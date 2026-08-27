@@ -1,6 +1,6 @@
 import "server-only";
 import { cache } from "react";
-import { prisma } from "./prisma";
+import { prisma, insensitive } from "./prisma";
 import type { ShopQuery } from "./validation";
 
 /**
@@ -138,11 +138,11 @@ export async function searchProducts(query: ShopQuery) {
   if (query.q) {
     and.push({
       OR: [
-        { name: { contains: query.q } },
-        { shortDescription: { contains: query.q } },
-        { description: { contains: query.q } },
-        { category: { name: { contains: query.q } } },
-        { ingredients: { some: { ingredient: { name: { contains: query.q } } } } },
+        { name: { contains: query.q, ...insensitive } },
+        { shortDescription: { contains: query.q, ...insensitive } },
+        { description: { contains: query.q, ...insensitive } },
+        { category: { name: { contains: query.q, ...insensitive } } },
+        { ingredients: { some: { ingredient: { name: { contains: query.q, ...insensitive } } } } },
       ],
     });
   }

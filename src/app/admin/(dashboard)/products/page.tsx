@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { prisma } from "@/lib/prisma";
+import { prisma, insensitive } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth";
 import { formatPrice } from "@/lib/money";
 import { formatDate } from "@/lib/utils";
@@ -27,9 +27,9 @@ export default async function AdminProductsPage({
     ...(params.q
       ? {
           OR: [
-            { name: { contains: params.q } },
-            { slug: { contains: params.q } },
-            { sku: { contains: params.q } },
+            { name: { contains: params.q, ...insensitive } },
+            { slug: { contains: params.q, ...insensitive } },
+            { sku: { contains: params.q, ...insensitive } },
           ],
         }
       : {}),

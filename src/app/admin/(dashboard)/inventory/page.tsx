@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { prisma } from "@/lib/prisma";
+import { prisma, insensitive } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth";
 import { formatDate } from "@/lib/utils";
 import { Card, EmptyRow, PageHeader, Pill, StatCard, Table, Td, Tr } from "@/components/admin/ui";
@@ -22,9 +22,9 @@ export default async function AdminInventoryPage({
         ? {
             variant: {
               OR: [
-                { name: { contains: params.q } },
-                { sku: { contains: params.q } },
-                { product: { name: { contains: params.q } } },
+                { name: { contains: params.q, ...insensitive } },
+                { sku: { contains: params.q, ...insensitive } },
+                { product: { name: { contains: params.q, ...insensitive } } },
               ],
             },
           }

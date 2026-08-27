@@ -10,31 +10,81 @@ before anything else is worth doing.
 
 ## 1. Database — SQLite to Postgres
 
-The schema is deliberately portable: no native enums, no scalar lists, no
-provider-specific column types. Switching is one line.
+**This is the one thing that blocks a Vercel deploy.** Thirteen routes are
+prerendered at build time and query the database — the homepage, the shop, every
+product page, `sitemap.xml` — so the build itself needs a reachable server. On
+Vercel there is no `dev.db`: it is gitignored, as it should be. The build gets
+as far as `Collecting page data ...` and dies there.
 
-In `prisma/schema.prisma`:
-
-```prisma
-datasource db {
-  provider = "postgresql"   // was "sqlite"
-  url      = env("DATABASE_URL")
-}
-```
-
-Then point `DATABASE_URL` at the new server and push:
+The schema is deliberately portable — no native enums, no scalar lists, no
+provider-specific column types — so the move is a command, not a migration:
 
 ```bash
-npx prisma db push && npm run db:seed
+npm run db:postgres
 ```
 
-`db:seed` is idempotent — it clears and rewrites the catalogue, the story
-content and the admin account, and is safe to re-run. Do **not** run it against
-a database that already has real orders in it; it truncates content tables.
+That flips `provider` in `prisma/schema.prisma` (Prisma requires a literal
+there; it cannot read `env()`). `npm run db:sqlite` goes back.
 
-**Where:** Neon, Supabase and Railway all work. Whatever you pick, take the
-*pooled* connection string for `DATABASE_URL` if the host offers one, since
-serverless functions open a connection per invocation.
+Then create the schema and fill it, pointing at the new server:
+
+```bash
+DATABASE_URL="postgres://…" npx prisma db push && DATABASE_URL="postgres://…" npm run db:seed
+```
+
+Do this **before** deploying, not during the build. Seeding on every build would
+wipe content tables, and orders with them.
+
+`db:seed` is idempotent and safe to re-run against a fresh database. Do **not**
+run it against one that already holds real orders.
+
+**Where:** Vercel's own Postgres (Neon) is the least friction — it sets
+`DATABASE_URL` in the project for you. Neon, Supabase and Railway are all fine
+otherwise. Take the *pooled* connection string if the host offers one, since
+serverless opens a connection per invocation.
+
+### The one behavioural difference between the two
+
+Prisma's `contains` compiles to `LIKE`. SQLite treats that case-insensitively
+for ASCII; PostgreSQL does not. Left alone, instant search and every admin
+lookup would silently stop matching a capitalised term the moment you switched —
+searching "Moringa" would return nothing.
+
+`insensitive` in `src/lib/prisma.ts` handles it: it emits `mode: "insensitive"`
+on Postgres and nothing on SQLite, which rejects that option outright. Every
+`contains` filter in the codebase spreads it. Nothing to do — just know why it
+is there before someone "tidies it away".
+
+---
+
+## 1a. Deploying to Vercel, start to finish
+
+1. Create the database and note its connection string.
+2. Locally: `npm run db:postgres`, then push and seed against that string
+   (commands above), then commit the changed `schema.prisma`.
+3. In the Vercel project, set **Environment Variables**:
+
+   | Variable | Value |
+   |---|---|
+   | `DATABASE_URL` | the pooled Postgres string |
+   | `AUTH_SECRET` | `openssl rand -base64 48` — any long random string |
+   | `NEXT_PUBLIC_SITE_URL` | `https://your-project.vercel.app` |
+
+   Without `AUTH_SECRET` nobody can sign in. The Razorpay keys can stay unset;
+   checkout runs cash-on-delivery until you add them.
+4. Deploy. The build command is already `prisma generate && next build`.
+
+### Warnings you will see, and can ignore
+
+- **`jose` — CompressionStream not supported in the Edge Runtime.** A warning,
+  not an error. It comes from `jose`'s JWE-decompression path, which this code
+  never reaches: sessions are signed (HS256), not encrypted-and-compressed. The
+  bundler simply cannot prove that statically.
+- **`package.json#prisma` is deprecated.** Cosmetic until Prisma 7.
+- **`npm warn allow-scripts`.** Prisma's client is generated explicitly by the
+  build command, so that one is covered. The one to keep an eye on is `sharp`:
+  if admin image upload returns a 500 in production, its install script is the
+  first place to look.
 
 ---
 

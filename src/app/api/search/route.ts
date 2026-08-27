@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { prisma, insensitive } from "@/lib/prisma";
 import { limitRoute } from "@/lib/rate-limit";
 import { stripHtml, truncate } from "@/lib/utils";
 
@@ -39,10 +39,10 @@ export async function GET(request: NextRequest) {
       where: {
         status: "published",
         OR: [
-          { name: { contains: term } },
-          { shortDescription: { contains: term } },
-          { category: { name: { contains: term } } },
-          { ingredients: { some: { ingredient: { name: { contains: term } } } } },
+          { name: { contains: term, ...insensitive } },
+          { shortDescription: { contains: term, ...insensitive } },
+          { category: { name: { contains: term, ...insensitive } } },
+          { ingredients: { some: { ingredient: { name: { contains: term, ...insensitive } } } } },
         ],
       },
       take: 6,
@@ -61,9 +61,9 @@ export async function GET(request: NextRequest) {
       where: {
         status: "published",
         OR: [
-          { title: { contains: term } },
-          { excerpt: { contains: term } },
-          { content: { contains: term } },
+          { title: { contains: term, ...insensitive } },
+          { excerpt: { contains: term, ...insensitive } },
+          { content: { contains: term, ...insensitive } },
         ],
       },
       take: 3,
@@ -72,18 +72,18 @@ export async function GET(request: NextRequest) {
     prisma.faq.findMany({
       where: {
         isActive: true,
-        OR: [{ question: { contains: term } }, { answer: { contains: term } }],
+        OR: [{ question: { contains: term, ...insensitive } }, { answer: { contains: term, ...insensitive } }],
       },
       take: 3,
       select: { id: true, question: true, answer: true },
     }),
     prisma.category.findMany({
-      where: { isActive: true, name: { contains: term } },
+      where: { isActive: true, name: { contains: term, ...insensitive } },
       take: 3,
       select: { id: true, name: true, slug: true, description: true },
     }),
     prisma.ingredient.findMany({
-      where: { name: { contains: term } },
+      where: { name: { contains: term, ...insensitive } },
       take: 3,
       select: { id: true, name: true, slug: true, description: true },
     }),

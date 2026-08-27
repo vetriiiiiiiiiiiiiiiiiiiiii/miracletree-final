@@ -17,7 +17,9 @@
     "test:e2e": "node scripts/reset-rate-limits.mjs && playwright test",
     "test:e2e:ui": "node scripts/reset-rate-limits.mjs && playwright test --ui",
     "shots": "node scripts/reset-rate-limits.mjs && playwright test e2e/shots.spec.ts --project=desktop",
-    "sweep": "node scripts/sweep-reservations.mjs"
+    "sweep": "node scripts/sweep-reservations.mjs",
+    "db:postgres": "node scripts/use-postgres.mjs postgresql",
+    "db:sqlite": "node scripts/use-postgres.mjs sqlite"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

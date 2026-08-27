@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { prisma } from "@/lib/prisma";
+import { prisma, insensitive } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth";
 import { formatPrice } from "@/lib/money";
 import { formatDate } from "@/lib/utils";
@@ -23,10 +23,10 @@ export default async function AdminCustomersPage({
     ...(params.q
       ? {
           OR: [
-            { email: { contains: params.q } },
-            { firstName: { contains: params.q } },
-            { lastName: { contains: params.q } },
-            { phone: { contains: params.q } },
+            { email: { contains: params.q, ...insensitive } },
+            { firstName: { contains: params.q, ...insensitive } },
+            { lastName: { contains: params.q, ...insensitive } },
+            { phone: { contains: params.q, ...insensitive } },
           ],
         }
       : {}),
