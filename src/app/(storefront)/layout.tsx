@@ -12,6 +12,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { CustomCursor } from "@/components/motion/CustomCursor";
 import { SmoothScroll } from "@/components/motion/SmoothScroll";
+import { LeafTransition } from "@/components/motion/LeafTransition";
 
 export default async function StorefrontLayout({
   children,
@@ -48,6 +49,7 @@ export default async function StorefrontLayout({
     <CartProvider cart={cart}>
       <WishlistProvider productIds={wishlistIds}>
         <SmoothScroll />
+        <LeafTransition />
         <CustomCursor hasPhoto={hasCursorPhoto} />
 
         <Header

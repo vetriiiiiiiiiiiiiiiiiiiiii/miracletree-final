@@ -85,6 +85,16 @@ export const COMMERCE_DEFAULTS = {
   codEnabled: true,
 } as const;
 
+/**
+ * The promotion the ritual builder unlocks.
+ *
+ * Lives here rather than beside the action because a `"use server"` module may
+ * only export async functions — exporting a plain const from one is a build
+ * error that TypeScript does not catch, since it is an SWC rule rather than a
+ * type rule.
+ */
+export const RITUAL_COUPON = "RITUAL";
+
 export const SITE = {
   name: "Miracle Tree",
   legalName: "Miracletree Life Science",

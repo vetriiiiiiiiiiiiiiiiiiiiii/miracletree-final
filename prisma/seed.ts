@@ -537,9 +537,10 @@ const HOMEPAGE_SECTIONS = [
 
 const NAVIGATION = [
   { group: "header", label: "Shop", href: "/shop", position: 1 },
-  { group: "header", label: "Our Story", href: "/about", position: 2 },
-  { group: "header", label: "Moringa", href: "/moringa", position: 3 },
-  { group: "header", label: "Contact", href: "/contact", position: 4 },
+  { group: "header", label: "Ritual", href: "/ritual", position: 2 },
+      { group: "header", label: "Our Story", href: "/about", position: 3 },
+  { group: "header", label: "Moringa", href: "/moringa", position: 4 },
+  { group: "header", label: "Contact", href: "/contact", position: 5 },
 
   { group: "footer-shop", label: "All products", href: "/shop", position: 1 },
   { group: "footer-shop", label: "Super Foods", href: "/shop/super-foods", position: 2 },
@@ -869,6 +870,21 @@ async function main() {
         description: "Free shipping, any order value",
         kind: "free_shipping",
         value: 0,
+        appliesTo: "all",
+        isActive: true,
+      },
+      {
+        // The promotion the ritual builder unlocks. It is an ordinary coupon
+        // rather than a special case in the pricing code, so the saving the
+        // builder quotes and the saving the cart applies are the same number
+        // evaluated by the same function — they cannot drift apart, and an
+        // admin can retire it without a deploy.
+        code: "RITUAL",
+        description: "10% off when you build a ritual",
+        kind: "percentage",
+        value: 10,
+        minSubtotal: 49900,
+        maxDiscount: 40000,
         appliesTo: "all",
         isActive: true,
       },

@@ -231,6 +231,14 @@ export const adminPaymentStatusSchema = z.object({
  * The page renders every citation it is given, so what matters is that the
  * admin can always attach one.
  */
+/**
+ * A ritual is a set of variant ids and nothing more. The client never sends a
+ * price, a quantity or a discount — all three are derived on the server.
+ */
+export const ritualSchema = z.object({
+  variantIds: z.array(z.string().cuid()).min(1).max(8),
+});
+
 export const adminMilestoneSchema = z.object({
   year: z.string().trim().min(1, "Give the year.").max(24),
   title: z.string().trim().min(1, "Give it a title.").max(160),

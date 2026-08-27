@@ -3,6 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ProductGallery, type GalleryImage } from "@/components/product/ProductGallery";
+import { PackViewer } from "@/components/product/PackViewer";
+import { cn } from "@/lib/utils";
 import {
   ProductPurchase,
   type PurchaseVariant,
@@ -40,13 +42,50 @@ export function ProductHero({
     variants[0]?.imageUrl ?? null,
   );
 
+  // Photographs are the default: they are what a shopper came to look at, and
+  // they are what a variant selection needs to move. Turning the pack is the
+  // second thing you do, not the first.
+  const [view, setView] = useState<"photos" | "pack">("photos");
+
   return (
     <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
-      <ProductGallery
-        images={images}
-        productName={productName}
-        activeImageUrl={activeImageUrl}
-      />
+      <div>
+        {view === "pack" ? (
+          <PackViewer images={images} productName={productName} />
+        ) : (
+          <ProductGallery
+            images={images}
+            productName={productName}
+            activeImageUrl={activeImageUrl}
+          />
+        )}
+
+        {images.length > 0 ? (
+          <div
+            role="group"
+            aria-label="How to view the product"
+            className="mt-4 flex justify-center gap-1"
+          >
+            {(["photos", "pack"] as const).map((option) => (
+              <button
+                key={option}
+                type="button"
+                onClick={() => setView(option)}
+                aria-pressed={view === option}
+                data-cursor="link"
+                className={cn(
+                  "border px-4 py-2 text-[0.62rem] uppercase tracking-[0.16em] transition-colors",
+                  view === option
+                    ? "border-emerald-400/50 bg-emerald-500/10 text-cream-50"
+                    : "border-white/12 text-cream-400 hover:border-white/25 hover:text-cream-200",
+                )}
+              >
+                {option === "photos" ? "Photos" : "Turn the pack"}
+              </button>
+            ))}
+          </div>
+        ) : null}
+      </div>
 
       <div className="lg:pt-4">
         {badges.length ? (

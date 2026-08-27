@@ -523,3 +523,15 @@
   border: 1px solid #7d8a6f;
   border-radius: 999px;
 }
+
+/*
+ * The route-change wipe. Blades rise from below to cover the seam between two
+ * pages, hold for a beat, then drop away. Scaling on Y from the bottom edge
+ * keeps it to compositor-only work — no layout, no paint of the page beneath.
+ */
+@keyframes leaf-wipe {
+  0%   { transform: scaleY(0); opacity: 0.9; }
+  38%  { transform: scaleY(1); opacity: 1; }
+  56%  { transform: scaleY(1); opacity: 1; }
+  100% { transform: scaleY(0); opacity: 0.9; transform-origin: top; }
+}
