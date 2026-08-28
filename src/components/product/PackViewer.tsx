@@ -12,10 +12,9 @@ import { prefersReducedMotion } from "@/lib/motion";
  *
  *   turntable — with enough frames (a pack shot on a rotating platform), the
  *               drag scrubs through them and the product genuinely spins.
- *   solid     — otherwise the pack is rotated in 3D space: the photograph with
- *               its white ground keyed out by a multiply blend, a specular
- *               sweep that tracks the angle, and a contact shadow that shortens
- *               as the pack turns away.
+ *   solid     — otherwise the pack is rotated in 3D space against a ground that
+ *               matches the photography, with a specular sweep that tracks the
+ *               angle and a contact shadow that shortens as it turns away.
  *
  * The second mode exists because a catalogue of two-to-four photographs per
  * product cannot be made into a 360° spin, and pretending otherwise would mean
