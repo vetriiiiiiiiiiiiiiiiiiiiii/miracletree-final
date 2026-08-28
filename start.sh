@@ -1,8 +1,7 @@
 #!/bin/sh
 
-# Start Nginx in the background
-nginx -g "daemon off;" &
+# Start Nginx in background as daemon
+nginx
 
-# Start the Next.js application
-# The standalone build outputs a server.js file
-node server.js
+# Start Next.js standalone application on port 3000
+PORT=3000 HOSTNAME=0.0.0.0 node server.js
