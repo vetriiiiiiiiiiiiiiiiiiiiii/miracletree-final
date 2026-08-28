@@ -33,7 +33,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/dev.db ./dev.db
+COPY --from=builder /app/prisma/dev.db ./dev.db
 
 # Copy start script
 COPY start.sh ./start.sh
