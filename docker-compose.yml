@@ -11,3 +11,9 @@ services:
       - NODE_ENV=production
       - PORT=3000
       - HOSTNAME=0.0.0.0
+      - DATABASE_URL=file:/data/miracletree.db
+    volumes:
+      - miracletree_data:/data
+
+volumes:
+  miracletree_data:

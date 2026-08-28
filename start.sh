@@ -1,5 +1,12 @@
 #!/bin/sh
 
+# Initialize database if it doesn't exist in the volume
+if [ ! -f /data/miracletree.db ]; then
+  echo "Initializing new database in volume..."
+  mkdir -p /data
+  cp /app/dev.db /data/miracletree.db
+fi
+
 # Start Nginx in background as daemon
 nginx
 
