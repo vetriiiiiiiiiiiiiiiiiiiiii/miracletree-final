@@ -11,6 +11,7 @@ RUN npm ci
 COPY . .
 
 # Build the application
+ENV DATABASE_URL="file:./dev.db"
 RUN npm run build
 
 # Stage 2: Serve the application with Nginx and Node.js
@@ -18,7 +19,7 @@ FROM node:20-alpine AS runner
 
 WORKDIR /app
 
-ENV NODE_ENV production
+ENV NODE_ENV=production
 
 # Install Nginx
 RUN apk add --no-cache nginx
