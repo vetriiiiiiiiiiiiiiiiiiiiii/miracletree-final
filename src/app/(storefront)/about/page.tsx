@@ -15,14 +15,14 @@ import {
   FieldNotes,
   Timeline,
 } from "@/components/story/StorySections";
-import { StoryFlight } from "@/components/story/flight/StoryFlight";
+import { StoryFlightLazy } from "@/components/story/flight/StoryFlightLazy";
 
 export const revalidate = 3600;
 
 export const metadata: Metadata = buildMetadata({
   title: "Our story",
   description:
-    "Miracletree Life Science began in 2009 with Sujatha Rajendran's idea and 80 acres near Madurai. The history, the awards, the people, and the field notes.",
+    "Miracletree Life Science began in 2009 with Sujatha Rajendran's idea and a research farm near Madurai. The history, the certifications, the people, and the field notes.",
   path: "/about",
 });
 
@@ -76,7 +76,7 @@ export default async function AboutPage() {
         {/* ---------------------------------------------------------- cover */}
         <div className="paper-ruled relative overflow-hidden border-b border-[#c9c0a8]">
           <Container className="relative py-16 md:py-24">
-            <Breadcrumbs items={crumbs} className="[&_*]:!text-[#8a7c55]" />
+            <Breadcrumbs items={crumbs} className="[&_*]:!text-[#6f6440]" />
 
             <div className="mt-12 grid items-center gap-12 lg:grid-cols-[1.25fr_0.75fr]">
               <div>
@@ -89,16 +89,16 @@ export default async function AboutPage() {
                 </h1>
 
                 <p className="mt-10 max-w-[46ch] text-[1.2rem] leading-relaxed text-[#3f4b39]">
-                  It started with a question about what to do with a tree that grows
-                  in everybody&rsquo;s backyard and that almost nobody was using
-                  properly.
+                  Moringa grows in half the backyards in Tamil Nadu. Almost none
+                  of it is dried properly. That gap is the company.
                 </p>
 
                 <p className="mt-5 max-w-[52ch] leading-relaxed text-[#55614e]">
-                  Eighty acres at the foot of the Sirumalai hills. Eleven thousand
-                  moringa and palmyrah trees. Forty growing families. This is the
-                  notebook — the history, what it has been recognised for, the people
-                  who did it, and the field notes kept along the way.
+                  A six-acre research farm kept since 2007, eighty-seven acres in
+                  production near the Vempakottai dam, and around three hundred
+                  more under contract across south Tamil Nadu. What follows is the
+                  history, the certifications, the people, and the notes we have
+                  kept along the way.
                 </p>
 
                 <nav aria-label="Sections of this story" className="mt-10 flex flex-wrap gap-x-6 gap-y-2">
@@ -112,7 +112,7 @@ export default async function AboutPage() {
                     <a
                       key={href}
                       href={href}
-                      className="text-[1.15rem] text-[#7a5c1f] underline decoration-[#c2a038]/50 underline-offset-4 hover:decoration-[#7a5c1f]"
+                      className="inline-block py-1 text-[1.15rem] text-[#7a5c1f] underline decoration-[#c2a038]/50 underline-offset-4 hover:decoration-[#7a5c1f]"
                       style={{ fontFamily: "var(--font-hand)" }}
                     >
                       {label}
@@ -149,30 +149,33 @@ export default async function AboutPage() {
 
               <div className="prose-paper max-w-[62ch]">
                 <p>
-                  In 2009 <strong>Sujatha Rajendran</strong> began turning the yield of the
-                  moringa into things people would actually choose to eat — food, not
-                  supplements, and nothing chemical in it. The product line was hers.
+                  In 2009 <strong>Sujatha Rajendran</strong> started turning moringa
+                  into food instead of supplements, with nothing chemical added. The
+                  product line was hers.
                 </p>
                 <p>
                   <strong>Saravanakumaran Rajendran</strong>, an engineer-agriculturist,
-                  came in to solve the unglamorous half: drying, milling and processing
-                  at a scale that could run every week without cooking the leaf on the
-                  way to the pack. He now holds patents in moringa processing and has
-                  been asked to advise on growing it in arid conditions abroad.
+                  came in to build the processing side: drying, milling and handling
+                  the leaf at a scale that could run every week without overheating
+                  it. He holds patents in moringa processing and has advised on
+                  growing the tree in arid conditions abroad.
                 </p>
                 <p>
-                  The farm sits at the base of the Eastern Ghats, near Sirumalai. Eleven
-                  thousand trees across roughly eighty acres, alongside palmyrah. The
-                  farm and its processes are certified organic.
+                  There are three farms. The original six-acre research farm has been
+                  run as sustainable organic ground since 2007 and is where the
+                  planting trials were done. Production is eighty-seven acres near the
+                  Vempakottai dam at Sattur. Beyond that, roughly three hundred and
+                  twelve acres are farmed under contract across south Tamil Nadu. The
+                  farm and its processes are certified organic under the Tamil Nadu
+                  Organic Certification Programme.
                 </p>
                 <p>
-                  What has probably mattered most is the part that does not appear on a
-                  pack: more than forty farming families now grow for the company, and
-                  several have moved from ₹30–40,000 a year to about ₹1 lakh within
-                  three years.
+                  More than forty farming families now grow for the company. Several
+                  have moved from ₹30,000–40,000 a year to about ₹1 lakh within three
+                  years of supplying us.
                 </p>
 
-                <p className="!mt-8 text-[0.7rem] uppercase tracking-[0.12em] !text-[#8a7c55]">
+                <p className="!mt-8 text-[0.7rem] uppercase tracking-[0.12em] !text-[#6f6440]">
                   Sourced from{" "}
                   <a
                     href="https://www.gotn.in/miracletree-marketing-the-moringa/"
@@ -195,7 +198,7 @@ export default async function AboutPage() {
             renders when the flight cannot (reduced motion, no WebGL), and it is
             what a printer and a screen reader get. */}
         <section id="flight" aria-hidden className="border-b border-[#c9c0a8]">
-          <StoryFlight milestones={milestones} />
+          <StoryFlightLazy milestones={milestones} />
         </section>
 
         <section className="border-b border-[#c9c0a8]">

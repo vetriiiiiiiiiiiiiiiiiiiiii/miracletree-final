@@ -27,10 +27,13 @@ export function Breadcrumbs({
                 </span>
               ) : (
                 <>
-                  <Link href={item.path} className="transition-colors hover:text-cream-100">
+                  <Link
+                  href={item.path}
+                  className="inline-block py-1.5 transition-colors hover:text-cream-100"
+                >
                     {item.name}
                   </Link>
-                  <span aria-hidden className="text-white/20">
+                  <span aria-hidden className="text-border-strong">
                     /
                   </span>
                 </>

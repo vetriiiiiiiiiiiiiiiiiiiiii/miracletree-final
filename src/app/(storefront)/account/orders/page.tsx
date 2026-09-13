@@ -57,10 +57,10 @@ export default async function AccountOrdersPage() {
 
       <ul className="mt-10 grid gap-4">
         {orders.map((order) => (
-          <li key={order.id} className="border border-white/12">
+          <li key={order.id} className="border border-border-subtle">
             <Link
               href={`/account/orders/${order.orderNumber}`}
-              className="group block p-6 transition-colors hover:bg-white/[0.02]"
+              className="group block p-6 transition-colors hover:bg-ink-800"
             >
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
@@ -81,11 +81,11 @@ export default async function AccountOrdersPage() {
                 {order.items.slice(0, 3).map((item) => (
                   <li key={item.id} className="truncate">
                     {item.quantity} × {item.productName}
-                    <span className="text-cream-400/70"> · {item.variantName}</span>
+                    <span className="text-cream-400"> · {item.variantName}</span>
                   </li>
                 ))}
                 {order.items.length > 3 ? (
-                  <li className="text-cream-400/70">and {order.items.length - 3} more</li>
+                  <li className="text-cream-400">and {order.items.length - 3} more</li>
                 ) : null}
               </ul>
 

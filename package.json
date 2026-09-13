@@ -14,9 +14,9 @@
     "db:seed": "tsx prisma/seed.ts",
     "db:reset": "prisma db push --force-reset && npm run db:seed",
     "setup": "prisma generate && prisma db push && npm run db:seed",
-    "test:e2e": "node scripts/reset-rate-limits.mjs && playwright test",
-    "test:e2e:ui": "node scripts/reset-rate-limits.mjs && playwright test --ui",
-    "shots": "node scripts/reset-rate-limits.mjs && playwright test e2e/shots.spec.ts --project=desktop",
+    "test:e2e": "node scripts/reset-e2e-state.mjs && playwright test",
+    "test:e2e:ui": "node scripts/reset-e2e-state.mjs && playwright test --ui",
+    "shots": "node scripts/reset-e2e-state.mjs && playwright test e2e/shots.spec.ts --project=desktop",
     "sweep": "node scripts/sweep-reservations.mjs",
     "db:postgres": "node scripts/use-postgres.mjs postgresql",
     "db:sqlite": "node scripts/use-postgres.mjs sqlite"
@@ -40,7 +40,7 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "recharts": "^2.15.1",
-    "sharp": "^0.34.1",
+    "sharp": "^0.34.5",
     "tailwind-merge": "^3.0.2",
     "three": "^0.175.0",
     "zod": "^3.24.2"

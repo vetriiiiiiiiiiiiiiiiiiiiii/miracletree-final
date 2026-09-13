@@ -62,7 +62,7 @@ export default async function AdminContentPage() {
             href="/"
             target="_blank"
             rel="noopener noreferrer"
-            className="border border-white/20 px-5 py-2.5 text-[0.68rem] uppercase tracking-[0.14em] text-cream-200 transition-colors hover:border-cream-100"
+            className="border border-border-strong px-5 py-2.5 text-[0.68rem] uppercase tracking-[0.14em] text-cream-200 transition-colors hover:border-cream-100"
           >
             Preview homepage
           </Link>
@@ -133,7 +133,7 @@ function SubLink({
 }) {
   return (
     <Link href={href}>
-      <Card className="h-full transition-colors hover:border-white/25">
+      <Card className="h-full transition-colors hover:border-border-strong">
         <h2 className="text-[0.95rem] text-cream-50">{title}</h2>
         <p className="mt-2 text-xs leading-relaxed text-cream-400">{body}</p>
       </Card>

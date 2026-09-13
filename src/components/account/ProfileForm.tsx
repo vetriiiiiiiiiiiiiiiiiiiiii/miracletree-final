@@ -75,7 +75,7 @@ export function ProfileForm({
         <Save />
       </form>
 
-      <div className="mt-14 border-t border-white/10 pt-8">
+      <div className="mt-14 border-t border-border-subtle pt-8">
         <h3 className="text-[1.05rem] text-cream-100">Signed in on this device</h3>
         <p className="mt-2 text-sm text-cream-400">
           Signing out clears your session. Your bag is kept.

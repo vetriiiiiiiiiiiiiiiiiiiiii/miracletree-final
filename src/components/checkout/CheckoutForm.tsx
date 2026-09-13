@@ -239,7 +239,7 @@ export function CheckoutForm({
                       "flex cursor-pointer gap-3 border p-4 transition-colors",
                       selectedAddress === saved.id
                         ? "border-gold-400 bg-white/[0.03]"
-                        : "border-white/12 hover:border-white/25",
+                        : "border-border-subtle hover:border-border-strong",
                     )}
                   >
                     <input
@@ -254,7 +254,7 @@ export function CheckoutForm({
                         "mt-1 h-3 w-3 shrink-0 rounded-full border",
                         selectedAddress === saved.id
                           ? "border-gold-400 bg-gold-400"
-                          : "border-white/30",
+                          : "border-border-strong",
                       )}
                       aria-hidden
                     />
@@ -278,7 +278,7 @@ export function CheckoutForm({
                     "flex cursor-pointer items-center gap-3 border p-4 text-sm transition-colors",
                     selectedAddress === null
                       ? "border-gold-400 bg-white/[0.03]"
-                      : "border-white/12 hover:border-white/25",
+                      : "border-border-subtle hover:border-border-strong",
                   )}
                 >
                   <input
@@ -291,7 +291,7 @@ export function CheckoutForm({
                   <span
                     className={cn(
                       "h-3 w-3 shrink-0 rounded-full border",
-                      selectedAddress === null ? "border-gold-400 bg-gold-400" : "border-white/30",
+                      selectedAddress === null ? "border-gold-400 bg-gold-400" : "border-border-strong",
                     )}
                     aria-hidden
                   />
@@ -404,10 +404,10 @@ export function CheckoutForm({
 
         {/* Summary */}
         <aside className="lg:sticky lg:top-28 lg:self-start">
-          <div className="border border-white/12 bg-white/[0.02] p-6 md:p-8">
+          <div className="border border-border-subtle bg-white/[0.02] p-6 md:p-8">
             <h2 className="text-title text-cream-50">Your order</h2>
 
-            <ul className="mt-6 grid gap-4 border-b border-white/10 pb-6">
+            <ul className="mt-6 grid gap-4 border-b border-border-subtle pb-6">
               {cart.lines.map((line) => (
                 <li key={line.id} className="flex gap-4">
                   <div className="relative h-16 w-14 shrink-0 overflow-hidden bg-ink-800">
@@ -452,7 +452,7 @@ export function CheckoutForm({
                     : formatPrice(cart.totals.shippingTotal)
                 }
               />
-              <div className="mt-3 flex items-baseline justify-between border-t border-white/10 pt-4">
+              <div className="mt-3 flex items-baseline justify-between border-t border-border-subtle pt-4">
                 <dt className="text-cream-100">Total</dt>
                 <dd className="text-xl tabular-nums text-cream-50">
                   {formatPrice(cart.totals.grandTotal)}
@@ -503,7 +503,7 @@ function PaymentOption({
     <label
       className={cn(
         "flex cursor-pointer gap-3 border p-4 transition-colors",
-        checked ? "border-gold-400 bg-white/[0.03]" : "border-white/12 hover:border-white/25",
+        checked ? "border-gold-400 bg-white/[0.03]" : "border-border-subtle hover:border-border-strong",
       )}
     >
       <input
@@ -516,7 +516,7 @@ function PaymentOption({
       <span
         className={cn(
           "mt-1 h-3 w-3 shrink-0 rounded-full border",
-          checked ? "border-gold-400 bg-gold-400" : "border-white/30",
+          checked ? "border-gold-400 bg-gold-400" : "border-border-strong",
         )}
         aria-hidden
       />

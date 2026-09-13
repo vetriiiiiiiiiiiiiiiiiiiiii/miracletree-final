@@ -48,9 +48,9 @@ export async function PolicyPage({
           <header className="mt-8">
             <h1 className="text-display text-cream-50">{title}</h1>
             {intro ? (
-              <p className="mt-5 leading-relaxed text-cream-300/80">{intro}</p>
+              <p className="mt-5 leading-relaxed text-cream-300">{intro}</p>
             ) : null}
-            <p className="mt-6 border-t border-white/10 pt-5 text-xs text-cream-400">
+            <p className="mt-6 border-t border-border-subtle pt-5 text-xs text-cream-400">
               Last updated{" "}
               {updated?.value
                 ? formatDate(updated.value)

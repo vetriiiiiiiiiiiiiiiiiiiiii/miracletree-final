@@ -40,7 +40,7 @@ export default function GlobalError({
           >
             That didn&rsquo;t take.
           </h1>
-          <p className="mx-auto mt-7 max-w-[42ch] leading-relaxed text-cream-300/85">
+          <p className="mx-auto mt-7 max-w-[42ch] leading-relaxed text-cream-300">
             An unexpected error stopped this page loading. Trying again usually works —
             if it doesn&rsquo;t, let us know and we&rsquo;ll look into it.
           </p>

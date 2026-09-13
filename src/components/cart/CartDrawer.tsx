@@ -45,7 +45,7 @@ export function CartDrawer() {
       ) : (
         <>
           {/* Free-shipping meter: a real, useful nudge rather than decoration. */}
-          <div className="border-b border-white/10 px-6 py-4">
+          <div className="border-b border-border-subtle px-6 py-4">
             {totals.amountToFreeShipping > 0 ? (
               <p className="text-xs text-cream-300">
                 <span className="text-gold-300">
@@ -56,7 +56,7 @@ export function CartDrawer() {
             ) : (
               <p className="text-xs text-leaf-300">Free shipping unlocked</p>
             )}
-            <div className="mt-2 h-px w-full bg-white/12">
+            <div className="mt-2 h-px w-full bg-border-subtle">
               <div
                 className="h-px bg-gold-400 transition-[width] duration-700 ease-[var(--ease-organic)]"
                 style={{ width: `${progress}%` }}
@@ -64,7 +64,7 @@ export function CartDrawer() {
             </div>
           </div>
 
-          <ul className="flex-1 divide-y divide-white/8 overflow-y-auto px-6">
+          <ul className="flex-1 divide-y divide-border-subtle overflow-y-auto px-6">
             {cart.lines.map((line) => (
               <li key={line.id} className="flex gap-4 py-5">
                 <Link
@@ -130,7 +130,7 @@ export function CartDrawer() {
             ))}
           </ul>
 
-          <div className="border-t border-white/10 px-6 py-5">
+          <div className="border-t border-border-subtle px-6 py-5">
             {cart.coupon ? (
               <div className="mb-4 flex items-center justify-between gap-3 border border-emerald-400/30 bg-emerald-500/8 px-3 py-2.5">
                 <span className="text-xs text-leaf-200">
@@ -155,7 +155,7 @@ export function CartDrawer() {
                   }}
                   placeholder="Discount code"
                   aria-label="Discount code"
-                  className="min-w-0 flex-1 border border-white/15 bg-white/[0.03] px-3 py-2.5 text-sm uppercase tracking-wider text-cream-50 placeholder:normal-case placeholder:tracking-normal placeholder:text-cream-400/60 focus:border-emerald-400 focus:outline-none"
+                  className="min-w-0 flex-1 border border-border-subtle bg-white/[0.03] px-3 py-2.5 text-sm uppercase tracking-wider text-cream-50 placeholder:normal-case placeholder:tracking-normal placeholder:text-cream-400 focus:border-emerald-400 focus:outline-none"
                 />
                 <Button type="submit" variant="secondary" size="sm" loading={applying}>
                   Apply
@@ -187,7 +187,7 @@ export function CartDrawer() {
                 label="Shipping"
                 value={totals.shippingTotal === 0 ? "Free" : formatPrice(totals.shippingTotal)}
               />
-              <div className="mt-2 flex items-baseline justify-between border-t border-white/10 pt-3">
+              <div className="mt-2 flex items-baseline justify-between border-t border-border-subtle pt-3">
                 <dt className="text-cream-100">Total</dt>
                 <dd className="text-lg tabular-nums text-cream-50">
                   {formatPrice(totals.grandTotal)}
@@ -235,7 +235,7 @@ export function CartDrawer() {
               </div>
             </div>
 
-            <p className="mt-4 text-center text-[0.65rem] uppercase tracking-[0.14em] text-cream-400/70">
+            <p className="mt-4 text-center text-[0.65rem] uppercase tracking-[0.14em] text-cream-400">
               Secure checkout · Ships across India
             </p>
           </div>
@@ -278,7 +278,7 @@ export function QuantityStepper({
   label: string;
 }) {
   return (
-    <div className="inline-flex items-center border border-white/15" role="group" aria-label={label}>
+    <div className="inline-flex items-center border border-border-subtle" role="group" aria-label={label}>
       <button
         type="button"
         onClick={() => onChange(value - 1)}
@@ -311,7 +311,7 @@ export function QuantityStepper({
 function EmptyBag({ onClose }: { onClose: () => void }) {
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-6 px-8 text-center">
-      <svg width="56" height="56" viewBox="0 0 40 40" fill="none" aria-hidden className="text-white/15">
+      <svg width="56" height="56" viewBox="0 0 40 40" fill="none" aria-hidden className="text-border-subtle">
         <path
           d="M20 34C20 34 6 28 6 16C6 9 12 4 20 4C28 4 34 9 34 16C34 28 20 34 20 34Z"
           stroke="currentColor"

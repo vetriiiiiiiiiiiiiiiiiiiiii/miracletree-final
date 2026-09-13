@@ -55,7 +55,7 @@ export function IngredientExplorer({
                   aria-controls={`ingredient-panel-${ingredient.slug}`}
                   onClick={() => setActive(index)}
                   className={cn(
-                    "group flex w-full items-baseline justify-between gap-6 border-t border-white/10 py-5 text-left transition-colors duration-400",
+                    "group flex w-full items-baseline justify-between gap-6 border-t border-border-subtle py-5 text-left transition-colors duration-400",
                     index === active ? "text-cream-50" : "text-cream-400 hover:text-cream-200",
                   )}
                 >
@@ -63,7 +63,7 @@ export function IngredientExplorer({
                     <span
                       className={cn(
                         "text-[0.66rem] tabular-nums tracking-[0.16em] transition-colors",
-                        index === active ? "text-gold-400" : "text-cream-400/50",
+                        index === active ? "text-gold-400" : "text-cream-400",
                       )}
                     >
                       0{index + 1}
@@ -78,7 +78,7 @@ export function IngredientExplorer({
                   <span
                     className={cn(
                       "h-px w-8 shrink-0 self-center transition-all duration-500 ease-[var(--ease-organic)]",
-                      index === active ? "w-14 bg-gold-400" : "bg-white/15",
+                      index === active ? "w-14 bg-gold-400" : "bg-border-subtle",
                     )}
                     aria-hidden
                   />
@@ -95,7 +95,7 @@ export function IngredientExplorer({
               aria-labelledby={`ingredient-tab-${current.slug}`}
               // Keying on the slug restarts the fade whenever the selection changes.
               key={current.slug}
-              className="flex flex-col justify-center border border-white/10 bg-ink/40 p-8 md:p-12"
+              className="flex flex-col justify-center border border-border-subtle bg-ink/40 p-8 md:p-12"
               style={{ animation: "ingredientIn 600ms var(--ease-organic) both" }}
             >
               <h3
@@ -106,18 +106,18 @@ export function IngredientExplorer({
               </h3>
 
               {current.origin ? (
-                <p className="eyebrow mt-4 text-gold-400/80">{current.origin}</p>
+                <p className="eyebrow mt-4 text-gold-400">{current.origin}</p>
               ) : null}
 
               {current.description ? (
-                <p className="mt-6 max-w-[46ch] text-[1.02rem] leading-relaxed text-cream-300/85">
+                <p className="mt-6 max-w-[46ch] text-[1.02rem] leading-relaxed text-cream-300">
                   {current.description}
                 </p>
               ) : null}
 
               <Link
                 href={`/shop?ingredient=${current.slug}`}
-                className="group mt-10 inline-flex items-center gap-3 text-[0.72rem] uppercase tracking-[0.16em] text-cream-200 transition-colors hover:text-gold-300"
+                className="group mt-10 inline-flex items-center gap-3 py-1.5 text-[0.72rem] uppercase tracking-[0.16em] text-cream-200 transition-colors hover:text-gold-300"
               >
                 <span>
                   {current.productCount} product{current.productCount === 1 ? "" : "s"} use it

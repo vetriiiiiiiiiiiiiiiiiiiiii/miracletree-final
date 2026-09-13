@@ -49,7 +49,7 @@ export function BrandStory({
             </RevealText>
 
             {subtitle ? (
-              <p className="mt-8 max-w-[48ch] text-[1.05rem] leading-relaxed text-cream-300/85">
+              <p className="mt-8 max-w-[48ch] text-[1.05rem] leading-relaxed text-cream-300">
                 {subtitle}
               </p>
             ) : null}
@@ -82,7 +82,7 @@ export function BrandStory({
                   className="object-contain p-10"
                 />
               ) : (
-                <div className="grid h-full place-items-center text-cream-400/40">
+                <div className="grid h-full place-items-center text-cream-400">
                   <span className="eyebrow">Miracletree Life Science · Madurai</span>
                 </div>
               )}

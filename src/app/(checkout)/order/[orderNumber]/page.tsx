@@ -7,6 +7,7 @@ import { LinkButton } from "@/components/ui/Button";
 import { OrderCelebration } from "@/components/checkout/OrderCelebration";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
+import { placedGuestOrder } from "@/lib/guest-orders";
 import { formatPrice } from "@/lib/money";
 import { formatDate } from "@/lib/utils";
 import { ORDER_STATUS_LABELS, type OrderStatus } from "@/lib/constants";
@@ -35,13 +36,18 @@ export default async function OrderConfirmationPage({
 
   if (!order) notFound();
 
-  // A guest can see the confirmation they were just redirected to, but a
-  // signed-in shopper must own the order — otherwise order numbers would be
-  // enumerable into other people's addresses.
+  // Order numbers are sequential (MT-2609-0001, -0002, …), so this page has to
+  // prove the reader is entitled to it rather than assume anyone holding a
+  // number is. Three ways to qualify: the order is yours, you are staff, or
+  // this browser is the one that placed it. Treating "no userId" as public —
+  // which is what this did before — left every guest order's name, email,
+  // phone and address readable by counting upwards.
   const user = await getCurrentUser();
-  if (order.userId && order.userId !== user?.id && user?.role !== "admin") {
-    notFound();
-  }
+  const owns = Boolean(order.userId) && order.userId === user?.id;
+  const isAdmin = user?.role === "admin";
+  const justPlaced = await placedGuestOrder(order.orderNumber);
+
+  if (!owns && !isAdmin && !justPlaced) notFound();
 
   const paid = order.paymentStatus === "paid";
   const cod = order.paymentProvider === "cod";
@@ -65,13 +71,13 @@ export default async function OrderConfirmationPage({
           <h1 className="text-hero text-cream-50" style={{ fontFamily: "var(--font-display)" }}>
             Your miracle is on its way.
           </h1>
-          <p className="mx-auto mt-7 max-w-[46ch] leading-relaxed text-cream-300/85">
+          <p className="mx-auto mt-7 max-w-[46ch] leading-relaxed text-cream-300">
             {cod && !paid
               ? "We've received your order and you'll pay the courier on delivery. A confirmation is on its way to your inbox."
               : "Payment received and your order is confirmed. A receipt is on its way to your inbox."}
           </p>
 
-          <dl className="mx-auto mt-10 grid max-w-md grid-cols-2 gap-x-8 gap-y-5 border-y border-white/10 py-7 text-left text-sm">
+          <dl className="mx-auto mt-10 grid max-w-md grid-cols-2 gap-x-8 gap-y-5 border-y border-border-subtle py-7 text-left text-sm">
             <div>
               <dt className="eyebrow text-cream-400">Order</dt>
               <dd className="mt-1.5 tabular-nums text-cream-50">{order.orderNumber}</dd>
@@ -99,7 +105,7 @@ export default async function OrderConfirmationPage({
         <div className="mx-auto mt-16 max-w-3xl">
           <h2 className="text-title text-cream-50">What's coming</h2>
 
-          <ul className="mt-7 divide-y divide-white/10 border-y border-white/10">
+          <ul className="mt-7 divide-y divide-border-subtle border-y border-border-subtle">
             {order.items.map((item) => (
               <li key={item.id} className="flex items-center gap-5 py-5">
                 <div className="relative h-20 w-16 shrink-0 overflow-hidden bg-ink-800">
@@ -138,7 +144,7 @@ export default async function OrderConfirmationPage({
               label="Shipping"
               value={order.shippingTotal === 0 ? "Free" : formatPrice(order.shippingTotal)}
             />
-            <div className="mt-2 flex items-baseline justify-between border-t border-white/10 pt-3">
+            <div className="mt-2 flex items-baseline justify-between border-t border-border-subtle pt-3">
               <dt className="text-cream-100">Total</dt>
               <dd className="text-lg tabular-nums text-cream-50">
                 {formatPrice(order.grandTotal)}
@@ -147,9 +153,9 @@ export default async function OrderConfirmationPage({
           </dl>
 
           {/* Delivery */}
-          <div className="mt-12 grid gap-8 border-t border-white/10 pt-8 sm:grid-cols-2">
+          <div className="mt-12 grid gap-8 border-t border-border-subtle pt-8 sm:grid-cols-2">
             <div>
-              <h3 className="eyebrow mb-3 text-gold-400/80">Delivering to</h3>
+              <h3 className="eyebrow mb-3 text-gold-400">Delivering to</h3>
               <address className="not-italic text-sm leading-relaxed text-cream-300">
                 {order.shippingName}
                 <br />
@@ -170,7 +176,7 @@ export default async function OrderConfirmationPage({
             </div>
 
             <div>
-              <h3 className="eyebrow mb-3 text-gold-400/80">What happens next</h3>
+              <h3 className="eyebrow mb-3 text-gold-400">What happens next</h3>
               <ol className="grid gap-2.5 text-sm text-cream-400">
                 <li>We pack your order within 1–2 working days.</li>
                 <li>You'll get a tracking number by email once it ships.</li>

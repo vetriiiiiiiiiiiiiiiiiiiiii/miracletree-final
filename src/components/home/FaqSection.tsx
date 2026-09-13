@@ -29,7 +29,7 @@ export function FaqSection({
             {showAllLink ? (
               <Link
                 href="/faq"
-                className="mt-8 inline-block text-[0.72rem] uppercase tracking-[0.16em] text-gold-300 underline underline-offset-4 hover:text-gold-200"
+                className="mt-8 inline-block py-1.5 text-[0.72rem] uppercase tracking-[0.16em] text-gold-300 underline underline-offset-4 hover:text-gold-300"
               >
                 All questions
               </Link>

@@ -50,16 +50,83 @@ export type ChapterState = {
   global: number;
 };
 
-const PALETTE = {
-  void: new THREE.Color("#05070a"),
-  soil: new THREE.Color("#120d08"),
-  deepLeaf: new THREE.Color("#0d3a22"),
-  brightLeaf: new THREE.Color("#3fae6b"),
-  gold: new THREE.Color("#d9bc6a"),
-  cream: new THREE.Color("#f4f1e8"),
-  cellCore: new THREE.Color("#7fe0a3"),
-  cellEdge: new THREE.Color("#123d26"),
-};
+export type WorldTheme = "dark" | "light";
+
+/**
+ * The scene's palette, in two lightings.
+ *
+ * `dark` is the original night journey: a seed in near-black, warming to soil
+ * underground, then back to black climbing into the canopy. `light` is the same
+ * journey at morning — pale mist instead of void, lit earth instead of black
+ * soil, and every leaf and rim colour re-picked to sit against a bright ground
+ * rather than glow out of a dark one.
+ *
+ * It is a second lighting setup, not an inversion. Rim colours in particular do
+ * not simply flip: on black a rim reads by being brighter than its base, and on
+ * mist the same trick makes an object dissolve, so the light rims are pulled
+ * toward mid-tones that still separate from both the body and the background.
+ *
+ * Every colour the scene uses lives here, including ones that were previously
+ * written inline at their material. One source of truth is the only way a
+ * second lighting stays consistent as the scene changes.
+ */
+const PALETTES = {
+  dark: {
+    void: "#05070a",
+    soil: "#120d08",
+    deepLeaf: "#0d3a22",
+    brightLeaf: "#3fae6b",
+    gold: "#d9bc6a",
+    cream: "#f4f1e8",
+    cellCore: "#7fe0a3",
+    cellEdge: "#123d26",
+    seedBase: "#0b0f0d",
+    seedRim: "#e6d3a3",
+    shellBase: "#1a1108",
+    shellRim: "#c9a86a",
+    canopyBase: "#0d1a12",
+    canopyRim: "#3f6b4e",
+    rootBase: "#140d08",
+    rootRim: "#5c4630",
+    podBody: "#1e4a2a",
+    podRidge: "#6fae72",
+    podTip: "#8a9b55",
+    petal: "#f2ead2",
+    petalCentre: "#e8c86a",
+  },
+  light: {
+    void: "#dee7e2",
+    soil: "#b9a68c",
+    deepLeaf: "#1f5c39",
+    brightLeaf: "#4f9e69",
+    gold: "#a8842a",
+    cream: "#2a3a2e",
+    cellCore: "#2f9a5f",
+    cellEdge: "#0f3d26",
+    seedBase: "#6a5f4e",
+    seedRim: "#8a7444",
+    shellBase: "#7a5f3c",
+    shellRim: "#5c4527",
+    canopyBase: "#2c5a3c",
+    canopyRim: "#79ab84",
+    rootBase: "#7d6a52",
+    rootRim: "#4a3a28",
+    podBody: "#357a4a",
+    podRidge: "#1f5c39",
+    podTip: "#7a8a3f",
+    petal: "#ffffff",
+    petalCentre: "#d9a52f",
+  },
+} as const satisfies Record<WorldTheme, Record<string, string>>;
+
+type Palette = Record<keyof (typeof PALETTES)["dark"], THREE.Color>;
+
+function buildPalette(theme: WorldTheme): Palette {
+  const source = PALETTES[theme];
+  return Object.fromEntries(
+    Object.entries(source).map(([key, hex]) => [key, new THREE.Color(hex)]),
+  ) as Palette;
+}
 
 /**
  * The camera path. Each chapter owns a stretch of the curve; the copy overlay
@@ -96,7 +163,16 @@ const LOOK_POINTS: [number, number, number][] = [
 ];
 
 /** Where each chapter sits on the 0–1 journey. */
-export const CHAPTER_STOPS = [0, 0.13, 0.3, 0.47, 0.62, 0.75, 0.88, 1];
+/**
+ * Chapter boundaries as a fraction of the journey.
+ *
+ * Four, not the original seven. The track was cut from 700svh to 240svh and
+ * seven chapters across that leaves each one about 20vh of scroll — the copy
+ * would change faster than it can be read. Four gives each chapter roughly
+ * 35vh, and the camera path is unchanged: it is simply travelled in fewer,
+ * longer stretches.
+ */
+export const CHAPTER_STOPS = [0, 0.3, 0.56, 0.8, 1];
 
 export class MoringaScene {
   private renderer: THREE.WebGLRenderer;
@@ -136,10 +212,16 @@ export class MoringaScene {
   /** Portrait viewports frame the subject high, above the copy. */
   private portrait = false;
 
+  /** Resolved once per instance; a theme change re-creates the scene. */
+  private P: Palette;
+
   constructor(
     private canvas: HTMLCanvasElement,
     private quality: Quality,
+    theme: WorldTheme = "dark",
   ) {
+    this.P = buildPalette(theme);
+
     this.renderer = new THREE.WebGLRenderer({
       canvas,
       antialias: quality === "high",
@@ -148,13 +230,13 @@ export class MoringaScene {
       stencil: false,
       depth: true,
     });
-    this.renderer.setClearColor(PALETTE.void, 1);
+    this.renderer.setClearColor(this.P.void, 1);
     this.renderer.setPixelRatio(
       Math.min(window.devicePixelRatio, quality === "high" ? 1.75 : 1.25),
     );
 
     this.camera = new THREE.PerspectiveCamera(55, 1, 0.1, 120);
-    this.scene.fog = new THREE.Fog(PALETTE.void, 12, 46);
+    this.scene.fog = new THREE.Fog(this.P.void, 12, 46);
 
     this.cameraCurve = new THREE.CatmullRomCurve3(
       CAMERA_POINTS.map((p) => new THREE.Vector3(...p)),
@@ -178,12 +260,16 @@ export class MoringaScene {
 
   private counts() {
     switch (this.quality) {
+      // Pod and particle counts are down sharply from the first version. At 85
+      // pods the canopy read as confetti: no single pod was legible, and the
+      // frame had no subject. Fewer, larger, correctly-shaped pods in bunches
+      // say "drumstick tree" where a cloud of them said nothing.
       case "high":
-        return { leaves: 2600, particles: 4200, cells: 700, roots: 22, pods: 85, flowers: 240 };
+        return { leaves: 1900, particles: 2400, cells: 700, roots: 18, pods: 44, flowers: 150 };
       case "medium":
-        return { leaves: 1300, particles: 1900, cells: 340, roots: 14, pods: 64, flowers: 140 };
+        return { leaves: 1000, particles: 1200, cells: 340, roots: 12, pods: 30, flowers: 90 };
       default:
-        return { leaves: 520, particles: 800, cells: 140, roots: 8, pods: 26, flowers: 60 };
+        return { leaves: 440, particles: 600, cells: 140, roots: 7, pods: 16, flowers: 45 };
     }
   }
 
@@ -228,10 +314,13 @@ export class MoringaScene {
         uniforms: {
           uTime: { value: 0 },
           uDisplace: { value: 0.022 },
-          uBase: { value: new THREE.Color("#0b0f0d") },
-          uRim: { value: new THREE.Color("#e6d3a3") },
-          uRimPower: { value: 3.4 },
-          uGlow: { value: 0 },
+          uBase: { value: this.P.canopyBase.clone() },
+          // A rim power of 3.4 confined the highlight to the silhouette edge,
+          // so the trunk read as a black cut-out against the canopy. Widening
+          // it lets light wrap far enough round to show the taper as a form.
+          uRim: { value: this.P.shellRim.clone() },
+          uRimPower: { value: 1.7 },
+          uGlow: { value: 0.12 },
           uOpacity: { value: 1 },
         },
       }),
@@ -240,6 +329,41 @@ export class MoringaScene {
     const seed = new THREE.Mesh(geometry, this.seedMaterial);
     seed.position.set(0, 0.1, 0);
     group.add(seed);
+  }
+
+  /**
+   * A tube along `curve` whose radius varies with distance along it.
+   *
+   * `TubeGeometry` only does constant radius, which is why both the trunk and
+   * the roots originally read as wires: a living root is thick where it leaves
+   * the stem and tapers to a hair. The tube is generated at a nominal radius
+   * and each ring is then scaled toward the centreline.
+   */
+  private taperedTube(
+    curve: THREE.Curve<THREE.Vector3>,
+    rings: number,
+    radial: number,
+    radiusAt: (t: number) => number,
+  ) {
+    const geometry = new THREE.TubeGeometry(curve, rings, 1, radial, false);
+    const pos = geometry.attributes.position as THREE.BufferAttribute;
+    const perRing = radial + 1;
+
+    for (let i = 0; i < pos.count; i++) {
+      const t = Math.min(1, Math.floor(i / perRing) / rings);
+      const centre = curve.getPointAt(t);
+      const r = radiusAt(t);
+      pos.setXYZ(
+        i,
+        centre.x + (pos.getX(i) - centre.x) * r,
+        centre.y + (pos.getY(i) - centre.y) * r,
+        centre.z + (pos.getZ(i) - centre.z) * r,
+      );
+    }
+    pos.needsUpdate = true;
+    geometry.computeVertexNormals();
+    this.disposables.push(geometry);
+    return geometry;
   }
 
   private buildRoots(count: number) {
@@ -253,43 +377,77 @@ export class MoringaScene {
         uniforms: {
           uTime: { value: 0 },
           uDisplace: { value: 0.02 },
-          uBase: { value: new THREE.Color("#1a1108") },
-          uRim: { value: new THREE.Color("#c9a86a") },
-          uRimPower: { value: 1.8 },
-          uGlow: { value: 0.4 },
+          // Roots were sharing the seed's gold rim at a glow of 0.4, which lit
+          // them like polished metal spokes. Underground they should read as
+          // wet earth catching a little light, so the rim is a muted clay and
+          // the glow is most of the way off.
+          uBase: { value: this.P.rootBase.clone() },
+          uRim: { value: this.P.rootRim.clone() },
+          uRimPower: { value: 2.4 },
+          uGlow: { value: 0.06 },
           uOpacity: { value: 0 },
         },
       }),
     );
 
-    // Roots fan outward and downward from the seed on randomised curves.
+    /** One root: down and out, wandering, thick at the crown and fine at the tip. */
+    const grow = (
+      origin: THREE.Vector3,
+      angle: number,
+      spread: number,
+      depth: number,
+      crownRadius: number,
+    ) => {
+      // Lateral drift so roots are not clean radial spokes out of one point.
+      const drift = (Math.random() - 0.5) * 0.9;
+      const points: THREE.Vector3[] = [];
+      const STEPS = 5;
+      for (let k = 0; k <= STEPS; k++) {
+        const t = k / STEPS;
+        const a = angle + drift * t * t;
+        // Steep at first, flattening as it runs out: the shape of a taproot
+        // shedding laterals rather than a straight spoke.
+        const out = Math.pow(t, 0.72) * spread;
+        points.push(
+          new THREE.Vector3(
+            origin.x + Math.cos(a) * out + (Math.random() - 0.5) * 0.12,
+            origin.y - Math.pow(t, 0.85) * depth,
+            origin.z + Math.sin(a) * out + (Math.random() - 0.5) * 0.12,
+          ),
+        );
+      }
+      const curve = new THREE.CatmullRomCurve3(points);
+      const geometry = this.taperedTube(curve, 30, 6, (t) =>
+        crownRadius * Math.pow(1 - t, 1.6) + 0.004,
+      );
+      group.add(new THREE.Mesh(geometry, this.rootMaterial));
+      return curve;
+    };
+
     for (let i = 0; i < count; i++) {
-      const angle = (i / count) * Math.PI * 2 + Math.random() * 0.4;
+      // Roots leave the crown at slightly different points, not all from one.
+      const angle = (i / count) * Math.PI * 2 + Math.random() * 0.5;
+      const origin = new THREE.Vector3(
+        Math.cos(angle) * 0.07,
+        -0.15 - Math.random() * 0.2,
+        Math.sin(angle) * 0.07,
+      );
       const spread = 0.8 + Math.random() * 2.6;
       const depth = 2 + Math.random() * 6;
+      const main = grow(origin, angle, spread, depth, 0.075 + Math.random() * 0.03);
 
-      const curve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(0, -0.2, 0),
-        new THREE.Vector3(
-          Math.cos(angle) * spread * 0.3,
-          -depth * 0.3,
-          Math.sin(angle) * spread * 0.3,
-        ),
-        new THREE.Vector3(
-          Math.cos(angle) * spread * 0.75,
-          -depth * 0.7,
-          Math.sin(angle) * spread * 0.75,
-        ),
-        new THREE.Vector3(
-          Math.cos(angle) * spread,
-          -depth,
-          Math.sin(angle) * spread,
-        ),
-      ]);
-
-      const geometry = new THREE.TubeGeometry(curve, 24, 0.035, 5, false);
-      this.disposables.push(geometry);
-      group.add(new THREE.Mesh(geometry, this.rootMaterial));
+      // Roots fork. Two in five put out a finer lateral partway down, which is
+      // most of what separates a root system from a starburst.
+      if (Math.random() < 0.45) {
+        const at = 0.4 + Math.random() * 0.3;
+        grow(
+          main.getPointAt(at),
+          angle + (Math.random() - 0.5) * 1.6,
+          spread * 0.5,
+          depth * 0.3,
+          0.03,
+        );
+      }
     }
   }
 
@@ -304,8 +462,15 @@ export class MoringaScene {
       new THREE.Vector3(0, 23, 0),
     ]);
 
-    const geometry = new THREE.TubeGeometry(curve, 120, 0.075, 8, false);
-    this.disposables.push(geometry);
+    // Moringa is soft-wooded and swells noticeably at the base, so the taper is
+    // strong — roughly six to one from bottom to top. Without it the trunk was a
+    // constant 0.075 from soil to canopy: a 23-unit wire of uniform width, which
+    // read as a drawn line rather than as a tree.
+    const geometry = this.taperedTube(curve, 140, 10, (t) => {
+      const radius = 0.42 * Math.pow(1 - t, 1.45) + 0.055;
+      // Bark is not a lathe finish.
+      return radius * (1 + Math.sin(t * 46) * 0.05);
+    });
 
     this.stemMaterial = this.track(
       new THREE.ShaderMaterial({
@@ -315,10 +480,10 @@ export class MoringaScene {
         uniforms: {
           uTime: { value: 0 },
           uDisplace: { value: 0.012 },
-          uBase: { value: new THREE.Color("#0d1a12") },
+          uBase: { value: this.P.canopyBase.clone() },
           // Dim: a bright stem runs straight down the middle of every canopy
           // frame and splits the composition in two.
-          uRim: { value: new THREE.Color("#3f6b4e") },
+          uRim: { value: this.P.canopyRim.clone() },
           uRimPower: { value: 3.2 },
           uGlow: { value: 0.12 },
           uOpacity: { value: 0 },
@@ -394,12 +559,12 @@ export class MoringaScene {
           uReveal: { value: 0 },
           uWind: { value: 0.35 },
           uPointer: { value: new THREE.Vector3(0, 0, -50) },
-          uDeep: { value: PALETTE.deepLeaf.clone() },
-          uBright: { value: PALETTE.brightLeaf.clone() },
-          uGold: { value: PALETTE.gold.clone() },
+          uDeep: { value: this.P.deepLeaf.clone() },
+          uBright: { value: this.P.brightLeaf.clone() },
+          uGold: { value: this.P.gold.clone() },
           uFogNear: { value: 4 },
           uFogFar: { value: 22 },
-          uFogColor: { value: PALETTE.void.clone() },
+          uFogColor: { value: this.P.void.clone() },
           uOpacity: { value: 0 },
         },
       }),
@@ -418,13 +583,64 @@ export class MoringaScene {
    * leaflets, and they are what makes the canopy read as a moringa rather than
    * as generic foliage.
    */
+  /**
+   * The profile of a drumstick pod, as a unit tube hanging from y=0 to y=-1.
+   *
+   * The previous version was a plain cone, wider at the free end than at the
+   * shoulder, which is precisely backwards and is why it read as a carrot. A
+   * real *Moringa oleifera* pod is close to uniform for most of its length,
+   * swells slightly just below the shoulder, and comes to a long point at the
+   * free tip. It is also not round: three prominent longitudinal ridges run the
+   * whole way down, which is what makes a drumstick recognisable in silhouette.
+   *
+   * Both are done here on the CPU, once, rather than in the vertex shader,
+   * because the geometry is instanced — every pod shares this one buffer, so
+   * the cost is paid a single time for all of them.
+   */
+  private podProfile(radialSegments: number, heightSegments: number) {
+    const geometry = new THREE.CylinderGeometry(
+      1, 1, 1, radialSegments, heightSegments, true,
+    );
+    const pos = geometry.attributes.position as THREE.BufferAttribute;
+
+    for (let i = 0; i < pos.count; i++) {
+      const x = pos.getX(i);
+      const y = pos.getY(i);
+      const z = pos.getZ(i);
+
+      // v: 0 at the shoulder, 1 at the free tip.
+      const v = 0.5 - y;
+
+      // Thickness along the pod. Narrow where it joins the branch, full by a
+      // sixth of the way down, held there, then drawn out to a point.
+      let r: number;
+      if (v < 0.16) r = 0.72 + (v / 0.16) * 0.28;
+      else if (v < 0.78) r = 1;
+      else r = Math.pow(1 - (v - 0.78) / 0.22, 0.75);
+
+      // Three ridges, easing off at the very tip where the pod rounds out.
+      const angle = Math.atan2(z, x);
+      const ribs = 1 + 0.2 * Math.cos(3 * angle) * Math.min(1, (1 - v) * 4);
+
+      const scale = r * ribs;
+      pos.setX(i, x * scale);
+      pos.setZ(i, z * scale);
+    }
+
+    pos.needsUpdate = true;
+    // The ridges only catch light if the normals know about them.
+    geometry.computeVertexNormals();
+    // Hang from the shoulder rather than pivot about the middle.
+    geometry.translate(0, -0.5, 0);
+    return geometry;
+  }
+
   private buildPods(count: number) {
     const group = this.group("pods");
 
-    // Open-ended, so no cap disc shows when a pod passes the camera.
-    const base = new THREE.CylinderGeometry(0.55, 1, 1, 7, 6, true);
-    // Pivot at the shoulder: a pod hangs from its top, not its middle.
-    base.translate(0, -0.5, 0);
+    // Enough radial segments for the three ridges to survive as a silhouette;
+    // at 7 they were averaged into a smooth cone.
+    const base = this.podProfile(14, 10);
 
     const geometry = new THREE.InstancedBufferGeometry();
     geometry.index = base.index;
@@ -440,20 +656,36 @@ export class MoringaScene {
     const phases = new Float32Array(count);
     const tilts = new Float32Array(count);
 
-    for (let i = 0; i < count; i++) {
-      const t = Math.pow(Math.random(), 0.8);
+    // Pods hang in bunches from the same node, never evenly scattered. Walking
+    // the count in small clusters is what stops the canopy reading as confetti.
+    let i = 0;
+    while (i < count) {
+      const clusterSize = Math.min(count - i, 2 + Math.floor(Math.random() * 3));
       const angle = Math.random() * Math.PI * 2;
-      const radius = 1.8 + Math.pow(Math.random(), 0.6) * 5.4;
+      // Held close to the trunk and to the height band the camera climbs
+      // through (roughly y=14 to y=22). Spread over the old 8-to-21 range at
+      // a 5-unit radius, the pods were nowhere near the lens on the one
+      // chapter that is actually about them.
+      const radius = 1.5 + Math.pow(Math.random(), 0.6) * 2.8;
+      const height = 12.5 + Math.pow(Math.random(), 0.85) * 8.5;
+      const nodeX = Math.cos(angle) * radius;
+      const nodeZ = Math.sin(angle) * radius;
 
-      offsets[i * 3] = Math.cos(angle) * radius;
-      offsets[i * 3 + 1] = 7 + t * 15;
-      offsets[i * 3 + 2] = Math.sin(angle) * radius;
+      for (let k = 0; k < clusterSize; k++, i++) {
+        offsets[i * 3] = nodeX + (Math.random() - 0.5) * 0.5;
+        offsets[i * 3 + 1] = height + (Math.random() - 0.5) * 0.4;
+        offsets[i * 3 + 2] = nodeZ + (Math.random() - 0.5) * 0.5;
 
-      // Real drumsticks run 25-50cm and are strikingly thin for their length.
-      lengths[i] = 2.2 + Math.random() * 1.9;
-      girths[i] = 0.10 + Math.random() * 0.07;
-      phases[i] = Math.random() * Math.PI * 2;
-      tilts[i] = (Math.random() - 0.5) * 0.22;
+        // A drumstick is 25-50cm long and about 1.5cm across: roughly 25:1.
+        // The old values gave 11:1, which is a courgette.
+        lengths[i] = 3.4 + Math.random() * 2.2;
+        // ~25:1 length to width, which is what a drumstick actually is, and
+        // just thick enough to hold its ridges at canopy distance.
+        girths[i] = 0.075 + Math.random() * 0.03;
+        phases[i] = Math.random() * Math.PI * 2;
+        // Gravity does most of the work; they hang close to vertical.
+        tilts[i] = (Math.random() - 0.5) * 0.16;
+      }
     }
 
     geometry.setAttribute("aOffset", new THREE.InstancedBufferAttribute(offsets, 3));
@@ -472,12 +704,12 @@ export class MoringaScene {
           uTime: { value: 0 },
           uReveal: { value: 0 },
           uWind: { value: 0.25 },
-          uBody: { value: new THREE.Color("#1e4a2a") },
-          uRidge: { value: new THREE.Color("#6fae72") },
-          uTip: { value: new THREE.Color("#8a9b55") },
+          uBody: { value: this.P.podBody.clone() },
+          uRidge: { value: this.P.podRidge.clone() },
+          uTip: { value: this.P.podTip.clone() },
           uFogNear: { value: 6 },
           uFogFar: { value: 26 },
-          uFogColor: { value: PALETTE.void.clone() },
+          uFogColor: { value: this.P.void.clone() },
           uOpacity: { value: 0 },
         },
       }),
@@ -536,8 +768,8 @@ export class MoringaScene {
           uReveal: { value: 0 },
           uSize: { value: 90 },
           uPixelRatio: { value: this.renderer.getPixelRatio() },
-          uPetal: { value: new THREE.Color("#f2ead2") },
-          uCentre: { value: new THREE.Color("#e8c86a") },
+          uPetal: { value: this.P.petal.clone() },
+          uCentre: { value: this.P.petalCentre.clone() },
           uOpacity: { value: 0 },
         },
       }),
@@ -587,8 +819,8 @@ export class MoringaScene {
         uniforms: {
           uTime: { value: 0 },
           uReveal: { value: 0 },
-          uCore: { value: PALETTE.cellCore.clone() },
-          uEdge: { value: PALETTE.cellEdge.clone() },
+          uCore: { value: this.P.cellCore.clone() },
+          uEdge: { value: this.P.cellEdge.clone() },
           uOpacity: { value: 0 },
         },
       }),
@@ -650,8 +882,8 @@ export class MoringaScene {
           uSize: { value: 58 },
           uPixelRatio: { value: this.renderer.getPixelRatio() },
           uPointer: { value: new THREE.Vector3(0, 0, -50) },
-          uWarm: { value: PALETTE.gold.clone() },
-          uCool: { value: PALETTE.brightLeaf.clone() },
+          uWarm: { value: this.P.gold.clone() },
+          uCool: { value: this.P.brightLeaf.clone() },
           uMix: { value: 0 },
           uOpacity: { value: 0.9 },
         },
@@ -789,14 +1021,14 @@ export class MoringaScene {
     // earlier version ran this backwards and opened on brown.
     if (p < 0.22) {
       fog.color.lerpColors(
-        PALETTE.void,
-        PALETTE.soil,
+        this.P.void,
+        this.P.soil,
         THREE.MathUtils.smoothstep(p, 0.06, 0.22),
       );
     } else {
       fog.color.lerpColors(
-        PALETTE.soil,
-        PALETTE.void,
+        this.P.soil,
+        this.P.void,
         THREE.MathUtils.smoothstep(p, 0.24, 0.46),
       );
     }

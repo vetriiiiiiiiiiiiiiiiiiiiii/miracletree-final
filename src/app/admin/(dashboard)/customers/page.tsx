@@ -173,7 +173,7 @@ export default async function AdminCustomersPage({
             {page > 1 ? (
               <Link
                 href={`/admin/customers?page=${page - 1}`}
-                className="border border-white/15 px-4 py-2 text-xs text-cream-300 hover:border-white/30"
+                className="border border-border-subtle px-4 py-2 text-xs text-cream-300 hover:border-border-strong"
               >
                 Previous
               </Link>
@@ -181,7 +181,7 @@ export default async function AdminCustomersPage({
             {page < pages ? (
               <Link
                 href={`/admin/customers?page=${page + 1}`}
-                className="border border-white/15 px-4 py-2 text-xs text-cream-300 hover:border-white/30"
+                className="border border-border-subtle px-4 py-2 text-xs text-cream-300 hover:border-border-strong"
               >
                 Next
               </Link>

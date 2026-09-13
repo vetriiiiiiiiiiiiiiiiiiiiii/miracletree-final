@@ -48,7 +48,7 @@ export function AddressBook({ addresses }: { addresses: AddressEntry[] }) {
           key={address.id}
           className={cn(
             "border p-6",
-            address.isDefault ? "border-gold-400/40" : "border-white/12",
+            address.isDefault ? "border-gold-400/40" : "border-border-subtle",
           )}
         >
           <div className="flex flex-wrap items-start justify-between gap-4">
@@ -137,7 +137,7 @@ function AddressForm({
   const errors = state.status === "error" ? (state.errors ?? {}) : {};
 
   return (
-    <form action={action} className="grid gap-5 border border-white/12 p-6 md:p-8">
+    <form action={action} className="grid gap-5 border border-border-subtle p-6 md:p-8">
       {address ? <input type="hidden" name="id" value={address.id} /> : null}
 
       <h3 className="text-[1.15rem] text-cream-50">

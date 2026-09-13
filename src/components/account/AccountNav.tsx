@@ -18,7 +18,7 @@ export function AccountNav({ isAdmin }: { isAdmin: boolean }) {
 
   return (
     <nav aria-label="Account" className="lg:sticky lg:top-28 lg:self-start">
-      <ul className="flex gap-1 overflow-x-auto border-b border-white/10 pb-1 lg:grid lg:gap-0 lg:overflow-visible lg:border-b-0 lg:pb-0">
+      <ul className="flex gap-1 overflow-x-auto border-b border-border-subtle pb-1 lg:grid lg:gap-0 lg:overflow-visible lg:border-b-0 lg:pb-0">
         {LINKS.map((link) => {
           const active = link.exact
             ? pathname === link.href
@@ -33,7 +33,7 @@ export function AccountNav({ isAdmin }: { isAdmin: boolean }) {
                   "block whitespace-nowrap px-4 py-3 text-sm transition-colors lg:border-l lg:px-5",
                   active
                     ? "text-cream-50 lg:border-gold-400"
-                    : "text-cream-400 hover:text-cream-100 lg:border-white/10",
+                    : "text-cream-400 hover:text-cream-100 lg:border-border-subtle",
                 )}
               >
                 {link.label}
@@ -46,7 +46,7 @@ export function AccountNav({ isAdmin }: { isAdmin: boolean }) {
           <li className="shrink-0">
             <Link
               href="/admin"
-              className="block whitespace-nowrap px-4 py-3 text-sm text-gold-300 transition-colors hover:text-gold-200 lg:border-l lg:border-white/10 lg:px-5"
+              className="block whitespace-nowrap px-4 py-3 text-sm text-gold-300 transition-colors hover:text-gold-300 lg:border-l lg:border-border-subtle lg:px-5"
             >
               Admin dashboard
             </Link>

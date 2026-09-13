@@ -95,12 +95,12 @@ export default async function AdminReviewsPage({
               "border px-3.5 py-2 text-[0.64rem] uppercase tracking-[0.12em] transition-colors",
               status === option.value
                 ? "border-gold-400 text-cream-50"
-                : "border-white/12 text-cream-400 hover:border-white/28 hover:text-cream-100",
+                : "border-border-subtle text-cream-400 hover:border-border-strong hover:text-cream-100",
             )}
           >
             {option.label}
             {byStatus[option.value] ? (
-              <span className="ml-1.5 tabular-nums text-cream-400/70">
+              <span className="ml-1.5 tabular-nums text-cream-400">
                 {byStatus[option.value]}
               </span>
             ) : null}

@@ -30,7 +30,12 @@ export default async function AdminInventoryPage({
           }
         : {}),
     },
-    orderBy: { onHand: "asc" },
+    // Lowest stock first, because that is what needs attention. The SKU is the
+    // tiebreaker: dozens of variants sit on the same opening quantity, and
+    // without it the database is free to return them in a different order on
+    // every refresh, so the table reshuffled under the cursor after each
+    // adjustment.
+    orderBy: [{ onHand: "asc" }, { variant: { sku: "asc" } }],
     select: {
       id: true,
       onHand: true,
@@ -230,7 +235,7 @@ function FilterLink({
         "border px-3.5 py-2 text-[0.64rem] uppercase tracking-[0.12em] transition-colors",
         active
           ? "border-gold-400 text-cream-50"
-          : "border-white/12 text-cream-400 hover:border-white/28 hover:text-cream-100",
+          : "border-border-subtle text-cream-400 hover:border-border-strong hover:text-cream-100",
       )}
     >
       {children}

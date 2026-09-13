@@ -58,7 +58,7 @@ export default async function FaqPage() {
           <header className="mt-8 max-w-3xl">
             <p className="eyebrow mb-5 text-gold-400">FAQ</p>
             <h1 className="text-display text-cream-50">Questions, answered.</h1>
-            <p className="mt-5 max-w-[52ch] leading-relaxed text-cream-300/80">
+            <p className="mt-5 max-w-[52ch] leading-relaxed text-cream-300">
               If what you need isn't here, write to us — we answer within one working
               day.
             </p>
@@ -72,7 +72,7 @@ export default async function FaqPage() {
                   <li key={group.category}>
                     <a
                       href={`#faq-${group.category}`}
-                      className="text-sm text-cream-400 transition-colors hover:text-cream-50"
+                      className="inline-block py-1.5 text-sm text-cream-400 transition-colors hover:text-cream-50"
                     >
                       {group.label}
                     </a>
@@ -98,7 +98,7 @@ export default async function FaqPage() {
             </div>
           </div>
 
-          <div className="mt-20 border-t border-white/10 pt-10">
+          <div className="mt-20 border-t border-border-subtle pt-10">
             <h2 className="text-title text-cream-50">Still stuck?</h2>
             <p className="mt-3 max-w-[48ch] text-sm leading-relaxed text-cream-400">
               Call us Monday to Saturday, 10am–5pm, or send a message and we'll come
@@ -106,7 +106,7 @@ export default async function FaqPage() {
             </p>
             <Link
               href="/contact"
-              className="mt-6 inline-block text-[0.72rem] uppercase tracking-[0.16em] text-gold-300 underline underline-offset-4"
+              className="mt-6 inline-block py-1.5 text-[0.72rem] uppercase tracking-[0.16em] text-gold-300 underline underline-offset-4"
             >
               Contact us
             </Link>

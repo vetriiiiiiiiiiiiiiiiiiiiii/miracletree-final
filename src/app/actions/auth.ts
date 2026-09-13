@@ -2,6 +2,8 @@
 
 import { redirect } from "next/navigation";
 import { randomBytes, createHash } from "node:crypto";
+import { send, mailConfigured } from "@/lib/mail";
+import { passwordReset } from "@/lib/mail-templates";
 import { prisma } from "@/lib/prisma";
 import {
   createSession,
@@ -204,7 +206,7 @@ export async function forgotPasswordAction(
 
   const user = await prisma.user.findUnique({
     where: { email: parsed.data.email },
-    select: { id: true },
+    select: { id: true, email: true },
   });
   if (!user) return generic;
 
@@ -225,9 +227,15 @@ export async function forgotPasswordAction(
     entityId: user.id,
   });
 
-  // Delivery is intentionally left to the operator's email provider. Until one
-  // is wired up, the link is logged server-side rather than shown to the client.
-  if (process.env.NODE_ENV !== "production") {
+  // Awaited rather than backgrounded: this is the one email whose absence makes
+  // the feature useless, so a provider failure should be visible in the logs
+  // right here. The response is still the same generic message either way —
+  // telling the client that delivery failed would confirm the address exists.
+  await send(passwordReset({ email: user.email, token }));
+
+  // Without a provider configured, `send` logs the subject only. Print the
+  // actual link in development so a reset can still be completed locally.
+  if (!mailConfigured() && process.env.NODE_ENV !== "production") {
     console.info(
       `[password reset] ${process.env.NEXT_PUBLIC_SITE_URL}/reset-password?token=${token}`,
     );

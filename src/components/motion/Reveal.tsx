@@ -35,6 +35,17 @@ export function Reveal({
     // Children marked `data-animate` stagger individually; otherwise the whole
     // block moves as one.
     const targets = node.querySelectorAll<HTMLElement>("[data-animate]");
+
+    if (targets.length) {
+      // The wrapper is rendered at `opacity: 0` so nothing flashes before the
+      // effect runs. When the children are the ones being animated, that
+      // inline style has to be released here — `revealOnScroll` only ever
+      // touches the targets it is given, so left alone the wrapper stays
+      // invisible and takes the whole staggered block down with it.
+      node.style.opacity = "1";
+      node.style.transform = "none";
+    }
+
     const trigger = revealOnScroll(targets.length ? targets : node, {
       trigger: node,
       y,

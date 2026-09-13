@@ -162,7 +162,7 @@ export function OrderControls({
               type="button"
               onClick={() => void saveNote()}
               disabled={noteBusy || !note.trim()}
-              className="justify-self-start border border-white/20 px-5 py-2.5 text-[0.68rem] uppercase tracking-[0.14em] text-cream-200 transition-colors hover:border-cream-100 disabled:opacity-40"
+              className="justify-self-start border border-border-strong px-5 py-2.5 text-[0.68rem] uppercase tracking-[0.14em] text-cream-200 transition-colors hover:border-cream-100 disabled:opacity-40"
             >
               {noteBusy ? "Saving…" : "Add note"}
             </button>
@@ -179,7 +179,7 @@ function Submit({ label }: { label: string }) {
     <button
       type="submit"
       disabled={pending}
-      className="justify-self-start bg-emerald-500 px-6 py-2.5 text-[0.68rem] font-medium uppercase tracking-[0.14em] text-cream-50 transition-colors hover:bg-emerald-400 disabled:opacity-60"
+      className="justify-self-start bg-emerald-500 px-6 py-2.5 text-[0.68rem] font-medium uppercase tracking-[0.14em] text-on-accent transition-colors hover:bg-emerald-400 disabled:opacity-60"
     >
       {pending ? "Saving…" : label}
     </button>

@@ -2,8 +2,10 @@ import type { Metadata, Viewport } from "next";
 import { Caveat, Fraunces, Inter } from "next/font/google";
 import { SITE } from "@/lib/constants";
 import { organizationSchema, siteUrl, websiteSchema } from "@/lib/seo";
+import { ThemeProvider, themeInitScript } from "@/components/theme/ThemeProvider";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Analytics } from "@/components/analytics/Analytics";
+import { Preloader } from "@/components/motion/Preloader";
 import "./globals.css";
 
 /**
@@ -86,6 +88,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html
       lang="en-IN"
       className={`${fraunces.variable} ${inter.variable} ${caveat.variable}`}
+      // Server-rendered as the brand default; the theme script in <head>
+      // corrects it before paint from the visitor's stored choice.
+      data-theme="dark"
       // The inline script below adds a `js` class before React hydrates, and
       // Lenis adds its own afterwards. Both are deliberate mutations of an
       // element React also renders, so the class mismatch is expected here.
@@ -100,12 +105,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             __html: `document.documentElement.classList.add('js')`,
           }}
         />
+        {/* Resolves the stored theme setting (including "system") onto the
+            root element before the first paint. Inlined rather than imported
+            because a network round-trip here is a black flash on paper. */}
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body>
-        <JsonLd id="org" data={organizationSchema()} />
-        <JsonLd id="website" data={websiteSchema()} />
-        {children}
-        <Analytics />
+        <ThemeProvider>
+          <JsonLd id="org" data={organizationSchema()} />
+          <JsonLd id="website" data={websiteSchema()} />
+          {children}
+          <Preloader />
+          <Analytics />
+        </ThemeProvider>
       </body>
     </html>
   );

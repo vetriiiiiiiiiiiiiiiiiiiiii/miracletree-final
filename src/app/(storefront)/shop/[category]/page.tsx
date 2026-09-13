@@ -112,7 +112,7 @@ export default async function CategoryPage({
             <p className="eyebrow mb-5 text-gold-400">Category</p>
             <h1 className="text-display text-cream-50">{category.name}</h1>
             {category.description ? (
-              <p className="mt-5 max-w-[54ch] leading-relaxed text-cream-300/80">
+              <p className="mt-5 max-w-[54ch] leading-relaxed text-cream-300">
                 {category.description}
               </p>
             ) : null}

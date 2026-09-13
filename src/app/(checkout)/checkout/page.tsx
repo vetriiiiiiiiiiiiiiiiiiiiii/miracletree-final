@@ -52,7 +52,7 @@ export default async function CheckoutPage() {
       <Container>
         {/* Deliberately stripped-back chrome: no nav rail, no promotions —
             nothing competing with finishing the order. */}
-        <div className="mb-12 flex items-center justify-between gap-6 border-b border-white/10 pb-6">
+        <div className="mb-12 flex items-center justify-between gap-6 border-b border-border-subtle pb-6">
           <Link href="/" aria-label="Miracle Tree — home">
             <Logo className="h-7 w-auto" />
           </Link>
@@ -85,7 +85,7 @@ export default async function CheckoutPage() {
         />
 
         {!user ? (
-          <p className="mt-10 border-t border-white/10 pt-6 text-sm text-cream-400">
+          <p className="mt-10 border-t border-border-subtle pt-6 text-sm text-cream-400">
             Have an account?{" "}
             <Link
               href="/login?next=/checkout"

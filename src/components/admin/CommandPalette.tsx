@@ -144,9 +144,9 @@ export function CommandPalette({
         role="dialog"
         aria-modal="true"
         aria-label="Command palette"
-        className="absolute left-1/2 top-[12vh] w-[min(38rem,calc(100vw-2rem))] -translate-x-1/2 border border-white/12 bg-ink-900/95 shadow-[0_0_80px_rgba(0,0,0,0.6)]"
+        className="absolute left-1/2 top-[12vh] w-[min(38rem,calc(100vw-2rem))] -translate-x-1/2 border border-border-subtle bg-ink-900/95 shadow-[0_0_80px_rgba(0,0,0,0.6)]"
       >
-        <div className="flex items-center gap-3 border-b border-white/10 px-4 py-3.5">
+        <div className="flex items-center gap-3 border-b border-border-subtle px-4 py-3.5">
           <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden className="text-cream-400">
             <circle cx="9" cy="9" r="6" stroke="currentColor" strokeWidth="1.4" />
             <path d="M13.5 13.5L17 17" stroke="currentColor" strokeWidth="1.4" />
@@ -157,9 +157,9 @@ export function CommandPalette({
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search products, orders, pages…"
             aria-label="Search"
-            className="w-full bg-transparent text-[0.95rem] text-cream-50 placeholder:text-cream-400/60 focus:outline-none"
+            className="w-full bg-transparent text-[0.95rem] text-cream-50 placeholder:text-cream-400 focus:outline-none"
           />
-          <kbd className="shrink-0 border border-white/15 px-1.5 py-0.5 text-[0.6rem] text-cream-400">
+          <kbd className="shrink-0 border border-border-subtle px-1.5 py-0.5 text-[0.6rem] text-cream-400">
             Esc
           </kbd>
         </div>
@@ -186,7 +186,7 @@ export function CommandPalette({
                 return (
                   <li key={`${entry.type}-${index}`}>
                     {showGroup ? (
-                      <p className="px-4 pb-1.5 pt-3 text-[0.58rem] uppercase tracking-[0.18em] text-cream-400/60">
+                      <p className="px-4 pb-1.5 pt-3 text-[0.58rem] uppercase tracking-[0.18em] text-cream-400">
                         {group}
                       </p>
                     ) : null}
@@ -228,7 +228,7 @@ export function CommandPalette({
           )}
         </div>
 
-        <footer className="flex items-center gap-4 border-t border-white/10 px-4 py-2.5 text-[0.62rem] text-cream-400">
+        <footer className="flex items-center gap-4 border-t border-border-subtle px-4 py-2.5 text-[0.62rem] text-cream-400">
           <span>↑↓ to navigate</span>
           <span>↵ to open</span>
           <span>esc to close</span>

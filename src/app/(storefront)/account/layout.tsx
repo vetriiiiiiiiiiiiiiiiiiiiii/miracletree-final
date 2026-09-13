@@ -18,7 +18,7 @@ export default async function AccountLayout({
   return (
     <div className="grain bg-ink pb-24 pt-12 md:pt-16">
       <Container>
-        <header className="border-b border-white/10 pb-10">
+        <header className="border-b border-border-subtle pb-10">
           <p className="eyebrow mb-4 text-gold-400">Your account</p>
           <h1 className="text-display text-cream-50">{name}</h1>
           <p className="mt-3 text-sm text-cream-400">{user.email}</p>

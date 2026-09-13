@@ -27,7 +27,7 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        "flex flex-col items-center gap-6 border border-white/10 px-8 py-20 text-center",
+        "flex flex-col items-center gap-6 border border-border-subtle px-8 py-20 text-center",
         className,
       )}
     >
@@ -85,7 +85,7 @@ function Glyph({ name }: { name: "leaf" | "bag" | "search" | "heart" }) {
       fill="none"
       stroke="currentColor"
       strokeWidth="1"
-      className="text-white/15"
+      className="text-border-subtle"
       aria-hidden
     >
       {paths[name]}

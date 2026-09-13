@@ -36,7 +36,7 @@ export default async function ContactPage({
           <header className="mt-8 max-w-3xl">
             <p className="eyebrow mb-5 text-gold-400">Contact</p>
             <h1 className="text-display text-cream-50">Talk to us.</h1>
-            <p className="mt-5 max-w-[52ch] leading-relaxed text-cream-300/80">
+            <p className="mt-5 max-w-[52ch] leading-relaxed text-cream-300">
               Questions about an order, a product, bulk supply or distribution — a real
               person reads every message.
             </p>
@@ -48,12 +48,12 @@ export default async function ContactPage({
               defaultMessage={order ? `About order ${order}: ` : undefined}
             />
 
-            <aside className="grid gap-10 lg:border-l lg:border-white/10 lg:pl-14">
+            <aside className="grid gap-10 lg:border-l lg:border-border-subtle lg:pl-14">
               <section>
-                <h2 className="eyebrow mb-4 text-gold-400/80">Call</h2>
+                <h2 className="eyebrow mb-4 text-gold-400">Call</h2>
                 <a
                   href={`tel:${SITE.phone.replace(/\s/g, "")}`}
-                  className="text-[1.35rem] text-cream-50 transition-colors hover:text-gold-300"
+                  className="inline-block py-1 text-[1.35rem] text-cream-50 transition-colors hover:text-gold-300"
                 >
                   {SITE.phone}
                 </a>
@@ -61,7 +61,7 @@ export default async function ContactPage({
               </section>
 
               <section>
-                <h2 className="eyebrow mb-4 text-gold-400/80">Email</h2>
+                <h2 className="eyebrow mb-4 text-gold-400">Email</h2>
                 <a
                   href={`mailto:${SITE.email}`}
                   className="block text-cream-100 transition-colors hover:text-gold-300"
@@ -70,14 +70,14 @@ export default async function ContactPage({
                 </a>
                 <a
                   href={`mailto:${SITE.supportEmail}`}
-                  className="mt-1 block text-sm text-cream-400 transition-colors hover:text-gold-300"
+                  className="mt-1 block py-1 text-sm text-cream-400 transition-colors hover:text-gold-300"
                 >
                   {SITE.supportEmail} — order support
                 </a>
               </section>
 
               <section>
-                <h2 className="eyebrow mb-4 text-gold-400/80">Visit</h2>
+                <h2 className="eyebrow mb-4 text-gold-400">Visit</h2>
                 <address className="not-italic leading-relaxed text-cream-300">
                   {SITE.legalName}
                   <br />
@@ -92,7 +92,7 @@ export default async function ContactPage({
               </section>
 
               <section>
-                <h2 className="eyebrow mb-4 text-gold-400/80">Bulk &amp; export</h2>
+                <h2 className="eyebrow mb-4 text-gold-400">Bulk &amp; export</h2>
                 <p className="text-sm leading-relaxed text-cream-400">
                   Wholesale, private label and export enquiries are handled separately.
                 </p>
@@ -100,21 +100,21 @@ export default async function ContactPage({
                   href={SITE.bulkOrders}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-3 inline-block text-sm text-gold-300 underline underline-offset-4"
+                  className="mt-3 inline-block py-1.5 text-sm text-gold-300 underline underline-offset-4"
                 >
                   indiamoringa.com
                 </a>
               </section>
 
               <section>
-                <h2 className="eyebrow mb-4 text-gold-400/80">Follow</h2>
+                <h2 className="eyebrow mb-4 text-gold-400">Follow</h2>
                 <ul className="grid gap-2 text-sm">
                   <li>
                     <a
                       href={SITE.social.instagram}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-cream-300 hover:text-gold-300"
+                      className="inline-block py-1 text-cream-300 hover:text-gold-300"
                     >
                       Instagram
                     </a>
@@ -124,7 +124,7 @@ export default async function ContactPage({
                       href={SITE.social.facebook}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-cream-300 hover:text-gold-300"
+                      className="inline-block py-1 text-cream-300 hover:text-gold-300"
                     >
                       Facebook
                     </a>
@@ -134,7 +134,7 @@ export default async function ContactPage({
                       href={SITE.social.youtube}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-cream-300 hover:text-gold-300"
+                      className="inline-block py-1 text-cream-300 hover:text-gold-300"
                     >
                       YouTube
                     </a>

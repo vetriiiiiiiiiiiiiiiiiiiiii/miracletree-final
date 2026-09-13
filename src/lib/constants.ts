@@ -103,7 +103,9 @@ export const SITE = {
     "Moringa-grown wellness from Madurai, Tamil Nadu. Leaf powders, teas, tablets and superfoods made from the miracle tree.",
   email: "info@miracletree.in",
   supportEmail: "support@miracletree.in",
-  phone: "+91 79040 57352",
+  phone: "+91 452 2663425",
+  /** Mobile, from the company's own brochure back page. */
+  mobile: "+91 99763 27601",
   phoneHours: "Mon–Sat, 10am–5pm IST",
   address: {
     line1: "Plot 7 - Door 121/2",

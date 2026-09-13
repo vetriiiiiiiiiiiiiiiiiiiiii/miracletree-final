@@ -107,10 +107,10 @@ export function ProductCard({
       data-animate="fade-up"
       data-cursor="view"
     >
-      <div className="relative aspect-4/5 overflow-hidden bg-gradient-to-b from-cream-50 to-cream-200">
+      <div className="relative aspect-4/5 overflow-hidden bg-gradient-to-b from-photo-from to-photo-to">
         {/* A warm wash deepens on hover — depth without a drop shadow. */}
         <div
-          className="absolute inset-0 bg-gradient-to-b from-transparent to-cream-300/0 transition-colors duration-700 group-hover:to-cream-300/70"
+          className="absolute inset-0 bg-gradient-to-b from-transparent to-photo-to/0 transition-colors duration-700 group-hover:to-photo-to/80"
           aria-hidden
         />
 
@@ -162,7 +162,7 @@ export function ProductCard({
               aria-label={`Quick view ${product.name}`}
               data-cursor="link"
               className={cn(
-                "grid h-8 w-8 place-items-center bg-cream-50/80 text-ink-600 backdrop-blur-sm",
+                "grid h-8 w-8 place-items-center bg-photo-from/80 text-on-photo backdrop-blur-sm",
                 "opacity-0 transition-all duration-300 hover:text-emerald-600",
                 "group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100",
                 "max-md:hidden",
@@ -192,7 +192,7 @@ export function ProductCard({
                 href={`/product/${product.slug}`}
                 data-cursor="link"
                 onClick={() => analytics.selectItem(listName, analyticsItem)}
-                className="flex h-11 w-full items-center justify-center border border-ink/15 bg-ink/85 text-[0.68rem] font-medium uppercase tracking-[0.16em] text-cream-50 backdrop-blur-md transition-colors hover:bg-ink"
+                className="flex h-11 w-full items-center justify-center border border-on-photo/15 bg-on-photo/85 text-[0.68rem] font-medium uppercase tracking-[0.16em] text-photo-from backdrop-blur-md transition-colors hover:bg-on-photo"
               >
                 Choose size
               </Link>
@@ -202,7 +202,7 @@ export function ProductCard({
                 data-cursor="link"
                 onClick={handleQuickAdd}
                 disabled={adding}
-                className="flex h-11 w-full items-center justify-center border border-emerald-400/50 bg-emerald-600/85 text-[0.68rem] font-medium uppercase tracking-[0.16em] text-cream-50 backdrop-blur-md transition-colors hover:bg-emerald-500 disabled:opacity-60"
+                className="flex h-11 w-full items-center justify-center border border-emerald-400/50 bg-emerald-600/85 text-[0.68rem] font-medium uppercase tracking-[0.16em] text-on-accent backdrop-blur-md transition-colors hover:bg-emerald-500 disabled:opacity-60"
               >
                 {adding ? "Adding…" : "Quick add"}
               </button>
@@ -214,7 +214,7 @@ export function ProductCard({
       {/* Details */}
       <div className="flex flex-1 flex-col gap-2 pt-5">
         {product.category ? (
-          <p className="eyebrow text-cream-400/70">{product.category.name}</p>
+          <p className="eyebrow text-cream-400">{product.category.name}</p>
         ) : null}
 
         <h3 className="text-[1.05rem] leading-snug text-cream-50">
@@ -261,7 +261,7 @@ function Badge({
   const tones = {
     leaf: "border-emerald-400/40 bg-forest-800/80 text-leaf-200",
     gold: "border-gold-400/40 bg-ink/80 text-gold-300",
-    muted: "border-white/15 bg-ink/85 text-cream-400",
+    muted: "border-border-subtle bg-ink/85 text-cream-400",
   };
 
   return (

@@ -41,7 +41,7 @@ export default function NotFound() {
             >
               This path didn&rsquo;t grow.
             </h1>
-            <p className="mt-8 max-w-[44ch] leading-relaxed text-cream-300/85">
+            <p className="mt-8 max-w-[44ch] leading-relaxed text-cream-300">
               The page you were looking for isn&rsquo;t here. It may have moved when we
               rebuilt the store, or the link may have a typo in it.
             </p>
@@ -55,7 +55,7 @@ export default function NotFound() {
               </LinkButton>
             </div>
 
-            <nav aria-label="Suggested pages" className="mt-14 border-t border-white/10 pt-7">
+            <nav aria-label="Suggested pages" className="mt-14 border-t border-border-subtle pt-7">
               <p className="eyebrow mb-4 text-cream-400">Or try</p>
               <ul className="flex flex-wrap gap-x-7 gap-y-3 text-sm">
                 {[

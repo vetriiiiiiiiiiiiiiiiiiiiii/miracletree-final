@@ -127,7 +127,7 @@ export function HomepageBuilder({ sections }: { sections: EditableSection[] }) {
                     "relative h-5 w-9 shrink-0 border transition-colors",
                     section.isActive
                       ? "border-emerald-400 bg-emerald-600/50"
-                      : "border-white/20 bg-white/[0.04]",
+                      : "border-border-strong bg-white/[0.04]",
                   )}
                 >
                   <span
@@ -144,7 +144,7 @@ export function HomepageBuilder({ sections }: { sections: EditableSection[] }) {
                 type="button"
                 onClick={() => setOpen(open === section.key ? null : section.key)}
                 aria-expanded={open === section.key}
-                className="shrink-0 border border-white/18 px-4 py-2 text-[0.64rem] uppercase tracking-[0.12em] text-cream-200 transition-colors hover:border-cream-100"
+                className="shrink-0 border border-border-strong px-4 py-2 text-[0.64rem] uppercase tracking-[0.12em] text-cream-200 transition-colors hover:border-cream-100"
               >
                 {open === section.key ? "Close" : "Edit"}
               </button>
@@ -176,7 +176,7 @@ function SectionForm({
   const errors = state.status === "error" ? (state.errors ?? {}) : {};
 
   return (
-    <form action={action} className="grid gap-5 border-t border-white/10 p-5">
+    <form action={action} className="grid gap-5 border-t border-border-subtle p-5">
       <input type="hidden" name="key" value={section.key} />
       <input type="hidden" name="position" value={section.position} />
       <input type="hidden" name="isActive" value={section.isActive ? "true" : "false"} />
@@ -239,7 +239,7 @@ function SaveSection() {
     <button
       type="submit"
       disabled={pending}
-      className="justify-self-start bg-emerald-500 px-6 py-2.5 text-[0.68rem] font-medium uppercase tracking-[0.14em] text-cream-50 transition-colors hover:bg-emerald-400 disabled:opacity-60"
+      className="justify-self-start bg-emerald-500 px-6 py-2.5 text-[0.68rem] font-medium uppercase tracking-[0.14em] text-on-accent transition-colors hover:bg-emerald-400 disabled:opacity-60"
     >
       {pending ? "Saving…" : "Save section"}
     </button>

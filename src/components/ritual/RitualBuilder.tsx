@@ -109,7 +109,7 @@ export function RitualBuilder({
         {steps.map((step, index) => (
           <section key={step.key} aria-labelledby={`step-${step.key}`}>
             <header className="mb-7">
-              <p className="eyebrow text-cream-400/70">
+              <p className="eyebrow text-cream-400">
                 Step {index + 1} · {step.eyebrow}
               </p>
               <h2 id={`step-${step.key}`} className="mt-3 text-title text-cream-50">
@@ -137,10 +137,10 @@ export function RitualBuilder({
                         "ease-[var(--ease-organic)] disabled:cursor-not-allowed disabled:opacity-40",
                         selected
                           ? "border-emerald-400/70 bg-emerald-500/[0.07]"
-                          : "border-white/10 bg-white/[0.02] hover:border-white/25",
+                          : "border-border-subtle bg-white/[0.02] hover:border-border-strong",
                       )}
                     >
-                      <div className="relative aspect-square w-full bg-gradient-to-b from-cream-50 to-cream-200">
+                      <div className="relative aspect-square w-full bg-gradient-to-b from-photo-from to-photo-to">
                         {choice.imageUrl ? (
                           <Image
                             src={choice.imageUrl}
@@ -159,7 +159,7 @@ export function RitualBuilder({
                             "absolute right-2 top-2 grid h-6 w-6 place-items-center rounded-full border transition-all duration-300",
                             selected
                               ? "scale-100 border-emerald-400 bg-emerald-500 opacity-100"
-                              : "scale-75 border-ink/20 bg-cream-50/70 opacity-0 group-hover:opacity-100",
+                              : "scale-75 border-on-photo/20 bg-photo-from/70 opacity-0 group-hover:opacity-100",
                           )}
                         >
                           <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -174,7 +174,7 @@ export function RitualBuilder({
                         </span>
 
                         {!choice.inStock ? (
-                          <span className="absolute left-2 top-2 border border-white/15 bg-ink/85 px-2 py-0.5 text-[0.55rem] uppercase tracking-[0.14em] text-cream-400">
+                          <span className="absolute left-2 top-2 border border-border-subtle bg-ink/85 px-2 py-0.5 text-[0.55rem] uppercase tracking-[0.14em] text-cream-400">
                             Out of stock
                           </span>
                         ) : null}
@@ -185,7 +185,7 @@ export function RitualBuilder({
                           {choice.productName}
                         </p>
                         {choice.variantName ? (
-                          <p className="text-[0.7rem] uppercase tracking-[0.1em] text-cream-400/70">
+                          <p className="text-[0.7rem] uppercase tracking-[0.1em] text-cream-400">
                             {choice.variantName}
                           </p>
                         ) : null}
@@ -205,7 +205,7 @@ export function RitualBuilder({
       {/* The running ritual. Sticky on desktop so the total is never out of
           sight while choosing. */}
       <aside className="lg:sticky lg:top-28">
-        <div className="border border-white/12 bg-white/[0.03] p-6">
+        <div className="border border-border-subtle bg-white/[0.03] p-6">
           <h2 className="text-[1.05rem] text-cream-50">Your ritual</h2>
 
           {chosen.length === 0 ? (
@@ -224,7 +224,7 @@ export function RitualBuilder({
                       <span className="block truncate text-sm text-cream-100">
                         {choice.productName}
                       </span>
-                      <span className="text-[0.68rem] uppercase tracking-[0.12em] text-cream-400/70">
+                      <span className="text-[0.68rem] uppercase tracking-[0.12em] text-cream-400">
                         {step.eyebrow}
                       </span>
                     </span>
@@ -238,20 +238,20 @@ export function RitualBuilder({
           )}
 
           {chosen.length > 0 ? (
-            <dl className="mt-6 grid gap-2 border-t border-white/10 pt-5 text-sm">
+            <dl className="mt-6 grid gap-2 border-t border-border-subtle pt-5 text-sm">
               <div className="flex justify-between">
                 <dt className="text-cream-400">Subtotal</dt>
                 <dd className="tabular-nums text-cream-100">{formatPrice(subtotal)}</dd>
               </div>
 
               {saving > 0 && promo ? (
-                <div className="flex justify-between text-emerald-300">
+                <div className="flex justify-between text-leaf-300">
                   <dt>{promo.code}</dt>
                   <dd className="tabular-nums">−{formatPrice(saving)}</dd>
                 </div>
               ) : null}
 
-              <div className="mt-1 flex justify-between border-t border-white/10 pt-3">
+              <div className="mt-1 flex justify-between border-t border-border-subtle pt-3">
                 <dt className="text-cream-100">Total</dt>
                 <dd className="text-[1.05rem] tabular-nums text-cream-50">
                   {formatPrice(subtotal - saving)}
@@ -283,7 +283,7 @@ export function RitualBuilder({
             </p>
           ) : null}
 
-          <p className="mt-4 text-[0.68rem] leading-relaxed text-cream-400/70">
+          <p className="mt-4 text-[0.68rem] leading-relaxed text-cream-400">
             Prices and stock are confirmed again when the bag is updated.{" "}
             <Link href="/shop" className="underline underline-offset-2 hover:text-cream-200">
               Browse everything

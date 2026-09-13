@@ -48,7 +48,7 @@ export default async function AccountOverviewPage() {
     <div className="grid gap-14">
       <section>
         <h2 className="sr-only">Summary</h2>
-        <dl className="grid gap-px overflow-hidden border border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-4">
+        <dl className="grid gap-px overflow-hidden border border-border-subtle bg-border-subtle sm:grid-cols-2 lg:grid-cols-4">
           <Stat label="Orders" value={String(orderCount)} />
           <Stat label="Total spent" value={formatPrice(spend._sum.grandTotal ?? 0)} />
           <Stat label="Saved products" value={String(wishlistCount)} href="/account/wishlist" />
@@ -70,7 +70,7 @@ export default async function AccountOverviewPage() {
         </div>
 
         {orders.length === 0 ? (
-          <div className="border border-white/10 px-8 py-14 text-center">
+          <div className="border border-border-subtle px-8 py-14 text-center">
             <p className="text-cream-200">You haven't ordered yet.</p>
             <p className="mx-auto mt-3 max-w-[40ch] text-sm text-cream-400">
               When you do, it will show up here with tracking and a full receipt.
@@ -80,12 +80,12 @@ export default async function AccountOverviewPage() {
             </LinkButton>
           </div>
         ) : (
-          <ul className="divide-y divide-white/10 border-y border-white/10">
+          <ul className="divide-y divide-border-subtle border-y border-border-subtle">
             {orders.map((order) => (
               <li key={order.id}>
                 <Link
                   href={`/account/orders/${order.orderNumber}`}
-                  className="group flex flex-wrap items-center gap-x-6 gap-y-3 py-5 transition-colors hover:bg-white/[0.02]"
+                  className="group flex flex-wrap items-center gap-x-6 gap-y-3 py-5 transition-colors hover:bg-ink-800"
                 >
                   <div className="min-w-[8rem]">
                     <p className="tabular-nums text-cream-50">{order.orderNumber}</p>
@@ -121,7 +121,7 @@ export default async function AccountOverviewPage() {
         )}
       </section>
 
-      <section className="border-t border-white/10 pt-10">
+      <section className="border-t border-border-subtle pt-10">
         <h2 className="text-title text-cream-50">Need a hand?</h2>
         <p className="mt-3 max-w-[52ch] text-sm leading-relaxed text-cream-400">
           Questions about an order, a delivery or a product — we answer within one

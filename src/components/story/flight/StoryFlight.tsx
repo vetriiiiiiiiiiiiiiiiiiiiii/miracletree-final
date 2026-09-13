@@ -279,7 +279,7 @@ export function StoryFlight({ milestones }: { milestones: MilestoneDatum[] }) {
 
         <div className="pointer-events-none absolute inset-x-0 bottom-0 p-6 text-center md:p-10">
           {current?.source ? (
-            <p className="text-[0.68rem] uppercase tracking-[0.14em] text-[#8a7c55]">
+            <p className="text-[0.68rem] uppercase tracking-[0.14em] text-[#6f6440]">
               {current.sourceUrl ? (
                 <a
                   href={current.sourceUrl}
@@ -295,7 +295,7 @@ export function StoryFlight({ milestones }: { milestones: MilestoneDatum[] }) {
             </p>
           ) : null}
 
-          <p className="mt-3 text-[0.68rem] uppercase tracking-[0.14em] text-[#8a7c55]/70">
+          <p className="mt-3 text-[0.68rem] uppercase tracking-[0.14em] text-[#6f6440]/70">
             {index + 1} / {milestones.length} · scroll to fly
           </p>
         </div>

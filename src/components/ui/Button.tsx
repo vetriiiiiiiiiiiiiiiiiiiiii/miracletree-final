@@ -10,9 +10,9 @@ type Size = "sm" | "md" | "lg";
 
 const VARIANTS: Record<Variant, string> = {
   primary:
-    "bg-emerald-500 text-cream-50 hover:bg-emerald-400 disabled:hover:bg-emerald-500",
+    "bg-emerald-500 text-on-accent hover:bg-emerald-400 disabled:hover:bg-emerald-500",
   secondary:
-    "border border-white/25 text-cream-100 hover:border-cream-100 hover:bg-white/[0.04]",
+    "border border-border-strong text-cream-100 hover:border-cream-100 hover:bg-white/[0.04]",
   ghost: "text-cream-200 hover:text-cream-50 hover:bg-white/[0.04]",
   gold: "bg-gold-400 text-ink hover:bg-gold-300 disabled:hover:bg-gold-400",
   danger: "bg-danger text-cream-50 hover:brightness-110",

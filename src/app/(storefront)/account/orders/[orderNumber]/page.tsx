@@ -78,7 +78,7 @@ export default async function OrderDetailPage({
 
       {/* Progress */}
       {!isCancelled ? (
-        <ol className="mt-10 grid gap-0 border-y border-white/10 py-6 sm:grid-cols-6">
+        <ol className="mt-10 grid gap-0 border-y border-border-subtle py-6 sm:grid-cols-6">
           {TIMELINE.map((step, index) => {
             const done = currentStep >= index;
             return (
@@ -86,14 +86,14 @@ export default async function OrderDetailPage({
                 <span
                   className={cn(
                     "mt-1 h-2 w-2 shrink-0 rounded-full transition-colors sm:mt-0",
-                    done ? "bg-emerald-400" : "bg-white/15",
+                    done ? "bg-emerald-400" : "bg-border-subtle",
                   )}
                   aria-hidden
                 />
                 <span
                   className={cn(
                     "text-xs leading-tight",
-                    done ? "text-cream-100" : "text-cream-400/50",
+                    done ? "text-cream-100" : "text-cream-400",
                   )}
                 >
                   {ORDER_STATUS_LABELS[step]}
@@ -111,7 +111,7 @@ export default async function OrderDetailPage({
 
       {order.trackingNumber ? (
         <div className="mt-8 border border-gold-400/30 bg-gold-400/5 p-5">
-          <p className="eyebrow text-gold-400/90">Tracking</p>
+          <p className="eyebrow text-gold-400">Tracking</p>
           <p className="mt-2 tabular-nums text-cream-50">{order.trackingNumber}</p>
           {order.trackingUrl ? (
             <a
@@ -128,7 +128,7 @@ export default async function OrderDetailPage({
 
       {/* Items */}
       <h3 className="mt-14 text-[1.15rem] text-cream-50">Items</h3>
-      <ul className="mt-5 divide-y divide-white/10 border-y border-white/10">
+      <ul className="mt-5 divide-y divide-border-subtle border-y border-border-subtle">
         {order.items.map((item) => (
           <li key={item.id} className="flex items-center gap-4 py-5">
             <div className="relative h-20 w-16 shrink-0 overflow-hidden bg-ink-800">
@@ -161,7 +161,7 @@ export default async function OrderDetailPage({
           label="Shipping"
           value={order.shippingTotal === 0 ? "Free" : formatPrice(order.shippingTotal)}
         />
-        <div className="mt-2 flex items-baseline justify-between border-t border-white/10 pt-3">
+        <div className="mt-2 flex items-baseline justify-between border-t border-border-subtle pt-3">
           <dt className="text-cream-100">Total</dt>
           <dd className="text-lg tabular-nums text-cream-50">
             {formatPrice(order.grandTotal)}
@@ -174,9 +174,9 @@ export default async function OrderDetailPage({
       </dl>
 
       {/* Address + history */}
-      <div className="mt-12 grid gap-10 border-t border-white/10 pt-8 sm:grid-cols-2">
+      <div className="mt-12 grid gap-10 border-t border-border-subtle pt-8 sm:grid-cols-2">
         <div>
-          <h3 className="eyebrow mb-3 text-gold-400/80">Delivery address</h3>
+          <h3 className="eyebrow mb-3 text-gold-400">Delivery address</h3>
           <address className="not-italic text-sm leading-relaxed text-cream-300">
             {order.shippingName}
             <br />
@@ -197,7 +197,7 @@ export default async function OrderDetailPage({
         </div>
 
         <div>
-          <h3 className="eyebrow mb-3 text-gold-400/80">History</h3>
+          <h3 className="eyebrow mb-3 text-gold-400">History</h3>
           <ol className="grid gap-3">
             {order.events.map((event) => (
               <li key={event.id} className="text-sm">
@@ -207,7 +207,7 @@ export default async function OrderDetailPage({
                 {event.message ? (
                   <span className="block text-xs text-cream-400">{event.message}</span>
                 ) : null}
-                <span className="block text-xs text-cream-400/60">
+                <span className="block text-xs text-cream-400">
                   {formatDate(event.createdAt, { hour: "numeric", minute: "2-digit" })}
                 </span>
               </li>
@@ -216,7 +216,7 @@ export default async function OrderDetailPage({
         </div>
       </div>
 
-      <div className="mt-12 flex flex-wrap gap-3 border-t border-white/10 pt-8">
+      <div className="mt-12 flex flex-wrap gap-3 border-t border-border-subtle pt-8">
         <LinkButton href="/shop" size="md" variant="secondary">
           Order again
         </LinkButton>

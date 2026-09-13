@@ -74,7 +74,7 @@ export default async function ShopPage({ searchParams }: { searchParams: SearchP
             <h1 className="text-display text-cream-50">
               {query.q ? `Results for “${query.q}”` : "The collection"}
             </h1>
-            <p className="mt-5 max-w-[52ch] leading-relaxed text-cream-300/80">
+            <p className="mt-5 max-w-[52ch] leading-relaxed text-cream-300">
               {query.q
                 ? `${result.total} ${result.total === 1 ? "product" : "products"} matched your search.`
                 : "Twenty-seven products, all from the same tree. Leaf, pod, flower, seed and gum, handled five different ways."}
@@ -127,17 +127,17 @@ export default async function ShopPage({ searchParams }: { searchParams: SearchP
           </div>
 
           {/* Crawlable category links, independent of the JS filter UI. */}
-          <nav aria-label="Shop by category" className="mt-20 border-t border-white/10 pt-10">
-            <h2 className="eyebrow mb-5 text-gold-400/80">Shop by category</h2>
+          <nav aria-label="Shop by category" className="mt-20 border-t border-border-subtle pt-10">
+            <h2 className="eyebrow mb-5 text-gold-400">Shop by category</h2>
             <ul className="flex flex-wrap gap-x-6 gap-y-3">
               {categories.map((category) => (
                 <li key={category.slug}>
                   <Link
                     href={`/shop/${category.slug}`}
-                    className="text-sm text-cream-300 underline-offset-4 hover:text-cream-50 hover:underline"
+                    className="inline-block py-1.5 text-sm text-cream-300 underline-offset-4 hover:text-cream-50 hover:underline"
                   >
                     {category.name}{" "}
-                    <span className="text-cream-400/60">({category._count.products})</span>
+                    <span className="text-cream-400">({category._count.products})</span>
                   </Link>
                 </li>
               ))}

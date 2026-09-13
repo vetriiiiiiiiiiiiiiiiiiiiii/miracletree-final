@@ -34,7 +34,7 @@ export function Rating({
       aria-label={`Rated ${value} out of 5 from ${count} review${count === 1 ? "" : "s"}`}
     >
       <span className="relative inline-flex" aria-hidden>
-        <Stars size={dimensions} className="text-white/18" />
+        <Stars size={dimensions} className="text-border-strong" />
         <span
           className="absolute inset-0 overflow-hidden"
           style={{ width: `${percent}%` }}
@@ -86,7 +86,7 @@ export function RatingInput({
       {[1, 2, 3, 4, 5].map((star) => (
         <label
           key={star}
-          className="cursor-pointer p-1 text-white/20 transition-colors has-[:checked]:text-gold-400 hover:text-gold-300"
+          className="cursor-pointer p-1 text-border-strong transition-colors has-[:checked]:text-gold-400 hover:text-gold-300"
           data-rating={star <= value ? "on" : "off"}
           style={{ color: star <= value ? "var(--color-gold-400)" : undefined }}
         >

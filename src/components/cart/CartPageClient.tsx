@@ -77,7 +77,7 @@ export function CartPageClient() {
           {cart.itemCount} {cart.itemCount === 1 ? "item" : "items"}
         </p>
 
-        <ul className="divide-y divide-white/10 border-y border-white/10">
+        <ul className="divide-y divide-border-subtle border-y border-border-subtle">
           {lines.map((line) => (
             <li key={line.id} className="flex gap-5 py-7 md:gap-7">
               <Link
@@ -106,7 +106,7 @@ export function CartPageClient() {
                     </Link>
                     <p className="mt-1 text-sm text-cream-400">{line.variantName}</p>
                     {line.sku ? (
-                      <p className="mt-0.5 text-xs text-cream-400/60">SKU {line.sku}</p>
+                      <p className="mt-0.5 text-xs text-cream-400">SKU {line.sku}</p>
                     ) : null}
                   </div>
 
@@ -166,7 +166,7 @@ export function CartPageClient() {
 
       {/* Summary */}
       <aside className="lg:sticky lg:top-28 lg:self-start">
-        <div className="border border-white/12 bg-white/[0.02] p-6 md:p-8">
+        <div className="border border-border-subtle bg-white/[0.02] p-6 md:p-8">
           <h2 className="text-title text-cream-50">Summary</h2>
 
           {/* Free shipping meter */}
@@ -182,7 +182,7 @@ export function CartPageClient() {
             ) : (
               <p className="text-sm text-leaf-300">Free shipping applied</p>
             )}
-            <div className="mt-2 h-px w-full bg-white/12">
+            <div className="mt-2 h-px w-full bg-border-subtle">
               <div
                 className="h-px bg-gold-400 transition-[width] duration-700 ease-[var(--ease-organic)]"
                 style={{
@@ -193,7 +193,7 @@ export function CartPageClient() {
           </div>
 
           {/* Coupon */}
-          <div className="mt-7 border-t border-white/10 pt-6">
+          <div className="mt-7 border-t border-border-subtle pt-6">
             {cart.coupon ? (
               <div className="flex items-center justify-between gap-3 border border-emerald-400/30 bg-emerald-500/8 px-3 py-2.5">
                 <span className="text-xs text-leaf-200">
@@ -218,7 +218,7 @@ export function CartPageClient() {
                   }}
                   placeholder="Promo code"
                   aria-label="Promo code"
-                  className="min-w-0 flex-1 border border-white/15 bg-white/[0.03] px-3 py-2.5 text-sm uppercase tracking-wider text-cream-50 placeholder:normal-case placeholder:tracking-normal placeholder:text-cream-400/60 focus:border-emerald-400 focus:outline-none"
+                  className="min-w-0 flex-1 border border-border-subtle bg-white/[0.03] px-3 py-2.5 text-sm uppercase tracking-wider text-cream-50 placeholder:normal-case placeholder:tracking-normal placeholder:text-cream-400 focus:border-emerald-400 focus:outline-none"
                 />
                 <Button type="submit" variant="secondary" size="sm" loading={applying}>
                   Apply
@@ -239,7 +239,7 @@ export function CartPageClient() {
           </div>
 
           {/* Totals */}
-          <dl className="mt-7 grid gap-2.5 border-t border-white/10 pt-6 text-sm">
+          <dl className="mt-7 grid gap-2.5 border-t border-border-subtle pt-6 text-sm">
             <Row label="Subtotal" value={formatPrice(totals.subtotal)} />
             {totals.discountTotal > 0 ? (
               <Row
@@ -254,7 +254,7 @@ export function CartPageClient() {
             />
             <Row label="Tax" value="Included" muted />
 
-            <div className="mt-3 flex items-baseline justify-between border-t border-white/10 pt-4">
+            <div className="mt-3 flex items-baseline justify-between border-t border-border-subtle pt-4">
               <dt className="text-cream-100">Estimated total</dt>
               <dd className="text-xl tabular-nums text-cream-50">
                 {formatPrice(totals.grandTotal)}

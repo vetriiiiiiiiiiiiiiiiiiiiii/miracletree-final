@@ -2,53 +2,205 @@
 
 /* ==========================================================================
    Miracle Tree — design tokens
-   A dark botanical palette. Gold is an accent only; it never fills a surface.
+   ==========================================================================
+   The palette is defined twice, as `--mt-*` runtime variables: once for the
+   dark ground (the brand default) and once for paper. `@theme inline` below
+   points every Tailwind colour utility at those variables rather than at a
+   fixed value, so `bg-ink` / `text-cream-100` resolve per theme and the whole
+   site flips without a single class changing.
+
+   Read the scales by ROLE, not by their name's literal colour:
+     ink-*     surface, darkest → lightest step away from the page
+     cream-*   foreground, strongest → most muted
+     forest-*  tinted section grounds
+     emerald / leaf / gold  brand accents, kept in hue across both themes
+
+   `data-theme` is always written explicitly by the inline script in
+   `src/app/layout.tsx`, which resolves the "system" setting before first
+   paint. CSS therefore needs no `prefers-color-scheme` branch, and no-JS
+   visitors get the dark brand default.
    ========================================================================== */
 
-@theme {
+:root,
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
   /* --- Surfaces: near-black through forest -------------------------------- */
-  --color-ink-950: #05080600;
-  --color-ink: #060907;
-  --color-ink-900: #0a0f0b;
-  --color-ink-800: #101711;
-  --color-ink-700: #17211a;
-  --color-ink-600: #1f2c23;
-  --color-ink-500: #2b3a2f;
+  --mt-ink-950: #05080600; /* transparent ground, for gradient fade-outs */
+  --mt-ink: #060907;
+  --mt-ink-900: #0a0f0b;
+  --mt-ink-800: #101711;
+  --mt-ink-700: #17211a;
+  --mt-ink-600: #1f2c23;
+  --mt-ink-500: #2b3a2f;
 
   /* --- Green: forest → emerald → leaf ------------------------------------- */
-  --color-forest-900: #0b1a11;
-  --color-forest-800: #10251a;
-  --color-forest-700: #163422;
-  --color-emerald-600: #1c5a3a;
-  --color-emerald-500: #237a4b;
-  --color-emerald-400: #2f9a5f;
-  --color-leaf-400: #5fae76;
-  --color-leaf-300: #8cc79b;
-  --color-leaf-200: #b8ddc1;
+  --mt-forest-900: #0b1a11;
+  --mt-forest-800: #10251a;
+  --mt-forest-700: #163422;
+  --mt-emerald-600: #1c5a3a;
+  --mt-emerald-500: #237a4b;
+  --mt-emerald-400: #2f9a5f;
+  --mt-leaf-400: #5fae76;
+  --mt-leaf-300: #8cc79b;
+  --mt-leaf-200: #b8ddc1;
 
   /* --- Gold accent -------------------------------------------------------- */
-  --color-gold-600: #9a7a20;
-  --color-gold-500: #c2a038;
-  --color-gold-400: #d9bc6a;
-  --color-gold-300: #e8d49a;
+  --mt-gold-600: #9a7a20;
+  --mt-gold-500: #c2a038;
+  --mt-gold-400: #d9bc6a;
+  --mt-gold-300: #e8d49a;
 
-  /* --- Cream / botanical paper -------------------------------------------- */
-  --color-cream-50: #faf8f2;
-  --color-cream-100: #f4f1e8;
-  --color-cream-200: #e8e2d3;
-  --color-cream-300: #d5cdb9;
-  --color-cream-400: #b3a992;
+  /* --- Foreground --------------------------------------------------------- */
+  --mt-cream-50: #faf8f2;
+  --mt-cream-100: #f4f1e8;
+  --mt-cream-200: #e8e2d3;
+  --mt-cream-300: #d5cdb9;
+  --mt-cream-400: #b3a992;
 
   /* --- Semantic ----------------------------------------------------------- */
-  --color-surface: var(--color-ink);
-  --color-surface-raised: var(--color-ink-800);
-  --color-border-subtle: #ffffff14;
-  --color-border-strong: #ffffff26;
+  --mt-border-subtle: #ffffff14;
+  --mt-border-strong: #ffffff26;
+  --mt-success: #3fa76a;
+  --mt-warning: #d9a441;
+  --mt-danger: #d1554f;
 
-  --color-success: #3fa76a;
-  --color-warning: #d9a441;
-  --color-danger: #d1554f;
+  /* Text that sits ON a filled emerald/gold accent. */
+  --mt-on-accent: #faf8f2;
 
+  /* The plate product photography sits on. Packshots are shot on white, so
+     this stays light in BOTH themes — flipping it would put a white-background
+     cut-out on a black tile and ring every product with a hard edge. It is a
+     surface that happens to be pale, not a foreground colour. */
+  --mt-photo-from: #faf8f2;
+  --mt-photo-to: #e8e2d3;
+  --mt-on-photo: #1f2c23;
+
+  /* Grain is a black noise plate: legible on ink, far too heavy on paper. */
+  /* Matches the WebGL clear colour in src/lib/world/MoringaScene.ts, so the
+     sticky stage does not flash a different colour before the canvas paints. */
+  --mt-world-void: #05070a;
+
+  --mt-grain-opacity: 0.035;
+  /* Glass bars (header, cart) tint toward the ground they float over. */
+  --mt-glass: #060907d9;
+  --mt-shadow-card: 0 1px 2px #00000040;
+  --mt-shadow-drawer: 0 0 80px #00000099;
+}
+
+/* --------------------------------------------------------------------------
+   Paper.
+   Not an inversion of the dark values — a true light palette that keeps the
+   brand's warmth. Surfaces are warm off-whites rather than pure #fff, and the
+   accents are re-darkened so they still pass contrast as text on a light
+   ground (leaf-200/gold-300 are the brightest accents on ink, so on paper they
+   become the DEEPEST — the scales keep their role, not their lightness).
+   -------------------------------------------------------------------------- */
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --mt-ink-950: #fbfaf600;
+  --mt-ink: #fbfaf6;
+  --mt-ink-900: #f5f2e9;
+  --mt-ink-800: #efebdf;
+  --mt-ink-700: #e6e1d1;
+  --mt-ink-600: #d8d2be;
+  --mt-ink-500: #c3bca4;
+
+  --mt-forest-900: #eaf1e7;
+  --mt-forest-800: #e2ebde;
+  --mt-forest-700: #d5e3d0;
+
+  --mt-emerald-600: #14512f;
+  --mt-emerald-500: #1a6a3f;
+  --mt-emerald-400: #1f7a49;
+  --mt-leaf-400: #2c7d4b;
+  --mt-leaf-300: #256d41;
+  --mt-leaf-200: #1f6039;
+
+  /* Gold is the eyebrow/index colour, and on the homepage those numerals sit
+     over the world scene's pale mist rather than the page ground — a darker
+     background than paper, so the scale is tuned against the mist and clears
+     AA on both. */
+  --mt-gold-600: #8a6a18;
+  --mt-gold-500: #7a5c14;
+  --mt-gold-400: #6d5411;
+  --mt-gold-300: #5e470e;
+
+  --mt-cream-50: #0b1410;
+  --mt-cream-100: #17231c;
+  --mt-cream-200: #2b362e;
+  --mt-cream-300: #4e5b51;
+  --mt-cream-400: #5b6760;
+
+  --mt-border-subtle: #0b141021;
+  --mt-border-strong: #0b141038;
+  --mt-success: #1f7a49;
+  --mt-warning: #8a6210;
+  --mt-danger: #b0322c;
+
+  --mt-on-accent: #faf8f2;
+
+  --mt-photo-from: #ffffff;
+  --mt-photo-to: #f0ece1;
+  --mt-on-photo: #1f2c23;
+
+  --mt-world-void: #dee7e2;
+
+  --mt-grain-opacity: 0.018;
+  --mt-glass: #fbfaf6d9;
+  --mt-shadow-card: 0 1px 2px #0b141014, 0 8px 24px -12px #0b14101f;
+  /* A 60%-black glow is a night-time effect. On paper it reads as grime. */
+  --mt-shadow-drawer: 0 0 60px #0b14102e;
+}
+
+/* Colour utilities point at the runtime variables, so a theme swap on <html>
+   repaints without regenerating a single class. */
+@theme inline {
+  --color-ink-950: var(--mt-ink-950);
+  --color-ink: var(--mt-ink);
+  --color-ink-900: var(--mt-ink-900);
+  --color-ink-800: var(--mt-ink-800);
+  --color-ink-700: var(--mt-ink-700);
+  --color-ink-600: var(--mt-ink-600);
+  --color-ink-500: var(--mt-ink-500);
+
+  --color-forest-900: var(--mt-forest-900);
+  --color-forest-800: var(--mt-forest-800);
+  --color-forest-700: var(--mt-forest-700);
+  --color-emerald-600: var(--mt-emerald-600);
+  --color-emerald-500: var(--mt-emerald-500);
+  --color-emerald-400: var(--mt-emerald-400);
+  --color-leaf-400: var(--mt-leaf-400);
+  --color-leaf-300: var(--mt-leaf-300);
+  --color-leaf-200: var(--mt-leaf-200);
+
+  --color-gold-600: var(--mt-gold-600);
+  --color-gold-500: var(--mt-gold-500);
+  --color-gold-400: var(--mt-gold-400);
+  --color-gold-300: var(--mt-gold-300);
+
+  --color-cream-50: var(--mt-cream-50);
+  --color-cream-100: var(--mt-cream-100);
+  --color-cream-200: var(--mt-cream-200);
+  --color-cream-300: var(--mt-cream-300);
+  --color-cream-400: var(--mt-cream-400);
+
+  --color-surface: var(--mt-ink);
+  --color-surface-raised: var(--mt-ink-800);
+  --color-border-subtle: var(--mt-border-subtle);
+  --color-border-strong: var(--mt-border-strong);
+
+  --color-on-accent: var(--mt-on-accent);
+  --color-photo-from: var(--mt-photo-from);
+  --color-photo-to: var(--mt-photo-to);
+  --color-on-photo: var(--mt-on-photo);
+  --color-success: var(--mt-success);
+  --color-warning: var(--mt-warning);
+  --color-danger: var(--mt-danger);
+}
+
+@theme {
   /* --- Type --------------------------------------------------------------- */
   --font-display: var(--font-fraunces), "Iowan Old Style", Georgia, serif;
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
@@ -75,8 +227,16 @@
   --ease-swift: cubic-bezier(0.4, 0, 0.2, 1);
 
   /* --- Layout ------------------------------------------------------------- */
-  --spacing-gutter: clamp(1.25rem, 5vw, 5rem);
+  /* 1rem at 320px, easing up to 5rem on wide screens. The previous floor of
+     1.25rem left the header 4px wider than the narrowest phones. */
+  --spacing-gutter: clamp(1rem, 5vw, 5rem);
   --radius-card: 2px;
+
+  /* The announcement bar plus the header. The homepage hero pulls itself up by
+     this much so a 100svh stage actually fills the viewport rather than ending
+     that far below the fold — the header is transparent over the hero there,
+     so it is meant to sit on top of it. */
+  --header-offset: 6.125rem;
 }
 
 /* ==========================================================================
@@ -84,6 +244,12 @@
    ========================================================================== */
 
 @layer base {
+  @media (min-width: 768px) {
+    :root {
+      --header-offset: 7.125rem;
+    }
+  }
+
   *,
   ::before,
   ::after {
@@ -108,6 +274,7 @@
   body {
     background-color: var(--color-ink);
     color: var(--color-cream-100);
+    transition: background-color 0.3s var(--ease-swift), color 0.3s var(--ease-swift);
     font-family: var(--font-sans);
     font-feature-settings: "cv02", "cv03", "cv11";
     -webkit-font-smoothing: antialiased;
@@ -187,7 +354,7 @@
     inset: 0;
     z-index: 1;
     pointer-events: none;
-    opacity: 0.035;
+    opacity: var(--mt-grain-opacity);
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 }
@@ -424,7 +591,7 @@
   font-family: var(--font-hand);
   font-size: 1.15rem;
   line-height: 1.3;
-  color: #6b5f3f;
+  color: #5c5031;
   transform: rotate(-1.6deg);
 }
 
@@ -524,14 +691,20 @@
   border-radius: 999px;
 }
 
-/*
- * The route-change wipe. Blades rise from below to cover the seam between two
- * pages, hold for a beat, then drop away. Scaling on Y from the bottom edge
- * keeps it to compositor-only work — no layout, no paint of the page beneath.
- */
-@keyframes leaf-wipe {
-  0%   { transform: scaleY(0); opacity: 0.9; }
-  38%  { transform: scaleY(1); opacity: 1; }
-  56%  { transform: scaleY(1); opacity: 1; }
-  100% { transform: scaleY(0); opacity: 0.9; transform-origin: top; }
+/* Hero entrance. Copy rises; packs arrive with a little more travel and a
+   touch of scale so the cluster assembles rather than appearing. Both are
+   compositor-only — transform and opacity, no layout, no paint. */
+@keyframes preloader-sweep {
+  from { transform: scaleX(0); transform-origin: left; }
+  to   { transform: scaleX(1); transform-origin: left; }
+}
+
+@keyframes hero-rise {
+  from { opacity: 0; transform: translate3d(0, 18px, 0); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes hero-pack {
+  from { opacity: 0; transform: translate3d(0, 34px, 0) scale(0.94); }
+  to   { opacity: 1; transform: none; }
 }

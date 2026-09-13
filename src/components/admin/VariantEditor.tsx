@@ -65,7 +65,7 @@ export function VariantEditor({
           <button
             type="button"
             onClick={() => setEditing("new")}
-            className="border border-white/20 px-4 py-2 text-[0.66rem] uppercase tracking-[0.12em] text-cream-200 transition-colors hover:border-cream-100"
+            className="border border-border-strong px-4 py-2 text-[0.66rem] uppercase tracking-[0.12em] text-cream-200 transition-colors hover:border-cream-100"
           >
             Add variant
           </button>
@@ -300,7 +300,7 @@ function SaveVariant() {
     <button
       type="submit"
       disabled={pending}
-      className="bg-emerald-500 px-6 py-2.5 text-[0.68rem] font-medium uppercase tracking-[0.14em] text-cream-50 transition-colors hover:bg-emerald-400 disabled:opacity-60"
+      className="bg-emerald-500 px-6 py-2.5 text-[0.68rem] font-medium uppercase tracking-[0.14em] text-on-accent transition-colors hover:bg-emerald-400 disabled:opacity-60"
     >
       {pending ? "Saving…" : "Save variant"}
     </button>

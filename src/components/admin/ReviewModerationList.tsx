@@ -97,7 +97,7 @@ export function ReviewModerationList({ reviews }: { reviews: ModerationReview[] 
               </p>
             </div>
 
-            <div className="grid gap-2 lg:border-l lg:border-white/10 lg:pl-8">
+            <div className="grid gap-2 lg:border-l lg:border-border-subtle lg:pl-8">
               {review.status !== "approved" ? (
                 <Action
                   busy={busy === review.id}
@@ -211,8 +211,8 @@ function Action({
       className={cn(
         "w-full px-4 py-2.5 text-[0.66rem] uppercase tracking-[0.12em] transition-colors disabled:opacity-50",
         tone === "primary"
-          ? "bg-emerald-500 text-cream-50 hover:bg-emerald-400"
-          : "border border-white/18 text-cream-200 hover:border-cream-100",
+          ? "bg-emerald-500 text-on-accent hover:bg-emerald-400"
+          : "border border-border-strong text-cream-200 hover:border-cream-100",
       )}
     >
       {children}

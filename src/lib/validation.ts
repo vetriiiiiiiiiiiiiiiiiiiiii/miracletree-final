@@ -271,6 +271,36 @@ export const adminCreditSchema = z.object({
   isActive: z.boolean().default(true),
 });
 
+/**
+ * A leader's profile. `longBio` is generous because it holds the whole
+ * biography as paragraphs separated by blank lines, and truncating a founder's
+ * history at the form layer would be a strange place to discover the limit.
+ */
+export const adminLeaderSchema = z.object({
+  name: z.string().trim().min(1, "Give a name.").max(160),
+  role: z.string().trim().min(1, "Give a role.").max(160),
+  credential: z.string().trim().max(160).optional().or(z.literal("")),
+  bio: z.string().trim().max(2000).optional().or(z.literal("")),
+  longBio: z.string().trim().max(20000).optional().or(z.literal("")),
+  quote: z.string().trim().max(600).optional().or(z.literal("")),
+  imageUrl: z.string().trim().max(500).optional().or(z.literal("")),
+  source: z.string().trim().max(160).optional().or(z.literal("")),
+  sourceUrl: z.string().trim().url("Enter a full URL.").max(500).optional().or(z.literal("")),
+  isFounder: z.boolean().default(false),
+  position: z.coerce.number().int().min(0).max(9999).default(0),
+  isActive: z.boolean().default(true),
+});
+
+/** One dated line on a leader's record. */
+export const adminLeaderHighlightSchema = z.object({
+  leaderId: z.string().trim().min(1, "Pick who this belongs to."),
+  kind: z.enum(["award", "patent", "role", "recognition"]).default("recognition"),
+  year: z.string().trim().max(24).optional().or(z.literal("")),
+  title: z.string().trim().min(1, "Give it a title.").max(200),
+  body: z.string().trim().max(2000).optional().or(z.literal("")),
+  position: z.coerce.number().int().min(0).max(9999).default(0),
+});
+
 export const adminCouponSchema = z.object({
   code: z
     .string()

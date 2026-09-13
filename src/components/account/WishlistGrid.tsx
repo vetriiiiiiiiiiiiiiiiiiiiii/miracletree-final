@@ -79,7 +79,7 @@ export function WishlistGrid({ items }: { items: WishlistEntry[] }) {
               ) : null}
 
               {!item.inStock ? (
-                <span className="absolute left-3 top-3 border border-white/15 bg-ink/85 px-2.5 py-1 text-[0.6rem] uppercase tracking-[0.14em] text-cream-400">
+                <span className="absolute left-3 top-3 border border-border-subtle bg-ink/85 px-2.5 py-1 text-[0.6rem] uppercase tracking-[0.14em] text-cream-400">
                   Out of stock
                 </span>
               ) : null}
@@ -87,7 +87,7 @@ export function WishlistGrid({ items }: { items: WishlistEntry[] }) {
 
             <div className="flex flex-1 flex-col pt-5">
               {item.categoryName ? (
-                <p className="eyebrow text-cream-400/70">{item.categoryName}</p>
+                <p className="eyebrow text-cream-400">{item.categoryName}</p>
               ) : null}
 
               <h3 className="mt-2 text-[1.05rem] leading-snug text-cream-50">

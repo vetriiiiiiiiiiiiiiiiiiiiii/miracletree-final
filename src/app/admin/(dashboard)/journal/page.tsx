@@ -40,7 +40,7 @@ export default async function AdminJournalPage() {
         actions={
           <Link
             href="/admin/journal/new"
-            className="inline-flex items-center bg-emerald-500 px-5 py-2.5 text-[0.68rem] font-medium uppercase tracking-[0.14em] text-cream-50 transition-colors hover:bg-emerald-400"
+            className="inline-flex items-center bg-emerald-500 px-5 py-2.5 text-[0.68rem] font-medium uppercase tracking-[0.14em] text-on-accent transition-colors hover:bg-emerald-400"
           >
             New article
           </Link>

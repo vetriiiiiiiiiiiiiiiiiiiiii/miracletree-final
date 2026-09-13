@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { SplitText } from "@/components/motion/SplitText";
 import type { ReactNode, Ref } from "react";
 
 /**
@@ -138,12 +139,19 @@ export function SectionHeading({
         </p>
       ) : null}
 
-      <h2 className="max-w-[18ch] text-title text-cream-50">{title}</h2>
+      {/* A plain string can be taken apart and animated word by word; a
+          composed node (a highlighted fragment, a line break) cannot be, and
+          is rendered as given rather than guessed at. */}
+      {typeof title === "string" ? (
+        <SplitText as="h2" text={title} className="max-w-[18ch] text-title text-cream-50" />
+      ) : (
+        <h2 className="max-w-[18ch] text-title text-cream-50">{title}</h2>
+      )}
 
       {lede ? (
         <p
           className={cn(
-            "max-w-[52ch] text-[1.05rem] leading-relaxed text-cream-300/80",
+            "max-w-[52ch] text-[1.05rem] leading-relaxed text-cream-300",
             align === "center" && "mx-auto",
           )}
         >
@@ -158,5 +166,5 @@ export function SectionHeading({
 
 /** A hairline rule that only exists to give a section a top edge. */
 export function Rule({ className }: { className?: string }) {
-  return <div className={cn("h-px w-full bg-white/10", className)} aria-hidden />;
+  return <div className={cn("h-px w-full bg-border-subtle", className)} aria-hidden />;
 }

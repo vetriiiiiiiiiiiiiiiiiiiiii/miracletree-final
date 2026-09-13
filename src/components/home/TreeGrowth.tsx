@@ -92,7 +92,7 @@ export function TreeGrowth({
 
           <h2 className="max-w-[16ch] text-display text-cream-50">{title}</h2>
           {subtitle ? (
-            <p className="mt-6 max-w-[46ch] leading-relaxed text-cream-300/80">{subtitle}</p>
+            <p className="mt-6 max-w-[46ch] leading-relaxed text-cream-300">{subtitle}</p>
           ) : null}
 
           <ol className="mt-12 grid gap-0">
@@ -104,12 +104,12 @@ export function TreeGrowth({
                 <li
                   key={stage.id}
                   className={cn(
-                    "grid grid-cols-[3rem_1fr] items-baseline gap-4 border-t border-white/8 py-4 transition-colors duration-500",
+                    "grid grid-cols-[3rem_1fr] items-baseline gap-4 border-t border-border-subtle py-4 transition-colors duration-500",
                     reduced || isActive
                       ? "text-cream-50"
                       : isPast
-                        ? "text-cream-300/70"
-                        : "text-cream-400/45",
+                        ? "text-cream-300"
+                        : "text-cream-400",
                   )}
                   aria-current={isActive ? "step" : undefined}
                 >
@@ -155,7 +155,7 @@ export function TreeGrowth({
               <span className="text-[0.62rem] tabular-nums tracking-[0.18em] text-cream-400">
                 {String(Math.round(progress * 100)).padStart(3, "0")}
               </span>
-              <span className="h-px flex-1 bg-white/10">
+              <span className="h-px flex-1 bg-border-subtle">
                 <span
                   className="block h-px bg-gold-400"
                   style={{ width: `${progress * 100}%` }}

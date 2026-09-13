@@ -190,7 +190,7 @@ function Save({ isNew }: { isNew: boolean }) {
     <button
       type="submit"
       disabled={pending}
-      className="w-full bg-emerald-500 px-5 py-3 text-[0.7rem] font-medium uppercase tracking-[0.14em] text-cream-50 transition-colors hover:bg-emerald-400 disabled:opacity-60"
+      className="w-full bg-emerald-500 px-5 py-3 text-[0.7rem] font-medium uppercase tracking-[0.14em] text-on-accent transition-colors hover:bg-emerald-400 disabled:opacity-60"
     >
       {pending ? "Saving…" : isNew ? "Create article" : "Save changes"}
     </button>

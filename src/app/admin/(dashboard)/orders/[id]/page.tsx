@@ -123,7 +123,7 @@ export default async function AdminOrderPage({
               ))}
             </Table>
 
-            <dl className="grid gap-2.5 border-t border-white/10 p-5 text-sm">
+            <dl className="grid gap-2.5 border-t border-border-subtle p-5 text-sm">
               <Row label="Subtotal" value={formatPrice(order.subtotal)} />
               {order.discountTotal > 0 ? (
                 <Row
@@ -135,7 +135,7 @@ export default async function AdminOrderPage({
                 label="Shipping"
                 value={order.shippingTotal === 0 ? "Free" : formatPrice(order.shippingTotal)}
               />
-              <div className="mt-2 flex items-baseline justify-between border-t border-white/10 pt-3">
+              <div className="mt-2 flex items-baseline justify-between border-t border-border-subtle pt-3">
                 <dt className="text-cream-100">Total</dt>
                 <dd className="text-lg tabular-nums text-cream-50">
                   {formatPrice(order.grandTotal)}

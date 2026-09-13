@@ -39,7 +39,7 @@ export function NewsletterForm({
     <form action={action} className={cn("grid gap-3", className)}>
       <input type="hidden" name="source" value={source} />
 
-      <div className="flex items-end gap-0 border-b border-white/20 focus-within:border-gold-400">
+      <div className="flex items-end gap-0 border-b border-border-strong focus-within:border-gold-400">
         <label htmlFor={`newsletter-${source}`} className="sr-only">
           Email address
         </label>
@@ -52,7 +52,7 @@ export function NewsletterForm({
           placeholder="your@email.com"
           aria-invalid={state.status === "error" ? true : undefined}
           aria-describedby={state.status === "error" ? `newsletter-${source}-error` : undefined}
-          className="min-w-0 flex-1 bg-transparent py-3 text-base text-cream-50 placeholder:text-cream-400/60 focus:outline-none"
+          className="min-w-0 flex-1 bg-transparent py-3 text-base text-cream-50 placeholder:text-cream-400 focus:outline-none"
         />
         <SubmitButton />
       </div>

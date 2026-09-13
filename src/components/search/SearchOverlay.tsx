@@ -115,7 +115,7 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
 
   return (
     <Drawer open={open} onClose={onClose} title="Search" side="top" className="max-h-[92dvh]">
-      <div className="border-b border-white/10 px-5 py-4 md:px-8">
+      <div className="border-b border-border-subtle px-5 py-4 md:px-8">
         <div className="mx-auto flex max-w-3xl items-center gap-4">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden className="shrink-0 text-cream-400">
             <circle cx="9" cy="9" r="6" stroke="currentColor" strokeWidth="1.4" />
@@ -133,7 +133,7 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
             aria-expanded={results.length > 0}
             aria-controls="search-results"
             aria-activedescendant={results[active] ? `search-hit-${results[active].id}` : undefined}
-            className="w-full bg-transparent py-3 text-lg text-cream-50 placeholder:text-cream-400/60 focus:outline-none md:text-xl"
+            className="w-full bg-transparent py-3 text-lg text-cream-50 placeholder:text-cream-400 focus:outline-none md:text-xl"
           />
           {loading ? (
             <span className="h-4 w-4 shrink-0 animate-spin rounded-full border border-cream-400 border-t-transparent" aria-hidden />
@@ -141,7 +141,7 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
           <button
             type="button"
             onClick={onClose}
-            className="shrink-0 rounded border border-white/15 px-2 py-1 text-[0.65rem] uppercase tracking-widest text-cream-400 hover:text-cream-100"
+            className="shrink-0 rounded border border-border-subtle px-2 py-1 text-[0.65rem] uppercase tracking-widest text-cream-400 hover:text-cream-100"
           >
             Esc
           </button>
@@ -160,7 +160,7 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
                         key={item}
                         type="button"
                         onClick={() => setTerm(item)}
-                        className="border border-white/12 px-3 py-1.5 text-sm text-cream-300 hover:border-white/30 hover:text-cream-50"
+                        className="border border-border-subtle px-3 py-1.5 text-sm text-cream-300 hover:border-border-strong hover:text-cream-50"
                       >
                         {item}
                       </button>
@@ -176,7 +176,7 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
                       key={s.href}
                       type="button"
                       onClick={() => go(s.href)}
-                      className="border border-white/12 px-3 py-1.5 text-sm text-cream-300 hover:border-white/30 hover:text-cream-50"
+                      className="border border-border-subtle px-3 py-1.5 text-sm text-cream-300 hover:border-border-strong hover:text-cream-50"
                     >
                       {s.label}
                     </button>
@@ -204,7 +204,7 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
                       onClick={() => go(hit.href)}
                       className={cn(
                         "flex w-full items-center gap-4 border border-transparent px-3 py-3 text-left transition-colors",
-                        index === active ? "border-white/12 bg-white/[0.05]" : "hover:bg-white/[0.03]",
+                        index === active ? "border-border-subtle bg-white/[0.05]" : "hover:bg-white/[0.03]",
                       )}
                     >
                       <span className="relative grid h-12 w-12 shrink-0 place-items-center overflow-hidden bg-ink-800">
@@ -225,7 +225,7 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
                           {formatPrice(hit.price)}
                         </span>
                       ) : (
-                        <span className="eyebrow shrink-0 text-cream-400/60">{hit.kind}</span>
+                        <span className="eyebrow shrink-0 text-cream-400">{hit.kind}</span>
                       )}
                     </button>
                   </li>
@@ -236,7 +236,7 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
                 <button
                   type="button"
                   onClick={() => go(`/shop?q=${encodeURIComponent(term.trim())}`)}
-                  className="mt-6 w-full border border-white/12 py-3 text-center text-[0.7rem] uppercase tracking-[0.16em] text-cream-300 hover:border-white/30 hover:text-cream-50"
+                  className="mt-6 w-full border border-border-subtle py-3 text-center text-[0.7rem] uppercase tracking-[0.16em] text-cream-300 hover:border-border-strong hover:text-cream-50"
                 >
                   See all results for &ldquo;{term.trim()}&rdquo;
                 </button>
@@ -268,7 +268,7 @@ function KindIcon({ kind }: { kind: SearchHit["kind"] }) {
   };
 
   return (
-    <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden className="text-cream-400/60">
+    <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden className="text-cream-400">
       <path d={glyphs[kind]} stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
     </svg>
   );

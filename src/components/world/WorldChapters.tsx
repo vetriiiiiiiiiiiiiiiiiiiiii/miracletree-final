@@ -72,6 +72,31 @@ export function WorldChapters({
       {/* Overlay rides above the sticky canvas — and is contained by it. */}
       {/* Copy sits low on phones so the 3D subject has the upper half to
           itself; centred from `md` up, where the layout is two columns. */}
+      {/* A scrim under the copy.
+          The chapter text sits directly on the WebGL canvas, and on paper the
+          canopy behind it is bright and busy enough to swallow body copy
+          entirely. No DOM-contrast check can catch this, because the thing
+          behind the text is a canvas rather than a background colour — so the
+          copy gets its own ground, weighted to the side it occupies and fading
+          out before it reaches the middle of the frame. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 z-10"
+        style={{
+          // A soft pool of ground under the copy, not a half-screen panel.
+          // The linear version ended at a fixed percentage of the width, which
+          // put a dead-straight vertical seam down the middle of the frame —
+          // very visible once the scene behind it was bright. An ellipse has no
+          // edge to notice, and it stops darkening the half of the picture that
+          // has no text on it.
+          background:
+            "radial-gradient(ellipse 60% 74% at 22% 47%," +
+            " color-mix(in srgb, var(--color-ink) 86%, transparent) 0%," +
+            " color-mix(in srgb, var(--color-ink) 50%, transparent) 45%," +
+            " transparent 74%)",
+        }}
+      />
+
       <div className="pointer-events-none absolute inset-0 z-20 flex items-end pb-24 md:items-center md:pb-0">
         <div className="mx-auto w-full max-w-[100rem] gutter">
           <div className="max-w-xl">
@@ -92,15 +117,31 @@ export function WorldChapters({
                   <span className="text-cream-400">{chapter.eyebrow}</span>
                 </p>
 
-                <h2
-                  className="text-display text-cream-50"
-                  style={{
-                    fontFamily: "var(--font-display)",
-                    textShadow: "0 2px 40px rgba(5,7,10,0.9)",
-                  }}
-                >
-                  {chapter.title}
-                </h2>
+                {/* The first chapter carries the page's only h1. The homepage
+                    previously had none at all — every chapter title was an h2 —
+                    which leaves the document with no top-level heading for
+                    search engines or a screen reader to anchor on. */}
+                {index === 0 ? (
+                  <h1
+                    className="text-display text-cream-50"
+                    style={{
+                      fontFamily: "var(--font-display)",
+                      textShadow: "0 2px 40px rgba(5,7,10,0.9)",
+                    }}
+                  >
+                    {chapter.title}
+                  </h1>
+                ) : (
+                  <h2
+                    className="text-display text-cream-50"
+                    style={{
+                      fontFamily: "var(--font-display)",
+                      textShadow: "0 2px 40px rgba(5,7,10,0.9)",
+                    }}
+                  >
+                    {chapter.title}
+                  </h2>
+                )}
 
                 <p className="mt-6 max-w-[44ch] text-[1.05rem] leading-relaxed text-cream-200/90">
                   {chapter.body}
@@ -194,7 +235,7 @@ export function WorldChapters({
               <span
                 className={cn(
                   "block h-px transition-all duration-500 ease-[var(--ease-organic)]",
-                  index === active ? "w-8 bg-gold-400" : "w-4 bg-white/25",
+                  index === active ? "w-8 bg-gold-400" : "w-4 bg-border-strong",
                 )}
                 aria-hidden
               />
@@ -213,7 +254,7 @@ export function WorldChapters({
         <span className="text-[0.58rem] uppercase tracking-[0.24em] text-cream-400">
           {progress < 0.02 ? "Scroll to begin" : `${Math.round(progress * 100)}%`}
         </span>
-        <span className="block h-14 w-px overflow-hidden bg-white/15">
+        <span className="block h-14 w-px overflow-hidden bg-border-subtle">
           <span
             className="block w-px bg-gold-400 transition-[height] duration-300"
             style={{ height: `${Math.max(4, progress * 100)}%` }}

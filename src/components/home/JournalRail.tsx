@@ -75,12 +75,12 @@ export function JournalRail({
                 </div>
 
                 <div className="mt-5 flex items-center gap-3 text-[0.66rem] uppercase tracking-[0.14em] text-cream-400">
-                  {article.category ? <span className="text-gold-400/90">{article.category.name}</span> : null}
-                  {article.category ? <span aria-hidden className="text-white/15">/</span> : null}
+                  {article.category ? <span className="text-gold-400">{article.category.name}</span> : null}
+                  {article.category ? <span aria-hidden className="text-border-subtle">/</span> : null}
                   <span>{article.readingMinutes} min read</span>
                 </div>
 
-                <h3 className="mt-3 text-[1.2rem] leading-snug text-cream-50 transition-colors group-hover:text-gold-200">
+                <h3 className="mt-3 text-[1.2rem] leading-snug text-cream-50 transition-colors group-hover:text-gold-300">
                   {article.title}
                 </h3>
 
@@ -93,7 +93,7 @@ export function JournalRail({
                 {article.publishedAt ? (
                   <time
                     dateTime={article.publishedAt.toISOString()}
-                    className="mt-4 block text-xs text-cream-400/70"
+                    className="mt-4 block text-xs text-cream-400"
                   >
                     {formatDate(article.publishedAt)}
                   </time>

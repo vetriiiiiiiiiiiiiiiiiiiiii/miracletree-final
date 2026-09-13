@@ -80,14 +80,14 @@ export function ProductRowActions({
       {open ? (
         <div
           role="menu"
-          className="absolute right-0 z-30 mt-1 w-52 border border-white/12 bg-ink-800 py-1 shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
+          className="absolute right-0 z-30 mt-1 w-52 border border-border-subtle bg-ink-800 py-1 shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
         >
           <MenuLink href={`/admin/products/${productId}`}>Edit</MenuLink>
           <MenuLink href={`/product/${slug}`} external>
             View on store
           </MenuLink>
 
-          <hr className="my-1 border-white/10" />
+          <hr className="my-1 border-border-subtle" />
 
           {status !== "published" ? (
             <MenuButton onClick={() => run(() => setProductStatusAction([productId], "published"))}>
@@ -117,7 +117,7 @@ export function ProductRowActions({
             </MenuButton>
           ) : null}
 
-          <hr className="my-1 border-white/10" />
+          <hr className="my-1 border-border-subtle" />
 
           <MenuButton tone="danger" onClick={() => { setOpen(false); setConfirming(true); }}>
             Delete

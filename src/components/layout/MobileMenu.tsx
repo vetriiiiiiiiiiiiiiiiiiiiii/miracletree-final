@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { Drawer } from "@/components/ui/Drawer";
 import { Logo } from "@/components/layout/Logo";
+import { ThemeSegmented } from "@/components/theme/ThemeToggle";
 import { SITE } from "@/lib/constants";
 import { gsap, prefersReducedMotion } from "@/lib/motion";
 import type { NavItem } from "@/components/layout/Header";
@@ -17,6 +18,7 @@ export function MobileMenu({
   open,
   onClose,
   items,
+  companyItems,
   categories,
   isAuthenticated,
   onSearch,
@@ -24,6 +26,8 @@ export function MobileMenu({
   open: boolean;
   onClose: () => void;
   items: NavItem[];
+  /** Grouped under their own heading, mirroring the desktop Company menu. */
+  companyItems: NavItem[];
   categories: { name: string; slug: string; count: number }[];
   isAuthenticated: boolean;
   onSearch: () => void;
@@ -47,7 +51,7 @@ export function MobileMenu({
 
   return (
     <Drawer open={open} onClose={onClose} title="Menu" side="top" className="h-[100dvh]">
-      <div className="flex h-16 items-center justify-between border-b border-white/10 px-5">
+      <div className="flex h-16 items-center justify-between border-b border-border-subtle px-5">
         <Logo className="h-7 w-auto" />
         <button
           type="button"
@@ -66,7 +70,7 @@ export function MobileMenu({
           type="button"
           onClick={onSearch}
           data-menu-item
-          className="mb-8 flex w-full items-center gap-3 border border-white/12 bg-white/[0.03] px-4 py-3.5 text-left text-sm text-cream-400"
+          className="mb-8 flex w-full items-center gap-3 border border-border-subtle bg-white/[0.03] px-4 py-3.5 text-left text-sm text-cream-400"
         >
           <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden>
             <circle cx="9" cy="9" r="6" stroke="currentColor" strokeWidth="1.4" />
@@ -92,7 +96,26 @@ export function MobileMenu({
           </ul>
         </nav>
 
-        <div className="mt-10 border-t border-white/10 pt-8" data-menu-item>
+        {companyItems.length ? (
+          <div className="mt-10 border-t border-border-subtle pt-8" data-menu-item>
+            <p className="eyebrow mb-4 text-cream-400">Company</p>
+            <ul className="grid gap-3">
+              {companyItems.map((item) => (
+                <li key={item.id}>
+                  <Link
+                    href={item.href}
+                    onClick={onClose}
+                    className="inline-block py-1 text-cream-200 hover:text-cream-50"
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+
+        <div className="mt-10 border-t border-border-subtle pt-8" data-menu-item>
           <p className="eyebrow mb-4 text-cream-400">Shop by category</p>
           <ul className="grid gap-3">
             {categories.map((category) => (
@@ -112,21 +135,28 @@ export function MobileMenu({
           </ul>
         </div>
 
-        <div className="mt-10 grid gap-3 border-t border-white/10 pt-8" data-menu-item>
+        <div className="mt-10 grid gap-3 border-t border-border-subtle pt-8" data-menu-item>
           <Link
             href={isAuthenticated ? "/account" : "/login"}
             onClick={onClose}
-            className="text-cream-200 hover:text-cream-50"
+            className="inline-block py-1 text-cream-200 hover:text-cream-50"
           >
             {isAuthenticated ? "Your account" : "Sign in"}
           </Link>
-          <Link href="/faq" onClick={onClose} className="text-cream-200 hover:text-cream-50">
+          <Link href="/faq" onClick={onClose} className="inline-block py-1 text-cream-200 hover:text-cream-50">
             Help &amp; FAQ
           </Link>
           <a href={`tel:${SITE.phone.replace(/\s/g, "")}`} className="text-cream-200">
             {SITE.phone}
           </a>
           <p className="text-xs text-cream-400">{SITE.phoneHours}</p>
+        </div>
+
+        {/* The header's one-tap toggle has no room to explain itself. Here it
+            does, including the "System" setting that follows the device. */}
+        <div className="mt-10 border-t border-border-subtle pt-8" data-menu-item>
+          <p className="eyebrow mb-4 text-cream-400">Theme</p>
+          <ThemeSegmented />
         </div>
       </div>
     </Drawer>

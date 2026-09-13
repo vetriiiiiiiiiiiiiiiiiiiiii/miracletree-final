@@ -294,7 +294,7 @@ export default async function AdminDashboard() {
               No sales in this window yet.
             </p>
           ) : (
-            <ul className="divide-y divide-white/8">
+            <ul className="divide-y divide-border-subtle">
               {topProducts.map((row) => {
                 const product = row.productId ? imageById.get(row.productId) : null;
                 return (

@@ -54,7 +54,7 @@ export function SettingsForm({
 
   return (
     <div className="grid gap-6">
-      <div role="tablist" className="flex flex-wrap gap-1 border-b border-white/10">
+      <div role="tablist" className="flex flex-wrap gap-1 border-b border-border-subtle">
         {(
           [
             ["store", "Store"],
@@ -91,13 +91,13 @@ export function SettingsForm({
               Nothing recorded yet.
             </p>
           ) : (
-            <ul className="divide-y divide-white/8">
+            <ul className="divide-y divide-border-subtle">
               {activity.map((entry) => (
                 <li key={entry.id} className="flex flex-wrap items-baseline gap-3 px-5 py-3">
                   <Pill tone="info">{entry.entity}</Pill>
                   <span className="text-sm text-cream-100">{entry.action}</span>
                   <span className="text-xs text-cream-400">{entry.actor}</span>
-                  <span className="ml-auto text-xs tabular-nums text-cream-400/70">
+                  <span className="ml-auto text-xs tabular-nums text-cream-400">
                     {entry.createdAt}
                   </span>
                 </li>
@@ -205,7 +205,7 @@ export function SettingsForm({
                         "border px-4 py-2 text-[0.66rem] uppercase tracking-[0.12em] transition-colors",
                         policyKey === policy.key
                           ? "border-gold-400 text-cream-50"
-                          : "border-white/12 text-cream-400 hover:border-white/28 hover:text-cream-100",
+                          : "border-border-subtle text-cream-400 hover:border-border-strong hover:text-cream-100",
                       )}
                     >
                       {policy.label}
@@ -260,7 +260,7 @@ function SaveSettings() {
     <button
       type="submit"
       disabled={pending}
-      className="justify-self-start bg-emerald-500 px-7 py-3 text-[0.7rem] font-medium uppercase tracking-[0.14em] text-cream-50 transition-colors hover:bg-emerald-400 disabled:opacity-60"
+      className="justify-self-start bg-emerald-500 px-7 py-3 text-[0.7rem] font-medium uppercase tracking-[0.14em] text-on-accent transition-colors hover:bg-emerald-400 disabled:opacity-60"
     >
       {pending ? "Saving…" : "Save settings"}
     </button>

@@ -30,7 +30,7 @@ const STEP_PLAN: { key: string; category: string; eyebrow: string; title: string
       eyebrow: "Morning",
       title: "Start the day with a cup",
       blurb:
-        "Rolled leaf or a tea bag, plain or spiced. This is the gentlest way into moringa and the one most people keep up.",
+        "Rolled leaf or a tea bag, plain or spiced. This is the easiest place to start, and the one most people stay with.",
     },
     {
       key: "nourish",
@@ -38,7 +38,7 @@ const STEP_PLAN: { key: string; category: string; eyebrow: string; title: string
       eyebrow: "At the table",
       title: "Something that goes into a meal",
       blurb:
-        "Powders and mixes that disappear into what you already cook — idly chutney, rice, a health mix, a soup.",
+        "Powders and mixes that go into food you already cook: idly chutney, rice, health mixes, soups.",
     },
     {
       key: "support",
@@ -46,21 +46,21 @@ const STEP_PLAN: { key: string; category: string; eyebrow: string; title: string
       eyebrow: "Daily support",
       title: "A measured dose",
       blurb:
-        "Capsules and tablets, for when you would rather not think about quantities. Take them with food.",
+        "Capsules and tablets, if you would rather not measure anything. Take them with food.",
     },
     {
       key: "carry",
       category: "healthy-snacks",
       eyebrow: "On the move",
       title: "Something to carry",
-      blurb: "For the middle of the afternoon, when the alternative is whatever is nearest.",
+      blurb: "Bars and laddus for the afternoon, when you want something to hand.",
     },
     {
       key: "after",
       category: "essential-oils",
       eyebrow: "After",
       title: "For skin and hair",
-      blurb: "Cold-pressed seed oil and skin drops — the part of the tree that never goes in a cup.",
+      blurb: "Cold-pressed seed oil and skin drops, made from the seed rather than the leaf.",
     },
   ];
 
@@ -163,15 +163,16 @@ export default async function RitualPage() {
         <Breadcrumbs items={crumbs} />
 
         <header className="mt-10 max-w-3xl">
-          <p className="eyebrow text-cream-400/70">Build your ritual</p>
+          <p className="eyebrow text-cream-400">Build your ritual</p>
           <h1 className="mt-5 text-hero text-cream-50">A day around the tree</h1>
           <p className="mt-7 max-w-[54ch] text-[1.1rem] leading-relaxed text-cream-300">
-            Moringa works by being ordinary — a cup in the morning, a spoon into
-            what you already cook, something in your bag at four o&rsquo;clock.
-            Put together the version of that you would actually keep up.
+            Most people who stick with moringa do it the same way: a cup in the
+            morning, a spoon stirred into something they already cook, and a
+            snack in the bag for the afternoon. Build the version of that you
+            will keep up.
           </p>
           {promo ? (
-            <p className="mt-5 text-sm text-emerald-300">
+            <p className="mt-5 text-sm text-leaf-300">
               {promo.percent}% off once your ritual passes{" "}
               {new Intl.NumberFormat("en-IN", {
                 style: "currency",

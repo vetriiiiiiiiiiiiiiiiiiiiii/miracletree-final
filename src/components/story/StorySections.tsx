@@ -64,12 +64,12 @@ function Cite({ source, url }: { source: string | null; url: string | null }) {
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="mt-2 inline-block text-[0.68rem] uppercase tracking-[0.12em] text-[#8a7c55] underline underline-offset-2 hover:text-[#6b5f3f]"
+      className="mt-2 inline-block py-1.5 text-[0.68rem] uppercase tracking-[0.12em] text-[#6f6440] underline underline-offset-2 hover:text-[#6b5f3f]"
     >
       {label}
     </a>
   ) : (
-    <span className="mt-2 inline-block text-[0.68rem] uppercase tracking-[0.12em] text-[#8a7c55]">
+    <span className="mt-2 inline-block text-[0.68rem] uppercase tracking-[0.12em] text-[#6f6440]">
       {label}
     </span>
   );
@@ -220,7 +220,7 @@ export function Accolades({ accolades }: { accolades: AccoladeEntry[] }) {
                   </div>
 
                   {item.issuer ? (
-                    <p className="mt-1 text-sm text-[#6b7462]">{item.issuer}</p>
+                    <p className="mt-1 text-sm text-[#5a6350]">{item.issuer}</p>
                   ) : null}
                   {item.body ? (
                     <p className="mt-3 text-sm leading-relaxed text-[#55614e]">{item.body}</p>
@@ -287,7 +287,7 @@ export function Credits({ credits }: { credits: CreditEntry[] }) {
                       href={person.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-2 inline-block break-all text-[0.68rem] uppercase tracking-[0.12em] text-[#8a7c55] underline underline-offset-2 hover:text-[#6b5f3f]"
+                      className="mt-2 inline-block break-all text-[0.68rem] uppercase tracking-[0.12em] text-[#6f6440] underline underline-offset-2 hover:text-[#6b5f3f] py-1.5"
                     >
                       {person.url.replace(/^https?:\/\//, "")}
                     </a>
@@ -357,7 +357,7 @@ export function FieldNotes({ notes }: { notes: FieldNote[] }) {
                 </div>
 
                 <div className="px-1 pb-1 pt-4">
-                  <p className="text-[0.66rem] uppercase tracking-[0.14em] text-[#8a7c55]">
+                  <p className="text-[0.66rem] uppercase tracking-[0.14em] text-[#6f6440]">
                     {note.category?.name ?? "Journal"} · {note.readingMinutes} min
                   </p>
                   <h3 className="mt-2 text-[1.1rem] leading-snug text-[#23301f] transition-colors group-hover:text-[#7a5c1f]">
@@ -370,7 +370,7 @@ export function FieldNotes({ notes }: { notes: FieldNote[] }) {
                   ) : null}
                   {note.publishedAt ? (
                     <p
-                      className="mt-3 text-[1rem] text-[#8a7c55]"
+                      className="mt-3 text-[1rem] text-[#6f6440]"
                       style={{ fontFamily: "var(--font-hand)" }}
                     >
                       {formatDate(note.publishedAt)}

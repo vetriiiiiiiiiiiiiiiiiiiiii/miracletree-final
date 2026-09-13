@@ -36,7 +36,7 @@ export default async function AdminLoginPage({
           <p className="eyebrow mt-5 text-gold-400">Store administration</p>
         </div>
 
-        <div className="border border-white/12 bg-ink-900/70 p-7 backdrop-blur-sm">
+        <div className="border border-border-subtle bg-ink-900/70 p-7 backdrop-blur-sm">
           <LoginForm next={next && next.startsWith("/admin") ? next : "/admin"} />
         </div>
 

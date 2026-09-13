@@ -9,9 +9,9 @@ import { cn } from "@/lib/utils";
  */
 
 const CONTROL =
-  "w-full rounded-none border border-white/15 bg-white/[0.03] px-4 py-3 text-[0.95rem] " +
-  "text-cream-50 placeholder:text-cream-400/60 transition-colors duration-200 " +
-  "hover:border-white/25 focus:border-emerald-400 focus:bg-white/[0.05] focus:outline-none " +
+  "w-full rounded-none border border-border-subtle bg-ink-800 px-4 py-3 text-[0.95rem] " +
+  "text-cream-50 placeholder:text-cream-400 transition-colors duration-200 " +
+  "hover:border-border-strong focus:border-emerald-400 focus:bg-ink-700 focus:outline-none " +
   "disabled:cursor-not-allowed disabled:opacity-50 " +
   "aria-[invalid=true]:border-danger";
 
@@ -213,7 +213,7 @@ export function Checkbox({
       <input
         id={fieldId}
         type="checkbox"
-        className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer appearance-none border border-white/25 bg-white/[0.03] transition-colors checked:border-emerald-400 checked:bg-emerald-500 focus-visible:outline-2 focus-visible:outline-gold-400"
+        className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer appearance-none border border-border-strong bg-ink-800 transition-colors checked:border-emerald-400 checked:bg-emerald-500 focus-visible:outline-2 focus-visible:outline-gold-400"
         style={{
           backgroundImage:
             "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23faf8f2' stroke-width='2.5'%3E%3Cpath d='M3 8.5l3.2 3.2L13 5'/%3E%3C/svg%3E\")",
@@ -242,10 +242,12 @@ export function FormMessage({
   children: ReactNode;
 }) {
   if (!children) return null;
+  // These were written for the dark ground: a pale pink error text and a white
+  // wash that are both invisible on paper. Semantic tokens flip with the theme.
   const tones = {
-    error: "border-danger/40 bg-danger/10 text-[#f0b3b0]",
-    success: "border-emerald-400/40 bg-emerald-500/10 text-leaf-200",
-    info: "border-white/15 bg-white/[0.04] text-cream-200",
+    error: "border-danger/40 bg-danger/10 text-danger",
+    success: "border-emerald-400/40 bg-emerald-500/10 text-emerald-400",
+    info: "border-border-subtle bg-ink-800 text-cream-200",
   };
 
   return (

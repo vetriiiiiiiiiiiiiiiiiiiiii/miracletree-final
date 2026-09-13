@@ -47,7 +47,7 @@ export function InventoryRow({
         value={delta}
         onChange={(event) => setDelta(event.target.value)}
         placeholder="±0"
-        className="w-16 border border-white/15 bg-white/[0.03] px-2 py-1.5 text-right text-sm tabular-nums text-cream-50 focus:border-emerald-400 focus:outline-none"
+        className="w-16 border border-border-subtle bg-white/[0.03] px-2 py-1.5 text-right text-sm tabular-nums text-cream-50 focus:border-emerald-400 focus:outline-none"
       />
 
       <label className="sr-only" htmlFor={`reason-${variantId}`}>
@@ -57,7 +57,7 @@ export function InventoryRow({
         id={`reason-${variantId}`}
         name="reason"
         defaultValue="restock"
-        className="border border-white/15 bg-transparent px-2 py-1.5 text-xs text-cream-200 focus:border-emerald-400 focus:outline-none"
+        className="border border-border-subtle bg-transparent px-2 py-1.5 text-xs text-cream-200 focus:border-emerald-400 focus:outline-none"
       >
         <option value="restock" className="bg-ink-800">
           Restock
@@ -107,7 +107,7 @@ function Apply({ disabled }: { disabled: boolean }) {
     <button
       type="submit"
       disabled={disabled || pending}
-      className="border border-white/20 px-3 py-1.5 text-[0.62rem] uppercase tracking-[0.1em] text-cream-200 transition-colors hover:border-cream-100 disabled:opacity-30"
+      className="border border-border-strong px-3 py-1.5 text-[0.62rem] uppercase tracking-[0.1em] text-cream-200 transition-colors hover:border-cream-100 disabled:opacity-30"
     >
       {pending ? "…" : "Apply"}
     </button>

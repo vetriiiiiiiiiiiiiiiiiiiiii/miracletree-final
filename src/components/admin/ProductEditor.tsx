@@ -125,7 +125,7 @@ export function ProductEditor({
         <div
           role="tablist"
           aria-label="Product sections"
-          className="flex flex-wrap gap-1 border-b border-white/10"
+          className="flex flex-wrap gap-1 border-b border-border-subtle"
         >
           {TABS.map((item) => {
             const disabled = isNew && (item === "Media" || item === "Variants");
@@ -398,7 +398,7 @@ export function ProductEditor({
 
             {/* Search preview */}
             <FieldGroup title="Preview" description="Roughly how this appears in a search result.">
-              <div className="max-w-[38rem] border border-white/12 bg-white/[0.02] p-5">
+              <div className="max-w-[38rem] border border-border-subtle bg-white/[0.02] p-5">
                 <p className="truncate text-xs text-leaf-300">
                   miracletree.in › product › {slug || "…"}
                 </p>
@@ -444,19 +444,19 @@ export function ProductEditor({
                 <div className="flex flex-wrap gap-3 text-sm">
                   <Link
                     href={`/admin/reviews?product=${draft.id}`}
-                    className="border border-white/15 px-4 py-2 text-cream-200 hover:border-white/30"
+                    className="border border-border-subtle px-4 py-2 text-cream-200 hover:border-border-strong"
                   >
                     Reviews ({reviewCount})
                   </Link>
                   <Link
                     href="/admin/content/faqs"
-                    className="border border-white/15 px-4 py-2 text-cream-200 hover:border-white/30"
+                    className="border border-border-subtle px-4 py-2 text-cream-200 hover:border-border-strong"
                   >
                     Product FAQs
                   </Link>
                   <Link
                     href="/admin/inventory"
-                    className="border border-white/15 px-4 py-2 text-cream-200 hover:border-white/30"
+                    className="border border-border-subtle px-4 py-2 text-cream-200 hover:border-border-strong"
                   >
                     Stock levels
                   </Link>
@@ -546,7 +546,7 @@ function SaveButton({ isNew }: { isNew: boolean }) {
     <button
       type="submit"
       disabled={pending}
-      className="w-full bg-emerald-500 px-5 py-3 text-[0.7rem] font-medium uppercase tracking-[0.14em] text-cream-50 transition-colors hover:bg-emerald-400 disabled:opacity-60"
+      className="w-full bg-emerald-500 px-5 py-3 text-[0.7rem] font-medium uppercase tracking-[0.14em] text-on-accent transition-colors hover:bg-emerald-400 disabled:opacity-60"
     >
       {pending ? "Saving…" : isNew ? "Create product" : "Save changes"}
     </button>

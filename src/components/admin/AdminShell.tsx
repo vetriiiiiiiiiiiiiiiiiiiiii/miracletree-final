@@ -23,6 +23,7 @@ type IconName =
   | "content"
   | "journal"
   | "story"
+  | "leadership"
   | "promotions"
   | "media"
   | "settings";
@@ -49,6 +50,7 @@ const NAVIGATION: NavSection[] = [
       { href: "/admin/content", label: "Homepage", icon: "content" },
       { href: "/admin/journal", label: "Journal", icon: "journal" },
       { href: "/admin/story", label: "Our Story", icon: "story" },
+      { href: "/admin/leadership", label: "Leadership", icon: "leadership" },
       { href: "/admin/media", label: "Media", icon: "media" },
       { href: "/admin/settings", label: "Settings", icon: "settings" },
     ],
@@ -139,13 +141,13 @@ export function AdminShell({
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-[160] flex w-64 flex-col border-r border-white/10 bg-ink-900",
+          "fixed inset-y-0 left-0 z-[160] flex w-64 flex-col border-r border-border-subtle bg-ink-900",
           "transition-transform duration-300 ease-[var(--ease-swift)] lg:translate-x-0",
           mobileOpen ? "translate-x-0" : "-translate-x-full",
         )}
         aria-label="Admin navigation"
       >
-        <div className="flex h-16 shrink-0 items-center justify-between border-b border-white/10 px-5">
+        <div className="flex h-16 shrink-0 items-center justify-between border-b border-border-subtle px-5">
           <Link href="/admin" className="flex items-center gap-2">
             <Logo className="h-6 w-auto" />
           </Link>
@@ -164,7 +166,7 @@ export function AdminShell({
         <nav className="flex-1 overflow-y-auto px-3 py-5">
           {NAVIGATION.map((section) => (
             <div key={section.title} className="mb-6">
-              <p className="mb-2 px-3 text-[0.58rem] uppercase tracking-[0.18em] text-cream-400/60">
+              <p className="mb-2 px-3 text-[0.58rem] uppercase tracking-[0.18em] text-cream-400">
                 {section.title}
               </p>
               <ul className="grid gap-0.5">
@@ -202,7 +204,7 @@ export function AdminShell({
           ))}
         </nav>
 
-        <div className="shrink-0 border-t border-white/10 p-4">
+        <div className="shrink-0 border-t border-border-subtle p-4">
           <p className="truncate text-sm text-cream-100">{user.name}</p>
           <p className="mt-0.5 truncate text-xs text-cream-400">{user.email}</p>
           <p className="mt-1.5 text-[0.6rem] uppercase tracking-[0.14em] text-gold-400">
@@ -235,7 +237,7 @@ export function AdminShell({
 
       {/* Main */}
       <div className="lg:pl-64">
-        <header className="sticky top-0 z-[140] flex h-16 items-center gap-4 border-b border-white/10 bg-ink-900/85 px-5 backdrop-blur-xl">
+        <header className="sticky top-0 z-[140] flex h-16 items-center gap-4 border-b border-border-subtle bg-ink-900/85 px-5 backdrop-blur-xl">
           <button
             type="button"
             onClick={() => setMobileOpen(true)}
@@ -252,21 +254,21 @@ export function AdminShell({
           <button
             type="button"
             onClick={() => setPaletteOpen(true)}
-            className="flex flex-1 items-center gap-3 border border-white/12 bg-white/[0.02] px-3.5 py-2 text-left text-sm text-cream-400 transition-colors hover:border-white/25 md:max-w-md"
+            className="flex flex-1 items-center gap-3 border border-border-subtle bg-white/[0.02] px-3.5 py-2 text-left text-sm text-cream-400 transition-colors hover:border-border-strong md:max-w-md"
           >
             <svg width="15" height="15" viewBox="0 0 20 20" fill="none" aria-hidden>
               <circle cx="9" cy="9" r="6" stroke="currentColor" strokeWidth="1.4" />
               <path d="M13.5 13.5L17 17" stroke="currentColor" strokeWidth="1.4" />
             </svg>
             <span className="flex-1">Search or jump to…</span>
-            <kbd className="hidden shrink-0 border border-white/15 px-1.5 py-0.5 text-[0.6rem] text-cream-400 md:block">
+            <kbd className="hidden shrink-0 border border-border-subtle px-1.5 py-0.5 text-[0.6rem] text-cream-400 md:block">
               ⌘K
             </kbd>
           </button>
 
           <Link
             href="/admin/products/new"
-            className="hidden shrink-0 items-center gap-2 bg-emerald-500 px-4 py-2 text-[0.68rem] font-medium uppercase tracking-[0.14em] text-cream-50 transition-colors hover:bg-emerald-400 sm:inline-flex"
+            className="hidden shrink-0 items-center gap-2 bg-emerald-500 px-4 py-2 text-[0.68rem] font-medium uppercase tracking-[0.14em] text-on-accent transition-colors hover:bg-emerald-400 sm:inline-flex"
           >
             New product
           </Link>
@@ -297,6 +299,7 @@ function Icon({ name, active }: { name: IconName; active: boolean }) {
     content: "M3 3h14v5H3zM3 10h6v7H3zM11 10h6v7h-6z",
     journal: "M4 3h12v14H4zM7 7h6M7 10h6M7 13h4",
     story: "M6 3v14M6 4.5h8l-1.6 2.4L14 9.3H6",
+    leadership: "M10 3.5a2.6 2.6 0 1 1 0 5.2 2.6 2.6 0 0 1 0-5.2M4.5 16.5c0-2.9 2.5-4.8 5.5-4.8s5.5 1.9 5.5 4.8",
     promotions: "M3 8l7-5 7 5v9H3V8zM7.5 10.5l5 5M12.5 10.5l-5 5",
     media: "M3 4h14v12H3zM3 12l4-4 3 3 3-3 4 4M7.5 7.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z",
     settings:

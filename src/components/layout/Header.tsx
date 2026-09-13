@@ -8,6 +8,7 @@ import { useCart } from "@/components/cart/CartProvider";
 import { Logo } from "@/components/layout/Logo";
 import { MobileMenu } from "@/components/layout/MobileMenu";
 import { SearchOverlay } from "@/components/search/SearchOverlay";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 export type NavItem = { id: string; label: string; href: string };
 
@@ -20,11 +21,14 @@ export type NavItem = { id: string; label: string; href: string };
  */
 export function Header({
   items,
+  companyItems,
   categories,
   isAuthenticated,
   announcement,
 }: {
   items: NavItem[];
+  /** Rendered behind a single "Company" menu rather than as top-level links. */
+  companyItems: NavItem[];
   categories: { name: string; slug: string; count: number }[];
   isAuthenticated: boolean;
   announcement: string | null;
@@ -90,19 +94,19 @@ export function Header({
         className={cn(
           "sticky top-0 z-[150] transition-all duration-500 ease-[var(--ease-organic)]",
           solid
-            ? "border-b border-white/10 bg-ink-900/80 backdrop-blur-xl"
+            ? "border-b border-border-subtle bg-ink-900/80 backdrop-blur-xl"
             : "border-b border-transparent bg-transparent",
           hidden && !menuOpen && "-translate-y-full",
         )}
       >
         <div className="mx-auto flex h-16 max-w-[100rem] items-center justify-between gutter md:h-20">
-          <div className="flex items-center gap-10">
+          <div className="flex items-center gap-6 xl:gap-10">
             <Link href="/" aria-label="Miracle Tree — home" className="shrink-0">
-              <Logo className="h-7 w-auto text-cream-50 md:h-8" />
+              <Logo className="h-6 w-auto text-cream-50 sm:h-7 md:h-8" />
             </Link>
 
             <nav aria-label="Primary" className="hidden lg:block">
-              <ul className="flex items-center gap-8">
+              <ul className="flex items-center gap-5 xl:gap-8">
                 {items.map((item) => (
                   <li key={item.id}>
                     <HeaderLink
@@ -117,11 +121,17 @@ export function Header({
                     </HeaderLink>
                   </li>
                 ))}
+
+                {companyItems.length ? (
+                  <li>
+                    <CompanyMenu items={companyItems} pathname={pathname} />
+                  </li>
+                ) : null}
               </ul>
             </nav>
           </div>
 
-          <div className="flex items-center gap-1 md:gap-2">
+          <div className="flex items-center gap-1 md:gap-1.5 xl:gap-2">
             <IconButton
               label="Search products, ingredients and articles"
               onClick={() => setSearchOpen(true)}
@@ -147,10 +157,17 @@ export function Header({
               </svg>
             </Link>
 
+            {/* Hidden below md. At 390px the logo plus five controls overflow
+                the header's content box by about 24px, which gave every page a
+                sideways scroll on a phone. The theme control is not lost — the
+                mobile menu carries the full Light/Dark/System switch, labelled,
+                which is a better control than an unlabelled icon anyway. */}
+            <ThemeToggle className="hidden md:inline-flex" />
+
             <button
               type="button"
               onClick={open}
-              className="relative inline-flex h-10 items-center gap-2 px-2 text-cream-200 transition-colors hover:text-cream-50"
+              className="relative inline-flex h-10 items-center gap-1.5 px-1 text-cream-200 transition-colors hover:text-cream-50 sm:gap-2 sm:px-2"
               aria-label={`Open bag, ${cart.itemCount} item${cart.itemCount === 1 ? "" : "s"}`}
             >
               <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden>
@@ -175,7 +192,7 @@ export function Header({
             <button
               type="button"
               onClick={() => setMenuOpen(true)}
-              className="inline-flex h-10 w-10 items-center justify-center text-cream-200 transition-colors hover:text-cream-50 lg:hidden"
+              className="inline-flex h-10 w-9 items-center justify-center text-cream-200 transition-colors hover:text-cream-50 sm:w-10 lg:hidden"
               aria-label="Open menu"
               aria-expanded={menuOpen}
             >
@@ -192,6 +209,7 @@ export function Header({
         open={menuOpen}
         onClose={() => setMenuOpen(false)}
         items={items}
+        companyItems={companyItems}
         categories={categories}
         isAuthenticated={isAuthenticated}
         onSearch={() => {
@@ -202,6 +220,103 @@ export function Header({
 
       <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
     </>
+  );
+}
+
+/**
+ * The "Company" menu.
+ *
+ * Opens on hover for a mouse and on click for everything else, and closes on
+ * Escape or a click outside. Hover alone would make it unreachable by keyboard
+ * and unusable on touch, and click alone feels broken against every other site
+ * with a desktop nav — so it answers to both.
+ */
+function CompanyMenu({ items, pathname }: { items: NavItem[]; pathname: string }) {
+  const [open, setOpen] = useState(false);
+  const wrapper = useRef<HTMLDivElement>(null);
+  const active = items.some((item) => pathname.startsWith(item.href.split("#")[0]!));
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+    const onClick = (event: MouseEvent) => {
+      if (!wrapper.current?.contains(event.target as Node)) setOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    document.addEventListener("mousedown", onClick);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.removeEventListener("mousedown", onClick);
+    };
+  }, [open]);
+
+  // A route change must close it, or it hangs over the page it just opened.
+  useEffect(() => setOpen(false), [pathname]);
+
+  return (
+    <div
+      ref={wrapper}
+      className="relative"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+    >
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        aria-haspopup="true"
+        className={cn(
+          "group relative flex items-center gap-1.5 py-1.5 text-[0.72rem] font-medium uppercase tracking-[0.16em] transition-colors duration-300",
+          active || open ? "text-cream-50" : "text-cream-300 hover:text-cream-50",
+        )}
+      >
+        Company
+        <svg
+          width="9"
+          height="9"
+          viewBox="0 0 10 10"
+          fill="none"
+          aria-hidden
+          className={cn("transition-transform duration-300", open && "rotate-180")}
+        >
+          <path d="M2 4l3 3 3-3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+        </svg>
+        <span
+          className={cn(
+            "absolute -bottom-0.5 left-0 h-px bg-gold-400 transition-all duration-500 ease-[var(--ease-organic)]",
+            active ? "w-full" : "w-0 group-hover:w-full",
+          )}
+          aria-hidden
+        />
+      </button>
+
+      <div
+        className={cn(
+          "absolute left-0 top-full z-50 w-56 pt-4 transition-all duration-200",
+          open ? "visible opacity-100" : "invisible opacity-0",
+        )}
+      >
+        <ul className="border border-border-subtle bg-ink-900 py-2 shadow-[var(--mt-shadow-drawer)]">
+          {items.map((item) => (
+            <li key={item.id}>
+              <Link
+                href={item.href}
+                className={cn(
+                  "block px-5 py-2.5 text-[0.78rem] transition-colors",
+                  pathname === item.href
+                    ? "text-cream-50"
+                    : "text-cream-300 hover:bg-ink-800 hover:text-cream-50",
+                )}
+              >
+                {item.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
   );
 }
 
@@ -219,7 +334,7 @@ function HeaderLink({
       href={href}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "group relative py-1 text-[0.72rem] font-medium uppercase tracking-[0.16em] transition-colors duration-300",
+        "group relative py-1.5 text-[0.72rem] font-medium uppercase tracking-[0.16em] transition-colors duration-300",
         active ? "text-cream-50" : "text-cream-300 hover:text-cream-50",
       )}
     >
@@ -249,7 +364,7 @@ function IconButton({
       type="button"
       onClick={onClick}
       aria-label={label}
-      className="inline-flex h-10 w-10 items-center justify-center text-cream-200 transition-colors hover:text-cream-50"
+      className="inline-flex h-10 w-9 items-center justify-center text-cream-200 transition-colors hover:text-cream-50 sm:w-10"
     >
       {children}
     </button>

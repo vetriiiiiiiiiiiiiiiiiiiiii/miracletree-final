@@ -66,7 +66,7 @@ export function ProductReviews({
               {breakdown.map((row) => (
                 <li key={row.star} className="flex items-center gap-3 text-xs">
                   <span className="w-8 tabular-nums text-cream-400">{row.star}★</span>
-                  <span className="h-1 flex-1 bg-white/10">
+                  <span className="h-1 flex-1 bg-border-subtle">
                     <span
                       className="block h-1 bg-gold-400"
                       style={{ width: count ? `${(row.count / count) * 100}%` : "0%" }}
@@ -113,7 +113,7 @@ export function ProductReviews({
 
         {reviews.length ? (
           <>
-            <ul className="grid gap-0 divide-y divide-white/10 border-t border-white/10">
+            <ul className="grid gap-0 divide-y divide-border-subtle border-t border-border-subtle">
               {reviews.slice(0, visible).map((review) => (
                 <li key={review.id} className="py-8">
                   <div className="flex flex-wrap items-center gap-3">
@@ -129,7 +129,7 @@ export function ProductReviews({
                     <h3 className="mt-4 text-[1.1rem] text-cream-50">{review.title}</h3>
                   ) : null}
 
-                  <p className="mt-3 leading-relaxed text-cream-300/85">{review.body}</p>
+                  <p className="mt-3 leading-relaxed text-cream-300">{review.body}</p>
 
                   <p className="mt-4 text-xs text-cream-400">
                     {review.authorName} · {formatDate(review.createdAt)}
@@ -179,7 +179,7 @@ function ReviewForm({
   }
 
   return (
-    <form action={action} className="mb-12 grid gap-5 border border-white/12 p-6 md:p-8">
+    <form action={action} className="mb-12 grid gap-5 border border-border-subtle p-6 md:p-8">
       <input type="hidden" name="productId" value={productId} />
       <input type="hidden" name="rating" value={rating} />
 

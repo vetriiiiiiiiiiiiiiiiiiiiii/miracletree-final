@@ -14,9 +14,13 @@ const csp = [
   `script-src 'self' 'unsafe-inline' ${process.env.NODE_ENV === "development" ? "'unsafe-eval'" : ""} https://checkout.razorpay.com https://www.googletagmanager.com`,
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com data:",
-  "img-src 'self' data: blob: https://cdn.shopify.com https://www.google-analytics.com",
+  // GA4 pixels come from regional hosts, not only www.google-analytics.com:
+  // a property in India beacons to region1.google-analytics.com, and the tag
+  // itself serves collection endpoints from googletagmanager.com. Naming only
+  // the one host let the tag load and then dropped its hits silently.
+  "img-src 'self' data: blob: https://cdn.shopify.com https://*.google-analytics.com https://*.googletagmanager.com",
   "media-src 'self' https://cdn.shopify.com blob:",
-  "connect-src 'self' https://api.razorpay.com https://lumberjack.razorpay.com https://www.google-analytics.com",
+  "connect-src 'self' https://api.razorpay.com https://lumberjack.razorpay.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com",
   "frame-src https://api.razorpay.com https://checkout.razorpay.com",
   "worker-src 'self' blob:",
   "object-src 'none'",

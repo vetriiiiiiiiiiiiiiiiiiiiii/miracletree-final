@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { ChapterState, Quality } from "@/lib/world/MoringaScene";
 import { prefersReducedMotion } from "@/lib/motion";
+import { useTheme } from "@/components/theme/ThemeProvider";
 
 /**
  * Mounts the Moringa World and binds it to scroll.
@@ -18,15 +19,30 @@ import { prefersReducedMotion } from "@/lib/motion";
  *  - The whole thing is progressive: the DOM copy underneath is real text that
  *    ships in the HTML, so the page reads and ranks without a single shader.
  */
+/**
+ * Where the camera rests in `hero` mode. 0.42 is the canopy — the most legible
+ * composition in the whole journey, and the frame the reduced-motion path
+ * already used.
+ */
+const HERO_REST = 0.42;
+
 export function MoringaWorld({
   onChapter,
   poster,
   className,
+  variant = "journey",
   children,
 }: {
   onChapter?: (state: ChapterState) => void;
   poster?: { url: string; alt: string } | null;
   className?: string;
+  /**
+   * `journey` binds the camera to scroll across a tall track. `hero` holds one
+   * composition in a single viewport and lets it drift — impressive on the
+   * first look, and not something the visitor has to scroll past on the
+   * hundredth.
+   */
+  variant?: "journey" | "hero";
   /**
    * Overlay content, rendered inside the sticky stage rather than beside it.
    * That containment is deliberate: a `position: fixed` overlay would stay
@@ -35,6 +51,7 @@ export function MoringaWorld({
    */
   children?: React.ReactNode;
 }) {
+  const { theme } = useTheme();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const [failed, setFailed] = useState(false);
@@ -61,7 +78,7 @@ export function MoringaWorld({
       .then(({ MoringaScene }) => {
         if (cancelled) return;
 
-        scene = new MoringaScene(canvas, pickQuality());
+        scene = new MoringaScene(canvas, pickQuality(), theme);
         scene.onChapterChange((state) => chapterHandler.current?.(state));
         setReady(true);
 
@@ -73,7 +90,35 @@ export function MoringaWorld({
           return Math.min(1, Math.max(0, -rect.top / total));
         };
 
-        if (reduced) {
+        if (variant === "hero") {
+          scene.snapTo(HERO_REST);
+
+          if (!reduced) {
+            // A slow figure-of-eight around the rest point. Small enough that
+            // nothing ever leaves frame, large enough that the scene reads as
+            // alive rather than as a still image.
+            const began = performance.now();
+            let raf = 0;
+            const drift = () => {
+              const t = (performance.now() - began) / 1000;
+              scene?.setProgress(HERO_REST + Math.sin(t * 0.09) * 0.02);
+              scene?.setPointer(Math.sin(t * 0.06) * 0.35, Math.cos(t * 0.045) * 0.25);
+              raf = requestAnimationFrame(drift);
+            };
+            raf = requestAnimationFrame(drift);
+            cleanups.push(() => cancelAnimationFrame(raf));
+
+            // The pointer still steers it, over the top of the drift.
+            const onPointer = (event: PointerEvent) => {
+              scene?.setPointer(
+                (event.clientX / window.innerWidth) * 2 - 1,
+                -((event.clientY / window.innerHeight) * 2 - 1),
+              );
+            };
+            window.addEventListener("pointermove", onPointer, { passive: true });
+            cleanups.push(() => window.removeEventListener("pointermove", onPointer));
+          }
+        } else if (reduced) {
           // A single composed frame partway through the journey: the canopy,
           // which is the most legible moment in the scene.
           scene.snapTo(0.42);
@@ -133,11 +178,23 @@ export function MoringaWorld({
       cleanups.forEach((fn) => fn());
       scene?.dispose();
     };
-  }, []);
+  }, [theme, variant]);
 
   return (
-    <div ref={trackRef} className={className} style={{ height: "700svh" }}>
-      <div className="sticky top-0 h-[100svh] w-full overflow-hidden bg-[#05070a]">
+    <div
+      ref={trackRef}
+      className={className}
+      // A journey needs a tall track for the camera to travel across. A hero is
+      // exactly one screen and never asks to be scrolled through.
+      style={{ height: variant === "hero" ? "100svh" : "240svh" }}
+    >
+      <div
+        className={
+          variant === "hero"
+            ? "relative h-[100svh] w-full overflow-hidden bg-[var(--mt-world-void)]"
+            : "sticky top-0 h-[100svh] w-full overflow-hidden bg-[var(--mt-world-void)]"
+        }
+      >
         <canvas
           ref={canvasRef}
           aria-hidden

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import {
   getArticles,
+  getCategories,
   getFaqs,
   getFeaturedProducts,
   getFeaturedReviews,
@@ -12,7 +13,6 @@ import {
 import { prisma } from "@/lib/prisma";
 import { buildMetadata } from "@/lib/seo";
 import { SITE } from "@/lib/constants";
-import { WorldChapters, type WorldChapter } from "@/components/world/WorldChapters";
 import { WhyMoringa } from "@/components/home/WhyMoringa";
 import { ProcessSection } from "@/components/home/ProcessSection";
 import { CollectionRail } from "@/components/home/CollectionRail";
@@ -22,8 +22,30 @@ import { BrandStory } from "@/components/home/BrandStory";
 import { JournalRail } from "@/components/home/JournalRail";
 import { FaqSection } from "@/components/home/FaqSection";
 import { FinalCta } from "@/components/home/FinalCta";
+import { HomeHero } from "@/components/home/HomeHero";
+import { InnovationStrip } from "@/components/home/InnovationStrip";
+import { FounderBlock } from "@/components/home/FounderBlock";
+import { TrustSignals } from "@/components/home/TrustSignals";
 
 // The homepage is fully CMS-driven, so it revalidates rather than being static.
+/**
+ * The four packs in the hero, chosen by hand: a flagship and three beside it.
+ *
+ * Most of the catalogue's photography has a white background baked into the
+ * image rather than a transparent one, which reads as a white card stuck onto
+ * the hero's ground. Nine of the twenty-seven are genuine cut-outs and these
+ * are four of them. The first is the MOGO group shot — several products in one
+ * frame, which does more work as the flagship than a single pack would. The
+ * two tea cartons are cut out but photographed as light boxes, so they are
+ * left out: on the dark ground they read as cards rather than as products.
+ */
+const HERO_PRODUCT_SLUGS = [
+  "mogo-moringa-energy-bar-movita-r",
+  "movita-multi-grain-health-mix-flavored",
+  "moringa-leaf-dried-50gms-pack-of-2",
+  "moringa-seed-oil-hair-strengthening-oil",
+];
+
 export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -44,53 +66,8 @@ export async function generateMetadata(): Promise<Metadata> {
  * The seven chapters of the journey. Their indices line up with CHAPTER_STOPS
  * in the scene, so the copy and the camera are describing the same moment.
  */
-const WORLD_CHAPTERS: WorldChapter[] = [
-  {
-    index: "01",
-    eyebrow: "The seed",
-    title: "From the Miracle Tree.",
-    body: "It begins as a winged seed, no larger than a thumbnail, sown at the edge of a field in Madurai before the rains.",
-  },
-  {
-    index: "02",
-    eyebrow: "Germination",
-    title: "Down, before up.",
-    body: "Roots go first, and they go deep — which is how this tree survives a monsoon that never arrives.",
-  },
-  {
-    index: "03",
-    eyebrow: "The rise",
-    title: "Head height in a year.",
-    body: "Soft-wooded and impatient. Moringa reaches harvestable height faster than almost anything else that feeds people.",
-  },
-  {
-    index: "04",
-    eyebrow: "Flower and pod",
-    title: "The drumstick tree.",
-    body: "Cream blossom first, then the pods it is named for — murungakkai, the vegetable in half the sambar in Tamil Nadu. Leaf, flower and pod are all eaten.",
-  },
-  {
-    index: "05",
-    eyebrow: "Inside the leaf",
-    title: "Where the green lives.",
-    body: "Chloroplasts, suspended in cytoplasm. Everything worth keeping is in here — and heat is what destroys it.",
-  },
-  {
-    index: "06",
-    eyebrow: "Below 40°C",
-    title: "Dried slowly, in shade.",
-    body: "Sun-drying is faster and cheaper, and it is why most moringa powder is olive rather than green. This is the corner we don't cut.",
-  },
-  {
-    index: "07",
-    eyebrow: "Your kitchen",
-    title: "One tree, twenty-seven ways.",
-    body: "Leaf, pod, flower, seed and gum — milled, rolled, pressed and packed within a few weeks of the harvest.",
-  },
-];
-
 export default async function HomePage() {
-  const [sections, products, ingredients, reviews, testimonials, articles, faqs] =
+  const [sections, products, ingredients, reviews, testimonials, articles, faqs, categories, heroPacks, founder, accolades] =
     await Promise.all([
       getHomepageSections(),
       getFeaturedProducts(10),
@@ -99,6 +76,27 @@ export default async function HomePage() {
       getTestimonials(6),
       getArticles({ take: 3 }),
       getFaqs(),
+      // The same row /leadership features, so the two pages cannot disagree
+      // about who runs the company or what he said.
+      getCategories(),
+      prisma.product.findMany({
+        where: { slug: { in: HERO_PRODUCT_SLUGS }, status: "published" },
+        select: {
+          name: true,
+          slug: true,
+          images: { select: { url: true }, take: 1 },
+          variants: { select: { price: true }, orderBy: { price: "asc" }, take: 1 },
+        },
+      }),
+      prisma.leader.findFirst({
+        where: { isActive: true, isFounder: true },
+        select: { name: true, role: true, quote: true, imageUrl: true },
+      }),
+      prisma.accolade.findMany({
+        where: { isActive: true },
+        orderBy: { position: "asc" },
+        select: { title: true, issuer: true, year: true },
+      }),
     ]);
 
   // The hero resolves into a real photograph of the featured product rather
@@ -168,16 +166,21 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* 01–07 — The Moringa World: one WebGL scene, travelled by scrolling.
-          Replaces the old hero and tree sections; both of those lived in the
-          same narrative space and now share one camera path. */}
-      <WorldChapters
-        chapters={WORLD_CHAPTERS}
-        ctaLabel={hero.ctaLabel}
-        ctaHref={hero.ctaHref}
-        secondaryLabel={hero.secondaryLabel}
-        secondaryHref={hero.secondaryHref}
-        poster={hero.image}
+      {/* One screen, laid out as a grid of panels: the statement, the flagship,
+          the world-first, the record, three more products, the certifications. */}
+      <HomeHero
+        title={hero.title}
+        subtitle={hero.subtitle}
+        products={HERO_PRODUCT_SLUGS.map((slug) =>
+          heroPacks.find((p) => p.slug === slug),
+        )
+          .filter((p) => p?.images[0]?.url)
+          .map((p) => ({
+            name: p!.name,
+            slug: p!.slug,
+            image: p!.images[0]!.url,
+            price: p!.variants[0]?.price ?? null,
+          }))}
       />
 
       {/* 03 — Why moringa */}
@@ -196,6 +199,11 @@ export default async function HomePage() {
         />
       ) : null}
 
+      {/* Innovation — placed immediately after "farm to pack", because the
+          process section ends on the drying step and that is the moment ULTCD
+          and CLHPD actually land. */}
+      <InnovationStrip />
+
       {/* 05/06 — The collection */}
       {isActive(sections, "collection") ? (
         <CollectionRail
@@ -204,6 +212,17 @@ export default async function HomePage() {
           ctaLabel={sections.get("collection")?.ctaLabel ?? "View all products"}
           ctaHref={sections.get("collection")?.ctaHref ?? "/shop"}
           products={products}
+        />
+      ) : null}
+
+      {/* The founder, after the range: the products raise the question of who
+          is behind them, and this answers it. */}
+      {founder ? (
+        <FounderBlock
+          name={founder.name}
+          role={founder.role}
+          quote={founder.quote}
+          imageUrl={founder.imageUrl}
         />
       ) : null}
 
@@ -222,6 +241,9 @@ export default async function HomePage() {
           }))}
         />
       ) : null}
+
+      {/* 09 — What the company can prove: certificates, recognition, visitors */}
+      <TrustSignals accolades={accolades} />
 
       {/* 08 — Social proof */}
       {isActive(sections, "reviews") ? (

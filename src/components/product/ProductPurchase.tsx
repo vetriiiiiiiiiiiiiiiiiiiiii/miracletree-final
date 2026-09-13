@@ -1,7 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 import { discountPercent, formatPrice } from "@/lib/money";
 import { Button } from "@/components/ui/Button";
@@ -50,6 +52,30 @@ export function ProductPurchase({
   const [index, setIndex] = useState(initialIndex);
   const [quantity, setQuantity] = useState(1);
   const [busy, setBusy] = useState<"add" | "buy" | null>(null);
+
+  // The sticky bar watches the real buy box and takes over once it has
+  // scrolled out of sight, so the two can never disagree about the variant,
+  // the quantity or the price: there is only one of each.
+  const actionsRef = useRef<HTMLDivElement>(null);
+  const [stuck, setStuck] = useState(false);
+  const [portalReady, setPortalReady] = useState(false);
+  useEffect(() => setPortalReady(true), []);
+
+  useEffect(() => {
+    const node = actionsRef.current;
+    if (!node || typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // Only when the buy box has gone *up* off the screen. Firing while it
+        // is still below the fold would show the bar before the shopper has
+        // even reached the product.
+        setStuck(!entry!.isIntersecting && entry!.boundingClientRect.top < 0);
+      },
+      { threshold: 0 },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [portalReady]);
 
   const selected = variants[index];
 
@@ -157,8 +183,8 @@ export function ProductPurchase({
                     "relative border px-4 py-2.5 text-sm transition-colors duration-300",
                     i === index
                       ? "border-gold-400 text-cream-50"
-                      : "border-white/15 text-cream-300 hover:border-white/35",
-                    soldOut && "cursor-not-allowed text-cream-400/40",
+                      : "border-border-subtle text-cream-300 hover:border-border-strong",
+                    soldOut && "cursor-not-allowed text-cream-400",
                   )}
                 >
                   {variant.name}
@@ -195,13 +221,13 @@ export function ProductPurchase({
           {stock.text}
         </span>
         {selected.sku ? (
-          <span className="ml-auto text-xs text-cream-400/70">SKU {selected.sku}</span>
+          <span className="ml-auto text-xs text-cream-400">SKU {selected.sku}</span>
         ) : null}
       </p>
 
       {/* Quantity + actions */}
       {stock.level !== "out" ? (
-        <div className="grid gap-4">
+        <div className="grid gap-4" ref={actionsRef}>
           <div className="flex items-center gap-4">
             <QuantityStepper
               value={quantity}
@@ -248,7 +274,7 @@ export function ProductPurchase({
           />
         </div>
       ) : (
-        <div className="border border-white/12 bg-white/[0.02] p-5">
+        <div className="border border-border-subtle bg-white/[0.02] p-5">
           <p className="text-sm text-cream-200">
             This size is sold out. Pick another size above, or check back — we restock
             after each harvest.
@@ -263,7 +289,7 @@ export function ProductPurchase({
       )}
 
       {/* Trust */}
-      <ul className="grid gap-3 border-t border-white/10 pt-6 text-sm text-cream-400">
+      <ul className="grid gap-3 border-t border-border-subtle pt-6 text-sm text-cream-400">
         <TrustRow icon="ship">
           Free shipping over ₹699 · flat ₹60 below that
         </TrustRow>
@@ -271,6 +297,107 @@ export function ProductPurchase({
         <TrustRow icon="leaf">Shade-dried below 40°C · no colouring, no preservatives</TrustRow>
         <TrustRow icon="lock">Secure payment by card, UPI, net banking or COD</TrustRow>
       </ul>
+
+      {/* Rendered into the body because a fixed element inside a transformed
+          ancestor is positioned against that ancestor, not the viewport, and
+          the product page animates its columns on reveal. */}
+      {portalReady && stock.level !== "out"
+        ? createPortal(
+            <StickyBuyBar
+              show={stuck}
+              productName={productName}
+              variantName={variants.length > 1 ? selected.name : null}
+              image={selected.imageUrl}
+              total={selected.price * quantity}
+              quantity={quantity}
+              busy={busy}
+              onAdd={() => handleAdd("stay")}
+              onBuy={() => handleAdd("checkout")}
+            />,
+            document.body,
+          )
+        : null}
+    </div>
+  );
+}
+
+/**
+ * The buy box, condensed, once the real one has scrolled away.
+ *
+ * It is always mounted while the product is purchasable and slides out of
+ * view rather than unmounting, so the transition runs in both directions and
+ * focus is never pulled out from under someone tabbing through the page.
+ * `inert` keeps it out of the tab order while it is off-screen.
+ */
+function StickyBuyBar({
+  show,
+  productName,
+  variantName,
+  image,
+  total,
+  quantity,
+  busy,
+  onAdd,
+  onBuy,
+}: {
+  show: boolean;
+  productName: string;
+  variantName: string | null;
+  image: string | null;
+  total: number;
+  quantity: number;
+  busy: "add" | "buy" | null;
+  onAdd: () => void;
+  onBuy: () => void;
+}) {
+  return (
+    <div
+      inert={!show}
+      aria-hidden={!show}
+      className={cn(
+        "fixed inset-x-0 bottom-0 z-[200] border-t border-border-subtle bg-glass backdrop-blur-xl",
+        "transition-transform duration-400 ease-[var(--ease-organic)] motion-reduce:transition-none",
+        show ? "translate-y-0" : "translate-y-full",
+      )}
+    >
+      <div className="mx-auto flex max-w-[100rem] items-center gap-4 gutter py-3">
+        {image ? (
+          <div className="relative hidden h-12 w-12 shrink-0 overflow-hidden border border-border-subtle bg-photo-to sm:block">
+            <Image src={image} alt="" fill sizes="48px" className="object-contain p-1" />
+          </div>
+        ) : null}
+
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm text-cream-100">{productName}</p>
+          <p className="truncate text-xs text-cream-400">
+            {variantName ? `${variantName} · ` : ""}
+            {quantity > 1 ? `${quantity} × · ` : ""}
+            <span className="tabular-nums text-cream-200">{formatPrice(total)}</span>
+          </p>
+        </div>
+
+        <div className="flex shrink-0 gap-2">
+          <Button
+            size="sm"
+            variant="ghost"
+            loading={busy === "buy"}
+            disabled={busy !== null}
+            onClick={onBuy}
+            className="hidden sm:inline-flex"
+          >
+            Buy now
+          </Button>
+          <Button
+            size="sm"
+            variant="primary"
+            loading={busy === "add"}
+            disabled={busy !== null}
+            onClick={onAdd}
+          >
+            Add to bag
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }

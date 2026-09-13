@@ -90,7 +90,7 @@ export function RecordManager({
             <button
               type="button"
               onClick={() => setEditing("new")}
-              className="border border-white/20 px-4 py-2 text-[0.66rem] uppercase tracking-[0.12em] text-cream-200 transition-colors hover:border-cream-100"
+              className="border border-border-strong px-4 py-2 text-[0.66rem] uppercase tracking-[0.12em] text-cream-200 transition-colors hover:border-cream-100"
             >
               {addLabel}
             </button>
@@ -101,7 +101,7 @@ export function RecordManager({
         {records.length === 0 ? (
           <p className="px-5 py-12 text-center text-sm text-cream-400">{emptyMessage}</p>
         ) : (
-          <ul className="divide-y divide-white/8">
+          <ul className="divide-y divide-border-subtle">
             {records.map((record) => (
               <li key={record.id} className="px-5 py-4">
                 <div className="flex flex-wrap items-start justify-between gap-4">
@@ -144,7 +144,7 @@ export function RecordManager({
                 </div>
 
                 {editing !== "new" && editing?.id === record.id ? (
-                  <div className="mt-5 border-t border-white/10 pt-5">
+                  <div className="mt-5 border-t border-border-subtle pt-5">
                     <RecordForm
                       fields={fields}
                       record={record}
@@ -311,7 +311,7 @@ function SaveRecord() {
     <button
       type="submit"
       disabled={pending}
-      className="bg-emerald-500 px-6 py-2.5 text-[0.68rem] font-medium uppercase tracking-[0.14em] text-cream-50 transition-colors hover:bg-emerald-400 disabled:opacity-60"
+      className="bg-emerald-500 px-6 py-2.5 text-[0.68rem] font-medium uppercase tracking-[0.14em] text-on-accent transition-colors hover:bg-emerald-400 disabled:opacity-60"
     >
       {pending ? "Saving…" : "Save"}
     </button>

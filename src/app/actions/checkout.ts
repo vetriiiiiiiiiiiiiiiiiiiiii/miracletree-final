@@ -1,6 +1,8 @@
 "use server";
 
 import { cookies } from "next/headers";
+import { rememberGuestOrder } from "@/lib/guest-orders";
+import { sendOrderPlacedEmails } from "@/lib/order-mail";
 import { prisma } from "@/lib/prisma";
 import { getCart } from "@/lib/cart";
 import { getCurrentUser } from "@/lib/auth";
@@ -195,6 +197,11 @@ export async function placeOrderAction(formData: FormData): Promise<CheckoutResu
     return { ok: false, error: "We couldn't place that order. Please try again." };
   }
 
+  // Lets this browser — and only this browser — read the confirmation page for
+  // a guest order. Set for signed-in shoppers too, so a confirmation opened
+  // before the session cookie lands still resolves.
+  await rememberGuestOrder(order.orderNumber);
+
   await recordAudit({
     actorId: user?.id,
     action: "order.placed",
@@ -213,6 +220,9 @@ export async function placeOrderAction(formData: FormData): Promise<CheckoutResu
       },
     });
     await clearCart(cart.id);
+    // The order is committed; the receipt is a courtesy that must not be able
+    // to fail it.
+    await sendOrderPlacedEmails(order.orderNumber);
     return { ok: true, kind: "cod", orderNumber: order.orderNumber };
   }
 
@@ -361,6 +371,12 @@ export async function markOrderPaid(orderId: string, paymentRef: string): Promis
     entityId: order.id,
     meta: { orderNumber: order.orderNumber },
   });
+
+  // Sent here rather than at either call site. Both the webhook and the
+  // client-side verify can reach a paid order, and whichever arrives first
+  // passes the `paymentStatus === "paid"` guard above — so this is the one
+  // place that runs exactly once per order, and the receipt cannot double up.
+  await sendOrderPlacedEmails(order.orderNumber);
 }
 
 /** Marks a gateway failure and returns the reserved units to stock. */

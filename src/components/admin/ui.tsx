@@ -36,7 +36,7 @@ export function PageHeader({
                   <span className="text-cream-200">{crumb.label}</span>
                 )}
                 {index < breadcrumb.length - 1 ? (
-                  <span aria-hidden className="text-white/20">
+                  <span aria-hidden className="text-border-strong">
                     /
                   </span>
                 ) : null}
@@ -79,9 +79,9 @@ export function Card({
   padded?: boolean;
 }) {
   return (
-    <section className={cn("border border-white/10 bg-ink-800/60", className)}>
+    <section className={cn("border border-border-subtle bg-ink-800/60", className)}>
       {title || actions ? (
-        <header className="flex flex-wrap items-start justify-between gap-3 border-b border-white/10 px-5 py-4">
+        <header className="flex flex-wrap items-start justify-between gap-3 border-b border-border-subtle px-5 py-4">
           <div>
             {title ? <h2 className="text-[0.95rem] text-cream-50">{title}</h2> : null}
             {description ? (
@@ -112,7 +112,7 @@ export function StatCard({
   tone?: "default" | "warning" | "danger";
 }) {
   const tones = {
-    default: "border-white/10",
+    default: "border-border-subtle",
     warning: "border-gold-400/35",
     danger: "border-danger/40",
   };
@@ -172,7 +172,7 @@ export function Table({
     <div className={cn("overflow-x-auto", className)}>
       <table className="w-full min-w-[42rem] border-collapse text-sm">
         <thead>
-          <tr className="border-b border-white/10">
+          <tr className="border-b border-border-subtle">
             {head.map((column, index) => {
               const config = typeof column === "string" ? { label: column } : column;
               return (
@@ -193,7 +193,7 @@ export function Table({
             })}
           </tr>
         </thead>
-        <tbody className="divide-y divide-white/8">{children}</tbody>
+        <tbody className="divide-y divide-border-subtle">{children}</tbody>
       </table>
 
       {empty}
@@ -249,11 +249,11 @@ export function Pill({
   className?: string;
 }) {
   const tones = {
-    neutral: "border-white/18 text-cream-300",
+    neutral: "border-border-strong text-cream-300",
     success: "border-emerald-400/45 text-leaf-200",
     warning: "border-gold-400/45 text-gold-300",
     danger: "border-danger/45 text-[#e0a19c]",
-    info: "border-white/25 text-cream-200",
+    info: "border-border-strong text-cream-200",
   };
 
   return (
@@ -292,7 +292,7 @@ export function FieldGroup({
   className?: string;
 }) {
   return (
-    <fieldset className={cn("grid gap-5 border-t border-white/10 pt-7 first:border-t-0 first:pt-0", className)}>
+    <fieldset className={cn("grid gap-5 border-t border-border-subtle pt-7 first:border-t-0 first:pt-0", className)}>
       <legend className="sr-only">{title}</legend>
       <div>
         <h3 className="text-[0.95rem] text-cream-50">{title}</h3>

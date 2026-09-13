@@ -90,14 +90,14 @@ export function RichTextEditor({
 
       {!preview ? (
         <>
-          <div className="flex flex-wrap gap-1 border border-b-0 border-white/15 bg-white/[0.02] p-1.5">
+          <div className="flex flex-wrap gap-1 border border-b-0 border-border-subtle bg-white/[0.02] p-1.5">
             {COMMANDS.map((command) => (
               <button
                 key={command.label}
                 type="button"
                 title={command.title}
                 onClick={() => apply(command)}
-                className="border border-transparent px-2.5 py-1.5 text-xs text-cream-300 transition-colors hover:border-white/15 hover:text-cream-50"
+                className="border border-transparent px-2.5 py-1.5 text-xs text-cream-300 transition-colors hover:border-border-subtle hover:text-cream-50"
               >
                 {command.label}
               </button>
@@ -112,7 +112,7 @@ export function RichTextEditor({
             rows={rows}
             spellCheck
             className={cn(
-              "w-full border border-white/15 bg-white/[0.03] px-4 py-3 font-mono text-[0.82rem] leading-relaxed",
+              "w-full border border-border-subtle bg-white/[0.03] px-4 py-3 font-mono text-[0.82rem] leading-relaxed",
               "text-cream-100 focus:border-emerald-400 focus:outline-none",
             )}
           />
@@ -123,7 +123,7 @@ export function RichTextEditor({
           </p>
         </>
       ) : (
-        <div className="min-h-[16rem] border border-white/15 bg-white/[0.02] p-6">
+        <div className="min-h-[16rem] border border-border-subtle bg-white/[0.02] p-6">
           {value.trim() ? (
             <div
               className="prose-botanical"

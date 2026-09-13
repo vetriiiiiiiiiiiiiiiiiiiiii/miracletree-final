@@ -29,7 +29,7 @@ export function Accordion({
   };
 
   return (
-    <div className={cn("divide-y divide-white/10 border-y border-white/10", className)}>
+    <div className={cn("divide-y divide-border-subtle border-y border-border-subtle", className)}>
       {items.map((item) => (
         <AccordionRow
           key={item.id}

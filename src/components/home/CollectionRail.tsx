@@ -127,7 +127,7 @@ export function CollectionRail({
             {/* Rail end-cap: the last card is a route into the full catalogue
                 rather than a dead stop. */}
             <div className="flex w-[68vw] shrink-0 items-center sm:w-[42vw] lg:w-[24rem]">
-              <div className="w-full border border-white/12 p-10 text-center">
+              <div className="w-full border border-border-subtle p-10 text-center">
                 <p className="text-title text-cream-50">Twenty-seven in all</p>
                 <p className="mt-4 text-sm leading-relaxed text-cream-400">
                   Powders, teas, tablets, mixes, bars and oil — every one of them from

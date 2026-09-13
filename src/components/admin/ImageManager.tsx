@@ -134,7 +134,7 @@ export function ImageManager({
               onDragEnd={() => setDragging(null)}
               className={cn(
                 "group relative aspect-square cursor-grab overflow-hidden border bg-ink-700 active:cursor-grabbing",
-                dragging === image.id ? "border-gold-400 opacity-50" : "border-white/12",
+                dragging === image.id ? "border-gold-400 opacity-50" : "border-border-subtle",
               )}
             >
               <Image
@@ -165,7 +165,7 @@ export function ImageManager({
           ))}
         </ul>
       ) : (
-        <p className="border border-dashed border-white/15 px-5 py-10 text-center text-sm text-cream-400">
+        <p className="border border-dashed border-border-subtle px-5 py-10 text-center text-sm text-cream-400">
           No images yet. The first one you add becomes the main image.
         </p>
       )}
@@ -183,7 +183,7 @@ export function ImageManager({
         <label
           htmlFor={`upload-${productId}`}
           className={cn(
-            "cursor-pointer border border-white/20 px-5 py-2.5 text-[0.68rem] uppercase tracking-[0.14em] text-cream-200 transition-colors hover:border-cream-100",
+            "cursor-pointer border border-border-strong px-5 py-2.5 text-[0.68rem] uppercase tracking-[0.14em] text-cream-200 transition-colors hover:border-cream-100",
             uploading && "pointer-events-none opacity-60",
           )}
         >

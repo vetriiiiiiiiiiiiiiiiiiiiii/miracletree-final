@@ -104,13 +104,13 @@ export function CustomerControls({
             type="button"
             onClick={() => void saveNote()}
             disabled={busy || !note.trim()}
-            className="justify-self-start border border-white/20 px-5 py-2.5 text-[0.68rem] uppercase tracking-[0.14em] text-cream-200 transition-colors hover:border-cream-100 disabled:opacity-40"
+            className="justify-self-start border border-border-strong px-5 py-2.5 text-[0.68rem] uppercase tracking-[0.14em] text-cream-200 transition-colors hover:border-cream-100 disabled:opacity-40"
           >
             {busy ? "Saving…" : "Add note"}
           </button>
 
           {notes.length ? (
-            <ul className="mt-2 grid gap-4 border-t border-white/10 pt-5">
+            <ul className="mt-2 grid gap-4 border-t border-border-subtle pt-5">
               {notes.map((entry) => (
                 <li key={entry.id}>
                   <p className="whitespace-pre-line text-sm leading-relaxed text-cream-300">

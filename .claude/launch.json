@@ -3,13 +3,10 @@
   "configurations": [
     {
       "name": "miracle-tree",
-      "runtimeExecutable": "npm",
+      "runtimeExecutable": "/bin/sh",
       "runtimeArgs": [
-        "run",
-        "dev",
-        "--",
-        "--port",
-        "3001"
+        "-c",
+        "export PATH=\"$HOME/.local/node/bin:$PATH\"; exec npm run dev -- --port 3001"
       ],
       "port": 3001,
       "autoPort": false

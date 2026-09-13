@@ -62,7 +62,7 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: number)
   const tones = {
     success: "border-emerald-400/40 bg-forest-800/95 text-leaf-200",
     error: "border-danger/50 bg-[#2a1212]/95 text-[#f0b8b5]",
-    info: "border-white/15 bg-ink-800/95 text-cream-200",
+    info: "border-border-subtle bg-ink-800/95 text-cream-200",
   };
 
   return (

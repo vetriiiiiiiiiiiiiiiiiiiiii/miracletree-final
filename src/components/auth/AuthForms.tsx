@@ -59,7 +59,7 @@ export function LoginForm({ next, justReset }: { next?: string; justReset?: bool
         />
         <Link
           href="/forgot-password"
-          className="justify-self-end text-xs text-cream-400 underline underline-offset-4 hover:text-cream-100"
+          className="justify-self-end py-1.5 text-xs text-cream-400 underline underline-offset-4 hover:text-cream-100"
         >
           Forgotten your password?
         </Link>
@@ -143,7 +143,7 @@ export function RegisterForm({ next }: { next?: string }) {
         </Link>
       </p>
 
-      <p className="text-center text-xs leading-relaxed text-cream-400/80">
+      <p className="text-center text-xs leading-relaxed text-cream-400">
         By creating an account you agree to our{" "}
         <Link href="/terms" className="underline underline-offset-2">
           terms

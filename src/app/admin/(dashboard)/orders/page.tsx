@@ -230,11 +230,11 @@ function FilterLink({
         "border px-3.5 py-2 text-[0.64rem] uppercase tracking-[0.12em] transition-colors",
         active
           ? "border-gold-400 text-cream-50"
-          : "border-white/12 text-cream-400 hover:border-white/28 hover:text-cream-100",
+          : "border-border-subtle text-cream-400 hover:border-border-strong hover:text-cream-100",
       )}
     >
       {children}
-      {count ? <span className="ml-1.5 tabular-nums text-cream-400/70">{count}</span> : null}
+      {count ? <span className="ml-1.5 tabular-nums text-cream-400">{count}</span> : null}
     </Link>
   );
 }
@@ -257,7 +257,7 @@ function PageLink({
   return (
     <Link
       href={`/admin/orders${search.toString() ? `?${search}` : ""}`}
-      className="border border-white/15 px-4 py-2 text-xs text-cream-300 hover:border-white/30 hover:text-cream-50"
+      className="border border-border-subtle px-4 py-2 text-xs text-cream-300 hover:border-border-strong hover:text-cream-50"
     >
       {children}
     </Link>

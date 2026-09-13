@@ -49,7 +49,7 @@ export function ProductFilters({
 
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <div className="flex items-center gap-2 border border-white/12 bg-white/[0.02] px-3.5 py-2">
+      <div className="flex items-center gap-2 border border-border-subtle bg-white/[0.02] px-3.5 py-2">
         <svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden className="text-cream-400">
           <circle cx="9" cy="9" r="6" stroke="currentColor" strokeWidth="1.4" />
           <path d="M13.5 13.5L17 17" stroke="currentColor" strokeWidth="1.4" />
@@ -59,7 +59,7 @@ export function ProductFilters({
           onChange={(event) => setTerm(event.target.value)}
           placeholder="Search name, slug or SKU"
           aria-label="Search products"
-          className="w-52 bg-transparent text-sm text-cream-50 placeholder:text-cream-400/60 focus:outline-none"
+          className="w-52 bg-transparent text-sm text-cream-50 placeholder:text-cream-400 focus:outline-none"
         />
         {term ? (
           <button
@@ -86,12 +86,12 @@ export function ProductFilters({
               "border px-3.5 py-2 text-[0.66rem] uppercase tracking-[0.12em] transition-colors",
               status === option.value
                 ? "border-gold-400 text-cream-50"
-                : "border-white/12 text-cream-400 hover:border-white/28 hover:text-cream-100",
+                : "border-border-subtle text-cream-400 hover:border-border-strong hover:text-cream-100",
             )}
           >
             {option.label}
             {counts[option.value] !== undefined ? (
-              <span className="ml-1.5 tabular-nums text-cream-400/70">
+              <span className="ml-1.5 tabular-nums text-cream-400">
                 {counts[option.value]}
               </span>
             ) : null}
@@ -104,7 +104,7 @@ export function ProductFilters({
         <select
           value={category}
           onChange={(event) => setParam("category", event.target.value || null)}
-          className="border border-white/12 bg-transparent py-2 pl-3 pr-8 text-[0.66rem] uppercase tracking-[0.12em] text-cream-100 focus:border-emerald-400 focus:outline-none"
+          className="border border-border-subtle bg-transparent py-2 pl-3 pr-8 text-[0.66rem] uppercase tracking-[0.12em] text-cream-100 focus:border-emerald-400 focus:outline-none"
         >
           <option value="" className="bg-ink-800">
             All categories

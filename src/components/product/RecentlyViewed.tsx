@@ -61,8 +61,8 @@ export function RecentlyViewedRail({ excludeId }: { excludeId?: string }) {
   if (items.length < 2) return null;
 
   return (
-    <section aria-labelledby="recently-viewed" className="border-t border-white/10 pt-10">
-      <h2 id="recently-viewed" className="eyebrow mb-6 text-gold-400/80">
+    <section aria-labelledby="recently-viewed" className="border-t border-border-subtle pt-10">
+      <h2 id="recently-viewed" className="eyebrow mb-6 text-gold-400">
         Recently viewed
       </h2>
 

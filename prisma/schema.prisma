@@ -230,7 +230,10 @@ model ProductVariant {
   id             String   @id @default(cuid())
   productId      String
   name           String
-  sku            String?
+  // Unique because a stock-keeping unit that names two products keeps no
+  // stock. Nullable, so variants without a code are simply absent from the
+  // index rather than colliding on the empty string.
+  sku            String?  @unique
   price          Int
   compareAtPrice Int?
   weightGrams    Int?
@@ -729,4 +732,70 @@ model Credit {
   updatedAt DateTime @updatedAt
 
   @@index([group])
+}
+
+// ------------------------------------------------------------- leadership
+
+/**
+ * A named leader with a full profile of their own.
+ *
+ * Distinct from `Credit`, which is a one-line acknowledgement in a list. A
+ * Leader carries a portrait, a long biography and its own dated highlights,
+ * because the founders' record — patents, advisory work, state awards — is a
+ * substantial part of why a buyer trusts a food brand, and a single line of
+ * credit cannot hold it.
+ *
+ * `isFounder` promotes one row to the featured profile at the top of
+ * /leadership; the rest render as the team below.
+ */
+model Leader {
+  id         String  @id @default(cuid())
+  name       String
+  role       String
+  /// A short qualifier under the name — "Engineer-agriculturist", "MS, Ophthalmology".
+  credential String?
+  /// One or two sentences, used on cards and in the grid.
+  bio        String?
+  /// The full profile. Blank lines separate paragraphs.
+  longBio    String?
+  /// Something they said, shown as a pull quote on the profile.
+  quote      String?
+  imageUrl   String?
+  /// Where their record is published, shown as a citation.
+  source     String?
+  sourceUrl  String?
+  isFounder  Boolean @default(false)
+  position   Int     @default(0)
+  isActive   Boolean @default(true)
+
+  highlights LeaderHighlight[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isFounder])
+  @@index([isActive])
+}
+
+/**
+ * One dated entry on a leader's record: an award, a patent, a posting.
+ * A relation rather than a scalar list, so the model stays portable to
+ * Postgres unchanged.
+ */
+model LeaderHighlight {
+  id       String  @id @default(cuid())
+  leaderId String
+  leader   Leader  @relation(fields: [leaderId], references: [id], onDelete: Cascade)
+  /// "2022–23", or blank for an undated standing fact.
+  year     String?
+  title    String
+  body     String?
+  /// award | patent | role | recognition — drives the icon shown beside it.
+  kind     String  @default("recognition")
+  position Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([leaderId])
 }

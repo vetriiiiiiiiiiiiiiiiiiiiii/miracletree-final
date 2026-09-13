@@ -38,7 +38,7 @@ export function Pagination({
   return (
     <nav
       aria-label="Pagination"
-      className="mt-16 flex flex-col items-center gap-5 border-t border-white/10 pt-8"
+      className="mt-16 flex flex-col items-center gap-5 border-t border-border-subtle pt-8"
     >
       <p className="text-xs tabular-nums text-cream-400">
         Showing {from}–{to} of {total}
@@ -55,7 +55,7 @@ export function Pagination({
 
         {pageRange(page, pages).map((entry, index) =>
           entry === "…" ? (
-            <li key={`gap-${index}`} className="px-2 text-cream-400/50" aria-hidden>
+            <li key={`gap-${index}`} className="px-2 text-cream-400" aria-hidden>
               …
             </li>
           ) : (
@@ -96,7 +96,7 @@ function PageLink({
     "grid h-9 min-w-9 place-items-center px-2 text-sm transition-colors",
     active
       ? "border border-gold-400 text-cream-50"
-      : "border border-transparent text-cream-400 hover:border-white/20 hover:text-cream-100",
+      : "border border-transparent text-cream-400 hover:border-border-strong hover:text-cream-100",
     disabled && "pointer-events-none opacity-30",
   );
 

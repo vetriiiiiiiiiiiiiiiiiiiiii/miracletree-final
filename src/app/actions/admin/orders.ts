@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin, AuthError } from "@/lib/auth";
 import { recordAudit } from "@/lib/audit";
+import { sendOrderStatusEmail, statusDeservesEmail } from "@/lib/order-mail";
 import { commitStock, releaseStock, adjustStock } from "@/lib/inventory";
 import {
   adminInventorySchema,
@@ -119,6 +120,13 @@ export async function updateOrderStatusAction(
     revalidatePath("/admin/orders");
     revalidatePath(`/admin/orders/${order.id}`);
     revalidatePath("/account/orders");
+
+    // Only the statuses a shopper would want to hear about. Marking an order
+    // "processing" or "packed" is an internal step, and emailing every one of
+    // them trains people to ignore the address the shipping notice comes from.
+    if (statusDeservesEmail(status)) {
+      await sendOrderStatusEmail(order.orderNumber, status, message || null);
+    }
 
     return { status: "success", message: `Order marked ${status.replace(/_/g, " ")}.` };
   } catch (error) {

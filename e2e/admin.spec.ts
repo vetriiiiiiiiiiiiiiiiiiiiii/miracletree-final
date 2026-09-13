@@ -90,14 +90,19 @@ test.describe("admin", () => {
     await page.goto("/admin/inventory");
     await expect(page.getByRole("heading", { name: "Inventory", level: 1 })).toBeVisible();
 
-    // Pin to a SKU. Product name alone matches every size of that product, and
-    // the table re-sorts by stock as soon as a quantity changes, so anything
-    // positional reads a different variant after the update.
-    const firstRow = page.locator("tbody tr").first();
-    const sku = ((await firstRow.locator("td").nth(2).textContent()) ?? "").trim();
-    expect(sku).not.toBe("");
+    // Pin to the variant id, which is what the adjustment field is keyed by.
+    // The product name matches every size of that product; the SKU is a
+    // substring match and was for a long time not even unique; and the table
+    // re-sorts by stock the moment a quantity changes, so anything positional
+    // reads a different variant after the update. Only the id identifies one
+    // row before and after.
+    const firstField = page.locator('input[id^="delta-"]').first();
+    await expect(firstField).toBeVisible();
+    const variantId = ((await firstField.getAttribute("id")) ?? "").replace("delta-", "");
+    expect(variantId).not.toBe("");
 
-    const rowFor = () => page.locator("tbody tr").filter({ hasText: sku }).first();
+    const rowFor = () =>
+      page.locator("tbody tr").filter({ has: page.locator(`#delta-${variantId}`) });
     const before = Number((await rowFor().locator("td").nth(3).textContent())?.trim() ?? "0");
 
     await rowFor().getByLabel(/Stock adjustment/i).fill("5");

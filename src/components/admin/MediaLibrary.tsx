@@ -99,7 +99,7 @@ export function MediaLibrary({ items }: { items: MediaItem[] }) {
             <label
               htmlFor="media-upload"
               className={cn(
-                "cursor-pointer border border-white/20 px-4 py-2 text-[0.66rem] uppercase tracking-[0.12em] text-cream-200 transition-colors hover:border-cream-100",
+                "cursor-pointer border border-border-strong px-4 py-2 text-[0.66rem] uppercase tracking-[0.12em] text-cream-200 transition-colors hover:border-cream-100",
                 uploading && "pointer-events-none opacity-60",
               )}
             >
@@ -115,7 +115,7 @@ export function MediaLibrary({ items }: { items: MediaItem[] }) {
         ) : (
           <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             {items.map((item) => (
-              <li key={item.id} className="group border border-white/10">
+              <li key={item.id} className="group border border-border-subtle">
                 <div className="relative aspect-square bg-ink-700">
                   <Image
                     src={item.url}
@@ -126,15 +126,15 @@ export function MediaLibrary({ items }: { items: MediaItem[] }) {
                   />
                 </div>
 
-                <div className="border-t border-white/10 p-3">
+                <div className="border-t border-border-subtle p-3">
                   <p className="truncate text-[0.7rem] text-cream-400" title={item.url}>
                     {item.url.split("/").pop()}
                   </p>
-                  <p className="mt-1 text-[0.62rem] tabular-nums text-cream-400/70">
+                  <p className="mt-1 text-[0.62rem] tabular-nums text-cream-400">
                     {item.width}×{item.height}
                     {item.sizeBytes ? ` · ${Math.round(item.sizeBytes / 1024)}KB` : ""}
                   </p>
-                  <p className="mt-0.5 text-[0.62rem] text-cream-400/70">
+                  <p className="mt-0.5 text-[0.62rem] text-cream-400">
                     {formatDate(item.createdAt)}
                   </p>
 

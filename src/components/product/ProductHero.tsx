@@ -77,7 +77,7 @@ export function ProductHero({
                   "border px-4 py-2 text-[0.62rem] uppercase tracking-[0.16em] transition-colors",
                   view === option
                     ? "border-emerald-400/50 bg-emerald-500/10 text-cream-50"
-                    : "border-white/12 text-cream-400 hover:border-white/25 hover:text-cream-200",
+                    : "border-border-subtle text-cream-400 hover:border-border-strong hover:text-cream-200",
                 )}
               >
                 {option === "photos" ? "Photos" : "Turn the pack"}
@@ -104,7 +104,7 @@ export function ProductHero({
         {categoryName && categorySlug ? (
           <Link
             href={`/shop/${categorySlug}`}
-            className="eyebrow text-gold-400/90 transition-colors hover:text-gold-300"
+            className="eyebrow inline-block py-1.5 text-gold-400 transition-colors hover:text-gold-300"
           >
             {categoryName}
           </Link>
@@ -113,7 +113,7 @@ export function ProductHero({
         <h1 className="mt-4 text-display text-cream-50">{productName}</h1>
 
         {shortDescription ? (
-          <p className="mt-5 max-w-[48ch] text-[1.05rem] leading-relaxed text-cream-300/85">
+          <p className="mt-5 max-w-[48ch] text-[1.05rem] leading-relaxed text-cream-300">
             {shortDescription}
           </p>
         ) : null}
@@ -126,7 +126,7 @@ export function ProductHero({
           ) : (
             <a
               href="#reviews"
-              className="text-xs text-cream-400 underline underline-offset-4 hover:text-cream-200"
+              className="inline-block py-1.5 text-xs text-cream-400 underline underline-offset-4 hover:text-cream-200"
             >
               No reviews yet — be the first
             </a>

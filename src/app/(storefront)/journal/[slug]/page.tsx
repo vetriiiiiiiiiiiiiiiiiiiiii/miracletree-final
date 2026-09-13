@@ -81,28 +81,28 @@ export default async function ArticlePage({ params }: { params: Params }) {
               {article.category ? (
                 <Link
                   href={`/journal?category=${article.category.slug}`}
-                  className="text-gold-400/90 hover:text-gold-300"
+                  className="text-gold-400 hover:text-gold-300"
                 >
                   {article.category.name}
                 </Link>
               ) : null}
-              <span aria-hidden className="text-white/15">/</span>
+              <span aria-hidden className="text-border-subtle">/</span>
               <span>{article.readingMinutes} min read</span>
             </p>
 
             <h1 className="mt-6 text-display text-cream-50">{article.title}</h1>
 
             {article.excerpt ? (
-              <p className="mt-6 text-[1.15rem] leading-relaxed text-cream-300/85">
+              <p className="mt-6 text-[1.15rem] leading-relaxed text-cream-300">
                 {article.excerpt}
               </p>
             ) : null}
 
-            <div className="mt-8 flex items-center gap-3 border-t border-white/10 pt-6 text-sm text-cream-400">
+            <div className="mt-8 flex items-center gap-3 border-t border-border-subtle pt-6 text-sm text-cream-400">
               <span>{article.authorName}</span>
               {article.publishedAt ? (
                 <>
-                  <span aria-hidden className="text-white/15">/</span>
+                  <span aria-hidden className="text-border-subtle">/</span>
                   <time dateTime={article.publishedAt.toISOString()}>
                     {formatDate(article.publishedAt)}
                   </time>
@@ -134,7 +134,7 @@ export default async function ArticlePage({ params }: { params: Params }) {
               {article.tags.split(",").map((tag) => (
                 <li
                   key={tag}
-                  className="border border-white/12 px-3 py-1.5 text-xs text-cream-400"
+                  className="border border-border-subtle px-3 py-1.5 text-xs text-cream-400"
                 >
                   {tag.trim()}
                 </li>
@@ -143,7 +143,7 @@ export default async function ArticlePage({ params }: { params: Params }) {
           ) : null}
 
           {/* Newsletter */}
-          <div className="mx-auto mt-20 max-w-[68ch] border-y border-white/10 py-10">
+          <div className="mx-auto mt-20 max-w-[68ch] border-y border-border-subtle py-10">
             <h2 className="text-title text-cream-50">Get the next one</h2>
             <p className="mt-3 max-w-[46ch] text-sm leading-relaxed text-cream-400">
               Roughly monthly. Harvest notes, growing notes and the occasional recipe.
@@ -199,7 +199,7 @@ export default async function ArticlePage({ params }: { params: Params }) {
                         />
                       )}
                     </div>
-                    <h3 className="mt-4 text-[1.1rem] leading-snug text-cream-50 transition-colors group-hover:text-gold-200">
+                    <h3 className="mt-4 text-[1.1rem] leading-snug text-cream-50 transition-colors group-hover:text-gold-300">
                       {item.title}
                     </h3>
                   </Link>

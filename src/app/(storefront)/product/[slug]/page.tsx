@@ -166,7 +166,7 @@ export default async function ProductPage({ params }: { params: Params }) {
                 <article
                   key={benefit.id}
                   data-animate="fade-up"
-                  className="border-t border-white/12 pt-6"
+                  className="border-t border-border-subtle pt-6"
                 >
                   <span className="text-[0.66rem] tabular-nums tracking-[0.16em] text-gold-400">
                     0{index + 1}
@@ -200,7 +200,7 @@ export default async function ProductPage({ params }: { params: Params }) {
                 <article
                   key={entry.ingredientId}
                   data-animate="fade-up"
-                  className="flex h-full flex-col border border-white/12 bg-ink/40 p-6"
+                  className="flex h-full flex-col border border-border-subtle bg-ink/40 p-6"
                 >
                   <h3
                     className="text-[1.15rem] text-cream-50"
@@ -212,7 +212,7 @@ export default async function ProductPage({ params }: { params: Params }) {
                     <p className="mt-1 text-xs text-gold-300">{entry.amount}</p>
                   ) : null}
                   {entry.ingredient.origin ? (
-                    <p className="eyebrow mt-3 text-cream-400/70">
+                    <p className="eyebrow mt-3 text-cream-400">
                       {entry.ingredient.origin}
                     </p>
                   ) : null}
@@ -223,7 +223,7 @@ export default async function ProductPage({ params }: { params: Params }) {
                   ) : null}
                   <Link
                     href={`/shop?ingredient=${entry.ingredient.slug}`}
-                    className="mt-5 text-[0.66rem] uppercase tracking-[0.14em] text-cream-300 underline underline-offset-4 hover:text-gold-300"
+                    className="mt-5 inline-block py-1.5 text-[0.66rem] uppercase tracking-[0.14em] text-cream-300 underline underline-offset-4 hover:text-gold-300"
                   >
                     Shop this part
                   </Link>
@@ -249,7 +249,7 @@ export default async function ProductPage({ params }: { params: Params }) {
                 {product.usageSteps.map((step) => (
                   <li
                     key={step.id}
-                    className="grid grid-cols-[3rem_1fr] gap-5 border-t border-white/10 py-8 first:border-t-0 first:pt-0"
+                    className="grid grid-cols-[3rem_1fr] gap-5 border-t border-border-subtle py-8 first:border-t-0 first:pt-0"
                   >
                     <span className="text-[0.66rem] tabular-nums tracking-[0.16em] text-gold-400">
                       0{step.step}
@@ -276,7 +276,7 @@ export default async function ProductPage({ params }: { params: Params }) {
           <div className="grid gap-12 lg:grid-cols-[0.75fr_1.25fr] lg:gap-20">
             <SectionHeading eyebrow="Farm to pack" title="Where this came from" />
             <div className="max-w-[58ch]">
-              <p className="leading-relaxed text-cream-300/85">
+              <p className="leading-relaxed text-cream-300">
                 Grown on smallholdings around Madurai in Tamil Nadu, picked by hand at
                 first light, and into shade within the hour. Drying happens below 40°C,
                 which is slower and more expensive than sun-drying and is the reason the
@@ -288,7 +288,7 @@ export default async function ProductPage({ params }: { params: Params }) {
               </p>
               <Link
                 href="/moringa"
-                className="mt-8 inline-block text-[0.72rem] uppercase tracking-[0.16em] text-gold-300 underline underline-offset-4"
+                className="mt-8 inline-block py-1.5 text-[0.72rem] uppercase tracking-[0.16em] text-gold-300 underline underline-offset-4"
               >
                 The whole process
               </Link>
@@ -354,9 +354,9 @@ export default async function ProductPage({ params }: { params: Params }) {
       ) : null}
 
       {/* Compliance note — stated once, plainly, on every product page. */}
-      <div className="border-t border-white/10 bg-ink py-10">
+      <div className="border-t border-border-subtle bg-ink py-10">
         <Container>
-          <p className="max-w-[76ch] text-xs leading-relaxed text-cream-400/80">
+          <p className="max-w-[76ch] text-xs leading-relaxed text-cream-400">
             {truncate(
               "These are food products, not medicines. They are not intended to diagnose, treat, cure or prevent any disease. If you are pregnant, nursing, taking prescribed medication or managing a health condition, talk to a qualified medical practitioner before adding any supplement to your diet.",
               400,

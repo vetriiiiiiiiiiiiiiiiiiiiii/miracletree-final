@@ -319,6 +319,7 @@ export const getNavigation = cache(async () => {
   });
   return {
     header: rows.filter((r) => r.group === "header"),
+    headerCompany: rows.filter((r) => r.group === "header-company"),
     footerShop: rows.filter((r) => r.group === "footer-shop"),
     footerCompany: rows.filter((r) => r.group === "footer-company"),
     footerSupport: rows.filter((r) => r.group === "footer-support"),

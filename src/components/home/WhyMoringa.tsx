@@ -12,19 +12,19 @@ const FACTS = [
     figure: "< 12",
     unit: "months",
     title: "Seed to first harvest",
-    body: "Moringa reaches harvestable height inside a year, which is why it is planted at the edges of fields rather than in them.",
+    body: "Moringa is tall enough to harvest within a year of sowing, so growers plant it along field edges and bunds.",
   },
   {
     figure: "5",
     unit: "usable parts",
     title: "Leaf, pod, flower, seed, gum",
-    body: "Almost nothing is discarded. Each part is processed differently and ends up in a different product on this site.",
+    body: "Each part is processed differently and ends up in a different product. Very little of the tree is thrown away.",
   },
   {
     figure: "< 40",
     unit: "°C",
     title: "Shade-dried, never sun-dried",
-    body: "Drying temperature is what decides whether leaf powder stays green or turns khaki. Slower and costlier, and the reason for the colour.",
+    body: "Drying temperature decides whether leaf powder stays green or turns khaki. Shade-drying costs us more and takes longer.",
   },
   {
     figure: "20+",
@@ -53,7 +53,7 @@ export function WhyMoringa({
 
         <Reveal className="mt-16 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4" stagger={0.1}>
           {FACTS.map((fact) => (
-            <article key={fact.title} data-animate="fade-up" className="border-t border-white/12 pt-6">
+            <article key={fact.title} data-animate="fade-up" className="border-t border-border-subtle pt-6">
               <p className="flex items-baseline gap-2">
                 <span
                   className="text-[2.75rem] leading-none text-cream-50"

@@ -1,8 +1,6 @@
 import Link from "next/link";
 import { Container, Section, SectionHeading } from "@/components/layout/Section";
-import { Reveal } from "@/components/motion/Reveal";
-import { Rating } from "@/components/ui/Rating";
-import { formatDate } from "@/lib/utils";
+import { TestimonialCarousel } from "@/components/home/TestimonialCarousel";
 
 export type ProofItem = {
   id: string;
@@ -41,7 +39,7 @@ export function SocialProof({
 
         {items.length === 0 ? (
           <div className="mt-14 max-w-[52ch] border-l border-gold-500/40 pl-6">
-            <p className="leading-relaxed text-cream-300/80">
+            <p className="leading-relaxed text-cream-300">
               We are rebuilding this section around verified reviews only. If you have
               bought from us before, your review will appear here once it is approved.
             </p>
@@ -53,52 +51,7 @@ export function SocialProof({
             </Link>
           </div>
         ) : (
-          <Reveal
-            className="mt-16 grid gap-x-8 gap-y-10 md:grid-cols-2 lg:grid-cols-3"
-            stagger={0.09}
-          >
-            {items.map((item) => (
-              <figure
-                key={item.id}
-                data-animate="fade-up"
-                className="flex h-full flex-col border-t border-white/12 pt-6"
-              >
-                <Rating value={item.rating} count={1} showCount={false} size="sm" />
-
-                <blockquote
-                  className="mt-5 flex-1 text-[1.05rem] leading-relaxed text-cream-100"
-                  style={{ fontFamily: "var(--font-display)" }}
-                >
-                  “{item.body}”
-                </blockquote>
-
-                <figcaption className="mt-6 text-sm text-cream-400">
-                  <span className="text-cream-200">{item.authorName}</span>
-                  {item.location ? <span> · {item.location}</span> : null}
-                  {item.isVerified ? (
-                    <span className="ml-2 border border-emerald-400/30 px-1.5 py-0.5 text-[0.6rem] uppercase tracking-[0.12em] text-leaf-300">
-                      Verified
-                    </span>
-                  ) : null}
-
-                  {item.product ? (
-                    <Link
-                      href={`/product/${item.product.slug}`}
-                      className="mt-2 block text-xs text-cream-400 underline underline-offset-4 hover:text-cream-100"
-                    >
-                      on {item.product.name}
-                    </Link>
-                  ) : null}
-
-                  {item.createdAt ? (
-                    <span className="mt-1 block text-xs text-cream-400/70">
-                      {formatDate(item.createdAt, { day: undefined })}
-                    </span>
-                  ) : null}
-                </figcaption>
-              </figure>
-            ))}
-          </Reveal>
+          <TestimonialCarousel items={items} />
         )}
       </Container>
     </Section>

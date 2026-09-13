@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Logo } from "@/components/layout/Logo";
 import { NewsletterForm } from "@/components/marketing/NewsletterForm";
+import { ThemeSegmented } from "@/components/theme/ThemeToggle";
 import { SITE } from "@/lib/constants";
 
 type Column = { id: string; label: string; href: string };
@@ -15,15 +16,15 @@ export function Footer({
   support: Column[];
 }) {
   return (
-    <footer className="border-t border-white/10 bg-ink-900">
+    <footer className="border-t border-border-subtle bg-ink-900">
       <div className="mx-auto max-w-[100rem] gutter">
         {/* Newsletter */}
-        <div className="grid gap-10 border-b border-white/10 py-16 lg:grid-cols-[1.1fr_1fr] lg:gap-20 lg:py-20">
+        <div className="grid gap-10 border-b border-border-subtle py-16 lg:grid-cols-[1.1fr_1fr] lg:gap-20 lg:py-20">
           <div>
             <h2 className="max-w-[16ch] text-display text-cream-50">
               Field notes from the tree.
             </h2>
-            <p className="mt-5 max-w-[46ch] text-cream-300/80">
+            <p className="mt-5 max-w-[46ch] text-cream-300">
               Harvest updates, growing notes and the occasional recipe. Roughly once a
               month, never more.
             </p>
@@ -52,14 +53,14 @@ export function Footer({
             <div className="mt-5 grid gap-1 text-sm">
               <a
                 href={`tel:${SITE.phone.replace(/\s/g, "")}`}
-                className="text-cream-200 transition-colors hover:text-gold-300"
+                className="inline-block py-1 text-cream-200 transition-colors hover:text-gold-300"
               >
                 {SITE.phone}
               </a>
               <span className="text-xs text-cream-400">{SITE.phoneHours}</span>
               <a
                 href={`mailto:${SITE.email}`}
-                className="mt-1 text-cream-200 transition-colors hover:text-gold-300"
+                className="mt-1 inline-block py-1 text-cream-200 transition-colors hover:text-gold-300"
               >
                 {SITE.email}
               </a>
@@ -72,13 +73,18 @@ export function Footer({
         </div>
 
         {/* Base */}
-        <div className="flex flex-col gap-6 border-t border-white/10 py-8 md:flex-row md:items-center md:justify-between">
-          <p className="text-xs text-cream-400">
-            © {new Date().getFullYear()} {SITE.legalName}. All rights reserved.
-          </p>
+        <div className="flex flex-col gap-6 border-t border-border-subtle py-8 md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
+            <p className="text-xs text-cream-400">
+              © {new Date().getFullYear()} {SITE.legalName}. All rights reserved.
+            </p>
+            {/* The full three-way control lives here and in the mobile menu;
+                the header keeps the one-tap toggle. */}
+            <ThemeSegmented />
+          </div>
 
           <div className="flex flex-wrap items-center gap-6">
-            <ul className="flex items-center gap-5">
+            <ul className="flex flex-wrap items-center gap-5">
               <SocialLink href={SITE.social.instagram} label="Instagram">
                 <path d="M5 2h10a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3z" />
                 <circle cx="10" cy="10" r="3.4" />
@@ -94,11 +100,14 @@ export function Footer({
             </ul>
 
             {/* Payment marks are described, not faked as brand logos. */}
-            <ul className="flex items-center gap-2" aria-label="Accepted payment methods">
+            {/* Wraps. Six chips in a non-wrapping row are 9px wider than a
+                390px phone, which put a sideways scroll on every page of the
+                site — the footer is on all of them. */}
+            <ul className="flex flex-wrap items-center gap-2" aria-label="Accepted payment methods">
               {["UPI", "Visa", "Mastercard", "RuPay", "Net banking", "COD"].map((method) => (
                 <li
                   key={method}
-                  className="border border-white/12 px-2 py-1 text-[0.6rem] uppercase tracking-[0.1em] text-cream-400"
+                  className="border border-border-subtle px-2 py-1 text-[0.6rem] uppercase tracking-[0.1em] text-cream-400"
                 >
                   {method}
                 </li>
@@ -116,13 +125,13 @@ function FooterColumn({ title, items }: { title: string; items: Column[] }) {
 
   return (
     <nav aria-label={title}>
-      <h3 className="eyebrow mb-5 text-gold-400/80">{title}</h3>
+      <h3 className="eyebrow mb-5 text-gold-400">{title}</h3>
       <ul className="grid gap-3">
         {items.map((item) => (
           <li key={item.id}>
             <Link
               href={item.href}
-              className="text-sm text-cream-300 transition-colors hover:text-cream-50"
+              className="inline-block py-1 text-sm text-cream-300 transition-colors hover:text-cream-50"
             >
               {item.label}
             </Link>
@@ -149,7 +158,7 @@ function SocialLink({
         target="_blank"
         rel="noopener noreferrer"
         aria-label={label}
-        className="block text-cream-400 transition-colors hover:text-cream-50"
+        className="block p-1 text-cream-400 transition-colors hover:text-cream-50"
       >
         <svg
           width="19"

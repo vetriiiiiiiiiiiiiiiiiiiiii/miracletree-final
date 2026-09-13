@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { LinkButton } from "@/components/ui/Button";
 import { BotanicalSeed } from "@/components/hero/BotanicalSeed";
+import { FloatingParticles } from "@/components/motion/FloatingParticles";
 import { initMotion, parallax } from "@/lib/motion";
 import { analytics } from "@/lib/analytics";
 
@@ -48,6 +49,9 @@ export function FinalCta({
             "radial-gradient(60% 55% at 50% 100%, rgba(28,90,58,0.28) 0%, rgba(6,9,7,0) 70%)",
         }}
       />
+
+      {/* Ambient drift over the ground, under the seed and the copy. */}
+      <FloatingParticles />
 
       <div
         ref={seedRef}

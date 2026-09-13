@@ -84,7 +84,7 @@ export default async function AdminProductsPage({
         actions={
           <Link
             href="/admin/products/new"
-            className="inline-flex items-center bg-emerald-500 px-5 py-2.5 text-[0.68rem] font-medium uppercase tracking-[0.14em] text-cream-50 transition-colors hover:bg-emerald-400"
+            className="inline-flex items-center bg-emerald-500 px-5 py-2.5 text-[0.68rem] font-medium uppercase tracking-[0.14em] text-on-accent transition-colors hover:bg-emerald-400"
           >
             New product
           </Link>
@@ -230,7 +230,7 @@ export default async function AdminProductsPage({
             {page > 1 ? (
               <Link
                 href={buildHref(params, page - 1)}
-                className="border border-white/15 px-4 py-2 text-xs text-cream-300 hover:border-white/30 hover:text-cream-50"
+                className="border border-border-subtle px-4 py-2 text-xs text-cream-300 hover:border-border-strong hover:text-cream-50"
               >
                 Previous
               </Link>
@@ -238,7 +238,7 @@ export default async function AdminProductsPage({
             {page < pages ? (
               <Link
                 href={buildHref(params, page + 1)}
-                className="border border-white/15 px-4 py-2 text-xs text-cream-300 hover:border-white/30 hover:text-cream-50"
+                className="border border-border-subtle px-4 py-2 text-xs text-cream-300 hover:border-border-strong hover:text-cream-50"
               >
                 Next
               </Link>

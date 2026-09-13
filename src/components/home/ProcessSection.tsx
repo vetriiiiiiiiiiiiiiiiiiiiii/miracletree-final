@@ -104,7 +104,7 @@ export function ProcessSection({ title, subtitle }: { title: string; subtitle: s
                     "grid grid-cols-[2.5rem_1fr] items-center gap-4 border-l py-3.5 pl-5 transition-all duration-500",
                     index === active
                       ? "border-gold-400 text-cream-50"
-                      : "border-white/10 text-cream-400/50",
+                      : "border-border-subtle text-cream-400",
                   )}
                 >
                   <span className="text-[0.66rem] tabular-nums tracking-[0.16em]">
@@ -122,7 +122,7 @@ export function ProcessSection({ title, subtitle }: { title: string; subtitle: s
               <li
                 key={step.id}
                 data-step
-                className="border-t border-white/10 py-10 first:border-t-0 first:pt-0 lg:py-16"
+                className="border-t border-border-subtle py-10 first:border-t-0 first:pt-0 lg:py-16"
               >
                 <p className="eyebrow mb-4 flex items-center gap-3 text-gold-400 lg:hidden">
                   <span className="tabular-nums">0{index + 1}</span>
@@ -140,7 +140,7 @@ export function ProcessSection({ title, subtitle }: { title: string; subtitle: s
                 <p className="mt-4 max-w-[48ch] leading-relaxed text-cream-400">{step.body}</p>
 
                 {step.id === "drying" ? (
-                  <p className="mt-6 max-w-[44ch] border-l border-gold-500/40 pl-5 text-sm leading-relaxed text-cream-300/80">
+                  <p className="mt-6 max-w-[44ch] border-l border-gold-500/40 pl-5 text-sm leading-relaxed text-cream-300">
                     Sun-drying is faster and cheaper, and it is why most moringa powder is
                     olive rather than green. It is the one corner we do not cut.
                   </p>

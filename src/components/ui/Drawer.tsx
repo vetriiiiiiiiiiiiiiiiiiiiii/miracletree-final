@@ -144,8 +144,15 @@ export function Drawer({
         aria-labelledby={labelledBy}
         tabIndex={-1}
         className={cn(
-          "absolute flex flex-col border-white/12 bg-ink-900/95 backdrop-blur-xl",
-          "shadow-[0_0_80px_rgba(0,0,0,0.6)] transition-all duration-500 ease-[var(--ease-organic)]",
+          "absolute flex flex-col border-border-subtle bg-ink-900/95 backdrop-blur-xl",
+          "transition-all duration-500 ease-[var(--ease-organic)]",
+          // The shadow is painted only while the drawer is open. A closed
+          // drawer is merely translated off-screen, and an 80px spread still
+          // reaches back over the edge from there — the cart drawer was
+          // darkening the right side of every page on the site, and the mobile
+          // menu the top. Neither is visible against a near-black ground,
+          // which is why it survived until the light theme existed.
+          open && "shadow-[var(--mt-shadow-drawer)]",
           positions[side],
           enter[side],
           className,
@@ -153,7 +160,7 @@ export function Drawer({
       >
         {children}
         {footer ? (
-          <div className="mt-auto border-t border-white/10 bg-ink-900/80 p-6">{footer}</div>
+          <div className="mt-auto border-t border-border-subtle bg-ink-900/80 p-6">{footer}</div>
         ) : null}
       </div>
     </div>,
@@ -173,7 +180,7 @@ export function DrawerHeader({
   id?: string;
 }) {
   return (
-    <header className="flex items-start justify-between gap-4 border-b border-white/10 px-6 py-5">
+    <header className="flex items-start justify-between gap-4 border-b border-border-subtle px-6 py-5">
       <div>
         <h2 id={id} className="text-lg text-cream-50">
           {title}

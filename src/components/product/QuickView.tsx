@@ -162,7 +162,7 @@ export function QuickView({
             {/* Detail */}
             <div className="flex flex-col">
               {data.categoryName ? (
-                <p className="eyebrow text-gold-400/90">{data.categoryName}</p>
+                <p className="eyebrow text-gold-400">{data.categoryName}</p>
               ) : null}
 
               <h2 className="mt-3 text-title text-cream-50">{data.name}</h2>
@@ -172,7 +172,7 @@ export function QuickView({
               </div>
 
               {data.shortDescription ? (
-                <p className="mt-4 text-sm leading-relaxed text-cream-300/85">
+                <p className="mt-4 text-sm leading-relaxed text-cream-300">
                   {data.shortDescription}
                 </p>
               ) : null}
@@ -222,8 +222,8 @@ export function QuickView({
                             "border px-3.5 py-2 text-sm transition-colors",
                             index === variantIndex
                               ? "border-gold-400 text-cream-50"
-                              : "border-white/15 text-cream-300 hover:border-white/35",
-                            out && "cursor-not-allowed text-cream-400/40 line-through",
+                              : "border-border-subtle text-cream-300 hover:border-border-strong",
+                            out && "cursor-not-allowed text-cream-400 line-through",
                           )}
                         >
                           {option.name}
@@ -236,7 +236,7 @@ export function QuickView({
 
               <div className="mt-auto pt-7">
                 {soldOut ? (
-                  <p className="border border-white/12 bg-white/[0.02] p-4 text-sm text-cream-300">
+                  <p className="border border-border-subtle bg-white/[0.02] p-4 text-sm text-cream-300">
                     This size is sold out. Pick another, or open the full page to be
                     notified when it returns.
                   </p>

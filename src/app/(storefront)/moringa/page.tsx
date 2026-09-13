@@ -52,7 +52,7 @@ export default async function MoringaPage() {
             >
               The drumstick tree.
             </h1>
-            <p className="mt-8 max-w-[56ch] text-[1.15rem] leading-relaxed text-cream-300/85">
+            <p className="mt-8 max-w-[56ch] text-[1.15rem] leading-relaxed text-cream-300">
               In Tamil Nadu it is <em className="text-leaf-200">murungai</em> — a thin,
               untidy tree leaning over half the compound walls in the district. It grows
               in poor soil, survives a failed monsoon, and reaches harvestable height in
@@ -67,7 +67,7 @@ export default async function MoringaPage() {
               { term: "Tamil", detail: "Murungai (முருங்கை)" },
               { term: "Grown here", detail: "Madurai, Tamil Nadu" },
             ].map((item) => (
-              <div key={item.term} data-animate="fade-up" className="border-t border-white/12 pt-5">
+              <div key={item.term} data-animate="fade-up" className="border-t border-border-subtle pt-5">
                 <dt className="eyebrow text-cream-400">{item.term}</dt>
                 <dd className="mt-3 text-[1.15rem] text-cream-50">{item.detail}</dd>
               </div>
@@ -133,7 +133,7 @@ export default async function MoringaPage() {
               ].map((item, index) => (
                 <li
                   key={item.title}
-                  className="grid grid-cols-[3rem_1fr] gap-5 border-t border-white/10 py-8 first:border-t-0 first:pt-0"
+                  className="grid grid-cols-[3rem_1fr] gap-5 border-t border-border-subtle py-8 first:border-t-0 first:pt-0"
                 >
                   <span className="text-[0.66rem] tabular-nums tracking-[0.16em] text-gold-400">
                     0{index + 1}
@@ -155,7 +155,7 @@ export default async function MoringaPage() {
       <Section tone="raised" spacing="tight" className="grain">
         <Container size="narrow">
           <h2 className="text-title text-cream-50">What we are not saying</h2>
-          <p className="mt-5 leading-relaxed text-cream-300/85">
+          <p className="mt-5 leading-relaxed text-cream-300">
             You will find a great deal written online about what moringa does to the
             human body. We do not repeat it. These are food products, not medicines, and
             nothing here is intended to diagnose, treat, cure or prevent any disease.

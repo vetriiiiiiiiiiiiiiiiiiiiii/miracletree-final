@@ -59,7 +59,7 @@ export function ConfirmDialog({
         aria-modal="true"
         aria-labelledby="confirm-title"
         aria-describedby="confirm-body"
-        className="relative w-full max-w-md border border-white/12 bg-ink-800 p-7 shadow-[0_30px_80px_rgba(0,0,0,0.6)]"
+        className="relative w-full max-w-md border border-border-subtle bg-ink-800 p-7 shadow-[0_30px_80px_rgba(0,0,0,0.6)]"
       >
         <h2 id="confirm-title" className="text-[1.15rem] text-cream-50">
           {title}
@@ -73,7 +73,7 @@ export function ConfirmDialog({
             ref={cancelRef}
             type="button"
             onClick={onCancel}
-            className="border border-white/20 px-5 py-2.5 text-[0.68rem] uppercase tracking-[0.14em] text-cream-200 transition-colors hover:border-cream-100"
+            className="border border-border-strong px-5 py-2.5 text-[0.68rem] uppercase tracking-[0.14em] text-cream-200 transition-colors hover:border-cream-100"
           >
             {cancelLabel}
           </button>

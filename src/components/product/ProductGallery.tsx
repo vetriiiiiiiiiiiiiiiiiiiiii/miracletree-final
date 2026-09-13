@@ -62,14 +62,22 @@ export function ProductGallery({
 
   if (!images.length) {
     return (
-      <div className="grid aspect-square place-items-center bg-ink-800 text-cream-400/40">
+      <div className="grid aspect-square place-items-center bg-ink-800 text-cream-400">
         <span className="eyebrow">No image yet</span>
       </div>
     );
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-[4.5rem_1fr] md:gap-6">
+    // The thumbnail rail only exists with more than one image, so the two-column
+    // template has to be conditional too — otherwise a single-image product
+    // renders its main photo into the empty 4.5rem rail column.
+    <div
+      className={cn(
+        "grid gap-4 md:gap-6",
+        images.length > 1 && "md:grid-cols-[4.5rem_1fr]",
+      )}
+    >
       {/* Thumbnails — desktop only */}
       {images.length > 1 ? (
         <div
@@ -86,8 +94,8 @@ export function ProductGallery({
               aria-label={`View image ${i + 1} of ${images.length}`}
               onClick={() => setIndex(i)}
               className={cn(
-                "relative aspect-square shrink-0 overflow-hidden border bg-cream-100 transition-colors duration-300",
-                i === index ? "border-gold-400" : "border-white/10 hover:border-white/30",
+                "relative aspect-square shrink-0 overflow-hidden border bg-photo-to transition-colors duration-300",
+                i === index ? "border-gold-400" : "border-border-subtle hover:border-border-strong",
               )}
             >
               <Image
@@ -104,7 +112,7 @@ export function ProductGallery({
 
       {/* Main image — desktop */}
       <div
-        className="relative hidden aspect-square overflow-hidden bg-gradient-to-b from-cream-50 to-cream-200 md:block"
+        className="relative hidden aspect-square overflow-hidden bg-gradient-to-b from-photo-from to-photo-to md:block"
         onPointerEnter={() => setZooming(true)}
         onPointerLeave={() => setZooming(false)}
         onPointerMove={onPointerMove}
@@ -126,7 +134,7 @@ export function ProductGallery({
           />
         ) : null}
 
-        <span className="pointer-events-none absolute bottom-4 right-4 text-[0.6rem] uppercase tracking-[0.14em] text-ink-500/50">
+        <span className="pointer-events-none absolute bottom-4 right-4 text-[0.6rem] uppercase tracking-[0.14em] text-on-photo/70">
           Hover to zoom
         </span>
       </div>
@@ -142,7 +150,7 @@ export function ProductGallery({
           {images.map((image, i) => (
             <div
               key={image.id}
-              className="relative aspect-square w-full shrink-0 snap-center bg-gradient-to-b from-cream-50 to-cream-200"
+              className="relative aspect-square w-full shrink-0 snap-center bg-gradient-to-b from-photo-from to-photo-to"
             >
               <Image
                 src={image.url}
@@ -163,7 +171,7 @@ export function ProductGallery({
                 key={image.id}
                 className={cn(
                   "h-1 w-6 transition-colors duration-300",
-                  i === index ? "bg-gold-400" : "bg-white/15",
+                  i === index ? "bg-gold-400" : "bg-border-subtle",
                 )}
               />
             ))}

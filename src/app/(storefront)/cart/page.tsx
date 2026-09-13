@@ -45,7 +45,7 @@ export default async function CartPage() {
         <CartPageClient />
 
         {recommended.length ? (
-          <section className="mt-24 border-t border-white/10 pt-14">
+          <section className="mt-24 border-t border-border-subtle pt-14">
             <h2 className="text-title text-cream-50">Goes well with this</h2>
             <ProductGrid
               products={recommended}
