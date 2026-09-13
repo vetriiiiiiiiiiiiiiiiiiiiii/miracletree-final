@@ -21,7 +21,6 @@ export default async function ResetPasswordPage({
   if (!token) {
     return (
       <AuthShell
-        eyebrow="Account recovery"
         title="That link is incomplete"
         lede="Reset links expire after an hour. Request a fresh one and try again."
       >
@@ -37,7 +36,6 @@ export default async function ResetPasswordPage({
 
   return (
     <AuthShell
-      eyebrow="Account recovery"
       title="Choose a new password"
       lede="Pick something you don't use anywhere else."
     >

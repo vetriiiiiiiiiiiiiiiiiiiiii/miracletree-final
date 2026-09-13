@@ -105,16 +105,12 @@ export function Section({
  * Numbering reinforces the homepage's chapter structure.
  */
 export function SectionHeading({
-  index,
-  eyebrow,
   title,
   lede,
   align = "left",
   className,
   children,
 }: {
-  index?: string;
-  eyebrow?: string;
   title: ReactNode;
   lede?: ReactNode;
   align?: "left" | "center";
@@ -129,16 +125,6 @@ export function SectionHeading({
         className,
       )}
     >
-      {index || eyebrow ? (
-        <p className="eyebrow flex items-center gap-3 text-gold-400">
-          {index ? <span className="tabular-nums">{index}</span> : null}
-          {index && eyebrow ? (
-            <span className="h-px w-8 bg-gold-400/40" aria-hidden />
-          ) : null}
-          {eyebrow ? <span className="text-cream-400">{eyebrow}</span> : null}
-        </p>
-      ) : null}
-
       {/* A plain string can be taken apart and animated word by word; a
           composed node (a highlighted fragment, a line break) cannot be, and
           is rendered as given rather than guessed at. */}

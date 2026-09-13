@@ -19,7 +19,6 @@ export default async function RegisterPage({
 
   return (
     <AuthShell
-      eyebrow="Create an account"
       title="Start here."
       lede="Faster checkout, order tracking, and a place to keep the things you want to come back to."
     >

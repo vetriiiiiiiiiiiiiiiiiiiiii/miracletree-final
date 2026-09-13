@@ -19,8 +19,6 @@ export function InnovationStrip() {
       <Container>
         <Reveal>
           <SectionHeading
-            index="05"
-            eyebrow="Technology"
             title="What we developed"
             lede="Two drying technologies, the first moringa-leaf energy bar, and cold-pressed seed oil. Built between 2014 and 2019."
           />

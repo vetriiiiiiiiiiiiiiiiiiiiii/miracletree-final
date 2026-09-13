@@ -83,8 +83,6 @@ export function CollectionRail({
         <Container className="lg:pb-14">
           <div className="flex flex-wrap items-end justify-between gap-8">
             <SectionHeading
-              index="05"
-              eyebrow="The collection"
               title={title}
               lede={subtitle ?? undefined}
               className="max-w-2xl"

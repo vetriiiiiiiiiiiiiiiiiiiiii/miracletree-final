@@ -19,7 +19,6 @@ export default async function LoginPage({
 
   return (
     <AuthShell
-      eyebrow="Welcome back"
       title="Sign in"
       lede="Your orders, addresses and saved products, in one place."
     >

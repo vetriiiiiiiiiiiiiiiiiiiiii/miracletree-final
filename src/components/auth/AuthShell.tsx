@@ -33,12 +33,10 @@ const REASONS = [
 const CERTIFICATIONS = ["Organic", "ISO 9001:2015", "HACCP", "GMP", "HALAL", "APEDA"];
 
 export function AuthShell({
-  eyebrow,
   title,
   lede,
   children,
 }: {
-  eyebrow: string;
   title: string;
   lede?: string;
   children: ReactNode;
@@ -46,7 +44,6 @@ export function AuthShell({
   return (
     <div className="grain relative grid min-h-[80svh] items-center bg-ink py-20 lg:grid-cols-2 lg:py-0">
       <div className="relative z-10 mx-auto w-full max-w-md gutter">
-        <p className="eyebrow mb-6 text-gold-400">{eyebrow}</p>
         <h1 className="text-display text-cream-50">{title}</h1>
         {lede ? (
           <p className="mt-5 max-w-[42ch] leading-relaxed text-cream-300">{lede}</p>

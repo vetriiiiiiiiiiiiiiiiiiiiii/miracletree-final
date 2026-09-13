@@ -107,7 +107,6 @@ export default async function MoringaPage() {
         <Container>
           <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
             <SectionHeading
-              eyebrow="How to choose"
               title="Telling one green powder from another"
               lede="Most packs look identical. These four things separate them."
             />
@@ -184,7 +183,6 @@ export default async function MoringaPage() {
           <Container>
             <div className="flex flex-wrap items-end justify-between gap-6">
               <SectionHeading
-                eyebrow="Where to start"
                 title="From the tree to your kitchen"
                 className="max-w-xl"
               />

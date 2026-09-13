@@ -45,8 +45,6 @@ export function WhyMoringa({
     <Section id="why-moringa" tone="default" spacing="default" className="grain">
       <Container>
         <SectionHeading
-          index="03"
-          eyebrow="Why moringa"
           title={title}
           lede={subtitle ?? undefined}
         />

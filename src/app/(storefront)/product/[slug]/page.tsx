@@ -138,7 +138,7 @@ export default async function ProductPage({ params }: { params: Params }) {
         <Section tone="raised" spacing="default" className="grain">
           <Container>
             <div className="grid gap-12 lg:grid-cols-[0.75fr_1.25fr] lg:gap-20">
-              <SectionHeading eyebrow="The product" title="Why this exists" />
+              <SectionHeading title="Why this exists" />
               <div
                 className="prose-botanical max-w-[62ch]"
                 // Sanitised on write in the admin action and again here, so
@@ -157,7 +157,6 @@ export default async function ProductPage({ params }: { params: Params }) {
         <Section tone="default" spacing="default" className="grain">
           <Container>
             <SectionHeading
-              eyebrow="What it offers"
               title="In the brand's own words"
               lede="Taken directly from the product's own description — we don't add claims of our own."
             />
@@ -191,7 +190,6 @@ export default async function ProductPage({ params }: { params: Params }) {
         <Section tone="forest" spacing="default" className="grain">
           <Container>
             <SectionHeading
-              eyebrow="What's inside"
               title="From the tree"
               lede="The parts of the moringa this product is made from."
             />
@@ -240,7 +238,6 @@ export default async function ProductPage({ params }: { params: Params }) {
           <Container>
             <div className="grid gap-12 lg:grid-cols-[0.75fr_1.25fr] lg:gap-20">
               <SectionHeading
-                eyebrow="How to use"
                 title="Three steps"
                 lede="Follow the serving on the pack. If you are pregnant, nursing or on prescribed medication, speak to your doctor first."
               />
@@ -274,7 +271,7 @@ export default async function ProductPage({ params }: { params: Params }) {
       <Section tone="raised" spacing="default" className="grain">
         <Container>
           <div className="grid gap-12 lg:grid-cols-[0.75fr_1.25fr] lg:gap-20">
-            <SectionHeading eyebrow="Farm to pack" title="Where this came from" />
+            <SectionHeading title="Where this came from" />
             <div className="max-w-[58ch]">
               <p className="leading-relaxed text-cream-300">
                 Grown on smallholdings around Madurai in Tamil Nadu, picked by hand at
@@ -300,7 +297,7 @@ export default async function ProductPage({ params }: { params: Params }) {
       {/* REVIEWS */}
       <Section id="reviews" tone="default" spacing="default" className="grain">
         <Container>
-          <SectionHeading eyebrow="Reviews" title="What people say" className="mb-14" />
+          <SectionHeading title="What people say" className="mb-14" />
           <ProductReviews
             productId={product.id}
             productName={product.name}
@@ -317,7 +314,7 @@ export default async function ProductPage({ params }: { params: Params }) {
         <Section tone="raised" spacing="default" className="grain">
           <Container>
             <div className="grid gap-12 lg:grid-cols-[0.75fr_1.25fr] lg:gap-20">
-              <SectionHeading eyebrow="FAQ" title={`About ${product.name}`} />
+              <SectionHeading title={`About ${product.name}`} />
               <Accordion
                 items={product.faqs.map((faq) => ({
                   id: faq.id,
@@ -335,7 +332,6 @@ export default async function ProductPage({ params }: { params: Params }) {
         <Section tone="default" spacing="default" className="grain">
           <Container>
             <SectionHeading
-              eyebrow="You may also like"
               title="From the same tree"
               lede={
                 product.category

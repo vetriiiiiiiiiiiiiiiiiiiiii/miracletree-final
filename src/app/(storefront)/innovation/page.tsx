@@ -75,8 +75,6 @@ export default function InnovationPage() {
         <Container>
           <Reveal>
             <SectionHeading
-              index="01"
-              eyebrow="Technology"
               title="Four developments"
               lede="Each one solved a specific problem in growing, drying or selling moringa."
             />
@@ -135,8 +133,6 @@ export default function InnovationPage() {
         <Container>
           <Reveal>
             <SectionHeading
-              index="02"
-              eyebrow="Timeline"
               title="How the company grew"
               lede="Five stages, in the order they happened."
             />
@@ -163,8 +159,6 @@ export default function InnovationPage() {
         <Container>
           <Reveal>
             <SectionHeading
-              index="03"
-              eyebrow="Standards"
               title="Certifications"
               lede="Each certificate number can be checked with the body that issued it."
             />

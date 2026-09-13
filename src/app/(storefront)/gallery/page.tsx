@@ -73,9 +73,7 @@ export default function GalleryPage() {
         >
           <Container>
             <Reveal>
-              {/* No eyebrow: it would repeat the title word for word. */}
               <SectionHeading
-                index={String(index + 1).padStart(2, "0")}
                 title={group.title}
                 lede={group.lede}
               />

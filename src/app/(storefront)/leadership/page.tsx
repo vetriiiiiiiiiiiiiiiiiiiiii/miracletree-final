@@ -259,8 +259,6 @@ export default async function LeadershipPage() {
         <Container>
           <Reveal>
             <SectionHeading
-              index="02"
-              eyebrow="International"
               title="International projects"
               lede="Since 2021 Miracletree has worked as a technology partner on moringa projects abroad, transferring its cultivation and processing methods."
             />
@@ -301,8 +299,6 @@ export default async function LeadershipPage() {
         <Container>
           <Reveal>
             <SectionHeading
-              index="03"
-              eyebrow="Visitors"
               title="Visitors to the farm and factory"
               lede="Agricultural bodies, research institutes and industry figures who have visited Madurai."
             />
@@ -337,7 +333,6 @@ export default async function LeadershipPage() {
           <Container>
             <Reveal>
               <SectionHeading
-                eyebrow="Also at Miracletree"
                 title="The rest of the team"
                 lede="The co-founder, the two doctors who advise on the range, and the engineer who runs despatch."
               />

@@ -52,8 +52,6 @@ export function TrustSignals({ accolades }: { accolades: TrustAccolade[] }) {
     <Section id="trust" tone="raised" spacing="default">
       <Container>
         <SectionHeading
-          index="09"
-          eyebrow="Verifiable"
           title="What we can prove"
           lede="Licence numbers, issuing bodies and dates — not adjectives. Every certificate below can be checked with the authority that granted it."
         />

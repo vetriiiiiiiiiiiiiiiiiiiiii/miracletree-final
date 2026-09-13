@@ -13,7 +13,6 @@ export const metadata: Metadata = buildMetadata({
 export default function ForgotPasswordPage() {
   return (
     <AuthShell
-      eyebrow="Account recovery"
       title="Reset your password"
       lede="Enter the email address you signed up with and we'll send you a link."
     >

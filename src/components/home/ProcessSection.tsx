@@ -87,8 +87,6 @@ export function ProcessSection({ title, subtitle }: { title: string; subtitle: s
     >
       <Container>
         <SectionHeading
-          index="04"
-          eyebrow="Farm to pack"
           title={title}
           lede={subtitle ?? undefined}
         />

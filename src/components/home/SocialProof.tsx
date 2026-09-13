@@ -31,8 +31,6 @@ export function SocialProof({
     <Section id="reviews" tone="default" spacing="default" className="grain">
       <Container>
         <SectionHeading
-          index="08"
-          eyebrow="In their words"
           title={title}
           lede={subtitle ?? undefined}
         />

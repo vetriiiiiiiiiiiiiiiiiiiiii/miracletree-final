@@ -36,8 +36,6 @@ export function JournalRail({
       <Container>
         <div className="flex flex-wrap items-end justify-between gap-8">
           <SectionHeading
-            index="10"
-            eyebrow="Journal"
             title={title}
             lede={subtitle ?? undefined}
             className="max-w-2xl"

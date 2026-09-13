@@ -36,8 +36,6 @@ export function IngredientExplorer({
     <Section id="ingredients" tone="forest" spacing="default" className="grain">
       <Container>
         <SectionHeading
-          index="07"
-          eyebrow="Ingredients"
           title={title}
           lede={subtitle ?? undefined}
         />
