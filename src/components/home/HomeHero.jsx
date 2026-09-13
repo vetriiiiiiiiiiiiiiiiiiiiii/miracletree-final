@@ -46,8 +46,26 @@ const NUMBERS = [
 
 const MARKS = ["NPOP Organic", "FSSAI", "ISO 9001:2015", "GMP", "HACCP"];
 
+/**
+ * Panels, not boxes. Every cell gets the lit top edge and a shadow; the ground
+ * varies by what the cell is for, because five identical greys in a grid read
+ * as a wireframe however good the content in them is.
+ */
 const CELL =
-  "border border-border-subtle bg-ink-800/60 transition-[border-color,transform] duration-500 ease-[var(--ease-organic)]";
+  "panel-lit border border-border-subtle transition-[border-color,transform,box-shadow] duration-500 ease-[var(--ease-organic)]";
+
+const GROUND = {
+  // A wash that lifts towards the headline and falls away under the buttons.
+  statement:
+    "linear-gradient(158deg, color-mix(in oklab, var(--mt-forest-800) 78%, transparent) 0%, color-mix(in oklab, var(--mt-ink-800) 92%, transparent) 58%, color-mix(in oklab, var(--mt-ink-900) 96%, transparent) 100%)",
+  // Deeper than its neighbours, so the pack's own pool of light has something
+  // to be light against.
+  flagship:
+    "linear-gradient(200deg, color-mix(in oklab, var(--mt-ink-700) 80%, transparent) 0%, color-mix(in oklab, var(--mt-ink) 88%, transparent) 100%)",
+  gold: "linear-gradient(135deg, color-mix(in oklab, var(--mt-gold-400) 17%, transparent) 0%, color-mix(in oklab, var(--mt-gold-600) 7%, transparent) 100%)",
+  quiet:
+    "linear-gradient(180deg, color-mix(in oklab, var(--mt-ink-800) 85%, transparent) 0%, color-mix(in oklab, var(--mt-ink-900) 92%, transparent) 100%)",
+};
 
 /** Counts up once, on mount. Returns the target immediately when disabled. */
 function useCountUp(target, enabled, duration = 1200) {
@@ -140,7 +158,18 @@ export function HomeHero({ title, subtitle, products }) {
   );
 
   return (
-    <section className="relative overflow-hidden border-b border-border-subtle bg-ink-900 px-gutter py-6 lg:h-[calc(100svh-var(--header-offset))]">
+    <section className="grain relative overflow-hidden border-b border-border-subtle bg-ink-900 px-gutter py-6 lg:h-[calc(100svh-var(--header-offset))]">
+      {/* Two pools of light rather than a flat fill, so the grid sits in a room
+          with a light source instead of on a sheet of colour. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(52% 48% at 8% -6%, color-mix(in oklab, var(--mt-forest-800) 85%, transparent) 0%, transparent 62%), radial-gradient(46% 52% at 96% 104%, color-mix(in oklab, var(--mt-emerald-600) 32%, transparent) 0%, transparent 60%)",
+        }}
+      />
+
       {/* The cells are translucent, so the drift reads through them and in the
           gaps between rather than sitting on top of anything. */}
       <FloatingParticles className="pointer-events-none absolute inset-0 h-full w-full" max={45} />
@@ -148,9 +177,23 @@ export function HomeHero({ title, subtitle, products }) {
       <div className="relative mx-auto grid h-full max-w-[100rem] gap-3 lg:grid-cols-12 lg:grid-rows-6">
         {/* The statement. Carries the page's only h1. */}
         <div
-          className={`${CELL} group flex flex-col justify-center p-7 hover:border-border-strong lg:col-span-7 lg:row-span-4 xl:p-10`}
-          style={rise("0.05s")}
+          className={`${CELL} group relative flex flex-col justify-center overflow-hidden p-7 hover:border-border-strong lg:col-span-7 lg:row-span-4 xl:p-10`}
+          style={{ ...rise("0.05s"), backgroundImage: GROUND.statement }}
         >
+          {/* The mark the wordmark is drawn from, ghosted at the edge. Large
+              enough to be a texture, faint enough not to be a logo. */}
+          <svg
+            aria-hidden
+            viewBox="0 0 100 100"
+            className="pointer-events-none absolute -right-10 -top-14 h-[130%] w-auto text-cream-50/[0.035]"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="0.6"
+          >
+            <path d="M50 96V22" />
+            <path d="M50 60c0-17-12-28.5-29-29.5C21.5 47 33.5 60 50 60z" fill="currentColor" fillOpacity="0.5" />
+            <path d="M50 44c0-17 12-28.5 29-29.5C78.5 31 66.5 44 50 44z" fill="currentColor" fillOpacity="0.5" />
+          </svg>
           <p className="flex items-center gap-3 text-[0.7rem] uppercase tracking-[0.22em] text-gold-400">
             MiracleTree Life Science · Madurai
             <span
@@ -197,9 +240,11 @@ export function HomeHero({ title, subtitle, products }) {
             onPointerMove={onPointerMove}
             onPointerLeave={() => setLean({ x: 0, y: 0 })}
             className={`group relative flex flex-col justify-between overflow-hidden p-6 lg:col-span-5 lg:row-span-4 ${CELL} hover:border-gold-400/60`}
-            style={rise("0.14s")}
+            style={{ ...rise("0.14s"), backgroundImage: GROUND.flagship }}
           >
-            <div className="flex items-start justify-between gap-4">
+            {/* The pool the pack stands in. */}
+            <div aria-hidden className="product-pool pointer-events-none absolute inset-0" />
+            <div className="relative flex items-start justify-between gap-4">
               <p className="text-[0.68rem] uppercase tracking-[0.2em] text-cream-400">
                 Flagship
               </p>
@@ -210,7 +255,7 @@ export function HomeHero({ title, subtitle, products }) {
               ) : null}
             </div>
 
-            <div className="relative my-4 min-h-[12rem] flex-1 lg:min-h-[9rem]">
+            <div className="relative z-[1] my-4 min-h-[12rem] flex-1 lg:min-h-[9rem]">
               {/* Two nested wrappers: the outer one breathes on a loop, the
                   inner one answers the pointer. One element cannot hold both
                   without the idle animation stamping on the lean. */}
@@ -241,7 +286,7 @@ export function HomeHero({ title, subtitle, products }) {
               </div>
             </div>
 
-            <p className="font-display text-xl leading-tight text-cream-50">
+            <p className="relative font-display text-xl leading-tight text-cream-50">
               <Link
                 href={`/product/${flagship.slug}`}
                 className="before:absolute before:inset-0"
@@ -254,9 +299,24 @@ export function HomeHero({ title, subtitle, products }) {
 
         {/* The one claim no competitor can make. */}
         <div
-          className="relative flex flex-col justify-center overflow-hidden border border-gold-400/45 bg-gold-400/[0.11] p-6 lg:col-span-4 lg:row-span-2"
-          style={rise("0.22s")}
+          className="panel-lit relative flex flex-col justify-center overflow-hidden border border-gold-400/45 p-6 lg:col-span-4 lg:row-span-2"
+          style={{ ...rise("0.22s"), backgroundImage: GROUND.gold }}
         >
+          {/* A seal, cropped hard by the corner so it reads as an impression in
+              the panel rather than as an icon someone placed there. The ribbon
+              tail came off: cut by the edge it looked like a lollipop. */}
+          <svg
+            aria-hidden
+            viewBox="0 0 60 60"
+            className="pointer-events-none absolute -bottom-16 -right-12 h-56 w-56 text-gold-400/[0.14]"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="0.55"
+          >
+            <circle cx="30" cy="30" r="26" />
+            <circle cx="30" cy="30" r="20" />
+            <circle cx="30" cy="30" r="13.5" strokeDasharray="1.6 2.6" />
+          </svg>
           {animate ? (
             <span
               aria-hidden
@@ -274,7 +334,7 @@ export function HomeHero({ title, subtitle, products }) {
 
         <dl
           className={`${CELL} grid grid-cols-2 content-center gap-x-6 gap-y-5 p-6 lg:col-span-3 lg:row-span-2`}
-          style={rise("0.28s")}
+          style={{ ...rise("0.28s"), backgroundImage: GROUND.quiet }}
         >
           {NUMBERS.map((n) => (
             <Stat key={n.label} item={n} animate={animate} />
@@ -285,9 +345,11 @@ export function HomeHero({ title, subtitle, products }) {
           {minis.map((p, i) => (
             <li
               key={`${p.slug}-${i}`}
-              className={`group relative flex flex-col ${CELL} p-3 hover:-translate-y-1 hover:border-gold-400/60`}
+              className={`group relative flex flex-col overflow-hidden ${CELL} p-3 hover:-translate-y-1 hover:border-gold-400/60 hover:shadow-[0_18px_40px_-24px_#000]`}
+              style={{ backgroundImage: GROUND.quiet }}
             >
-              <div className="relative min-h-[4.5rem] flex-1">
+              <span aria-hidden className="product-pool pointer-events-none absolute inset-0 opacity-70" />
+              <div className="relative z-[1] min-h-[4.5rem] flex-1">
                 <Image
                   // Keying on the slug restarts the fade when the cell cycles
                   // to a different product, so the swap is a dissolve rather
@@ -305,13 +367,13 @@ export function HomeHero({ title, subtitle, products }) {
                   }
                 />
               </div>
-              <p className="mt-2 line-clamp-2 text-[0.74rem] leading-snug text-cream-200">
+              <p className="relative mt-2 line-clamp-2 text-[0.74rem] leading-snug text-cream-200">
                 <Link href={`/product/${p.slug}`} className="before:absolute before:inset-0">
                   {p.name}
                 </Link>
               </p>
               {p.price !== null ? (
-                <p className="text-[0.72rem] tabular-nums text-cream-400">
+                <p className="relative text-[0.72rem] tabular-nums text-cream-400">
                   {formatPrice(p.price)}
                 </p>
               ) : null}
@@ -321,12 +383,12 @@ export function HomeHero({ title, subtitle, products }) {
 
         <div
           className={`${CELL} flex flex-wrap items-center justify-between gap-x-8 gap-y-3 px-6 py-4 lg:col-span-12`}
-          style={rise("0.4s")}
+          style={{ ...rise("0.4s"), backgroundImage: GROUND.quiet }}
         >
           {MARKS.map((m, i) => (
             <span
               key={m}
-              className="text-[0.68rem] uppercase tracking-[0.16em] text-cream-400"
+              className="flex items-center gap-2 text-[0.68rem] uppercase tracking-[0.16em] text-cream-400"
               style={
                 animate
                   ? {
@@ -335,6 +397,18 @@ export function HomeHero({ title, subtitle, products }) {
                   : undefined
               }
             >
+              <svg
+                aria-hidden
+                width="11"
+                height="11"
+                viewBox="0 0 12 12"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.4"
+                className="shrink-0 text-gold-400/70"
+              >
+                <path d="M2 6.4 4.6 9 10 3.2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
               {m}
             </span>
           ))}

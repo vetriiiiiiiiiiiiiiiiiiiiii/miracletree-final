@@ -343,6 +343,47 @@
   font-weight: 500;
 }
 
+/* A surface rather than a box.
+ *
+ * One hairline of light along the top edge and a shadow beneath is most of the
+ * difference between a rectangle drawn on a page and a panel sitting above it.
+ * The highlight is brightest in the middle and fades at both ends, because a
+ * full-width line reads as a border and a border is what we are trying not to
+ * look like.
+ */
+@utility panel-lit {
+  position: relative;
+  box-shadow: var(--mt-shadow-card);
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 1px;
+    z-index: 2;
+    pointer-events: none;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in oklab, var(--mt-cream-50) 26%, transparent) 35%,
+      color-mix(in oklab, var(--mt-cream-50) 26%, transparent) 65%,
+      transparent
+    );
+  }
+}
+
+/* The ground a product sits on: a pool of light under it, tight and elliptical,
+ * so the pack casts rather than hovers. */
+@utility product-pool {
+  background:
+    radial-gradient(
+      58% 42% at 50% 62%,
+      color-mix(in oklab, var(--mt-forest-700) 90%, transparent) 0%,
+      transparent 70%
+    );
+}
+
 /* Grain sits over dark surfaces so large black areas do not band on OLED. */
 @utility grain {
   position: relative;
