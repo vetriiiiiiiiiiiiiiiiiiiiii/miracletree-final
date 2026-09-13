@@ -27,7 +27,8 @@ import { FounderBlock } from "@/components/home/FounderBlock";
 import { TrustSignals } from "@/components/home/TrustSignals";
 // The homepage is fully CMS-driven, so it revalidates rather than being static.
 /**
- * The four packs in the hero, chosen by hand: a flagship and three beside it.
+ * The packs in the hero: a flagship, and six the three small cells cycle
+ * through so the composition is never showing the same range twice.
  *
  * Most of the catalogue's photography has a white background baked into the
  * image rather than a transparent one, which reads as a white card stuck onto
@@ -42,6 +43,9 @@ const HERO_PRODUCT_SLUGS = [
   "movita-multi-grain-health-mix-flavored",
   "moringa-leaf-dried-50gms-pack-of-2",
   "moringa-seed-oil-hair-strengthening-oil",
+  "moringa-leaf-powder-capsules-60-capsules",
+  "moringa-gum-gond-powder-100-grams",
+  "moringa-seed-capsule-90-capsules",
 ];
 export const revalidate = 300;
 export async function generateMetadata() {

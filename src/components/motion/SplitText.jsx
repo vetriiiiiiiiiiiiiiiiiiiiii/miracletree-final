@@ -23,6 +23,7 @@ export function SplitText({
   text,
   as: Tag = "span",
   className,
+  style,
   delay = 0,
   stagger = 0.045,
 }) {
@@ -54,7 +55,7 @@ export function SplitText({
   }, []);
   const words = text.split(/(\s+)/);
   return (
-    <Tag ref={ref} className={className} aria-label={text}>
+    <Tag ref={ref} className={className} style={style} aria-label={text}>
       {words.map((word, i) => {
         if (/^\s+$/.test(word)) return " ";
         return (

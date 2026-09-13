@@ -694,6 +694,24 @@
 /* Hero entrance. Copy rises; packs arrive with a little more travel and a
    touch of scale so the cluster assembles rather than appearing. Both are
    compositor-only — transform and opacity, no layout, no paint. */
+/* Hero: a pack breathing in place, so the composition is never fully still. */
+@keyframes hero-float {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50%      { transform: translate3d(0, -10px, 0); }
+}
+
+/* Hero: light travelling across the gold panel, once in a while. */
+@keyframes hero-sheen {
+  0%       { transform: translateX(-130%) skewX(-18deg); }
+  55%, 100% { transform: translateX(230%) skewX(-18deg); }
+}
+
+/* Hero: a rule drawing itself in under a label. */
+@keyframes hero-rule {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
 @keyframes preloader-sweep {
   from { transform: scaleX(0); transform-origin: left; }
   to   { transform: scaleX(1); transform-origin: left; }

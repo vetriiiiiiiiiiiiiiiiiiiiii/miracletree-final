@@ -30,6 +30,24 @@ export function FloatingParticles({ className, density = 0.00004, max = 70 }) {
     if (window.matchMedia("(pointer: coarse)").matches) return;
     const ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) return;
+
+    // The accent is a theme token, so the motes have to be read from the page
+    // rather than hard-coded: a gold tuned for the dark ground disappears on
+    // cream, and the toggle would leave them the wrong colour until reload.
+    let rgb = "217, 188, 106";
+    const readAccent = () => {
+      const hex = getComputedStyle(canvas).getPropertyValue("--mt-gold-400").trim();
+      const m = /^#?([0-9a-f]{6})$/i.exec(hex);
+      if (!m) return;
+      const n = parseInt(m[1], 16);
+      rgb = `${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}`;
+    };
+    readAccent();
+    const themeWatcher = new MutationObserver(readAccent);
+    themeWatcher.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    });
     let motes = [];
     let width = 0;
     let height = 0;
@@ -69,8 +87,7 @@ export function FloatingParticles({ className, density = 0.00004, max = 70 }) {
         if (m.x > width + 4) m.x = -4;
         ctx.beginPath();
         ctx.arc(m.x, m.y, m.r, 0, Math.PI * 2);
-        // Warm gold, to match the accent rather than fight it.
-        ctx.fillStyle = `rgba(217, 188, 106, ${m.a})`;
+        ctx.fillStyle = `rgba(${rgb}, ${m.a})`;
         ctx.fill();
       }
       raf = requestAnimationFrame(frame);
@@ -99,6 +116,7 @@ export function FloatingParticles({ className, density = 0.00004, max = 70 }) {
     window.addEventListener("resize", onResize);
     return () => {
       stop();
+      themeWatcher.disconnect();
       visible.disconnect();
       document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("resize", onResize);
