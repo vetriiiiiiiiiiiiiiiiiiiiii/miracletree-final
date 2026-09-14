@@ -4,11 +4,13 @@ import { Container, Section, SectionHeading } from "@/components/layout/Section"
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { ProductHero } from "@/components/product/ProductHero";
 import { ProductReviews } from "@/components/product/ProductReviews";
+import { BrandStorySection } from "@/components/product/BrandStorySection";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { Accordion } from "@/components/ui/Accordion";
 import { Reveal } from "@/components/motion/Reveal";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { RecentlyViewed } from "@/components/product/RecentlyViewed";
+import { brandStoryFor } from "@/lib/brand-stories";
 import { prisma } from "@/lib/prisma";
 import { getProductBySlug, getRelatedProducts } from "@/lib/queries";
 import { breadcrumbSchema, buildMetadata, faqSchema, productSchema } from "@/lib/seo";
@@ -285,6 +287,9 @@ export default async function ProductPage({ params }) {
       </Section>
 
       {/* REVIEWS */}
+      {/* The sub-brand's own story, for the products that have one. */}
+      <BrandStorySection story={brandStoryFor(product.slug)} />
+
       <Section id="reviews" tone="default" spacing="default" className="grain">
         <Container>
           <SectionHeading title="What people say" className="mb-14" />
