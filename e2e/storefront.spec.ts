@@ -270,7 +270,7 @@ test.describe("storefront", () => {
     await expect(page.getByRole("heading", { name: /^Credits$/i })).toBeVisible();
 
     // The researched history, not invented history. Scoped to the paper
-    // sections rather than the page: the flight above renders the same
+    // sections rather than the page: the timeline renders the same
     // milestones into the DOM ahead of time, hidden until each one flies into
     // view, so an unscoped `.first()` matches a copy that is deliberately
     // invisible. The paper record is the authoritative one in any case — it is
