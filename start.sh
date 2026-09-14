@@ -7,6 +7,9 @@ if [ ! -f /data/miracletree.db ]; then
   cp /app/dev.db /data/miracletree.db
 fi
 
+echo "Updating database schema..."
+DATABASE_URL="file:/data/miracletree.db" npx prisma db push --schema=prisma/schema.prisma --accept-data-loss
+
 # Start Nginx in background as daemon
 nginx
 
