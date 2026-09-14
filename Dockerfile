@@ -34,10 +34,7 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/prisma/dev.db ./dev.db
-COPY --from=builder /app/prisma ./prisma
-
-# Install prisma for database migrations
-RUN npm install prisma
+COPY --from=builder /app/prisma/schema.prisma ./prisma/schema.prisma
 
 # Copy start script
 COPY start.sh ./start.sh
