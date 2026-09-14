@@ -271,6 +271,9 @@
   html {
     -webkit-text-size-adjust: 100%;
     scroll-behavior: smooth;
+    /* Anchored targets must clear the sticky header, or a deep link lands with
+       its heading hidden underneath it. */
+    scroll-padding-top: calc(var(--header-offset) + 1rem);
     /* Lenis drives scroll on desktop; this is the no-JS / reduced-motion path. */
   }
 
