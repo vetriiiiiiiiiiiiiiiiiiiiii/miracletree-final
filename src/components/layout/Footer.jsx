@@ -67,6 +67,22 @@ export function Footer({ shop, company, support }) {
             <p className="text-xs text-cream-400">
               © {new Date().getFullYear()} {SITE.legalName}. All rights reserved.
             </p>
+
+            {/* Build credit. `noopener` because the tab it opens would
+                otherwise get a handle back to this one through window.opener,
+                and `min-h` so it clears the 24px tap target the sweep checks
+                for — the line is only 16px tall on its own. */}
+            <p className="text-xs text-cream-400">
+              Crafted by{" "}
+              <a
+                href="https://lumiodigital.store"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-[1.5rem] items-center text-cream-200 underline decoration-border-strong underline-offset-4 transition-colors hover:text-cream-50 hover:decoration-gold-400"
+              >
+                Lumio Digital
+              </a>
+            </p>
             {/* The full three-way control lives here and in the mobile menu;
             the header keeps the one-tap toggle. */}
             <ThemeSegmented />
