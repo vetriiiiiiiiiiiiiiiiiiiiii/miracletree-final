@@ -202,9 +202,21 @@
 
 @theme {
   /* --- Type --------------------------------------------------------------- */
-  --font-display: var(--font-fraunces), "Iowan Old Style", Georgia, serif;
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-hand: var(--font-caveat), "Segoe Script", cursive;
+  /* Times New Roman throughout.
+   *
+   * The three roles are kept as separate tokens even though they now resolve
+   * to the same stack: the components ask for a display, body or margin face
+   * by name, and collapsing the tokens would mean editing every one of them to
+   * ever tell the voices apart again.
+   *
+   * Times is a system font, so nothing is downloaded and there is no swap.
+   * Liberation Serif and Nimbus Roman are the metric-compatible substitutes
+   * Linux ships — without them a container with no Microsoft fonts falls back
+   * to whatever generic serif it has, which is not the same shape at all.
+   */
+  --font-display: "Times New Roman", Times, "Liberation Serif", "Nimbus Roman", serif;
+  --font-sans: "Times New Roman", Times, "Liberation Serif", "Nimbus Roman", serif;
+  --font-hand: "Times New Roman", Times, "Liberation Serif", "Nimbus Roman", serif;
 
   --text-hero: clamp(2.75rem, 9vw, 8.5rem);
   --text-hero--line-height: 0.92;
@@ -276,7 +288,6 @@
     color: var(--color-cream-100);
     transition: background-color 0.3s var(--ease-swift), color 0.3s var(--ease-swift);
     font-family: var(--font-sans);
-    font-feature-settings: "cv02", "cv03", "cv11";
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     /* `clip`, not `hidden`. Both stop a stray wide element from scrolling the
