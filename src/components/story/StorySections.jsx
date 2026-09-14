@@ -1,7 +1,9 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { BotanicalPlate, Underlined, useDrawOnScroll } from "@/components/story/Drawn";
+import { useEffect, useRef, useState } from "react";
+import { BotanicalPlate, Underlined } from "@/components/story/Drawn";
+import { mottoFor } from "@/lib/story-mottos";
 import { cn, formatDate } from "@/lib/utils";
 /** A citation. Small, permanent, and linked wherever a source exists. */
 function Cite({ source, url }) {
@@ -23,93 +25,169 @@ function Cite({ source, url }) {
   );
 }
 // ---------------------------------------------------------------- timeline
+
+/**
+ * A rule down the spine that fills as the reader descends it.
+ *
+ * Tied to the section's own scroll progress rather than to the window, so it
+ * reads as a measure of the history rather than of the page. Under reduced
+ * motion it is simply full: a progress indicator that never moves is noise,
+ * and a spine that is drawn is what the section had before.
+ */
+function useSpineProgress(ref) {
+  const [progress, setProgress] = useState(1);
+
+  useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let frame = 0;
+    const measure = () => {
+      frame = 0;
+      const box = node.getBoundingClientRect();
+      // Zero when the top of the list reaches the middle of the screen, one
+      // when its bottom does. Anchoring on the middle means the rule tracks
+      // whatever is actually being read.
+      const middle = window.innerHeight / 2;
+      const travelled = middle - box.top;
+      setProgress(Math.max(0, Math.min(1, travelled / Math.max(1, box.height))));
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(measure);
+    };
+
+    measure();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [ref]);
+
+  return progress;
+}
+
+/**
+ * The history, at the scale fifteen years deserves.
+ *
+ * The year is the thing that carries it, so the year is enormous and sticks to
+ * the top of the screen while its own entry scrolls past — the reader is held
+ * in 2014 for as long as 2014 has something to say, and the change of number
+ * is what marks the passage. It is not decoration: on a list of fourteen
+ * entries the alternative is a column of small grey dates nobody reads.
+ *
+ * The mottos are the company's own lines, arrows included.
+ */
 export function Timeline({ milestones }) {
-  const ref = useDrawOnScroll();
+  const listRef = useRef(null);
+  const progress = useSpineProgress(listRef);
+
   if (!milestones.length) return null;
+
+  const first = milestones[0]?.year;
+  const last = milestones[milestones.length - 1]?.year;
+
   return (
     <section id="timeline" className="relative">
-      <header className="mb-14 max-w-2xl">
+      <header className="mb-16 max-w-3xl">
         <p className="margin-note mb-3">how it actually went</p>
         <h2 className="text-title text-[#23301f]">
           <Underlined>A working history</Underlined>
         </h2>
+        <p className="mt-5 max-w-[54ch] text-[1.05rem] leading-relaxed text-[#55614e]">
+          {first} to {last} — {milestones.length} milestones, from a first planting
+          to a moringa economy.
+        </p>
       </header>
 
-      <div ref={ref} className="relative">
-        {/* The spine, drawn as a wavering pen line rather than a border. */}
-        <svg
-          className="pointer-events-none absolute left-[0.25rem] top-0 h-full w-6 md:left-[7rem]"
-          viewBox="0 0 24 1000"
-          preserveAspectRatio="none"
-          fill="none"
+      <div ref={listRef} className="relative">
+        {/* The spine. A hairline the full height, with the travelled part
+            drawn over it, so there is always a line and the fill reads as
+            distance covered rather than as the line appearing. */}
+        <div
           aria-hidden
+          className="pointer-events-none absolute left-[0.45rem] top-0 hidden h-full w-px bg-[#5d7150]/25 md:left-[calc(14rem+0.45rem)] md:block"
         >
-          <path
-            data-draw
-            d="M12 4C9 120 15 240 11 360C8 480 14 600 10 720C7 840 13 920 12 996"
-            stroke="#8a9b7a"
-            strokeWidth="2"
-            strokeLinecap="round"
-            opacity="0.8"
+          <div
+            className="w-px bg-[#5d7150] transition-[height] duration-150 ease-out"
+            style={{ height: `${(progress * 100).toFixed(2)}%` }}
           />
-        </svg>
+        </div>
 
-        <ol className="grid gap-12">
-          {milestones.map((entry, index) => (
-            <li
-              key={entry.id}
-              className="relative grid gap-3 pl-10 md:grid-cols-[6rem_1fr] md:gap-12 md:pl-0"
-            >
-              <div className="md:text-right">
-                <p
-                  className="text-[1.5rem] leading-none text-[#7a5c1f]"
-                  style={{ fontFamily: "var(--font-hand)" }}
-                >
-                  {entry.year}
-                </p>
-              </div>
-
-              {/* Node */}
-              <span
-                aria-hidden
-                // Centred on the spine: the SVG is 1.5rem wide with the stroke
-                // down its middle, so the node sits at left + 0.75rem - half its
-                // own width.
-                className="absolute left-[0.625rem] top-2 h-3 w-3 rounded-full border-2 border-[#5d7150] bg-[#efe9d8] md:left-[7.375rem]"
-              />
-
-              <div className="md:pl-6">
-                <h3 className="text-[1.2rem] leading-snug text-[#23301f]">
-                  {entry.title}
-                </h3>
-                {entry.body ? (
-                  <p className="mt-2 max-w-[56ch] leading-relaxed text-[#55614e]">
-                    {entry.body}
+        <ol className="grid gap-16 md:gap-20">
+          {milestones.map((entry, index) => {
+            const motto = mottoFor(entry.title);
+            return (
+              <li
+                key={entry.id}
+                // `min-h` is what makes the pinned year mean anything: it
+                // gives the year a stretch to hold through. Sized in vh so the
+                // hold is a share of the screen rather than a guess in pixels.
+                className="relative grid gap-4 md:min-h-[44vh] md:grid-cols-[14rem_1fr] md:gap-16"
+              >
+                {/* The year, held at the top of the screen for the length of
+                    its own entry. */}
+                <div className="md:sticky md:top-28 md:self-start md:text-right">
+                  <p
+                    className="font-display leading-[0.85] tracking-[-0.03em] text-[#23301f]"
+                    style={{ fontSize: "clamp(2.6rem, 6vw, 5rem)" }}
+                  >
+                    {entry.year}
                   </p>
-                ) : null}
-                <Cite source={entry.source} url={entry.sourceUrl} />
-              </div>
+                </div>
 
-              {/* A sketch pinned beside a couple of the entries. */}
-              {index === 0 ? (
-                <BotanicalPlate
-                  subject="seed"
-                  className="pointer-events-none absolute -top-4 right-6 hidden h-40 w-32 opacity-55 lg:block"
+                {/* The node on the spine, aligned to the first line of the
+                    title rather than to the top of the cell. */}
+                <span
+                  aria-hidden
+                  className="absolute left-0 top-3 hidden h-[0.7rem] w-[0.7rem] rounded-full border-2 border-[#5d7150] bg-[#efe9d8] md:left-[calc(14rem+0.1rem)] md:block"
                 />
-              ) : null}
-              {index === milestones.length - 1 ? (
-                <BotanicalPlate
-                  subject="pod"
-                  className="pointer-events-none absolute -top-2 right-8 hidden h-44 w-28 opacity-55 lg:block"
-                />
-              ) : null}
-            </li>
-          ))}
+
+                <div className="md:pt-1">
+                  <h3 className="max-w-[22ch] font-display text-[clamp(1.45rem,2.6vw,2.1rem)] leading-[1.15] text-[#23301f]">
+                    {entry.title}
+                  </h3>
+
+                  {motto ? (
+                    <p className="mt-4 text-[0.74rem] uppercase tracking-[0.16em] text-[#7a5c1f]">
+                      {motto}
+                    </p>
+                  ) : null}
+
+                  {entry.body ? (
+                    <p className="mt-5 max-w-[58ch] text-[1.02rem] leading-[1.75] text-[#55614e]">
+                      {entry.body}
+                    </p>
+                  ) : null}
+
+                  <Cite source={entry.source} url={entry.sourceUrl} />
+                </div>
+
+                {/* A sketch pinned beside the first and last entries. */}
+                {index === 0 ? (
+                  <BotanicalPlate
+                    subject="seed"
+                    className="pointer-events-none absolute -top-6 right-4 hidden h-44 w-32 opacity-45 xl:block"
+                  />
+                ) : null}
+                {index === milestones.length - 1 ? (
+                  <BotanicalPlate
+                    subject="pod"
+                    className="pointer-events-none absolute -top-4 right-6 hidden h-48 w-28 opacity-45 xl:block"
+                  />
+                ) : null}
+              </li>
+            );
+          })}
         </ol>
       </div>
     </section>
   );
 }
+
 // ---------------------------------------------------------------- accolades
 const KIND_LABEL = {
   award: "Award",
