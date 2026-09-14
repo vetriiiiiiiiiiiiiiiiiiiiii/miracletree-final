@@ -29,10 +29,9 @@ function Cite({ source, url }) {
 /**
  * A rule down the spine that fills as the reader descends it.
  *
- * Tied to the section's own scroll progress rather than to the window, so it
- * reads as a measure of the history rather than of the page. Under reduced
- * motion it is simply full: a progress indicator that never moves is noise,
- * and a spine that is drawn is what the section had before.
+ * Tied to the list's own scroll progress rather than to the window, so it reads
+ * as a measure of the history rather than of the page. Under reduced motion it
+ * is simply full: a progress indicator that never moves is noise.
  */
 function useSpineProgress(ref) {
   const [progress, setProgress] = useState(1);
@@ -47,10 +46,8 @@ function useSpineProgress(ref) {
       frame = 0;
       const box = node.getBoundingClientRect();
       // Zero when the top of the list reaches the middle of the screen, one
-      // when its bottom does. Anchoring on the middle means the rule tracks
-      // whatever is actually being read.
-      const middle = window.innerHeight / 2;
-      const travelled = middle - box.top;
+      // when its bottom does — so the rule tracks what is being read.
+      const travelled = window.innerHeight / 2 - box.top;
       setProgress(Math.max(0, Math.min(1, travelled / Math.max(1, box.height))));
     };
     const onScroll = () => {
@@ -71,19 +68,62 @@ function useSpineProgress(ref) {
 }
 
 /**
- * The history, at the scale fifteen years deserves.
+ * Marks each entry once it has been reached, and never unmarks it.
  *
- * The year is the thing that carries it, so the year is enormous and sticks to
- * the top of the screen while its own entry scrolls past — the reader is held
- * in 2014 for as long as 2014 has something to say, and the change of number
- * is what marks the passage. It is not decoration: on a list of fourteen
- * entries the alternative is a column of small grey dates nobody reads.
+ * Entries that re-hide on the way back up make a page feel unstable — the
+ * reader scrolls up to check something and watches it disappear. Arriving is a
+ * one-way door here.
+ */
+function useRevealed(count) {
+  const [revealed, setRevealed] = useState(() => new Set());
+  const nodes = useRef([]);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setRevealed(new Set(Array.from({ length: count }, (_, i) => i)));
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const arrived = entries
+          .filter((e) => e.isIntersecting)
+          .map((e) => Number(e.target.dataset.index));
+        if (arrived.length) {
+          setRevealed((prev) => {
+            const next = new Set(prev);
+            for (const i of arrived) next.add(i);
+            return next;
+          });
+        }
+      },
+      // Fires a little before the entry is fully on screen, so the movement
+      // finishes about when the reader gets there.
+      { threshold: 0.15, rootMargin: "0px 0px -12% 0px" },
+    );
+    for (const node of nodes.current) if (node) observer.observe(node);
+    return () => observer.disconnect();
+  }, [count]);
+
+  return [revealed, nodes];
+}
+
+/**
+ * The history as the classic centre-spine timeline: a rule down the middle
+ * with the entries stepping either side of it.
  *
- * The mottos are the company's own lines, arrows included.
+ * It is the oldest form there is for this and it is still the right one — the
+ * alternation gives the eye somewhere to go on a list of fourteen, and the
+ * spine makes the passage of time a physical distance rather than a column of
+ * dates. The line draws as you descend, each entry rises into place as you
+ * reach it, and its node on the spine fills as it arrives.
+ *
+ * Below `lg` it folds to a single column with the spine on the left, because
+ * alternating sides on a narrow screen is a zigzag, not a timeline.
  */
 export function Timeline({ milestones }) {
   const listRef = useRef(null);
   const progress = useSpineProgress(listRef);
+  const [revealed, nodes] = useRevealed(milestones.length);
 
   if (!milestones.length) return null;
 
@@ -104,12 +144,12 @@ export function Timeline({ milestones }) {
       </header>
 
       <div ref={listRef} className="relative">
-        {/* The spine. A hairline the full height, with the travelled part
-            drawn over it, so there is always a line and the fill reads as
-            distance covered rather than as the line appearing. */}
+        {/* The spine: a hairline the full height with the travelled part drawn
+            over it, so there is always a line and the fill reads as distance
+            covered rather than as the line appearing. */}
         <div
           aria-hidden
-          className="pointer-events-none absolute left-[0.45rem] top-0 hidden h-full w-px bg-[#5d7150]/25 md:left-[calc(14rem+0.45rem)] md:block"
+          className="pointer-events-none absolute left-[0.4rem] top-0 h-full w-px bg-[#5d7150]/25 lg:left-1/2 lg:-translate-x-px"
         >
           <div
             className="w-px bg-[#5d7150] transition-[height] duration-150 ease-out"
@@ -117,68 +157,83 @@ export function Timeline({ milestones }) {
           />
         </div>
 
-        <ol className="grid gap-16 md:gap-20">
+        <ol className="grid gap-14 lg:gap-4">
           {milestones.map((entry, index) => {
             const motto = mottoFor(entry.title);
+            const isLeft = index % 2 === 0;
+            const shown = revealed.has(index);
+
             return (
               <li
                 key={entry.id}
-                // `min-h` is what makes the pinned year mean anything: it
-                // gives the year a stretch to hold through. Sized in vh so the
-                // hold is a share of the screen rather than a guess in pixels.
-                className="relative grid gap-4 md:min-h-[44vh] md:grid-cols-[14rem_1fr] md:gap-16"
+                data-index={index}
+                ref={(node) => {
+                  nodes.current[index] = node;
+                }}
+                className="relative pl-8 lg:grid lg:grid-cols-2 lg:gap-16 lg:pl-0"
               >
-                {/* The year, held at the top of the screen for the length of
-                    its own entry. */}
-                <div className="md:sticky md:top-28 md:self-start md:text-right">
+                {/* The node, on the spine and level with the year. */}
+                <span
+                  aria-hidden
+                  className={cn(
+                    "absolute left-0 top-[0.6rem] h-[0.85rem] w-[0.85rem] rounded-full border-2 border-[#5d7150] lg:left-1/2 lg:-translate-x-1/2",
+                    "transition-[background-color,transform] duration-500 ease-out",
+                    shown ? "scale-110 bg-[#5d7150]" : "scale-90 bg-[#efe9d8]",
+                  )}
+                />
+
+                {/* Alternating: odd entries take the right column and leave
+                    the left empty, which is what makes the step. */}
+                {!isLeft ? <div aria-hidden className="hidden lg:block" /> : null}
+
+                <div
+                  className={cn(
+                    isLeft ? "lg:pr-14 lg:text-right" : "lg:pl-14",
+                    "transition-[opacity,transform] duration-700 ease-[var(--ease-organic)] motion-reduce:transition-none",
+                    shown ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0",
+                  )}
+                  style={{ transitionDelay: shown ? "60ms" : "0ms" }}
+                >
                   <p
-                    className="font-display leading-[0.85] tracking-[-0.03em] text-[#23301f]"
-                    style={{ fontSize: "clamp(2.6rem, 6vw, 5rem)" }}
+                    className="font-display leading-none tracking-[-0.02em] text-[#23301f]"
+                    style={{ fontSize: "clamp(2rem, 3.6vw, 3.1rem)" }}
                   >
                     {entry.year}
                   </p>
-                </div>
 
-                {/* The node on the spine, aligned to the first line of the
-                    title rather than to the top of the cell. */}
-                <span
-                  aria-hidden
-                  className="absolute left-0 top-3 hidden h-[0.7rem] w-[0.7rem] rounded-full border-2 border-[#5d7150] bg-[#efe9d8] md:left-[calc(14rem+0.1rem)] md:block"
-                />
-
-                <div className="md:pt-1">
-                  <h3 className="max-w-[22ch] font-display text-[clamp(1.45rem,2.6vw,2.1rem)] leading-[1.15] text-[#23301f]">
+                  <h3
+                    className={cn(
+                      "mt-3 font-display text-[clamp(1.2rem,1.9vw,1.6rem)] leading-snug text-[#23301f]",
+                      isLeft ? "lg:ml-auto" : "",
+                      "max-w-[26ch]",
+                    )}
+                  >
                     {entry.title}
                   </h3>
 
                   {motto ? (
-                    <p className="mt-4 text-[0.74rem] uppercase tracking-[0.16em] text-[#7a5c1f]">
+                    <p className="mt-2.5 text-[0.72rem] uppercase tracking-[0.16em] text-[#7a5c1f]">
                       {motto}
                     </p>
                   ) : null}
 
                   {entry.body ? (
-                    <p className="mt-5 max-w-[58ch] text-[1.02rem] leading-[1.75] text-[#55614e]">
+                    <p
+                      className={cn(
+                        "mt-4 max-w-[46ch] text-[0.98rem] leading-[1.7] text-[#55614e]",
+                        isLeft ? "lg:ml-auto" : "",
+                      )}
+                    >
                       {entry.body}
                     </p>
                   ) : null}
 
                   <Cite source={entry.source} url={entry.sourceUrl} />
-                </div>
 
-                {/* A sketch pinned beside the first and last entries. */}
-                {index === 0 ? (
-                  <BotanicalPlate
-                    subject="seed"
-                    className="pointer-events-none absolute -top-6 right-4 hidden h-44 w-32 opacity-45 xl:block"
-                  />
-                ) : null}
-                {index === milestones.length - 1 ? (
-                  <BotanicalPlate
-                    subject="pod"
-                    className="pointer-events-none absolute -top-4 right-6 hidden h-48 w-28 opacity-45 xl:block"
-                  />
-                ) : null}
+                  {/* Space under each entry so the alternation has a rhythm
+                      rather than two columns of touching blocks. */}
+                  <div aria-hidden className="hidden lg:block lg:h-16" />
+                </div>
               </li>
             );
           })}
