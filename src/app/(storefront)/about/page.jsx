@@ -14,7 +14,6 @@ import {
   FieldNotes,
   Timeline,
 } from "@/components/story/StorySections";
-import { StoryFlightLazy } from "@/components/story/flight/StoryFlightLazy";
 export const revalidate = 3600;
 export const metadata = buildMetadata({
   title: "Our story",
@@ -199,15 +198,12 @@ export default async function AboutPage() {
         </section>
 
         {/* ------------------------------------------------------- timeline */}
-        {/* The history is flown through rather than scrolled past: each entry
-            approaches out of the haze, holds, and passes overhead. The paper
-            timeline below is not a duplicate for its own sake — it is what
-            renders when the flight cannot (reduced motion, no WebGL), and it is
-            what a printer and a screen reader get. */}
-        <section id="flight" aria-hidden className="border-b border-[#c9c0a8]">
-          <StoryFlightLazy milestones={milestones} />
-        </section>
-
+        {/* The history used to be flown through first — a WebGL corridor of
+            milestones you scrolled towards — with this paper timeline beneath
+            it as the accessible equivalent. The flight is gone; the paper is
+            what carries the record, which is what it was always doing for
+            anyone on reduced motion, without WebGL, on a printer, or using a
+            screen reader. */}
         <section className="border-b border-[#c9c0a8]">
           <Container className="py-20 md:py-28">
             <Timeline milestones={milestones} />

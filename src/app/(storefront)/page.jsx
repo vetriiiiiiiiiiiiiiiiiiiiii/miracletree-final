@@ -25,6 +25,7 @@ import { HomeHero } from "@/components/home/HomeHero";
 import { InnovationStrip } from "@/components/home/InnovationStrip";
 import { FounderBlock } from "@/components/home/FounderBlock";
 import { TrustSignals } from "@/components/home/TrustSignals";
+import { ExportReach } from "@/components/home/ExportReach";
 // The homepage is fully CMS-driven, so it revalidates rather than being static.
 /**
  * The packs in the hero: a flagship, and six the three small cells cycle
@@ -243,6 +244,9 @@ export default async function HomePage() {
           }))}
         />
       ) : null}
+
+      {/* 08 — Where the moringa goes */}
+      <ExportReach />
 
       {/* 09 — What the company can prove: certificates, recognition, visitors */}
       <TrustSignals accolades={accolades} />
