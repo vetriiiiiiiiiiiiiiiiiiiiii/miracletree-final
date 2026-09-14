@@ -59,33 +59,38 @@ test.describe("pack viewer", () => {
   });
 });
 
-test.describe("leaf transition", () => {
+test.describe("route progress", () => {
   test.use({ storageState: { cookies: [], origins: [] } });
 
-  test("wipes between routes without ever blocking the page", async ({ page }, testInfo) => {
+  test("indicates navigation without ever blocking the page", async ({ page }, testInfo) => {
     test.skip(testInfo.project.name === "mobile", "desktop");
 
     await page.goto("/");
     await page.getByRole("link", { name: "Shop", exact: true }).first().click();
     await expect(page).toHaveURL(/\/shop/);
 
-    // Mid-transition, whatever sits under the centre of the viewport must still
-    // be page content — never the overlay. This is the assertion that catches a
-    // wipe that forgets `pointer-events: none` and eats every click.
+    // The bar is a fixed overlay at the very top of the stacking order. If it
+    // ever became interactive it would eat the first click of every navigation,
+    // so this asserts the property that keeps it harmless rather than asserting
+    // that it was visible at some exact instant.
+    const bar = page.locator('div.pointer-events-none.fixed.inset-x-0.top-0');
+    await expect(bar).toHaveCount(1);
+    await expect(bar).toHaveCSS("pointer-events", "none");
+
+    // Whatever sits under the centre of the viewport must be page content.
     const blocking = await page.evaluate(() => {
       const el = document.elementFromPoint(window.innerWidth / 2, window.innerHeight / 2);
       let node: Element | null = el;
       while (node) {
-        if (node instanceof HTMLElement && node.style.zIndex === "9998") return true;
+        if (node instanceof HTMLElement && node.style.zIndex === "9999") return true;
         node = node.parentElement;
       }
       return false;
     });
-    expect(blocking, "the wipe never intercepts the pointer").toBe(false);
+    expect(blocking, "the progress bar never intercepts the pointer").toBe(false);
 
-    // And it clears itself rather than lingering.
+    // And it retires rather than sitting there at a half-finished width.
     await page.waitForTimeout(1200);
-    const remaining = await page.locator("div.fixed.z-\\[9998\\]").count();
-    expect(remaining, "the overlay is removed once it has run").toBe(0);
+    await expect(bar).toHaveCSS("opacity", "0");
   });
 });

@@ -36,16 +36,37 @@ test.describe("storefront", () => {
   // contact details) — which is a different test, not this one.
   test.use({ storageState: { cookies: [], origins: [] } });
 
-  test("homepage renders the journey and stays error-free", async ({ page }) => {
+  test("homepage hero fits one screen and stays error-free", async ({ page }) => {
     const errors = watchConsole(page);
 
     await page.goto("/");
-    await expect(page.getByRole("heading", { name: /From the Miracle Tree/i })).toBeVisible();
 
-    // All seven chapters ship in the HTML, not just the visible one.
-    await expect(page.locator("article[aria-hidden]")).toHaveCount(7);
+    // The hero carries the page's only h1. It had none at all when the scene
+    // was a scroll journey and every chapter title was an h2.
+    const heading = page.getByRole("heading", { level: 1, name: /From the Miracle Tree/i });
+    await expect(heading).toBeVisible();
 
-    // The world must never swallow the rest of the page.
+    // Both calls to action and the credentials are readable without scrolling.
+    // The scene used to be a 2.4-screen journey, which taxed every repeat
+    // visitor before they could reach a product; this is the guard against it
+    // quietly growing back.
+    // The headline and both calls to action must be readable without scrolling
+    // at every size. The credential strip is held to the same rule on desktop
+    // only: on a 390px phone the hero also carries a product photograph, and
+    // demanding all four fit would mean shrinking the products to nothing.
+    const viewport = page.viewportSize()!;
+    const mustFit = [
+      page.getByRole("link", { name: /Shop the range/i }),
+      page.getByRole("link", { name: /What we developed/i }),
+      ...(viewport.width >= 1024 ? [page.getByText("Working with moringa since")] : []),
+    ];
+    for (const locator of mustFit) {
+      const box = await locator.first().boundingBox();
+      expect(box, "hero element is rendered").not.toBeNull();
+      expect(box!.y + box!.height).toBeLessThanOrEqual(viewport.height + 1);
+    }
+
+    // The hero must never swallow the rest of the page.
     await expect(page.getByRole("heading", { name: /Farm to pack/i })).toBeAttached();
 
     expect(errors).toEqual([]);
@@ -169,6 +190,76 @@ test.describe("storefront", () => {
     await expect(page.getByText("₹220").first()).toBeVisible();
   });
 
+  test("a guest order is not readable by anyone who guesses its number", async ({
+    page,
+    browser,
+  }) => {
+    await page.goto("/product/moringa-leaf-powder-hpd-dried");
+    await page.getByRole("button", { name: "Add to bag" }).click();
+    await expect(page.getByRole("dialog", { name: "Your bag" })).toBeVisible();
+
+    await page.goto("/checkout");
+    await fillCheckout(page, "625018");
+    await page.getByRole("button", { name: /Place order/i }).click();
+    await page.waitForURL(/\/order\/MT-/, { timeout: 30_000 });
+
+    const orderNumber = page.url().split("/order/")[1]!.split("?")[0]!;
+    // The browser that placed it still sees it.
+    await expect(page.getByText(orderNumber).first()).toBeVisible();
+
+    // Order numbers are sequential, so a stranger holding one must get nothing.
+    // This is the regression guard for an earlier version that treated any
+    // order without a userId as public and leaked the whole guest order book.
+    const stranger = await browser.newContext();
+    const strangerPage = await stranger.newPage();
+    const response = await strangerPage.goto(`/order/${orderNumber}`);
+    expect(response?.status()).toBe(404);
+
+    // Assert on details unique to THIS buyer. The footer carries the company's
+    // own address and email on every page, 625018 included, so those strings
+    // prove nothing either way.
+    const body = await strangerPage.content();
+    expect(body).not.toContain("12 Milakaranai Road");
+    expect(body).not.toContain("buyer@example.com");
+    expect(body).not.toContain("9876543210");
+    await stranger.close();
+  });
+
+  test("the gallery renders the company's own photographs", async ({ page }) => {
+    await page.goto("/gallery");
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+
+    // Real files, not placeholders. The path is matched unencoded because
+    // next/image rewrites it to /_next/image?url=%2Fphotos%2F… — a selector
+    // looking for a literal "/photos/" matches nothing.
+    const images = page.locator('main img[src*="photos"]');
+    expect(await images.count()).toBeGreaterThan(10);
+
+    // The captions the company supplied are attached to the visitor photos.
+    await expect(page.getByText(/Farmers visiting Miracle Tree Life Science/i)).toBeVisible();
+
+    // The lightbox opens and closes without trapping the page.
+    await page.locator("main figure button").first().click();
+    const dialog = page.getByRole("dialog");
+    await expect(dialog).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(dialog).toHaveCount(0);
+  });
+
+  test("guests can track an order with its number and email", async ({ page }) => {
+    await page.goto("/track");
+    await expect(page.getByRole("heading", { name: /Track your order/i })).toBeVisible();
+
+    // A wrong pair must not confirm whether the order number exists.
+    const form = page.locator("form").filter({
+      has: page.getByRole("button", { name: /Find my order/i }),
+    });
+    await form.getByLabel(/^Order number/).fill("MT-0000-0001");
+    await form.getByLabel(/^Email address/).fill("nobody@example.com");
+    await form.getByRole("button", { name: /Find my order/i }).click();
+    await expect(page.getByText(/could not find an order/i)).toBeVisible();
+  });
+
   test("our story carries the history, awards, credits and field notes", async ({ page }) => {
     await page.goto("/about");
 
@@ -185,13 +276,46 @@ test.describe("storefront", () => {
     // invisible. The paper record is the authoritative one in any case — it is
     // what survives without WebGL.
     await expect(page.locator("#credits").getByText("Sujatha Rajendran").first()).toBeVisible();
-    await expect(
-      page.locator("#timeline").getByText(/Best Agriculturist/i).first(),
-    ).toBeVisible();
+    // A milestone only the company's own records carry, so this also proves the
+    // history is the supplied one rather than the earlier researched version.
+    await expect(page.locator("#timeline").getByText(/ULTCD/i).first()).toBeVisible();
 
-    // Every award and certification must be traceable to a published source.
-    const citations = page.getByRole("link", { name: /^Source:/i });
+    // Every claim must be attributed. Most now come from the company's own
+    // history document and its scope certificates, which have no public URL —
+    // so this counts attributions rather than links, and the certificate
+    // numbers below are what make those particular claims checkable.
+    const citations = page.getByText(/^Source:/i);
     expect(await citations.count()).toBeGreaterThan(4);
+
+    // The certifications carry numbers a buyer can verify with the issuer.
+    await expect(page.getByText(/12418012002283/).first()).toBeVisible();
+    await expect(page.getByText(/ORG\/SC\/2510\/001122/).first()).toBeVisible();
+  });
+
+  test("leadership carries the founder's record, each claim cited", async ({ page }) => {
+    await page.goto("/leadership");
+
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+
+    // The featured founder, his role, and the achievement the page exists to
+    // carry. These come from rows, so this also proves the seed reached the DB
+    // and the featured/other split rendered.
+    await expect(page.getByRole("heading", { name: "R. Saravanakumaran" })).toBeVisible();
+    await expect(page.getByText(/Co-founder & Chief Executive/i).first()).toBeVisible();
+    await expect(page.getByText(/Best Agriculturist/i).first()).toBeVisible();
+
+    // The rest of the table renders below him rather than being dropped.
+    await expect(page.getByRole("heading", { name: "Sujatha Rajendran" })).toBeVisible();
+
+    // Same rule as the story page: a credential nobody can check is a legal
+    // exposure on a food brand, so every profile shown carries its source.
+    const citations = page.getByRole("link", { name: /^Source:/i });
+    expect(await citations.count()).toBeGreaterThan(2);
+
+    // Search engines should attach the award to the person, not the company.
+    const personSchema = await page.locator('script#ld-leadership-person').textContent();
+    expect(personSchema).toContain('"@type":"Person"');
+    expect(personSchema).toContain("Best Agriculturist");
   });
 
   test("the journal index now lives inside the story", async ({ page }) => {

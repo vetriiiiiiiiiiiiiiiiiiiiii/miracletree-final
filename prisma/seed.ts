@@ -13,6 +13,7 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { ACCOLADES, CREDITS, MILESTONES } from "./story";
+import { LEADERS } from "./leadership";
 
 const prisma = new PrismaClient();
 const here = dirname(fileURLToPath(import.meta.url));
@@ -55,7 +56,11 @@ function extractBullets(html: string): { title: string; body: string | null }[] 
     .filter((t) => t.length > 3 && t.length < 320)
     .slice(0, 6)
     .map((text) => {
-      const split = text.match(/^([^:–—-]{3,48})\s*[:–—-]\s*(.+)$/);
+      // A bare hyphen only separates a title from a body when it has space
+      // around it. Treating any hyphen as a separator turned the bullet
+      // "Anti-Inflammatory" into the title "Anti" with the body
+      // "Inflammatory", which is how it rendered on the product page.
+      const split = text.match(/^([^:–—]{3,48})\s*(?::|\s-\s|[–—])\s*(.+)$/);
       return split
         ? { title: split[1]!.trim(), body: split[2]!.trim() }
         : { title: text.length > 64 ? `${text.slice(0, 61)}…` : text, body: null };
@@ -133,7 +138,7 @@ const CATEGORIES = [
     slug: "super-foods",
     name: "Super Foods",
     description:
-      "Everyday staples rebuilt around the moringa leaf — soups, mixes and powders for the Indian kitchen.",
+      "Soups, mixes and powders for the Indian kitchen, built around the moringa leaf.",
     position: 1,
   },
   {
@@ -184,6 +189,50 @@ const FEATURED_HANDLES = new Set([
   "moringa-rolled-plain-tea-100-gms-50-servings-approx",
   "moringa-seed-oil-hair-strengthening-oil",
 ]);
+
+/**
+ * Category codes for stock-keeping units, and the codes themselves.
+ *
+ * A variant's SKU used to be the product slug's first twelve characters plus
+ * the variant position, which is not a keeping unit at all. Four of the herbal
+ * teas are "moringa-with-..." — ginger, orange, peppermint, cinnamon — so all
+ * four carried MT-MORINGA-WITH-2, and moringa seed oil shared a code with
+ * moringa seed capsules. Ten of thirty-two codes named more than one product,
+ * covering half the catalogue. The admin's inventory table then adjusted
+ * whichever duplicate happened to sort first, and a warehouse picking by code
+ * would have shipped the wrong tea.
+ *
+ * Building the code from the category and the product's place in the
+ * catalogue makes it distinct by construction rather than by luck, and it is
+ * what a real SKU looks like anyway: an identifier, not a compressed name. The
+ * product name sits in the column beside it wherever the code is shown.
+ */
+const SKU_CATEGORY_CODE: Record<string, string> = {
+  "super-foods": "SUP",
+  "herbal-supplements": "HRB",
+  "moringa-tea": "TEA",
+  "healthy-snacks": "SNK",
+  "essential-oils": "OIL",
+};
+
+const issuedSkus = new Set<string>();
+
+function variantSku(
+  explicit: string | undefined,
+  categorySlug: string,
+  productIndex: number,
+  position: number,
+) {
+  const code =
+    explicit ||
+    `MT-${SKU_CATEGORY_CODE[categorySlug] ?? "GEN"}-${String(productIndex + 1).padStart(3, "0")}-${position}`;
+  // Loud rather than silent: a duplicate here is the bug this replaced.
+  if (issuedSkus.has(code)) {
+    throw new Error(`duplicate SKU ${code} (product #${productIndex + 1}, variant ${position})`);
+  }
+  issuedSkus.add(code);
+  return code;
+}
 
 const PRODUCT_TYPE_BY_CATEGORY: Record<string, string> = {
   "super-foods": "mix",
@@ -395,7 +444,7 @@ const ARTICLES = [
     excerpt:
       "It grows in poor soil, survives drought, and every part of it is useful. A short field guide to the tree that grows in half the backyards in Tamil Nadu.",
     content: `<p>Walk through any village in Madurai district and you will pass it a dozen times without looking up: a thin, untidy tree with pale bark and small round leaflets, usually leaning over a compound wall. Nobody plants it ceremonially. It simply appears, and then it feeds people.</p>
-<p><em>Moringa oleifera</em> earned the name "miracle tree" the unglamorous way — by being useful in places where little else is. It grows in thin, sandy soil. It survives a failed monsoon. It reaches harvestable height in under a year, which for a tree is close to impatience.</p>
+<p><em>Moringa oleifera</em> got the name "miracle tree" for practical reasons. It grows in thin, sandy soil. It survives a failed monsoon. It reaches harvestable height in under a year, which for a tree is close to impatience.</p>
 <h2>Every part has a use</h2>
 <p>The <strong>leaf</strong> is the part most people outside India now recognise, dried and milled into powder. The <strong>pod</strong> — the drumstick itself — goes into sambar across South India. The <strong>flower</strong> appears in a short window and is gathered the same day. The <strong>seed</strong> is cold-pressed for oil. Even the <strong>gum</strong> that sets on the bark is collected and milled.</p>
 <h2>What growing it well actually requires</h2>
@@ -423,7 +472,7 @@ const ARTICLES = [
     slug: "six-ways-to-cook-with-moringa",
     category: "Kitchen",
     excerpt:
-      "Not smoothies. Dal, rasam, chapati dough, curd rice, podi and buttermilk — where a spoon of leaf powder actually belongs.",
+      "Dal, rasam, chapati dough, curd rice, podi and buttermilk. Six Indian dishes that take a spoon of leaf powder well.",
     content: `<p>Most moringa advice assumes you own a blender and drink your breakfast. Here is what to do if you cook the way most Indian households actually cook.</p>
 <h2>1. Dal</h2>
 <p>Stir a teaspoon in after you take the pot off the heat. Added earlier, it dulls.</p>
@@ -447,7 +496,7 @@ const HOMEPAGE_SECTIONS = [
     kind: "hero",
     title: "From the Miracle Tree.",
     subtitle:
-      "Moringa grown, dried and milled in Madurai — from a single seed to what reaches your kitchen.",
+      "Moringa grown, dried and milled in Madurai. Twenty-seven products, all from one tree.",
     ctaLabel: "Explore the collection",
     ctaHref: "/shop",
     data: JSON.stringify({ secondaryLabel: "Discover moringa", secondaryHref: "/moringa" }),
@@ -466,21 +515,21 @@ const HOMEPAGE_SECTIONS = [
     kind: "why",
     title: "Why moringa",
     subtitle:
-      "It grows where little else will, and almost nothing about it is wasted.",
+      "It grows in poor soil with little water, and almost every part of it is usable.",
     position: 3,
   },
   {
     key: "farm-to-product",
     kind: "process",
     title: "Farm to pack",
-    subtitle: "Seven steps, and the one that decides everything is the drying.",
+    subtitle: "Seven steps from the field to the pack. The drying is the one that matters most.",
     position: 4,
   },
   {
     key: "collection",
     kind: "collection",
     title: "The collection",
-    subtitle: "Twenty-seven ways to bring the tree indoors.",
+    subtitle: "Powders, teas, capsules, oils, bars and snacks.",
     ctaLabel: "View all products",
     ctaHref: "/shop",
     position: 5,
@@ -489,7 +538,7 @@ const HOMEPAGE_SECTIONS = [
     key: "ingredients",
     kind: "ingredients",
     title: "What's inside",
-    subtitle: "Five parts of one tree, and what each of them becomes.",
+    subtitle: "Leaf, pod, flower, seed and gum, and what we make from each.",
     position: 6,
   },
   {
@@ -538,9 +587,18 @@ const HOMEPAGE_SECTIONS = [
 const NAVIGATION = [
   { group: "header", label: "Shop", href: "/shop", position: 1 },
   { group: "header", label: "Ritual", href: "/ritual", position: 2 },
-      { group: "header", label: "Our Story", href: "/about", position: 3 },
-  { group: "header", label: "Moringa", href: "/moringa", position: 4 },
+  { group: "header", label: "Moringa", href: "/moringa", position: 3 },
+  { group: "header", label: "Innovation", href: "/innovation", position: 4 },
   { group: "header", label: "Contact", href: "/contact", position: 5 },
+
+  // The company pages sit behind one "Company" menu in the header rather than
+  // as four more top-level links. Leadership and the gallery were previously
+  // reachable only from the footer, which is why nobody could find them.
+  { group: "header-company", label: "Our story", href: "/about", position: 1 },
+  { group: "header-company", label: "Leadership", href: "/leadership", position: 2 },
+  { group: "header-company", label: "Innovation", href: "/innovation", position: 3 },
+  { group: "header-company", label: "Gallery", href: "/gallery", position: 4 },
+  { group: "header-company", label: "Certifications", href: "/innovation#certifications", position: 5 },
 
   { group: "footer-shop", label: "All products", href: "/shop", position: 1 },
   { group: "footer-shop", label: "Super Foods", href: "/shop/super-foods", position: 2 },
@@ -550,17 +608,21 @@ const NAVIGATION = [
   { group: "footer-shop", label: "Oils & Skin", href: "/shop/essential-oils", position: 6 },
 
   { group: "footer-company", label: "Our story", href: "/about", position: 1 },
-  { group: "footer-company", label: "Discover moringa", href: "/moringa", position: 2 },
-  { group: "footer-company", label: "Field notes", href: "/about#field-notes", position: 3 },
-  { group: "footer-company", label: "Become a distributor", href: "/contact?topic=distributor", position: 4 },
-  { group: "footer-company", label: "Bulk & export", href: "https://indiamoringa.com", position: 5 },
+  { group: "footer-company", label: "Leadership", href: "/leadership", position: 2 },
+  { group: "footer-company", label: "Innovation", href: "/innovation", position: 3 },
+  { group: "footer-company", label: "Gallery", href: "/gallery", position: 4 },
+  { group: "footer-company", label: "Discover moringa", href: "/moringa", position: 5 },
+  { group: "footer-company", label: "Field notes", href: "/about#field-notes", position: 6 },
+  { group: "footer-company", label: "Become a distributor", href: "/contact?topic=distributor", position: 7 },
+  { group: "footer-company", label: "Bulk & export", href: "https://indiamoringa.com", position: 8 },
 
-  { group: "footer-support", label: "Contact", href: "/contact", position: 1 },
-  { group: "footer-support", label: "FAQ", href: "/faq", position: 2 },
-  { group: "footer-support", label: "Shipping", href: "/shipping", position: 3 },
-  { group: "footer-support", label: "Returns & refunds", href: "/returns", position: 4 },
-  { group: "footer-support", label: "Privacy policy", href: "/privacy", position: 5 },
-  { group: "footer-support", label: "Terms of service", href: "/terms", position: 6 },
+  { group: "footer-support", label: "Track your order", href: "/track", position: 1 },
+  { group: "footer-support", label: "Contact", href: "/contact", position: 2 },
+  { group: "footer-support", label: "FAQ", href: "/faq", position: 3 },
+  { group: "footer-support", label: "Shipping", href: "/shipping", position: 4 },
+  { group: "footer-support", label: "Returns & refunds", href: "/returns", position: 5 },
+  { group: "footer-support", label: "Privacy policy", href: "/privacy", position: 6 },
+  { group: "footer-support", label: "Terms of service", href: "/terms", position: 7 },
 ];
 
 const SETTINGS: Record<string, string> = {
@@ -633,6 +695,11 @@ async function main() {
     prisma.milestone.deleteMany(),
     prisma.accolade.deleteMany(),
     prisma.credit.deleteMany(),
+    // Highlights first: the cascade would handle it, but the delete order in
+    // this block is explicit everywhere else and staying consistent is worth
+    // more than the one saved line.
+    prisma.leaderHighlight.deleteMany(),
+    prisma.leader.deleteMany(),
   ]);
 
   // ---- categories, collections, ingredients
@@ -749,7 +816,7 @@ async function main() {
         data: {
           productId: product.id,
           name: v.title === "Default Title" ? "Standard" : v.title,
-          sku: v.sku || `MT-${product.slug.slice(0, 12).toUpperCase()}-${v.position}`,
+          sku: variantSku(v.sku, categorySlug, index, v.position),
           price: rupeesToPaise(v.price),
           compareAtPrice: v.compare_at_price
             ? rupeesToPaise(v.compare_at_price) > rupeesToPaise(v.price)
@@ -928,6 +995,26 @@ async function main() {
   });
   console.log(
     `✓ story: ${MILESTONES.length} milestones, ${ACCOLADES.length} accolades, ${CREDITS.length} credits`,
+  );
+
+  // --- leadership: full profiles, with each leader's record as child rows.
+  // Written one at a time rather than with createMany so the nested highlights
+  // come along; there are five of them, so the round trips do not matter.
+  for (const [i, leader] of LEADERS.entries()) {
+    const { slugKey: _slugKey, highlights, ...fields } = leader;
+    await prisma.leader.create({
+      data: {
+        ...fields,
+        position: i,
+        isActive: true,
+        highlights: {
+          create: highlights.map((h, j) => ({ ...h, position: j })),
+        },
+      },
+    });
+  }
+  console.log(
+    `✓ leadership: ${LEADERS.length} profiles, ${LEADERS.reduce((n, l) => n + l.highlights.length, 0)} highlights`,
   );
 
   console.log(`✓ admin ready: ${email}`);

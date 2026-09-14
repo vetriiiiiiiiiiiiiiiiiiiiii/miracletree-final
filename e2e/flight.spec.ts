@@ -15,8 +15,13 @@ test.describe("story flight", () => {
     test.skip(testInfo.project.name === "mobile", "captured on desktop");
 
     await page.goto("/about");
-    await expect(page.locator("#flight canvas")).toBeVisible();
-    await page.waitForTimeout(1500);
+
+    // The renderer is ~340kB and the flight sits several screens down, so it
+    // is not downloaded until the reader is heading towards it. Asserting its
+    // absence here is the guard against that deferral quietly regressing to an
+    // eager import, which is what it used to be.
+    await page.waitForTimeout(1200);
+    await expect(page.locator("#flight canvas")).toHaveCount(0);
 
     // Scrolled by wheel from a known top, not scrollIntoView: Lenis owns the
     // scroll on pointer devices, converts wheel into real window scroll, and
@@ -34,6 +39,8 @@ test.describe("story flight", () => {
     };
 
     await flyBy(9);
+    // By now the observer has long since fired and the canvas is warm.
+    await expect(page.locator("#flight canvas")).toBeVisible();
     const first = await counter.textContent();
     await page.screenshot({ path: "shots/flight-start.png" });
 
