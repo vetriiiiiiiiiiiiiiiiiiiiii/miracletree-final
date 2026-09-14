@@ -279,7 +279,12 @@
     font-feature-settings: "cv02", "cv03", "cv11";
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
-    overflow-x: hidden;
+    /* `clip`, not `hidden`. Both stop a stray wide element from scrolling the
+       page sideways, but `hidden` makes the body a scroll container, and a
+       scroll container silently breaks every `position: sticky` descendant —
+       which is how the timeline's pinned years were failing with no error and
+       no warning. `clip` does the same job without creating one. */
+    overflow-x: clip;
   }
 
   h1,
