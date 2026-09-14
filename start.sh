@@ -8,7 +8,7 @@ if [ ! -f /data/miracletree.db ]; then
 fi
 
 echo "Updating database schema..."
-DATABASE_URL="file:/data/miracletree.db" npx -y prisma@6 db push --schema=prisma/schema.prisma --accept-data-loss --skip-generate
+DATABASE_URL="file:/data/miracletree.db" npx -y prisma@6 db push --schema=node_modules/.prisma/client/schema.prisma --accept-data-loss --skip-generate
 
 # Start Nginx in background as daemon
 nginx
