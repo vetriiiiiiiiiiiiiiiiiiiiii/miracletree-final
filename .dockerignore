@@ -1,10 +1,1 @@
-node_modules
-npm-debug.log
-Dockerfile
-.dockerignore
-.git
-.gitignore
-README.md
-.next
-!.next/standalone
-!.next/static
+test.Dockerfile

@@ -13,6 +13,10 @@ COPY . .
 # Build the application
 ENV DATABASE_URL="file:./dev.db"
 RUN npx prisma db push
+# Seed it too. prisma/dev.db is gitignored, so without this the image ships a
+# database with the right tables and no rows, and a container starting on a
+# fresh volume serves an empty shop: no products, no story, no admin account.
+RUN npm run db:seed
 RUN npm run build
 
 # Stage 2: Serve the application with Nginx and Node.js
@@ -34,7 +38,7 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/prisma/dev.db ./dev.db
-COPY --from=builder /app/prisma/schema.prisma ./prisma/schema.prisma
+COPY --from=builder /app/scripts/repair-duplicate-skus.mjs ./scripts/repair-duplicate-skus.mjs
 
 # Copy start script
 COPY start.sh ./start.sh
