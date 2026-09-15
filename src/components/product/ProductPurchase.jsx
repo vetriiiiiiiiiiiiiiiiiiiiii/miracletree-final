@@ -262,7 +262,7 @@ export function ProductPurchase({
           Packed within 1–2 working days, shipped across India
         </TrustRow>
         <TrustRow icon="leaf">
-          Shade-dried below 40°C · no colouring, no preservatives
+          Closed-chamber dried at low temperature · no colouring, no preservatives
         </TrustRow>
         <TrustRow icon="lock">Secure payment by card, UPI, net banking or COD</TrustRow>
       </ul>

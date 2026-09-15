@@ -23,7 +23,7 @@ export async function generateMetadata({ searchParams }) {
   return buildMetadata({
     title: term ? `Search: ${term}` : "Shop all moringa products",
     description:
-      "Moringa leaf powder, teas, tablets, capsules, mixes, snacks and seed oil — grown and shade-dried in Madurai, Tamil Nadu.",
+      "Moringa leaf powder, teas, tablets, capsules, mixes, snacks and seed oil — grown in Madurai, Tamil Nadu and dried in-house at low temperature.",
     path: "/shop",
     // Filtered and paginated permutations are index noise; canonical /shop and
     // the category pages carry the SEO weight.

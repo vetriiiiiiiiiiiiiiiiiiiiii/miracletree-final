@@ -267,9 +267,10 @@ export default async function ProductPage({ params }) {
             <div className="max-w-[58ch]">
               <p className="leading-relaxed text-cream-300">
                 Grown on smallholdings around Madurai in Tamil Nadu, picked by hand at
-                first light, and into shade within the hour. Drying happens below 40°C,
-                which is slower and more expensive than sun-drying and is the reason the
-                leaf still looks like a leaf when it reaches the mill.
+                first light, and into shade within the hour. Drying then happens in a
+                controlled low-temperature closed chamber rather than in open sun —
+                slower and more expensive, and the reason the leaf still looks like a
+                leaf when it reaches the mill.
               </p>
               <p className="mt-5 leading-relaxed text-cream-400">
                 Everything is milled and packed in small batches, so what arrives is
