@@ -252,7 +252,7 @@ const INGREDIENTS = [
     name: "Moringa Leaf",
     origin: "Madurai, Tamil Nadu",
     description:
-      "Hand-picked leaflets of Moringa oleifera, shade-dried below 40°C to keep the leaf green rather than khaki.",
+      "Hand-picked leaflets of Moringa oleifera, dried in a controlled low-temperature closed chamber to keep the leaf green rather than khaki.",
   },
   {
     slug: "moringa-seed",
@@ -344,7 +344,7 @@ const FAQS = [
     category: "moringa",
     question: "Why does your leaf powder look bright green rather than dull?",
     answer:
-      "Colour is the clearest signal of how a leaf was dried. We shade-dry below 40°C rather than sun-drying, which is slower and costs more, but it keeps the leaf green instead of turning it khaki.",
+      "Colour is the clearest signal of how a leaf was dried. Rather than drying in open sun, we use ULTCD and CLHPD — controlled low-temperature closed-chamber drying developed in-house. It is slower and costs more, and it keeps the leaf green instead of turning it khaki.",
   },
   {
     category: "products",
@@ -448,7 +448,7 @@ const ARTICLES = [
 <h2>Every part has a use</h2>
 <p>The <strong>leaf</strong> is the part most people outside India now recognise, dried and milled into powder. The <strong>pod</strong> — the drumstick itself — goes into sambar across South India. The <strong>flower</strong> appears in a short window and is gathered the same day. The <strong>seed</strong> is cold-pressed for oil. Even the <strong>gum</strong> that sets on the bark is collected and milled.</p>
 <h2>What growing it well actually requires</h2>
-<p>The difference between good moringa and forgettable moringa is almost entirely in the drying. A leaf laid out in direct sun loses its colour within hours and turns the dull khaki you see in cheap powder. Shade-drying below 40°C takes longer and costs more, and it is the reason a good powder is still green when it reaches you.</p>
+<p>The difference between good moringa and forgettable moringa is almost entirely in the drying. A leaf laid out in direct sun loses its colour within hours and turns the dull khaki you see in cheap powder. Controlled low-temperature closed-chamber drying takes longer and costs more, and it is the reason a good powder is still green when it reaches you.</p>
 <p>That is the whole craft, more or less. Grow it where it wants to grow, pick it in the morning, and do not cook it on the way to the pack.</p>`,
   },
   {
@@ -461,7 +461,7 @@ const ARTICLES = [
 <h2>Leaf only, or leaf and stem?</h2>
 <p>Stem is cheaper to grow and heavier to sell, so it finds its way into a lot of powder. Leaf-only powder is finer, greener, and tastes noticeably less woody. If a label does not say, it is usually because the answer is not "leaf only".</p>
 <h2>Colour</h2>
-<p>Fresh, shade-dried leaf powder is a deep green with a slight grey cast. Bright emerald usually means colouring. Khaki or olive means heat — either sun-drying or a hot mill.</p>
+<p>Fresh leaf powder dried at low temperature is a deep green with a slight grey cast. Bright emerald usually means colouring. Khaki or olive means heat — either sun-drying or a hot mill.</p>
 <h2>Mesh size</h2>
 <p>Mesh describes how finely the leaf was milled. An 80-mesh powder dissolves into liquid; a coarse grind settles at the bottom of the glass. Neither is wrong, but they suit different uses — fine for drinks, coarse for cooking.</p>
 <h2>Harvest and pack date</h2>
@@ -632,7 +632,7 @@ const SETTINGS: Record<string, string> = {
   "checkout.codEnabled": "true",
   "seo.defaultTitle": "Miracle Tree — Moringa superfoods from Madurai",
   "seo.defaultDescription":
-    "Moringa leaf powder, teas, tablets and superfoods grown and shade-dried in Madurai, Tamil Nadu. From the miracle tree.",
+    "Moringa leaf powder, teas, tablets and superfoods grown in Madurai, Tamil Nadu and dried in-house at low temperature. From the miracle tree.",
   "brand.tagline": "From the Miracle Tree.",
   "brand.foundedYearsCopy": "20+ years working with moringa",
 };

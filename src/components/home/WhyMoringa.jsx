@@ -20,10 +20,10 @@ const FACTS = [
     body: "Each part is processed differently and ends up in a different product. Very little of the tree is thrown away.",
   },
   {
-    figure: "< 40",
-    unit: "°C",
-    title: "Shade-dried, never sun-dried",
-    body: "Drying temperature decides whether leaf powder stays green or turns khaki. Shade-drying costs us more and takes longer.",
+    figure: "2",
+    unit: "drying technologies",
+    title: "Closed-chamber dried, never sun-dried",
+    body: "Most moringa is dried in open sun because sun is free, and the heat takes the colour with it. ULTCD and CLHPD dry the leaf in a controlled low-temperature closed chamber instead — both developed in-house.",
   },
   {
     figure: "20+",

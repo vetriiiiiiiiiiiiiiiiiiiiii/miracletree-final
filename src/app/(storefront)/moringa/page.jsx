@@ -116,7 +116,7 @@ export default async function MoringaPage() {
               {[
                 {
                   title: "Colour",
-                  body: "Deep green with a slight grey cast is shade-dried leaf. Khaki or olive means heat. Bright emerald usually means colouring.",
+                  body: "Deep green with a slight grey cast is leaf dried at low temperature. Khaki or olive means heat — open sun or a hot mill. Bright emerald usually means colouring.",
                 },
                 {
                   title: "Leaf only, or leaf and stem",

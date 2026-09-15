@@ -22,7 +22,7 @@ const STEPS = [
   {
     id: "drying",
     label: "Drying",
-    body: "Into shade within the hour, then dried below 40°C. This is the step that decides the colour.",
+    body: "Into shade within the hour, then into a controlled low-temperature closed chamber — ULTCD, developed here in 2014. This is the step that decides the colour.",
   },
   {
     id: "processing",
