@@ -302,6 +302,39 @@ const INGREDIENTS_BY_CATEGORY: Record<string, string[]> = {
   "essential-oils": ["moringa-seed"],
 };
 
+/**
+ * Ingredients for a specific product, where the category's list is wrong for it.
+ *
+ * Ingredients are otherwise assigned by category, which left Amla listed as an
+ * ingredient with nothing using it: the amla tablets sit in herbal-supplements,
+ * and that category's list is leaf, seed, flower and gum. A product named after
+ * an ingredient has to be linked to it.
+ */
+const INGREDIENTS_BY_HANDLE: Record<string, string[]> = {
+  "moringa-amla-tablets": ["moringa-leaf", "amla"],
+};
+
+/**
+ * Price corrections supplied by MiracleTree, in rupees.
+ *
+ * The Shopify export these products are imported from carries prices the
+ * company has since revised. Rather than edit the export — which is the record
+ * of what was exported — the corrections are applied here, keyed by product
+ * handle and variant title, so the source file stays untouched and every
+ * correction is visible in one place.
+ */
+const PRICE_OVERRIDES: Record<string, Record<string, number>> = {
+  "mogo-moringa-energy-bar": { "Pack of 10": 400 },
+  "colostrum-protein-bar-200-gms": { "Default Title": 400 },
+  "drumstick-pulp-soup-instant-soup-10-sachets": { "10 Sachets Per Box": 560 },
+};
+
+/** The corrected price for a variant, or its exported price. */
+function variantPrice(handle: string, title: string, exported: string | number): number {
+  const override = PRICE_OVERRIDES[handle]?.[title];
+  return override ?? Number(exported);
+}
+
 /** Preparation steps by category — practical instructions, no claims. */
 const USAGE_BY_CATEGORY: Record<string, { title: string; body: string }[]> = {
   "moringa-tea": [
@@ -753,9 +786,13 @@ async function main() {
     // come from that same variant. Taking the highest compare-at across all
     // variants produced nonsense like "-96% off" on multi-size products.
     const cheapestVariant = p.variants.reduce((low, v) =>
-      Number(v.price) < Number(low.price) ? v : low,
+      variantPrice(p.handle, v.title, v.price) < variantPrice(p.handle, low.title, low.price)
+        ? v
+        : low,
     );
-    const cheapest = rupeesToPaise(cheapestVariant.price);
+    const cheapest = rupeesToPaise(
+      variantPrice(p.handle, cheapestVariant.title, cheapestVariant.price),
+    );
     const cheapestCompare = cheapestVariant.compare_at_price
       ? rupeesToPaise(cheapestVariant.compare_at_price)
       : 0;
@@ -802,7 +839,10 @@ async function main() {
           })),
         },
         ingredients: {
-          create: (INGREDIENTS_BY_CATEGORY[categorySlug] ?? ["moringa-leaf"]).map(
+          create: (
+            INGREDIENTS_BY_HANDLE[p.handle] ??
+            INGREDIENTS_BY_CATEGORY[categorySlug] ?? ["moringa-leaf"]
+          ).map(
             (slug, i) => ({ ingredientId: ingredientIds.get(slug)!, position: i }),
           ),
         },
@@ -817,7 +857,7 @@ async function main() {
           productId: product.id,
           name: v.title === "Default Title" ? "Standard" : v.title,
           sku: variantSku(v.sku, categorySlug, index, v.position),
-          price: rupeesToPaise(v.price),
+          price: rupeesToPaise(variantPrice(p.handle, v.title, v.price)),
           compareAtPrice: v.compare_at_price
             ? rupeesToPaise(v.compare_at_price) > rupeesToPaise(v.price)
               ? rupeesToPaise(v.compare_at_price)

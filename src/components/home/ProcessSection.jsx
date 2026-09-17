@@ -22,7 +22,9 @@ const STEPS = [
   {
     id: "drying",
     label: "Drying",
-    body: "Into shade within the hour, then into a controlled low-temperature closed chamber — ULTCD, developed here in 2014. This is the step that decides the colour.",
+    // The step's own line was removed on instruction; the supplied CLHPD
+    // paragraph below carries this step.
+    body: null,
   },
   {
     id: "processing",
@@ -124,14 +126,19 @@ export function ProcessSection({ title, subtitle }) {
                 >
                   {step.label}
                 </h3>
-                <p className="mt-4 max-w-[48ch] leading-relaxed text-cream-400">
-                  {step.body}
-                </p>
+                {step.body ? (
+                  <p className="mt-4 max-w-[48ch] leading-relaxed text-cream-400">
+                    {step.body}
+                  </p>
+                ) : null}
 
                 {step.id === "drying" ? (
-                  <p className="mt-6 max-w-[44ch] border-l border-gold-500/40 pl-5 text-sm leading-relaxed text-cream-300">
-                    Sun-drying is faster and cheaper, and it is why most moringa powder
-                    is olive rather than green. It is the one corner we do not cut.
+                  <p className="mt-6 max-w-[48ch] border-l border-gold-500/40 pl-5 text-sm leading-relaxed text-cream-300">
+                    Building on years of low-temperature expertise, CLHPD represents the
+                    next stage in MiracleTree&rsquo;s controlled dehydration journey.
+                    Developed specifically for premium Moringa and herbal materials, it
+                    safeguards the nutrients and integrity often lost to conventional
+                    drying.
                   </p>
                 ) : null}
               </li>

@@ -47,10 +47,13 @@ export default async function MoringaPage() {
               The drumstick tree.
             </h1>
             <p className="mt-8 max-w-[56ch] text-[1.15rem] leading-relaxed text-cream-300">
-              In Tamil Nadu it is <em className="text-leaf-200">murungai</em> — a thin,
-              untidy tree leaning over half the compound walls in the district. It grows
-              in poor soil, survives a failed monsoon, and reaches harvestable height in
-              under a year. Almost every part of it is edible.
+              Known affectionately in Tamil Nadu as{" "}
+              <em className="text-leaf-200">murungai</em>, Our Moringa is cultivated in
+              meticulously enriched earth along the beautiful foothills of the Western
+              Ghats and Sirumalai. A true testament to natural resilience, it thrives
+              even with very little water easily surviving a failed monsoon and reaches a
+              harvestable height in under a year. A miracle of nature, almost every part
+              of this incredible tree is wonderfully edible.
             </p>
           </header>
 
