@@ -20,12 +20,6 @@ const FACTS = [
     body: "Each part is processed differently and ends up in a different product. Very little of the tree is thrown away.",
   },
   {
-    figure: "2",
-    unit: "drying technologies",
-    title: "Closed-chamber dried, never sun-dried",
-    body: "Most moringa is dried in open sun because sun is free, and the heat takes the colour with it. ULTCD and CLHPD dry the leaf in a controlled low-temperature closed chamber instead — both developed in-house.",
-  },
-  {
     figure: "20+",
     unit: "years",
     title: "Working with the same growers",
@@ -39,7 +33,7 @@ export function WhyMoringa({ title, subtitle }) {
         <SectionHeading title={title} lede={subtitle ?? undefined} />
 
         <Reveal
-          className="mt-16 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4"
+          className="mt-16 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3"
           stagger={0.1}
         >
           {FACTS.map((fact) => (
