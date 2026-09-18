@@ -67,7 +67,19 @@ export function Header({
         Skip to content
       </a>
 
-      {announcement && !scrolled ? (
+      {/* Always in flow, never conditional.
+       *
+       * This used to unmount once the page scrolled past 24px, and because it
+       * sits in normal flow above a sticky header, mounting it added 33px of
+       * document height and moved the scroll position with it. Near the
+       * threshold that fed back on itself — the bar appeared, the shift pushed
+       * the page back over 24px, the bar vanished, and so on — which is the
+       * flicker anyone saw scrolling back to the top.
+       *
+       * No condition is needed: the bar is relative, not sticky, so it simply
+       * scrolls out of view while the header stays. Document height is now
+       * constant, so there is nothing to feed back. */}
+      {announcement ? (
         <div className="relative z-40 bg-forest-800 py-2 text-center text-[0.7rem] uppercase tracking-[0.18em] text-leaf-200">
           {announcement}
         </div>
