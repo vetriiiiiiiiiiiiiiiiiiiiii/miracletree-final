@@ -11,6 +11,18 @@ import { LinkButton } from "@/components/ui/Button";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getBestSellers, getFaqs, getIngredients } from "@/lib/queries";
 import { breadcrumbSchema, buildMetadata, faqSchema } from "@/lib/seo";
+/**
+ * The parts of the moringa tree, in the order the section's own lede names
+ * them: leaf, seed, flower, gum and pod.
+ */
+const MORINGA_PARTS = [
+  "moringa-leaf",
+  "moringa-seed",
+  "moringa-flower",
+  "moringa-gum",
+  "drumstick-pod",
+];
+
 export const revalidate = 3600;
 export const metadata = buildMetadata({
   title: "Discover moringa",
@@ -86,18 +98,30 @@ export default async function MoringaPage() {
         subtitle="Seed to harvest, the way the tree actually does it: fast, untidy, and useful at every stage."
       />
 
-      {/* Parts of the tree */}
+      {/* Parts of the tree.
+
+          The five the heading names, in the order it names them. The explorer
+          used to list every ingredient in the catalogue alphabetically, which
+          put amla first — an Indian gooseberry heading a section about the
+          parts of a moringa tree — and sprouted millets last, making seven
+          entries under a heading that promises five. Both are real ingredients
+          in real products and stay in the database; they are simply not parts
+          of this tree. */}
       <IngredientExplorer
         title="Five parts, five products"
         subtitle="Leaf, seed, flower, gum and pod. Each is handled differently and ends up somewhere different in the range."
-        ingredients={ingredients.map((i) => ({
-          id: i.id,
-          name: i.name,
-          slug: i.slug,
-          description: i.description,
-          origin: i.origin,
-          productCount: i._count.products,
-        }))}
+        ingredients={MORINGA_PARTS.map((slug) =>
+          ingredients.find((i) => i.slug === slug),
+        )
+          .filter(Boolean)
+          .map((i) => ({
+            id: i.id,
+            name: i.name,
+            slug: i.slug,
+            description: i.description,
+            origin: i.origin,
+            productCount: i._count.products,
+          }))}
       />
 
       {/* How it's processed */}
@@ -106,32 +130,34 @@ export default async function MoringaPage() {
         subtitle="Seven steps between the field and your kitchen. One of them matters more than the rest."
       />
 
-      {/* Choosing well */}
+      {/* Why MiracleTree. Replaces the buyer's guide that stood here — the
+          company supplied this copy and it is used verbatim, including its
+          capitalisation and its arrows. */}
       <Section tone="default" spacing="default" className="grain">
         <Container>
           <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
             <SectionHeading
-              title="Telling one green powder from another"
-              lede="Most packs look identical. These four things separate them."
+              title="WHY MIRACLETREE?"
+              lede="Anyone can sell you a green powder. Very few can show you the farm, the drying chamber and the years of hard-work standing behind it. Here is what lies between our leaf and your pack."
             />
 
             <ol className="grid gap-0">
               {[
                 {
-                  title: "Colour",
-                  body: "Deep green with a slight grey cast is leaf dried at low temperature. Khaki or olive means heat — open sun or a hot mill. Bright emerald usually means colouring.",
+                  title: "DRYING THAT PROTECTS THE LEAF, NOT JUST PRESERVES IT",
+                  body: "Fresh Moringa leaves are highly perishable, and inappropriate drying can adversely affect colour, sensory quality and nutritional characteristics. That is why, in 2014, we moved away from uncontrolled conventional drying and introduced ULTCD — Ultra Low Temperature Closed Chamber Drying: low temperature, controlled environment, hygienic closed-chamber processing — then advanced it again in 2019 with CLHPD — Controlled Low Heat Process Drying.",
                 },
                 {
-                  title: "Leaf only, or leaf and stem",
-                  body: "Stem is cheaper to grow and heavier to sell. Leaf-only powder is finer, greener, and noticeably less woody. If a pack does not say, assume it is not leaf only.",
+                  title: "ONE CHAIN, CONTROLLED END TO END",
+                  body: "Cultivation → Harvesting → Primary Processing → Drying → Milling → Formulation → Product Development → Packaging → Quality Systems. International quality cannot be created only inside a factory; it requires control across the chain — seed & cultivation, harvesting, hygiene, drying, processing, quality assurance, formulation, packaging, traceability. We control all of it.",
                 },
                 {
-                  title: "Mesh",
-                  body: "Fine grinds dissolve into liquid; coarse grinds settle. Neither is wrong — fine suits drinks, coarse suits cooking.",
+                  title: "THE WHOLE TREE, NOT JUST THE LEAF",
+                  body: "“Don’t grow Moringa merely to harvest it. Create value from the tree.” Leaves, flowers, seeds and cold-pressed seed oil — powders, foods, beverages, supplements and skin-food personal care. That whole-tree philosophy now stands behind more than 60 Moringa formulations, from MOGO® and MOVITA® to Beauty Drops.",
                 },
                 {
-                  title: "A printed pack date",
-                  body: "Dried leaf is stable but not immortal. A manufacturer who prints a date is telling you they turn over stock.",
+                  title: "FIFTEEN YEARS OF PROOF, FROM THE FARM UP",
+                  body: "Since 2009: four cultivation models, including high-density systems of up to 3,800 plants per acre; farming knowledge transferred to growers through SOPs; and products reaching more than 14 countries. Global Moringa competitiveness begins at the farm — and the farm is where we began.",
                 },
               ].map((item, index) => (
                 <li
@@ -142,8 +168,10 @@ export default async function MoringaPage() {
                     0{index + 1}
                   </span>
                   <div>
-                    <h3 className="text-[1.25rem] text-cream-50">{item.title}</h3>
-                    <p className="mt-2 max-w-[50ch] leading-relaxed text-cream-400">
+                    <h3 className="text-[1.05rem] leading-snug tracking-[0.04em] text-cream-50">
+                      {item.title}
+                    </h3>
+                    <p className="mt-3 max-w-[54ch] leading-relaxed text-cream-400">
                       {item.body}
                     </p>
                   </div>
@@ -151,6 +179,10 @@ export default async function MoringaPage() {
               ))}
             </ol>
           </div>
+
+          <p className="mt-14 text-[0.78rem] uppercase tracking-[0.2em] text-gold-400">
+            From tree to technology. From farm to global nutrition.
+          </p>
         </Container>
       </Section>
 
