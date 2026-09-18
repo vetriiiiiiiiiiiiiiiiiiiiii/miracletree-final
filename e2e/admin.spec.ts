@@ -157,8 +157,10 @@ test.describe("our story admin", () => {
     await expect(page.getByRole("heading", { name: /Awards & certification/ })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Credits" })).toBeVisible();
 
-    // The design credit is a row like any other, editable here rather than
-    // only in Prisma Studio.
-    await expect(page.getByText("sketch-portfolio").first()).toBeVisible();
+    // Credits are rows like any other, editable here rather than only in
+    // Prisma Studio. Asserting that some row exists rather than naming one:
+    // the credits are company copy, and the design-reference row has already
+    // been removed at their request once.
+    await expect(page.getByText("The growing families").first()).toBeVisible();
   });
 });

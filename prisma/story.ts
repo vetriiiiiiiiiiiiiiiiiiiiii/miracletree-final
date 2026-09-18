@@ -257,11 +257,4 @@ export const CREDITS = [
     group: "grower",
     url: null,
   },
-  {
-    name: "sketch-portfolio",
-    role: "Design reference",
-    body: "The notebook this page is built as — ruled paper, marginalia, hand-drawn underlines that draw themselves as you scroll — follows a portfolio by Shajith. The effect here is rebuilt rather than copied: the original animates handwriting with Vara.js, which injects SVG outside React's control, so the same idea is done with stroke-dasharray instead.",
-    group: "design",
-    url: "https://github.com/shajith23/sketch-portfolio",
-  },
 ];

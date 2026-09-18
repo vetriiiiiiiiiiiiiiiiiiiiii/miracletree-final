@@ -322,8 +322,17 @@ test.describe("storefront", () => {
     await page.goto("/journal");
     await expect(page).toHaveURL(/\/about/);
 
-    // Article URLs are untouched, so nothing already indexed breaks.
-    const article = await page.goto("/journal/reading-a-moringa-label");
+    // An article still resolves under /journal. The slug is read from the
+    // index rather than hard-coded: the field notes are company copy and get
+    // rewritten, and a test that pins one slug fails on the rewrite rather
+    // than on anything being broken.
+    const href = await page
+      .locator('a[href^="/journal/"]')
+      .first()
+      .getAttribute("href");
+    expect(href, "an article is linked from the story page").toBeTruthy();
+
+    const article = await page.goto(href!);
     expect(article?.status()).toBe(200);
     await expect(page.locator("h1")).toBeVisible();
   });

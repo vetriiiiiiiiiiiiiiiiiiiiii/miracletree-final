@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { BotanicalPlate, Underlined } from "@/components/story/Drawn";
 import { mottoFor } from "@/lib/story-mottos";
-import { cn, formatDate } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 /** A citation. Small, permanent, and linked wherever a source exists. */
 function Cite({ source, url }) {
   if (!source) return null;
@@ -393,7 +393,8 @@ export function FieldNotes({ notes }) {
           <Underlined>Field notes</Underlined>
         </h2>
         <p className="mt-6 leading-relaxed text-[#55614e]">
-          What we have written down about the tree, the harvest and the kitchen.
+          Notes from the field, the drying chamber and the kitchen — the same
+          knowledge we hand to farmers as SOPs.
         </p>
       </header>
 
@@ -430,7 +431,10 @@ export function FieldNotes({ notes }) {
 
                 <div className="px-1 pb-1 pt-4">
                   <p className="text-[0.66rem] uppercase tracking-[0.14em] text-[#6f6440]">
-                    {note.category?.name ?? "Journal"} · {note.readingMinutes} min
+                    {note.publishedAt
+                      ? `Since ${new Date(note.publishedAt).getUTCFullYear()} · `
+                      : ""}
+                    {note.category?.name ?? "Journal"}
                   </p>
                   <h3 className="mt-2 text-[1.1rem] leading-snug text-[#23301f] transition-colors group-hover:text-[#7a5c1f]">
                     {note.title}
@@ -440,14 +444,7 @@ export function FieldNotes({ notes }) {
                       {note.excerpt}
                     </p>
                   ) : null}
-                  {note.publishedAt ? (
-                    <p
-                      className="mt-3 text-[1rem] text-[#6f6440]"
-                      style={{ fontFamily: "var(--font-hand)" }}
-                    >
-                      {formatDate(note.publishedAt)}
-                    </p>
-                  ) : null}
+
                 </div>
               </div>
             </Link>
