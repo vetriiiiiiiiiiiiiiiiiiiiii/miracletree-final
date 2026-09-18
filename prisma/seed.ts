@@ -323,7 +323,32 @@ const INGREDIENTS_BY_HANDLE: Record<string, string[]> = {
  * handle and variant title, so the source file stays untouched and every
  * correction is visible in one place.
  */
+/**
+ * Product names corrected by MiracleTree, keyed by handle.
+ *
+ * The Shopify export carries two products called "Mogo™ Moringa Energy Bar":
+ * the bar itself in healthy snacks, and a super-foods combo of the bar with
+ * Movita laddus and leaf tablets. The company asked for the super-foods entry
+ * to become the colostrum energy bar, which is also what leaves a single Mogo
+ * product in the catalogue.
+ */
+/**
+ * Handles whose exported compare-at price no longer means anything.
+ *
+ * The super-foods entry was a ₹950 combo marked down from ₹1,030. It is now
+ * the colostrum energy bar at ₹400, and carrying the old compare-at across
+ * advertised a 61% discount that never happened — caught by the suite's own
+ * plausibility check. The company gave a price and no compare-at, so there is
+ * no strike-through rather than an invented one.
+ */
+const DROP_COMPARE_AT = new Set(["mogo\u2122-moringa-energy-bar-movita-r"]);
+
+const NAME_OVERRIDES: Record<string, string> = {
+  "mogo™-moringa-energy-bar-movita-r": "Colostrum Energy Bar",
+};
+
 const PRICE_OVERRIDES: Record<string, Record<string, number>> = {
+  "mogo™-moringa-energy-bar-movita-r": { "Default Title": 400 },
   "mogo-moringa-energy-bar": { "Pack of 10": 400 },
   "colostrum-protein-bar-200-gms": { "Default Title": 400 },
   "drumstick-pulp-soup-instant-soup-10-sachets": { "10 Sachets Per Box": 560 },
@@ -773,11 +798,12 @@ async function main() {
     const cheapestCompare = cheapestVariant.compare_at_price
       ? rupeesToPaise(cheapestVariant.compare_at_price)
       : 0;
-    const compareAt = cheapestCompare > cheapest ? cheapestCompare : 0;
+    const compareAt =
+      DROP_COMPARE_AT.has(p.handle) || cheapestCompare <= cheapest ? 0 : cheapestCompare;
 
     const product = await prisma.product.create({
       data: {
-        name,
+        name: NAME_OVERRIDES[p.handle] ?? name,
         slug: p.handle.replace(/[^a-z0-9-]/gi, "").toLowerCase() || slugify(name),
         productType: PRODUCT_TYPE_BY_CATEGORY[categorySlug] ?? "mix",
         categoryId: categoryIds.get(categorySlug)!,
