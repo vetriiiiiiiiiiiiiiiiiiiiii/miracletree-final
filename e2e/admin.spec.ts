@@ -133,6 +133,28 @@ test.describe("admin", () => {
     }
   });
 
+  test("editing a homepage section persists", async ({ page }) => {
+    // The section editor submits no Body field, and for a while the action read
+    // that absent field straight into the schema, so every save was rejected
+    // against a field the operator could not see. The round trip is the test.
+    await page.goto("/admin/content");
+    await page.getByRole("button", { name: "Edit" }).first().click();
+
+    const title = page.locator('[name="title"]').first();
+    const original = await title.inputValue();
+    await title.fill(`${original} (edited)`);
+    await page.getByRole("button", { name: /save section/i }).click();
+    await expect(page.getByText("Section saved.")).toBeVisible();
+
+    await page.goto("/admin/content");
+    await expect(page.getByText(`${original} (edited)`)).toBeVisible();
+
+    await page.getByRole("button", { name: "Edit" }).first().click();
+    await page.locator('[name="title"]').first().fill(original);
+    await page.getByRole("button", { name: /save section/i }).click();
+    await expect(page.getByText("Section saved.")).toBeVisible();
+  });
+
   test("command palette opens and finds a product", async ({ page }) => {
     await page.goto("/admin");
     // The shortcut listener is on window; give the document focus first.
