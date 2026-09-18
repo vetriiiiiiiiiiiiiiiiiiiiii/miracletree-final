@@ -471,55 +471,32 @@ const TESTIMONIALS = [
 
 const ARTICLES = [
   {
-    title: "Why the drumstick tree is called the miracle tree",
-    slug: "why-the-drumstick-tree-is-called-the-miracle-tree",
-    category: "Moringa",
-    excerpt:
-      "It grows in poor soil, survives drought, and every part of it is useful. A short field guide to the tree that grows in half the backyards in Tamil Nadu.",
-    content: `<p>Walk through any village in Madurai district and you will pass it a dozen times without looking up: a thin, untidy tree with pale bark and small round leaflets, usually leaning over a compound wall. Nobody plants it ceremonially. It simply appears, and then it feeds people.</p>
-<p><em>Moringa oleifera</em> got the name "miracle tree" for practical reasons. It grows in thin, sandy soil. It survives a failed monsoon. It reaches harvestable height in under a year, which for a tree is close to impatience.</p>
-<h2>Every part has a use</h2>
-<p>The <strong>leaf</strong> is the part most people outside India now recognise, dried and milled into powder. The <strong>pod</strong> — the drumstick itself — goes into sambar across South India. The <strong>flower</strong> appears in a short window and is gathered the same day. The <strong>seed</strong> is cold-pressed for oil. Even the <strong>gum</strong> that sets on the bark is collected and milled.</p>
-<h2>What growing it well actually requires</h2>
-<p>The difference between good moringa and forgettable moringa is almost entirely in the drying. A leaf laid out in direct sun loses its colour within hours and turns the dull khaki you see in cheap powder. Controlled low-temperature closed-chamber drying takes longer and costs more, and it is the reason a good powder is still green when it reaches you.</p>
-<p>That is the whole craft, more or less. Grow it where it wants to grow, pick it in the morning, and do not cook it on the way to the pack.</p>`,
-  },
-  {
-    title: "Reading a moringa label: what the numbers actually mean",
-    slug: "reading-a-moringa-label",
-    category: "Guides",
-    excerpt:
-      "Mesh size, harvest date, leaf-only versus whole-plant. A plain-language guide to telling one green powder from another.",
-    content: `<p>Two packs of moringa leaf powder can look identical and be completely different products. Here is what to look at.</p>
-<h2>Leaf only, or leaf and stem?</h2>
-<p>Stem is cheaper to grow and heavier to sell, so it finds its way into a lot of powder. Leaf-only powder is finer, greener, and tastes noticeably less woody. If a label does not say, it is usually because the answer is not "leaf only".</p>
-<h2>Colour</h2>
-<p>Fresh leaf powder dried at low temperature is a deep green with a slight grey cast. Bright emerald usually means colouring. Khaki or olive means heat — either sun-drying or a hot mill.</p>
-<h2>Mesh size</h2>
-<p>Mesh describes how finely the leaf was milled. An 80-mesh powder dissolves into liquid; a coarse grind settles at the bottom of the glass. Neither is wrong, but they suit different uses — fine for drinks, coarse for cooking.</p>
-<h2>Harvest and pack date</h2>
-<p>Dried leaf is stable but not immortal. A pack date within the last six months is a reasonable expectation, and a manufacturer who prints one is telling you they turn over stock.</p>`,
-  },
-  {
-    title: "Six ways to put moringa into food you already cook",
-    slug: "six-ways-to-cook-with-moringa",
+    title: "Four ways we already eat moringa at home",
+    slug: "four-ways-we-already-eat-moringa-at-home",
     category: "Kitchen",
+    // The "Since" year the card shows in place of a publication date.
+    since: 2015,
     excerpt:
-      "Dal, rasam, chapati dough, curd rice, podi and buttermilk. Six Indian dishes that take a spoon of leaf powder well.",
-    content: `<p>Most moringa advice assumes you own a blender and drink your breakfast. Here is what to do if you cook the way most Indian households actually cook.</p>
-<h2>1. Dal</h2>
-<p>Stir a teaspoon in after you take the pot off the heat. Added earlier, it dulls.</p>
-<h2>2. Rasam</h2>
-<p>Add with the coriander at the end. It sits well against tamarind.</p>
-<h2>3. Chapati dough</h2>
-<p>A teaspoon per cup of atta. The dough turns faintly green and the rotis stay soft a little longer.</p>
-<h2>4. Curd rice</h2>
-<p>Half a teaspoon, mixed in cold. Mild enough that children do not negotiate.</p>
-<h2>5. Podi</h2>
-<p>Add to your usual idli podi after roasting, never during.</p>
-<h2>6. Buttermilk</h2>
-<p>A quarter teaspoon in a glass of spiced <em>neer mor</em>, especially in summer.</p>
-<p>The rule underneath all six: add it late, keep the heat off it, and it will taste like the dish rather than like a supplement.</p>`,
+      "Stirred into warm rice with a little ghee or gingelly oil (Moringa Rice Mix), mixed into a ready podi for idli and dosa (Idli–Dosa Chutney Powder), brewed as masala chai (Chaitree®), or whisked as a sprouted multigrain drink (MOVITA®). No new habits — just the plate you already have.",
+    content: `<p>Stirred into warm rice with a little ghee or gingelly oil (Moringa Rice Mix), mixed into a ready podi for idli and dosa (Idli–Dosa Chutney Powder), brewed as masala chai (Chaitree®), or whisked as a sprouted multigrain drink (MOVITA®). No new habits — just the plate you already have.</p>`,
+  },
+  {
+    title: "Why colour tells you how a leaf was dried",
+    slug: "why-colour-tells-you-how-a-leaf-was-dried",
+    category: "Process",
+    since: 2014,
+    excerpt:
+      "Fresh moringa leaf is highly perishable — inappropriate drying costs it colour, sensory quality and nutrition. That is why we dry in controlled low-temperature closed chambers (ULTCD, 2014; CLHPD, 2019) rather than open sun. Green is not marketing; it is process control.",
+    content: `<p>Fresh moringa leaf is highly perishable — inappropriate drying costs it colour, sensory quality and nutrition. That is why we dry in controlled low-temperature closed chambers (ULTCD, 2014; CLHPD, 2019) rather than open sun. Green is not marketing; it is process control.</p>`,
+  },
+  {
+    title: "One tree, four planting patterns",
+    slug: "one-tree-four-planting-patterns",
+    category: "Farm",
+    since: 2010,
+    excerpt:
+      "12×12 ft for large trees, 8×8 ft for balance, 4×4 ft for intensity, and high density up to 3,800 plants an acre for leaf and biomass. There is no single correct way to plant moringa — the pattern follows the purpose. Each model was demonstrated on our farm and written up as SOPs for visiting farmers.",
+    content: `<p>12×12 ft for large trees, 8×8 ft for balance, 4×4 ft for intensity, and high density up to 3,800 plants an acre for leaf and biomass. There is no single correct way to plant moringa — the pattern follows the purpose. Each model was demonstrated on our farm and written up as SOPs for visiting farmers.</p>`,
   },
 ];
 
@@ -938,7 +915,9 @@ async function main() {
         content: a.content,
         categoryId: category.id,
         status: "published",
-        publishedAt: new Date(),
+        // The card shows "Since <year>" in place of a date, so the year the
+        // company gave for each note is what publishedAt carries.
+        publishedAt: new Date(Date.UTC(a.since, 0, 1)),
         readingMinutes: Math.max(1, Math.round(words / 220)),
         seoTitle: a.title,
         seoDescription: a.excerpt,

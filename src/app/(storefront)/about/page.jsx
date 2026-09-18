@@ -87,17 +87,21 @@ export default async function AboutPage() {
                   <Underlined>Our story</Underlined>
                 </h1>
 
-                <p className="mt-10 max-w-[46ch] text-[1.2rem] leading-relaxed text-[#3f4b39]">
-                  Moringa grows in half the backyards in Tamil Nadu. Almost none of it
-                  is dried properly. That gap is the company.
+                <p className="mt-10 max-w-[50ch] text-[1.2rem] leading-relaxed text-[#3f4b39]">
+                  Fresh Moringa leaf is highly perishable inappropriate drying costs it
+                  colour, sensory quality and nutrition. Conventional drying leaves that
+                  step uncontrolled. We built a company around controlling it and every
+                  step after it, from seed and cultivation to traceability.
                 </p>
 
-                <p className="mt-5 max-w-[52ch] leading-relaxed text-[#55614e]">
-                  A six-acre research farm kept since 2007, eighty-seven acres in
-                  production near the Vempakottai dam, and around three hundred more
-                  under contract across south Tamil Nadu. What follows is the history,
-                  the certifications, the people, and the notes we have kept along the
-                  way.
+                <p className="mt-5 max-w-[56ch] leading-relaxed text-[#55614e]">
+                  Beginning in 2009 with 100% sustainable farming and an exclusive focus
+                  on Moringa oleifera, MiracleTree® grew from a farm into a complete
+                  value chain: four cultivation models up to 3,800 plants an acre, two
+                  proprietary drying technologies — ULTCD (2014) and CLHPD (2019) and
+                  more than 60 formulations across food, nutrition, supplements and
+                  personal care. What follows is the history, the technology, the
+                  people, and the notes we have kept along the way.
                 </p>
 
                 <nav

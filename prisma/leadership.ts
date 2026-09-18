@@ -27,17 +27,25 @@ export const LEADERS = [
     isFounder: true,
     position: 0,
     bio: "He developed the two drying technologies the company is built on, ULTCD and CLHPD, and now leads MiracleTree's international moringa projects: technology transfer with NADEC in Saudi Arabia, and a 1.7-million-tree development at Thumrait in Oman.",
-    longBio: `R. Saravanakumaran grew up in Madurai and trained as an engineer. He did not set out to farm. He went to work on the equipment side of agriculture, which is still where he spends most of his time.
+    longBio: `THE ENGINEER WHO NEVER SET OUT TO FARM
 
-His wife Sujatha had the idea for the products. She wanted moringa to reach people as food they would buy anyway: bars, teas, laddus, instead of capsules. He worked out how to make that at scale without ruining the leaf.
+Saravanakumaran Rajendran grew up in Madurai in a household where both the table and the bookshelf were fed by the land. The meals were farm-fresh produce; the reading was Sangam literature. "My father made sure we learnt and appreciated Purananuru and Agathyan's writings," he recalls. Somewhere along the way, he admits, it all took a backseat.
 
-The hard part is drying. Fresh moringa loses colour and quality fast, and most of it is dried in the sun because sun is free. In 2014 he introduced ULTCD — Ultra Low Temperature Closed Chamber Drying — and in 2019 followed it with CLHPD, Controlled Low Heat Process Drying, developed for premium moringa and other herbal materials. Both have since been applied well beyond moringa, to other herbs and vegetables.
+He left with an engineering degree and went to work on the technology side of agriculture finding ways and means to make sustainable technology work for farming. "Solving problems was my goal, not farming," he smiles. Those years were spent on the equipment and process side of the field: the machines, the drying, the handling the unglamorous half of agriculture that decides whether a harvest survives.
 
-The farm was run as a teaching ground alongside the business. Four planting models were trialled side by side — 12×12 ft, 8×8 ft, 4×4 ft, and high density at around 3,800 plants an acre — then written up as SOPs and shared with visiting farmers. Moringa under cultivation in Tamil Nadu grew from roughly 1,800 acres in 2010 to about 9,000 by 2017.
+The turn came in 2007, when a friend took him and his wife Sujatha to a three-day workshop with organic farming scientist G. Nammalwar. "He awakened the farmer within me," Kumaran says. It changed his outlook on agriculture entirely from purely commercial, to using his skills and education to help farmers utilise technology for sustainable farming.
 
-Since 2021 the work has been international. Between 2021 and 2023 he transferred cultivation and value-addition expertise to NADEC in Saudi Arabia. Since 2025 he has been technology partner on an integrated moringa farm and processing campus at Thumrait in Dhofar, Oman — 580 acres in phase one, approximately 1.7 million trees, and a leaf-processing facility designed around 44 tonnes of fresh leaf a day. His stated principle for that work is to transfer the technology rather than create a dependency: develop the system, document the SOP, train the team, hand it over.
+The moringa idea was Sujatha's. In markets saturated with chemically grown produce, she wanted healthy, nutritional food to reach people as food they would buy anyway not capsules. When sustained production demanded technical and engineering support, he joined her. In 2009, the family's dedicated Moringa journey began.
 
-He farms organically himself. The family land at Kilakarai, Vadipatti carries its own NPOP organic certificate covering moringa alongside coconut, palmyra and orchard crops.`,
+He can still quote the Sangam couplet his father taught him as a child "Murungai undavan, verungai povaan." It is often misread as "the one who eats moringa will go empty-handed." The true meaning, he explains, is the opposite: the one who eats moringa will not need a walking stick towards the end of his life. The literature the young engineer set aside became the crop he now builds his life around.
+
+The MiracleTree® family did not set out to simply farm; they sought to solve the processing side of agriculture. Recognising early that consumers needed convenient formats, the company moved Moringa beyond capsules and powders into everyday foods like bars, teas, and multigrain mixes.
+
+The hard part is drying. Fresh Moringa is highly perishable, and inappropriate drying adversely affects colour and quality. In 2014, the company introduced ULTCD (Ultra Low Temperature Closed Chamber Drying), followed in 2019 by CLHPD (Controlled Low Heat Process Drying). Both are now applied to other herbs and vegetables.
+
+The farm was run as a learning ground. Four planting models were trialled 12×12 ft, 8×8 ft, 4×4 ft, and high density (3,800 plants/acre) then organised into SOPs and shared with visiting farmers. During this period, MiracleTree® observed Moringa cultivation in Tamil Nadu grow from roughly 1,800 acres in 2010 to 9,000 by 2017.
+
+Since 2021, the work has been international. MiracleTree® transferred expertise to NADEC in Saudi Arabia (2021–2023) and became a technology partner for an integrated campus at Thumrait, Oman (2025–2026) featuring 580 acres, 1.7 million trees, and a 44-tonne/day processing facility. The company's core principle remains: develop the system, document the SOP, train the team, and transfer the technology to build local capability rather than create dependency.`,
     quote:
       "Using the yield of the moringa tree was my wife Sujatha's brainchild. She wanted to reach healthy and chemical-free food to people.",
     source: "Company records and GoTN.in",
