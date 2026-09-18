@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Container, Section, SectionHeading } from "@/components/layout/Section";
+import { CertificationMarks } from "@/components/home/CertificationMarks";
 import { Floating } from "@/components/motion/Floating";
 /**
  * Scientific and institutional figures the company records as having come to
@@ -31,6 +32,8 @@ export function TrustSignals({ accolades }) {
           title="What we can prove"
           lede="Licence numbers, issuing bodies and dates — not adjectives. Every certificate below can be checked with the authority that granted it."
         />
+
+        <CertificationMarks className="mt-12" />
 
         <div className="mt-14 grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
           <div>
