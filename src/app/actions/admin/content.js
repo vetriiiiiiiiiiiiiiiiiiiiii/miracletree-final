@@ -37,11 +37,18 @@ const parseDate = (value) => (value ? new Date(value) : null);
 export async function saveSectionAction(_prev, formData) {
   try {
     const admin = await requireAdmin();
+    // The section editor has no Body field, so `body` is absent from the form
+    // rather than empty. `formData.get` answers null for an absent field, and
+    // null satisfies none of the schema's branches — so every save failed
+    // validation and reported "check the highlighted fields" against a field
+    // the operator could not see. Absent means "leave it alone", which is not
+    // the same as an empty string, so the update below skips it entirely.
+    const submittedBody = formData.get("body");
     const parsed = adminSectionSchema.safeParse({
       key: formData.get("key"),
       title: formData.get("title"),
       subtitle: formData.get("subtitle"),
-      body: formData.get("body"),
+      body: submittedBody ?? "",
       ctaLabel: formData.get("ctaLabel"),
       ctaHref: formData.get("ctaHref"),
       mediaUrl: formData.get("mediaUrl"),
@@ -77,7 +84,7 @@ export async function saveSectionAction(_prev, formData) {
         kind: input.key,
         title: input.title || null,
         subtitle: input.subtitle || null,
-        body: sanitizeHtml(input.body) || null,
+        body: submittedBody === null ? null : sanitizeHtml(input.body) || null,
         ctaLabel: input.ctaLabel || null,
         ctaHref: input.ctaHref || null,
         mediaUrl: input.mediaUrl || null,
@@ -88,7 +95,9 @@ export async function saveSectionAction(_prev, formData) {
       update: {
         title: input.title || null,
         subtitle: input.subtitle || null,
-        body: sanitizeHtml(input.body) || null,
+        ...(submittedBody === null
+          ? {}
+          : { body: sanitizeHtml(input.body) || null }),
         ctaLabel: input.ctaLabel || null,
         ctaHref: input.ctaHref || null,
         mediaUrl: input.mediaUrl || null,
