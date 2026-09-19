@@ -30,14 +30,14 @@ export const MILESTONES = [
   {
     year: "2010",
     title: "Rethinking moringa cultivation",
-    body: "Field-level R&D across four cultivation systems — 12×12 ft, 8×8 ft, 4×4 ft, and high density at up to roughly 3,800 plants an acre. The objective was to understand which approach suits which production requirement, rather than to settle on one correct spacing.",
+    body: "Field-level R&D across four cultivation systems — 12×12 ft, 8×8 ft, 4×4 ft, and high density at up to roughly 3,800 plants an acre. There is no single correct way to plant moringa — it depends on the farmer's purpose, local conditions and intended end product: leaf, biomass or tree development.",
     source: COMPANY,
     sourceUrl: null,
   },
   {
     year: "2010–2017",
     title: "Farmer education and knowledge transfer",
-    body: "The farm opens to growers, who visit to observe the planting models side by side and adapt them. Practices are written up as SOPs so the knowledge travels. Company records put moringa under cultivation in Tamil Nadu at roughly 1,800 acres in 2010 and around 9,000 by 2017. Demonstrate, educate, transfer, grow.",
+    body: "The farm opens to growers, who visit to observe the planting models side by side and adapt them. Practices are written up as SOPs so the knowledge travels. According to the company's industry records, moringa under cultivation in Tamil Nadu grew from roughly 1,800 acres in 2010 to around 9,000 by 2017. Demonstrate, educate, transfer, grow.",
     source: COMPANY,
     sourceUrl: null,
   },
@@ -58,7 +58,7 @@ export const MILESTONES = [
   {
     year: "2018",
     title: "Moringa becomes skin food",
-    body: "Beauty Drops, developed from cold-pressed moringa seed oil, take the work past nutrition and into natural personal care — and show the seed is worth as much as the leaf.",
+    body: "Beauty Drops, developed from cold-pressed moringa seed oil, take the work past nutrition and into natural personal care, proving the seed had real commercial value beyond conventional agricultural use.",
     source: COMPANY,
     sourceUrl: null,
   },

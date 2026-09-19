@@ -402,7 +402,7 @@ const FAQS = [
     category: "moringa",
     question: "Why does your leaf powder look bright green rather than dull?",
     answer:
-      "Colour is the clearest signal of how a leaf was dried. Rather than drying in open sun, we use ULTCD and CLHPD — controlled low-temperature closed-chamber drying developed in-house. It is slower and costs more, and it keeps the leaf green instead of turning it khaki.",
+      "Colour tells you how a leaf was dried. Fresh Moringa leaf is highly perishable, and inappropriate drying adversely affects its colour, sensory quality and nutritional characteristics. That is why we never rely on uncontrolled conventional drying: our leaf is dried under ULTCD — Ultra Low Temperature Closed Chamber Drying (2014) — low temperature, controlled environment and hygienic closed-chamber processing, advanced in 2019 by CLHPD, Controlled Low Heat Process Drying. Sun-drying is faster and cheaper; controlled low-heat drying is what retains the leaf's natural characteristics. The green in your pack is process control, not chance.",
   },
   {
     category: "products",

@@ -90,8 +90,11 @@ export default async function LeadershipPage() {
     orderBy: { position: "asc" },
     include: { highlights: { orderBy: { position: "asc" } } },
   });
+  // Only the featured founder is shown. The company asked for the team grid to
+  // come down: the profiles it carried are the ones the old site presented as
+  // "trusted by doctors", a claim the business does not stand behind. The rows
+  // stay in the database, so the page can be restored from the admin.
   const founder = leaders.find((l) => l.isFounder) ?? leaders[0];
-  const others = leaders.filter((l) => l.id !== founder?.id);
   const crumbs = [
     { name: "Home", path: "/" },
     { name: "Leadership", path: "/leadership" },
@@ -328,78 +331,6 @@ export default async function LeadershipPage() {
         </Container>
       </Section>
 
-      {/* ------------------------------------------------------------ team */}
-      {others.length ? (
-        <Section spacing="default" id="team">
-          <Container>
-            <Reveal>
-              <SectionHeading
-                title="The rest of the team"
-                lede="The co-founder, the two doctors who advise on the range, and the engineer who runs despatch."
-              />
-            </Reveal>
-
-            <Reveal className="mt-16" stagger={0.08}>
-              <ul className="grid gap-px border border-border-subtle bg-border-subtle md:grid-cols-2">
-                {others.map((person) => (
-                  <li
-                    key={person.id}
-                    data-animate="fade-up"
-                    className="bg-ink p-8 md:p-10"
-                  >
-                    <p className="eyebrow text-gold-400">{person.role}</p>
-                    <h3 className="mt-3 font-display text-[1.5rem] text-cream-50">
-                      {person.name}
-                    </h3>
-                    {person.credential ? (
-                      <p className="mt-1 text-[0.9rem] text-cream-400">
-                        {person.credential}
-                      </p>
-                    ) : null}
-                    {person.bio ? (
-                      <p className="mt-5 leading-relaxed text-cream-300">
-                        {person.bio}
-                      </p>
-                    ) : null}
-
-                    {person.highlights.length ? (
-                      <ul className="mt-6 grid gap-2">
-                        {person.highlights.map((h) => (
-                          <li
-                            key={h.id}
-                            className="flex gap-3 text-[0.9rem] text-cream-400"
-                          >
-                            <span
-                              className="mt-2 h-1 w-1 shrink-0 rounded-full bg-emerald-400"
-                              aria-hidden
-                            />
-                            <span>
-                              {h.year ? (
-                                <span className="tabular-nums text-gold-400">
-                                  {h.year} —{" "}
-                                </span>
-                              ) : null}
-                              {h.title}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : null}
-
-                    {person.sourceUrl ? (
-                      <Citation
-                        source={person.source}
-                        url={person.sourceUrl}
-                        className="mt-6"
-                      />
-                    ) : null}
-                  </li>
-                ))}
-              </ul>
-            </Reveal>
-          </Container>
-        </Section>
-      ) : null}
 
       <Section tone="raised" spacing="tight">
         <Container className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">

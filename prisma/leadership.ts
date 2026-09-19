@@ -96,7 +96,7 @@ Since 2021, the work has been international. MiracleTree® transferred expertise
       {
         year: null,
         kind: "recognition",
-        title: "Four cultivation models, trialled and published",
+        title: "Four cultivation models, trialled and documented",
         body: "12×12 ft, 8×8 ft, 4×4 ft and high density to 3,800 plants an acre, documented as SOPs and shared with farmers.",
       },
       {

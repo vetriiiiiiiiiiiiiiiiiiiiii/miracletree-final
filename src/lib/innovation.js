@@ -20,9 +20,9 @@ export const INNOVATIONS = [
     headline: "Low-temperature closed-chamber drying",
     problem:
       "Fresh moringa leaf is highly perishable, and most of it is dried in open sun because sun costs nothing. Heat takes out the colour and much of the quality, which is why a lot of moringa powder is olive rather than green.",
-    body: "MiracleTree moved drying into a controlled low-temperature closed chamber — hygienic, repeatable, and held below the temperature that damages the leaf.",
+    body: "MiracleTree moved drying into a controlled low-temperature closed chamber — hygienic, repeatable, and held at low temperature under controlled conditions — so the leaf keeps more of what the sun would take from it.",
     outcome:
-      "Moringa leaf dried below the temperature at which it loses colour and quality.",
+      "Moringa leaf dried under controlled low heat in a closed chamber — for better retention of its natural colour, sensory quality and nutritional characteristics.",
   },
   {
     slug: "mogo",

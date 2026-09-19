@@ -304,13 +304,18 @@ test.describe("storefront", () => {
     await expect(page.getByText(/Co-founder & Chief Executive/i).first()).toBeVisible();
     await expect(page.getByText(/Best Agriculturist/i).first()).toBeVisible();
 
-    // The rest of the table renders below him rather than being dropped.
-    await expect(page.getByRole("heading", { name: "Sujatha Rajendran" })).toBeVisible();
+    // The team grid below him was taken down on instruction: those were the
+    // profiles the old site presented as "trusted by doctors". The rows are
+    // still seeded, so this guards the page, not the data.
+    await expect(page.locator("#team")).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: "Sujatha Rajendran" })).toHaveCount(0);
 
     // Same rule as the story page: a credential nobody can check is a legal
     // exposure on a food brand, so every profile shown carries its source.
+    // One profile is shown now that the team grid is gone, so one citation is
+    // the whole set rather than a floor that happened to be comfortable.
     const citations = page.getByRole("link", { name: /^Source:/i });
-    expect(await citations.count()).toBeGreaterThan(2);
+    expect(await citations.count()).toBeGreaterThan(0);
 
     // Search engines should attach the award to the person, not the company.
     const personSchema = await page.locator('script#ld-leadership-person').textContent();

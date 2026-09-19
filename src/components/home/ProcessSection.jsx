@@ -7,17 +7,17 @@ const STEPS = [
   {
     id: "seed",
     label: "Seed",
-    body: "Winged seeds are sown at the field edge before the north-east monsoon.",
+    body: "Quality control starts before the plant reaches the field. Seeds enter documented nursery protocols — germination protocols, grow-bag systems, soil-media modification and young-plant hardening — so every tree begins from a verified, healthy start.",
   },
   {
     id: "cultivation",
     label: "Cultivation",
-    body: "No irrigation infrastructure and no shade house. The tree wants poor, well-drained soil.",
+    body: "Grown under one of four documented planting models — 12×12 ft, 8×8 ft, 4×4 ft or high density up to 3,800 plants an acre — matched to the crop's purpose: leaf, biomass or tree development. Every practice follows SOPs developed and demonstrated on our own farm.",
   },
   {
     id: "harvest",
     label: "Harvest",
-    body: "Leaflets are stripped by hand at first light, when the leaf still holds its moisture.",
+    body: "Harvesting is planned around what happens next: post-harvest handling and drying requirements decide how and when leaf is picked. Careful harvesting is the first quality step after cultivation — and harvesting practices are among the SOPs we developed on our farm and transferred to farmers.",
   },
   {
     id: "drying",
@@ -29,12 +29,12 @@ const STEPS = [
   {
     id: "processing",
     label: "Processing",
-    body: "Milled, sieved to grade, and tested before anything is blended or pressed.",
+    body: "Dried leaf enters a controlled chain — milling, sieving and quality control — before anything is formulated, blended or pressed. It is the same chain MiracleTree® now designs into full processing facilities: receiving, cleaning, de-stemming, controlled drying, milling, sieving, quality control, packing.",
   },
   {
     id: "packaging",
     label: "Packaging",
-    body: "Sealed in small batches, so a pack is rarely more than a few weeks old.",
+    body: "Packaging is a quality step, not an afterthought. It sits inside the controlled chain — formulation → packaging → traceability — so what reaches your kitchen can be traced back through processing to the farm.",
   },
   {
     id: "home",
