@@ -47,6 +47,70 @@ function stripHtml(html: string): string {
     .trim();
 }
 
+/**
+ * Bullets that cannot be published on a food label in India.
+ *
+ * The benefit lists come straight from the company's own Shopify copy, and a
+ * good part of them state or imply that the product treats, prevents or
+ * regulates a condition: blood sugar, immunity, inflammation, sleep, weight in
+ * malnourished children. Under the FSSAI Advertising and Claims regulations
+ * those are restricted claims — a health claim needs substantiation on file,
+ * and a claim to treat a disease is not permitted on a food at all.
+ *
+ * Matched on the bullet's own title, exactly as the feed spells it, so nothing
+ * is caught by accident. Composition and sensory bullets are untouched:
+ * "Gluten free", "High Fiber", "100% Natural Ingredients" and the rest all
+ * state what is in the pack rather than what it will do to a body — which is
+ * the same line the rest of the site already holds.
+ *
+ * Remove a line from this list and the bullet comes straight back.
+ */
+const UNPUBLISHABLE_CLAIMS = new Set(
+  [
+    // Blood sugar
+    "Blood Sugar Regulation",
+    "Aids in regulating blood sugar levels",
+    "Regulates blood sugar",
+    // Immunity
+    "Boosts Immunity",
+    "Immunity booster",
+    "Immunity support",
+    "Immune Support",
+    "Immune Boost",
+    "Naturally Enhances the Immunity",
+    // Inflammation and infection
+    "Anti-Inflammatory",
+    "Anti-Inflammatory Properties",
+    "Anti-Inflammatory properties",
+    "Anti Bacterial Properties",
+    "Anti-microbial actions",
+    // Body systems and conditions
+    "Acts as a sleep aid",
+    "Cognitive Support",
+    "Good for Detox",
+    "Good for Heart Health",
+    "Supports Heart Health",
+    "Good for Stress Relief",
+    "Better bone health",
+    "Improves weight in malnourished children",
+    "It Stimulates Appetite",
+    "Boosts Metabolism",
+    "Anti-ageing effects",
+  ].map((t) => t.toLowerCase()),
+);
+
+/** Bullets the importer picked up that were never benefits to begin with. */
+const NOT_A_BENEFIT = new Set(
+  ["1. Put the contents in the sachet to a cup / bowl."].map((t) => t.toLowerCase()),
+);
+
+function publishableBullets<T extends { title: string }>(bullets: T[]): T[] {
+  return bullets.filter((b) => {
+    const key = b.title.trim().toLowerCase();
+    return !UNPUBLISHABLE_CLAIMS.has(key) && !NOT_A_BENEFIT.has(key);
+  });
+}
+
 /** Pulls the brand's own <li> bullets out of the Shopify description. */
 function extractBullets(html: string): { title: string; body: string | null }[] {
   const items = [...html.matchAll(/<li[^>]*>([\s\S]*?)<\/li>/gi)].map((m) =>
@@ -783,7 +847,7 @@ async function main() {
     const name = cleanTitle(p.title);
     const subtitle = subtitleFrom(p.title);
     const plain = stripHtml(p.body_html);
-    const bullets = extractBullets(p.body_html);
+    const bullets = publishableBullets(extractBullets(p.body_html));
     // The card shows the cheapest variant's price, so the strike-through must
     // come from that same variant. Taking the highest compare-at across all
     // variants produced nonsense like "-96% off" on multi-size products.
