@@ -21,7 +21,7 @@ export function ExportReach() {
     <Section id="reach" tone="default" spacing="default" className="grain">
       <Container>
         <SectionHeading
-          title="From Madurai to fourteen countries"
+          title="From Madurai to 14+ countries"
           lede="Moringa grown, dried and milled in one district in Tamil Nadu, shipped to nine countries on record by name — and in two of them, built from the ground up."
         />
 
