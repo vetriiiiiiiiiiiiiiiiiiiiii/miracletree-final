@@ -77,13 +77,26 @@ test.describe("admin", () => {
     await page.goto("/admin/products");
     await page.getByRole("link", { name: "Moringa Leaf Powder" }).first().click();
 
-    const marker = `Shade-dried in Madurai. ${Date.now()}`;
-    await page.getByLabel(/^Short description/).fill(marker);
+    // This used to write "Shade-dried in Madurai. <timestamp>" and leave it
+    // there. Two problems: the suite edits the real catalogue, so a product on
+    // the storefront was left wearing a test string; and the string it chose is
+    // a drying claim the company does not make, which made every later check
+    // for "shade-dried" look like a content bug that had come back. The marker
+    // is inert now, and the original copy goes back afterwards.
+    const field = page.getByLabel(/^Short description/);
+    const original = await field.inputValue();
+    const marker = `E2E short description ${Date.now()}`;
+
+    await field.fill(marker);
     await page.getByRole("button", { name: /Save changes/i }).click();
     await expect(page.getByText("Product saved.")).toBeVisible();
 
     await page.reload();
     await expect(page.getByLabel(/^Short description/)).toHaveValue(marker);
+
+    await page.getByLabel(/^Short description/).fill(original);
+    await page.getByRole("button", { name: /Save changes/i }).click();
+    await expect(page.getByText("Product saved.")).toBeVisible();
   });
 
   test("inventory adjustment is recorded", async ({ page }) => {
