@@ -244,17 +244,6 @@ export function HomeHero({ title, subtitle, products }) {
           >
             {/* The pool the pack stands in. */}
             <div aria-hidden className="product-pool pointer-events-none absolute inset-0" />
-            <div className="relative flex items-start justify-between gap-4">
-              <p className="text-[0.68rem] uppercase tracking-[0.2em] text-cream-400">
-                Flagship
-              </p>
-              {flagship.price !== null ? (
-                <p className="text-[0.8rem] tabular-nums text-cream-300">
-                  from {formatPrice(flagship.price)}
-                </p>
-              ) : null}
-            </div>
-
             <div className="relative z-[1] my-4 min-h-[12rem] flex-1 lg:min-h-[9rem]">
               {/* Two nested wrappers: the outer one breathes on a loop, the
                   inner one answers the pointer. One element cannot hold both

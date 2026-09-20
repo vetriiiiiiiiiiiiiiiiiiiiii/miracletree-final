@@ -34,13 +34,15 @@ import { ExportReach } from "@/components/home/ExportReach";
  * Most of the catalogue's photography has a white background baked into the
  * image rather than a transparent one, which reads as a white card stuck onto
  * the hero's ground. Nine of the twenty-seven are genuine cut-outs and these
- * are four of them. The first is the MOGO group shot — several products in one
- * frame, which does more work as the flagship than a single pack would. The
- * two tea cartons are cut out but photographed as light boxes, so they are
- * left out: on the dark ground they read as cards rather than as products.
+ * are four of them. The two tea cartons are cut out but photographed as light
+ * boxes, so they are left out: on the dark ground they read as cards rather
+ * than as products.
+ *
+ * The MOGO group shot led this list and filled the large cell, because several
+ * packs in one frame carry a big panel better than a single one does. It is
+ * gone on instruction: the hero shows one product at a time, never a bundle.
  */
 const HERO_PRODUCT_SLUGS = [
-  "mogo-moringa-energy-bar-movita-r",
   "movita-multi-grain-health-mix-flavored",
   "moringa-leaf-dried-50gms-pack-of-2",
   "moringa-seed-oil-hair-strengthening-oil",
