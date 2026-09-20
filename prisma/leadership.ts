@@ -22,7 +22,7 @@ export const LEADERS = [
   {
     slugKey: "saravanakumaran-rajendran",
     name: "R. Saravanakumaran",
-    role: "Co-founder & Chief Executive",
+    role: "Founder & Chief Executive",
     credential: "Engineer-agriculturist",
     isFounder: true,
     position: 0,

@@ -231,7 +231,7 @@ export const CREDITS = [
   },
   {
     name: "R. Saravanakumaran",
-    role: "Co-founder & Chief Executive",
+    role: "Founder & Chief Executive",
     body: "Engineer-agriculturist. Built the ULTCD and CLHPD drying processes, and leads the company's international moringa projects in Saudi Arabia and Oman.",
     group: "team",
     url: null,

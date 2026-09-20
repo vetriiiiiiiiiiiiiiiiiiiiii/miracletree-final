@@ -26,7 +26,7 @@ const LEADER_FIELDS = [
     required: true,
     maxLength: 160,
     half: true,
-    placeholder: "Co-founder & Chief Executive",
+    placeholder: "Founder & Chief Executive",
   },
   {
     name: "credential",

@@ -301,7 +301,7 @@ test.describe("storefront", () => {
     // carry. These come from rows, so this also proves the seed reached the DB
     // and the featured/other split rendered.
     await expect(page.getByRole("heading", { name: "R. Saravanakumaran" })).toBeVisible();
-    await expect(page.getByText(/Co-founder & Chief Executive/i).first()).toBeVisible();
+    await expect(page.getByText(/Founder & Chief Executive/i).first()).toBeVisible();
     await expect(page.getByText(/Best Agriculturist/i).first()).toBeVisible();
 
     // The team grid below him was taken down on instruction: those were the
