@@ -21,6 +21,7 @@ const EMPTY = {
   dimensions: "",
   status: "draft",
   isFeatured: false,
+  isHeroPack: false,
   isNew: true,
   isBestSeller: false,
   isOnSale: false,

@@ -45,6 +45,7 @@ export default async function EditProductPage({ params, searchParams }) {
     dimensions: product.dimensions ?? "",
     status: product.status,
     isFeatured: product.isFeatured,
+    isHeroPack: product.isHeroPack,
     isNew: product.isNew,
     isBestSeller: product.isBestSeller,
     isOnSale: product.isOnSale,

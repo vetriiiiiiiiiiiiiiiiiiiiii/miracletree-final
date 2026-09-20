@@ -157,6 +157,10 @@ model Product {
 
   status       String  @default("draft") // draft | published | archived
   isFeatured   Boolean @default(false)
+  // Whether this product is one of the packs in the homepage hero. Separate
+  // from isFeatured, which fills the collection rail further down the page:
+  // the hero holds a handful of photographs and the rail holds a shelf.
+  isHeroPack   Boolean @default(false)
   isNew        Boolean @default(false)
   isBestSeller Boolean @default(false)
   isOnSale     Boolean @default(false)

@@ -108,25 +108,14 @@ export function Footer({ shop, company, support }) {
               </SocialLink>
             </ul>
 
-            {/* Payment marks are described, not faked as brand logos. */}
-            {/* Wraps. Six chips in a non-wrapping row are 9px wider than a
-            390px phone, which put a sideways scroll on every page of the
-            site — the footer is on all of them. */}
-            <ul
-              className="flex flex-wrap items-center gap-2"
-              aria-label="Accepted payment methods"
-            >
-              {["UPI", "Visa", "Mastercard", "RuPay", "Net banking", "COD"].map(
-                (method) => (
-                  <li
-                    key={method}
-                    className="border border-border-subtle px-2 py-1 text-[0.6rem] uppercase tracking-[0.1em] text-cream-400"
-                  >
-                    {method}
-                  </li>
-                ),
-              )}
-            </ul>
+            {/* One line about who takes the payment, in place of the six
+                method chips that stood here. Razorpay is the gateway, so the
+                methods it happens to support are its business to advertise and
+                change, not ours to list and then keep in step. */}
+            <p className="text-[0.68rem] uppercase tracking-[0.14em] text-cream-400">
+              Payments secured by{" "}
+              <span className="text-cream-200">Razorpay</span>
+            </p>
           </div>
         </div>
       </div>

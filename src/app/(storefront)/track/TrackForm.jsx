@@ -105,6 +105,23 @@ function OrderResult({ order }) {
         </ul>
       </div>
 
+      {order.trackingNumber ? (
+        <div className="border-t border-border-subtle p-6">
+          <h2 className="eyebrow mb-3 text-cream-400">Consignment</h2>
+          <p className="tabular-nums text-cream-50">{order.trackingNumber}</p>
+          {order.trackingUrl ? (
+            <a
+              href={order.trackingUrl}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="mt-3 inline-block text-sm text-cream-200 underline underline-offset-4 hover:text-cream-50"
+            >
+              Track with the courier
+            </a>
+          ) : null}
+        </div>
+      ) : null}
+
       {order.events.length ? (
         <div className="border-t border-border-subtle p-6">
           <h2 className="eyebrow mb-5 text-cream-400">Progress</h2>

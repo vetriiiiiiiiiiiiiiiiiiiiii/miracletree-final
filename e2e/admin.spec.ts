@@ -99,6 +99,40 @@ test.describe("admin", () => {
     await expect(page.getByText("Product saved.")).toBeVisible();
   });
 
+  test("the homepage hero follows the admin's choice", async ({ page }) => {
+    // The hero used to be a hard-coded list of slugs in the page file, so
+    // changing which packs it shows meant a deploy. It reads the product flag
+    // now, and falls back to that list only when nothing at all is ticked.
+    const heroNames = async () => {
+      const shopper = await page.context().browser()!.newContext();
+      const home = await shopper.newPage();
+      await home.goto("/");
+      const names = await home
+        .locator('a[href^="/product/"]')
+        .evaluateAll((els) => els.slice(0, 3).map((e) => e.textContent?.trim() ?? ""));
+      await shopper.close();
+      return names.join(" | ");
+    };
+
+    const before = await heroNames();
+    expect(before).not.toContain("Moringa Gum");
+
+    await page.goto("/admin/products");
+    await page.getByRole("link", { name: "Moringa Gum (Gond) Powder" }).first().click();
+    await page.getByLabel(/Homepage hero/i).first().check();
+    await page.getByRole("button", { name: /Save changes/i }).click();
+    await expect(page.getByText("Product saved.")).toBeVisible();
+
+    expect(await heroNames()).toContain("Moringa Gum");
+
+    // Put the catalogue back the way the suite found it.
+    await page.reload();
+    await page.getByLabel(/Homepage hero/i).first().uncheck();
+    await page.getByRole("button", { name: /Save changes/i }).click();
+    await expect(page.getByText("Product saved.")).toBeVisible();
+    expect(await heroNames()).not.toContain("Moringa Gum");
+  });
+
   test("inventory adjustment is recorded", async ({ page }) => {
     await page.goto("/admin/inventory");
     await expect(page.getByRole("heading", { name: "Inventory", level: 1 })).toBeVisible();

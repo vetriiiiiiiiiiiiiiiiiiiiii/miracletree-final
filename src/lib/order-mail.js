@@ -95,7 +95,13 @@ export async function sendOrderPlacedEmails(orderNumber) {
 export async function sendOrderStatusEmail(orderNumber, status, message) {
   const order = await prisma.order.findUnique({
     where: { orderNumber },
-    select: { orderNumber: true, email: true, shippingName: true },
+    select: {
+      orderNumber: true,
+      email: true,
+      shippingName: true,
+      trackingNumber: true,
+      trackingUrl: true,
+    },
   });
   if (!order) return;
   sendInBackground(
@@ -105,6 +111,8 @@ export async function sendOrderStatusEmail(orderNumber, status, message) {
       customerName: order.shippingName,
       statusLabel: ORDER_STATUS_LABELS[status] ?? status,
       message,
+      trackingNumber: order.trackingNumber,
+      trackingUrl: order.trackingUrl,
     }),
   );
 }
