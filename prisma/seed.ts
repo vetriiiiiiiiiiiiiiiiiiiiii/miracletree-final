@@ -687,8 +687,8 @@ const ARTICLES = [
     // The "Since" year the card shows in place of a publication date.
     since: 2015,
     excerpt:
-      "Stirred into warm rice with a little ghee or gingelly oil (Moringa Rice Mix), mixed into a ready podi for idli and dosa (Idli–Dosa Chutney Powder), brewed as masala chai (Chaitree®), or whisked as a sprouted multigrain drink (MOVITA®). No new habits — just the plate you already have.",
-    content: `<p>Stirred into warm rice with a little ghee or gingelly oil (Moringa Rice Mix), mixed into a ready podi for idli and dosa (Idli–Dosa Chutney Powder), brewed as masala chai (Chaitree®), or whisked as a sprouted multigrain drink (MOVITA®). No new habits — just the plate you already have.</p>`,
+      "Stirred into warm rice with a little ghee or gingelly oil (Moringa Rice Mix), mixed into a ready podi for idli and dosa (Idli–Dosa Chutney Powder), brewed as masala chai (Chaitree®), or whisked as a sprouted multigrain drink (MOVITA®). No new habits just the plate you already have.",
+    content: `<p>Stirred into warm rice with a little ghee or gingelly oil (Moringa Rice Mix), mixed into a ready podi for idli and dosa (Idli–Dosa Chutney Powder), brewed as masala chai (Chaitree®), or whisked as a sprouted multigrain drink (MOVITA®). No new habits just the plate you already have.</p>`,
   },
   {
     title: "Why colour tells you how a leaf was dried",
@@ -696,8 +696,8 @@ const ARTICLES = [
     category: "Process",
     since: 2014,
     excerpt:
-      "Fresh moringa leaf is highly perishable — inappropriate drying costs it colour, sensory quality and nutrition. That is why we dry in controlled low-temperature closed chambers (ULTCD, 2014; CLHPD, 2019) rather than open sun. Green is not marketing; it is process control.",
-    content: `<p>Fresh moringa leaf is highly perishable — inappropriate drying costs it colour, sensory quality and nutrition. That is why we dry in controlled low-temperature closed chambers (ULTCD, 2014; CLHPD, 2019) rather than open sun. Green is not marketing; it is process control.</p>`,
+      "Fresh moringa leaf is highly perishable; inappropriate drying costs it colour, sensory quality, and nutrition. That is why we dry in controlled low-temperature closed chambers (ULTCD, 2014; CLHPD, 2019) rather than open sun. Green is not marketing; it is process control.",
+    content: `<p>Fresh moringa leaf is highly perishable; inappropriate drying costs it colour, sensory quality, and nutrition. That is why we dry in controlled low-temperature closed chambers (ULTCD, 2014; CLHPD, 2019) rather than open sun. Green is not marketing; it is process control.</p>`,
   },
   {
     title: "One tree, four planting patterns",
