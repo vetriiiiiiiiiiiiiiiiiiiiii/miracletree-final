@@ -20,6 +20,15 @@ DATABASE_URL="file:/data/miracletree.db" node ./scripts/repair-duplicate-skus.mj
 echo "Updating database schema..."
 DATABASE_URL="file:/data/miracletree.db" npx -y prisma@6 db push --schema=node_modules/.prisma/client/schema.prisma --accept-data-loss --skip-generate
 
+# Bring the editorial content up to date. The database above is whatever the
+# volume was holding, which after the first deploy is never refreshed — so
+# every copy correction since then had been landing in the image and stopping
+# there. This replays the snapshot built into the image when its version
+# differs from the one the database recorded, and touches nothing outside the
+# content tables: no products, no orders, no customers, no reviews.
+echo "Syncing content..."
+DATABASE_URL="file:/data/miracletree.db" node ./scripts/sync-content.mjs || echo "Content sync skipped."
+
 # Start Nginx in background as daemon
 nginx
 

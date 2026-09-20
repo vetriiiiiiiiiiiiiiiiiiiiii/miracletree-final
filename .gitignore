@@ -14,3 +14,6 @@ tsconfig.tsbuildinfo
 e2e/.auth/
 shots/
 test-results/
+
+# Built by scripts/export-content.mjs during the image build.
+content-snapshot.json
