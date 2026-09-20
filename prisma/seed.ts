@@ -735,7 +735,7 @@ const HOMEPAGE_SECTIONS = [
     kind: "why",
     title: "Why moringa",
     subtitle:
-      "It grows in poor soil with little water, and almost every part of it is usable.",
+      "Moringa is naturally nutrient-dense: iron, calcium, potassium, beta-carotene, and fibre, plus all nine essential amino acids, a complete plant protein that keeps its nutrition for months once dried, without refrigeration.",
     position: 3,
   },
   {
