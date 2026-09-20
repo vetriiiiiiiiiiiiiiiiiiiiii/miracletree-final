@@ -62,6 +62,8 @@ export async function trackOrderAction(_prev, formData) {
       status: true,
       paymentStatus: true,
       placedAt: true,
+      trackingNumber: true,
+      trackingUrl: true,
       items: { select: { productName: true, variantName: true, quantity: true } },
       events: {
         orderBy: { createdAt: "asc" },
@@ -88,6 +90,12 @@ export async function trackOrderAction(_prev, formData) {
       status: order.status,
       statusLabel: ORDER_STATUS_LABELS[order.status] ?? order.status,
       paymentStatus: order.paymentStatus,
+      // The courier's own reference. A signed-in shopper already sees this on
+      // the order page; a guest was told it existed in the shipping email and
+      // then had nowhere to read it. It is on the order either way — no more
+      // of the record is exposed than before.
+      trackingNumber: order.trackingNumber,
+      trackingUrl: order.trackingUrl,
       itemCount: order.items.reduce((n, i) => n + i.quantity, 0),
       items: order.items.map((i) => ({
         // Variant names repeat the product on single-variant lines, so only

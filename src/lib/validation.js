@@ -158,6 +158,7 @@ export const adminProductSchema = z.object({
   dimensions: z.string().trim().max(60).optional().or(z.literal("")),
   status: z.enum(PRODUCT_STATUSES),
   isFeatured: z.boolean().default(false),
+  isHeroPack: z.boolean().default(false),
   isNew: z.boolean().default(false),
   isBestSeller: z.boolean().default(false),
   isOnSale: z.boolean().default(false),

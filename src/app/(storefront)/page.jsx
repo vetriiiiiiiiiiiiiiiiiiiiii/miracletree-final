@@ -28,29 +28,34 @@ import { TrustSignals } from "@/components/home/TrustSignals";
 import { ExportReach } from "@/components/home/ExportReach";
 // The homepage is fully CMS-driven, so it revalidates rather than being static.
 /**
- * The packs in the hero: a flagship, and six the three small cells cycle
- * through so the composition is never showing the same range twice.
+ * The packs in the hero.
  *
- * Most of the catalogue's photography has a white background baked into the
- * image rather than a transparent one, which reads as a white card stuck onto
- * the hero's ground. Nine of the twenty-seven are genuine cut-outs and these
- * are four of them. The two tea cartons are cut out but photographed as light
- * boxes, so they are left out: on the dark ground they read as cards rather
- * than as products.
+ * Which products appear is the shop's decision, not this file's: tick
+ * "Homepage hero" on a product in the admin and it appears here, ordered by
+ * the product's own sort order — lowest fills the large panel, the rest cycle
+ * through the three small cells.
+ *
+ * This list is what the hero falls back to when nothing is ticked, so a fresh
+ * install and a shop that has just untick-ed its last pack both still render a
+ * hero rather than a hole. Picking these is not arbitrary: most of the
+ * catalogue's photography has a white background baked into the image rather
+ * than a transparent one, which reads as a white card stuck onto the hero's
+ * dark ground. Nine of the twenty-seven are genuine cut-outs and these are
+ * four of them. The two tea cartons are cut out but photographed as light
+ * boxes, so they are left out for the same reason.
  *
  * The MOGO group shot led this list and filled the large cell, because several
- * packs in one frame carry a big panel better than a single one does. It is
- * gone on instruction: the hero shows one product at a time, never a bundle.
+ * packs in one frame carry a big panel better than one does. It is gone on
+ * instruction: the hero shows one product at a time, never a bundle.
  */
-const HERO_PRODUCT_SLUGS = [
+const FALLBACK_HERO_SLUGS = [
   "movita-multi-grain-health-mix-flavored",
   "moringa-leaf-dried-50gms-pack-of-2",
   "moringa-seed-oil-hair-strengthening-oil",
   "moringa-leaf-powder-capsules-60-capsules",
   "moringa-gum-gond-powder-100-grams",
   "moringa-seed-capsule-90-capsules",
-];
-export const revalidate = 300;
+];export const revalidate = 300;
 export async function generateMetadata() {
   const settings = await getSettings();
   const base = buildMetadata({
@@ -94,10 +99,15 @@ export default async function HomePage() {
     // about who runs the company or what he said.
     getCategories(),
     prisma.product.findMany({
-      where: { slug: { in: HERO_PRODUCT_SLUGS }, status: "published" },
+      where: {
+        status: "published",
+        OR: [{ isHeroPack: true }, { slug: { in: FALLBACK_HERO_SLUGS } }],
+      },
+      orderBy: { position: "asc" },
       select: {
         name: true,
         slug: true,
+        isHeroPack: true,
         images: { select: { url: true }, take: 1 },
         variants: { select: { price: true }, orderBy: { price: "asc" }, take: 1 },
       },
@@ -114,6 +124,18 @@ export default async function HomePage() {
   ]);
   // The hero resolves into a real photograph of the featured product rather
   // than a stock image, which is what makes the seed→product idea land.
+  // What the shop has chosen wins outright, in the products' own sort order —
+  // first into the large panel, the rest through the small cells. The fallback
+  // is consulted only when nothing at all is ticked, and then in its own
+  // declared order, so the two lists can never mix into a hero nobody arranged.
+  const withPhoto = heroPacks.filter((p) => p.images[0]?.url);
+  const chosenPacks = withPhoto.filter((p) => p.isHeroPack);
+  const heroPackList = chosenPacks.length
+    ? chosenPacks
+    : FALLBACK_HERO_SLUGS.map((slug) =>
+        withPhoto.find((p) => p.slug === slug),
+      ).filter(Boolean);
+
   const heroSection = sections.get("hero");
   const heroProduct = await prisma.product.findFirst({
     where: { status: "published", isFeatured: true },
@@ -176,16 +198,12 @@ export default async function HomePage() {
       <HomeHero
         title={hero.title}
         subtitle={hero.subtitle}
-        products={HERO_PRODUCT_SLUGS.map((slug) =>
-          heroPacks.find((p) => p.slug === slug),
-        )
-          .filter((p) => p?.images[0]?.url)
-          .map((p) => ({
-            name: p.name,
-            slug: p.slug,
-            image: p.images[0].url,
-            price: p.variants[0]?.price ?? null,
-          }))}
+        products={heroPackList.map((p) => ({
+          name: p.name,
+          slug: p.slug,
+          image: p.images[0].url,
+          price: p.variants[0]?.price ?? null,
+        }))}
       />
 
       {/* 03 — Why moringa */}

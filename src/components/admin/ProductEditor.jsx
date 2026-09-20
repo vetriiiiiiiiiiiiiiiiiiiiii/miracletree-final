@@ -190,6 +190,12 @@ export function ProductEditor({
                   description="Appears in the homepage collection rail."
                 />
                 <Checkbox
+                  name="isHeroPack"
+                  defaultChecked={draft.isHeroPack}
+                  label="Homepage hero"
+                  description="One of the packs at the top of the homepage. The lowest sort order fills the large panel; the rest cycle through the small cells. Use a photograph cut out of its background."
+                />
+                <Checkbox
                   name="isBestSeller"
                   defaultChecked={draft.isBestSeller}
                   label="Bestseller"

@@ -158,12 +158,18 @@ Open it: ${siteUrl("/admin/orders")}`,
 /** Status changed — shipped, delivered, cancelled. */
 export function orderStatusUpdate(input) {
   const trackUrl = siteUrl("/track");
+  // A shipping notice whose whole job is to say "it is on its way" and then
+  // withholds the consignment number is the wrong email. When ops has entered
+  // one it goes in the body, and the courier's own link becomes the button.
+  const consignment = input.trackingNumber
+    ? `\nConsignment number: ${input.trackingNumber}\n`
+    : "";
   return {
     to: input.email,
     subject: `Order ${input.orderNumber} — ${input.statusLabel}`,
     text: `${input.customerName}, your order ${input.orderNumber} is now: ${input.statusLabel}.
-${input.message ? `\n${input.message}\n` : ""}
-Track it at ${trackUrl} with this order number and email address.
+${input.message ? `\n${input.message}\n` : ""}${consignment}
+Track it at ${input.trackingUrl ?? trackUrl}${input.trackingUrl ? "" : " with this order number and email address"}.
 
 ${SITE.legalName} · ${SITE.phone}`,
     html: shell(
@@ -174,7 +180,15 @@ ${SITE.legalName} · ${SITE.phone}`,
          <strong>${escape(input.statusLabel.toLowerCase())}</strong>.
        </p>
        ${input.message ? `<p style="margin:0 0 18px;font-size:14px;line-height:1.6;color:${MUTED};">${escape(input.message)}</p>` : ""}
-       ${button(trackUrl, "Track this order")}`,
+       ${
+         input.trackingNumber
+           ? `<p style="margin:0 0 18px;font-size:14px;line-height:1.6;color:${MUTED};">
+                Consignment number
+                <strong style="color:inherit;">${escape(input.trackingNumber)}</strong>
+              </p>`
+           : ""
+       }
+       ${button(input.trackingUrl ?? trackUrl, input.trackingUrl ? "Track with the courier" : "Track this order")}`,
     ),
     replyTo: SITE.supportEmail,
   };
