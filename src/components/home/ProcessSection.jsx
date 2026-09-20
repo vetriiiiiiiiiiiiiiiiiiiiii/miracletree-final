@@ -133,7 +133,7 @@ export function ProcessSection({ title, subtitle }) {
                 ) : null}
 
                 {step.id === "drying" ? (
-                  <p className="mt-6 max-w-[48ch] border-l border-gold-500/40 pl-5 text-sm leading-relaxed text-cream-300">
+                  <p className="mt-6 max-w-[48ch] text-sm leading-relaxed text-cream-300">
                     Building on years of low-temperature expertise, CLHPD represents the
                     next stage in MiracleTree&rsquo;s controlled dehydration journey.
                     Developed specifically for premium Moringa and herbal materials, it
