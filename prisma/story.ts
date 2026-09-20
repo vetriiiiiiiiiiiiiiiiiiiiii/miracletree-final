@@ -244,13 +244,6 @@ export const CREDITS = [
     url: null,
   },
   {
-    name: "NABARD MABIF",
-    role: "Agribusiness incubator",
-    body: "Miracle Tree Life Sciences is an incubatee of the MABIF programme.",
-    group: "partner",
-    url: "https://www.mabif.com/incubatees/miracle-tree-life-sciences/",
-  },
-  {
     name: "The growing families",
     role: "Across south Tamil Nadu",
     body: "Around 312 acres under contract beyond the company's own farms, and the reason the planting trials and SOPs were shared rather than kept.",
