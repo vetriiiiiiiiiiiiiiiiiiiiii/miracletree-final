@@ -460,7 +460,7 @@ const FAQS = [
     category: "moringa",
     question: "What exactly is moringa?",
     answer:
-      "Moringa oleifera is a fast-growing tree native to South India and grown widely across Tamil Nadu, where it is better known as the drumstick tree. Almost every part of it is edible — leaf, pod, flower, seed and gum — and each part is used differently across our range.",
+      "Moringa oleifera Lam. (family Moringaceae) the drumstick tree, murungai in Tamil is a fast-growing, drought-resistant tree cultivated widely across Tamil Nadu. Its leaf is recognised among the most nutrient-dense plant foods on the planet: a good source of iron, calcium, potassium and beta-carotene, and a complete plant protein carrying all nine essential amino acids. Dried properly, the leaf retains that nutrition for years without refrigeration. Five parts of the tree enter our range leaf, pod, flower, seed and gum each processed differently into a different product.",
   },
   {
     category: "moringa",
