@@ -464,9 +464,9 @@ const FAQS = [
   },
   {
     category: "moringa",
-    question: "Why does your leaf powder look bright green rather than dull?",
+    question: "Why does MiracleTree make such a point about drying?",
     answer:
-      "Colour tells you how a leaf was dried. Fresh Moringa leaf is highly perishable, and inappropriate drying adversely affects its colour, sensory quality and nutritional characteristics. That is why we never rely on uncontrolled conventional drying: our leaf is dried under ULTCD — Ultra Low Temperature Closed Chamber Drying (2014) — low temperature, controlled environment and hygienic closed-chamber processing, advanced in 2019 by CLHPD, Controlled Low Heat Process Drying. Sun-drying is faster and cheaper; controlled low-heat drying is what retains the leaf's natural characteristics. The green in your pack is process control, not chance.",
+      "Because drying is where most moringa is lost. Fresh leaf is highly perishable, and uncontrolled conventional drying costs it colour, sensory quality and nutritional characteristics. So drying became our engineering problem: ULTCD (2014) moved the leaf into a controlled low-temperature closed chamber, and CLHPD (2019) extended controlled low-heat drying to premium moringa and other herbs. Everything else in our chain milling, formulation, packaging is built around protecting what drying preserves.",
   },
   {
     category: "products",
