@@ -24,7 +24,7 @@ const clean = (row) =>
 const content = {
   // Bumped by hand when the repo's copy should be pushed over whatever a
   // deployed database is holding. See sync-content.mjs.
-  version: process.env.CONTENT_VERSION ?? "2026-09-20.2",
+  version: process.env.CONTENT_VERSION ?? "2026-09-20.3",
   articles: (
     await prisma.article.findMany({ include: { category: true } })
   ).map(({ category, ...a }) => ({
