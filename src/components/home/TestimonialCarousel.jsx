@@ -1,71 +1,105 @@
 "use client";
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Rating } from "@/components/ui/Rating";
 import { formatDate } from "@/lib/utils";
 import { cn } from "@/lib/utils";
+
 /**
- * One review at a time, on a slow rotation.
+ * Three reviews at a time, turned a page at a time.
  *
- * A grid of nine quotes is read as wallpaper; a single quote at display size
- * gets read. The trade is that a carousel can hide content and steal control,
- * so this one gives both back:
+ * This showed one quote at display size, which read well and left most of a
+ * very tall section empty — a single sentence floating in a screen of ground.
+ * Three to a row fills it, and turning a whole page rather than sliding one
+ * card keeps the reading order honest: you finish a set, then the next set
+ * arrives, instead of a row that is always mid-shuffle.
  *
- * - It advances every eight seconds and stops the moment a pointer enters, a
- *   control takes focus, or the tab goes to the background. It never moves
- *   while someone is part-way through reading.
- * - Arrow keys work, the dots are real buttons, and the live region announces
- *   each quote as it arrives.
- * - Under `prefers-reduced-motion` it does not rotate at all and every review
- *   is rendered as a plain list, which is also what a crawler and a printer
- *   get.
+ * The properties the single-quote version had are all kept, because they are
+ * what stops a carousel being hostile:
  *
- * The quotes are stacked rather than swapped so the section keeps the height
- * of its tallest one: an auto-advancing block that resizes under the reader is
- * how a carousel makes the whole page jump.
+ * - it advances every nine seconds, and stops the moment a pointer enters, a
+ *   control takes focus, or the tab goes to the background;
+ * - arrow keys work, the dots are real buttons, and a live region announces
+ *   each page without moving focus;
+ * - under `prefers-reduced-motion` it does not rotate at all — every review
+ *   renders as one plain list, which is also what a crawler and a printer get.
+ *
+ * The rows are stacked in one grid cell rather than swapped, so the section
+ * holds the height of its tallest page and nothing below it moves while the
+ * rotation runs.
  */
+const PER_PAGE = 3;
+const INTERVAL = 9000;
+
 export function TestimonialCarousel({ items }) {
-  const [index, setIndex] = useState(0);
+  const [page, setPage] = useState(0);
   const [rotating, setRotating] = useState(false);
   const [paused, setPaused] = useState(false);
   const root = useRef(null);
+
+  const pages = useMemo(() => {
+    const out = [];
+    for (let i = 0; i < items.length; i += PER_PAGE) out.push(items.slice(i, i + PER_PAGE));
+    return out;
+  }, [items]);
+
+  // The average and the count, from the reviews actually on the page. Stated
+  // rather than implied: a row of five-star quotes with no figure beside it is
+  // the shape of a testimonial wall, and this is not one.
+  const summary = useMemo(() => {
+    const rated = items.filter((i) => typeof i.rating === "number" && i.rating > 0);
+    if (!rated.length) return null;
+    return {
+      average: rated.reduce((n, i) => n + i.rating, 0) / rated.length,
+      count: rated.length,
+    };
+  }, [items]);
+
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    if (items.length < 2) return;
+    if (pages.length < 2) return;
     setRotating(true);
-  }, [items.length]);
+  }, [pages.length]);
+
   const go = useCallback(
-    (delta) => setIndex((i) => (i + delta + items.length) % items.length),
-    [items.length],
+    (delta) => setPage((i) => (i + delta + pages.length) % pages.length),
+    [pages.length],
   );
+
   useEffect(() => {
     if (!rotating || paused) return;
-    const id = window.setInterval(() => go(1), 8000);
+    const id = window.setInterval(() => go(1), INTERVAL);
     return () => window.clearInterval(id);
   }, [rotating, paused, go]);
+
   // A hidden tab should not burn through the whole set unseen.
   useEffect(() => {
     const onVisibility = () => setPaused(document.hidden);
     document.addEventListener("visibilitychange", onVisibility);
     return () => document.removeEventListener("visibilitychange", onVisibility);
   }, []);
+
   if (!items.length) return null;
+
   // Without rotation there is no carousel to speak of — just the reviews.
   if (!rotating) {
     return (
-      <ul className="mt-16 grid gap-x-8 gap-y-10 md:grid-cols-2 lg:grid-cols-3">
-        {items.map((item) => (
-          <li key={item.id} className="border-t border-border-subtle pt-6">
-            <Quote item={item} />
-          </li>
-        ))}
-      </ul>
+      <>
+        {summary ? <Summary {...summary} className="mt-12" /> : null}
+        <ul className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {items.map((item) => (
+            <li key={item.id}>
+              <Quote item={item} />
+            </li>
+          ))}
+        </ul>
+      </>
     );
   }
+
   return (
     <div
       ref={root}
-      className="mt-14"
       onPointerEnter={() => setPaused(true)}
       onPointerLeave={() => setPaused(false)}
       onFocusCapture={() => setPaused(true)}
@@ -77,41 +111,55 @@ export function TestimonialCarousel({ items }) {
         if (e.key === "ArrowLeft") go(-1);
       }}
     >
-      {/* The stack sizes itself to the tallest quote, so nothing below it
-            moves as the rotation runs. */}
-      <div className="grid">
-        {items.map((item, i) => (
+      {summary ? <Summary {...summary} className="mt-12" /> : null}
+
+      <div className="mt-10 grid">
+        {pages.map((group, p) => (
           <div
-            key={item.id}
-            aria-hidden={i !== index}
-            inert={i !== index}
+            key={p}
+            aria-hidden={p !== page}
+            inert={p !== page}
             className={cn(
-              "col-start-1 row-start-1 transition-[opacity,transform] duration-700 ease-[var(--ease-organic)]",
-              i === index
-                ? "opacity-100 translate-y-0"
-                : "pointer-events-none opacity-0 translate-y-3",
+              "col-start-1 row-start-1 grid gap-6 transition-opacity duration-500 md:grid-cols-2 lg:grid-cols-3",
+              p === page ? "opacity-100" : "pointer-events-none opacity-0",
             )}
           >
-            <Quote item={item} large />
+            {group.map((item, i) => (
+              <div
+                key={item.id}
+                style={
+                  // Keyed on the page so the stagger replays on every turn.
+                  // Tailwind cannot see a delay interpolated at runtime, so the
+                  // animation is set here rather than as a class.
+                  p === page
+                    ? {
+                        animation: `hero-rise 0.6s var(--ease-organic) ${i * 0.09}s both`,
+                      }
+                    : undefined
+                }
+              >
+                <Quote item={item} />
+              </div>
+            ))}
           </div>
         ))}
       </div>
 
-      <div className="mt-10 flex items-center justify-between gap-6 border-t border-border-subtle pt-5">
+      <div className="mt-10 flex flex-wrap items-center justify-between gap-x-6 gap-y-4 border-t border-border-subtle pt-5">
         <div className="flex items-center gap-2">
-          {items.map((item, i) => (
+          {pages.map((group, p) => (
             <button
-              key={item.id}
+              key={p}
               type="button"
-              onClick={() => setIndex(i)}
-              aria-label={`Review ${i + 1} of ${items.length}, by ${item.authorName}`}
-              aria-current={i === index}
-              className="grid h-6 w-6 place-items-center"
+              onClick={() => setPage(p)}
+              aria-label={`Reviews ${p * PER_PAGE + 1} to ${p * PER_PAGE + group.length} of ${items.length}`}
+              aria-current={p === page}
+              className="grid h-6 w-8 place-items-center"
             >
               <span
                 className={cn(
-                  "block h-px w-4 transition-colors duration-300",
-                  i === index ? "bg-gold-400" : "bg-border-strong",
+                  "block h-px w-6 transition-colors duration-300",
+                  p === page ? "bg-gold-400" : "bg-border-strong",
                 )}
               />
             </button>
@@ -119,40 +167,75 @@ export function TestimonialCarousel({ items }) {
         </div>
 
         <div className="flex items-center gap-1">
-          <Arrow label="Previous review" onClick={() => go(-1)} direction="prev" />
+          <Arrow label="Previous reviews" onClick={() => go(-1)} direction="prev" />
           <span className="px-2 text-[0.72rem] tabular-nums text-cream-400">
-            {index + 1} / {items.length}
+            {page + 1} / {pages.length}
           </span>
-          <Arrow label="Next review" onClick={() => go(1)} direction="next" />
+          <Arrow label="Next reviews" onClick={() => go(1)} direction="next" />
         </div>
       </div>
 
       {/* Announced without moving focus, so a screen reader follows the
-            rotation instead of being yanked around by it. */}
+          rotation instead of being yanked around by it. */}
       <p aria-live="polite" className="sr-only">
-        {items[index] ? `${items[index].authorName}: ${items[index].body}` : ""}
+        {(pages[page] ?? [])
+          .map((item) => `${item.authorName}: ${item.body}`)
+          .join(". ")}
       </p>
     </div>
   );
 }
-function Quote({ item, large = false }) {
+
+/** The aggregate, from the same rows the quotes come from. */
+function Summary({ average, count, className }) {
   return (
-    <figure className="flex h-full flex-col">
+    <div
+      className={cn(
+        "flex flex-wrap items-end gap-x-8 gap-y-3 border-t border-border-subtle pt-6",
+        className,
+      )}
+    >
+      <p className="flex items-baseline gap-2">
+        <span
+          className="text-[2.6rem] leading-none text-cream-50"
+          style={{ fontFamily: "var(--font-display)" }}
+        >
+          {average.toFixed(1)}
+        </span>
+        <span className="text-sm text-cream-400">out of 5</span>
+      </p>
+      <Rating value={average} count={count} size="md" showCount={false} className="pb-1.5" />
+      <p className="pb-1.5 text-[0.72rem] uppercase tracking-[0.16em] text-cream-400">
+        {count} {count === 1 ? "review" : "reviews"}
+      </p>
+    </div>
+  );
+}
+
+function Quote({ item }) {
+  return (
+    <figure className="panel-lit relative flex h-full flex-col overflow-hidden bg-ink-800/40 p-7">
+      {/* The opening mark, set as ornament rather than punctuation: it is
+          decorative, so the quote below keeps its own real quotation marks for
+          anyone reading with the styles off. */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute -right-2 -top-8 select-none text-[7rem] leading-none text-cream-50/[0.05]"
+        style={{ fontFamily: "var(--font-display)" }}
+      >
+        &rdquo;
+      </span>
+
       <Rating value={item.rating} count={1} showCount={false} size="sm" />
 
       <blockquote
-        className={cn(
-          "mt-5 flex-1 leading-relaxed text-cream-100",
-          large
-            ? "max-w-[36ch] text-[clamp(1.3rem,2.6vw,2.1rem)] leading-[1.35]"
-            : "text-[1.05rem]",
-        )}
+        className="relative mt-5 flex-1 text-[1.12rem] leading-[1.6] text-cream-100"
         style={{ fontFamily: "var(--font-display)" }}
       >
         &ldquo;{item.body}&rdquo;
       </blockquote>
 
-      <figcaption className={cn("text-sm text-cream-400", large ? "mt-8" : "mt-6")}>
+      <figcaption className="mt-7 border-t border-border-subtle pt-5 text-sm text-cream-400">
         <span className="text-cream-200">{item.authorName}</span>
         {item.location ? <span> · {item.location}</span> : null}
         {item.isVerified ? (
@@ -161,10 +244,12 @@ function Quote({ item, large = false }) {
           </span>
         ) : null}
 
+        {/* `flex`, not `inline-flex`: inline ran the product straight on from
+            the author, so the caption read "Sruthi Bon Movita Sprouted…". */}
         {item.product ? (
           <Link
             href={`/product/${item.product.slug}`}
-            className="mt-2 inline-flex min-h-[1.5rem] items-center text-xs text-cream-400 underline underline-offset-4 hover:text-cream-100"
+            className="mt-2 flex min-h-[1.5rem] items-center text-xs text-cream-400 underline underline-offset-4 hover:text-cream-100"
           >
             on {item.product.name}
           </Link>
@@ -179,6 +264,7 @@ function Quote({ item, large = false }) {
     </figure>
   );
 }
+
 function Arrow({ label, onClick, direction }) {
   return (
     <button

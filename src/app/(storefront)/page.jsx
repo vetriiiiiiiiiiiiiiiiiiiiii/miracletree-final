@@ -91,7 +91,7 @@ export default async function HomePage() {
     getHomepageSections(),
     getFeaturedProducts(10),
     getIngredients(),
-    getFeaturedReviews(6),
+    getFeaturedReviews(9),
     getTestimonials(6),
     getArticles({ take: 3 }),
     getFaqs(),
@@ -189,7 +189,7 @@ export default async function HomePage() {
       body: t.body,
       createdAt: t.createdAt,
     })),
-  ].slice(0, 6);
+  ].slice(0, 9);
   const storySection = sections.get("story");
   return (
     <>
