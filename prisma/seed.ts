@@ -542,21 +542,142 @@ const FAQS = [
   },
 ];
 
-/** Real customer quotes carried over from the existing site. Nothing invented. */
-const TESTIMONIALS = [
-  {
-    authorName: "Vedha Varshini S",
-    body: "Being a 5 year user, this is the best product I have ever used.",
-    rating: 5,
-    position: 1,
-  },
-  {
-    authorName: "Shree",
-    body: "I've been using beauty drops for 6 years. It has helped me reduce black spots and acne.",
-    rating: 5,
-    position: 2,
-  },
-];
+/**
+ * The reviews customers actually left, read off miracletree.in.
+ *
+ * The table used to start empty — better than inventing reviews, but it meant
+ * the storefront showed none at all while twelve real ones sat on the Shopify
+ * site behind Judge.me. These are those twelve, verbatim: the same author
+ * names the shop displays (initials and "Customer" included, because that is
+ * how the reviewer chose to appear), the same titles and bodies, the dates
+ * they were left, and the buyer badge only where Judge.me shows one.
+ *
+ * Nine products have no reviews and get none here. An empty review section is
+ * an honest one.
+ *
+ * Keyed by Shopify handle rather than by slug: the slug strips the ™ out of
+ * one handle, and an override keyed on the wrong one silently matches nothing.
+ */
+const REVIEWS_BY_HANDLE: Record<
+  string,
+  Array<{
+    authorName: string;
+    rating: number;
+    title: string;
+    body: string;
+    at: string;
+    isVerified?: boolean;
+  }>
+> = {
+  "beauty-drops-skin-food-hydrates-skin": [
+    {
+      authorName: "Vedha Varshini S",
+      rating: 5,
+      title: "Outstanding skin and pigmentation",
+      body: "Being a 5 year user, this is the best product I have ever used.\nAs the name mentions,gives us a splendid look even without no makeup usage.\nSterling product with supreme quality . Highly recommended 👍",
+      at: "2024-03-11T18:40:32Z",
+    },
+    {
+      authorName: "Shree",
+      rating: 5,
+      title: "Best for clear and radiant skin",
+      body: "I've been using beauty drops for 6 years. It has helped me reduce black spots and acne.  I notice a natural glow and shine, and they also remove scar marks.I highly recommend them to anyone seeking to achieve clear, radiant skin.✨",
+      at: "2024-03-11T07:58:36Z",
+    },
+    {
+      authorName: "Customer",
+      rating: 5,
+      title: "Excellent for skin hydration",
+      body: "I have been using beauty drops for the last 3 months and  it has made my skin hydrated and gives a natural glow.\nMust use! Highly recommend 👌",
+      at: "2024-02-20T02:05:24Z",
+    },
+  ],
+  "mogo-moringa-energy-bar": [
+    {
+      authorName: "Amod Tamhane",
+      rating: 5,
+      title: "Healthy snack",
+      body: "I loved the taste of the snack bar. It's healthy too. Yummy yummy yummy.",
+      at: "2024-03-07T09:38:58Z",
+      isVerified: true,
+    },
+    {
+      authorName: "S.R.",
+      rating: 5,
+      title: "Moringa bars",
+      body: "Tastes so good and has plenty of micro nutrients ! It’s a good protein snack post workout & can also be taken to cut down unnecessary calories and cravings!",
+      at: "2024-02-21T17:10:58Z",
+    },
+    {
+      authorName: "Jessy",
+      rating: 5,
+      title:
+        "Amazing product, we enjoyed the taste and cherished every bite of moringa bar.",
+      body: "Moringa tea very refreshing. It's a very tasty and healthy tea. Enjoyed it",
+      at: "2024-02-21T15:30:52Z",
+    },
+    {
+      authorName: "d.S.",
+      rating: 5,
+      title: "Awesome product",
+      body: "Nice product and genuine goods i loved it and the taste is good that everyone will love it.",
+      at: "2024-02-21T12:16:22Z",
+    },
+    {
+      authorName: "Ajeeth kumar",
+      rating: 5,
+      title: "best healthy snacks for working professionals",
+      body: "i personally recommend this mogo energy bar for healthy snacks",
+      at: "2024-02-21T11:23:38Z",
+    },
+    {
+      authorName: "Saijo John",
+      rating: 5,
+      title: "Best low calorie on the go snack",
+      body: "Highly recommended if you are looking for a health and low calorie snack.",
+      at: "2024-02-19T20:52:42Z",
+    },
+  ],
+  "movita-sprouted-multi-grain-laddus-250-gms-no-added-sugar-richness-of-moringa": [
+    {
+      authorName: "Sruthi B",
+      rating: 5,
+      title: "Tastiest and healthy snack",
+      body: "Ladoo is one of the favorite snacks which my friend always gives me, this gives instant energy. Having one ladoo makes us feel fulfilled.",
+      at: "2024-03-12T15:24:08Z",
+    },
+    {
+      authorName: "Dhiviya Thandavan",
+      rating: 5,
+      title: "Staying Fit is treasure beyond measure",
+      body: "I m Dhiviya Thandavan,  DGM Aparajitha Corporate Services Private Limited,  Madurai.  Strongly believe in good health & staying Fit. Have been using Movita Laddu  & Health Drink for more than 5 years. Feel energised,  free from joints pain & active all through the day. This natural nutrition is  recommended for all age groups.  Staying Fit is treasure beyond measure",
+      at: "2024-03-11T15:07:38Z",
+    },
+    {
+      authorName: "C.",
+      rating: 5,
+      title: "One of the best I have ever had.",
+      body: "I have had alot of ladoos, this has become my favourite snack recently and I am loving it so much.",
+      at: "2024-02-19T13:02:13Z",
+    },
+  ],
+};
+
+/**
+ * Standalone quotes, separate from product reviews.
+ *
+ * Empty on purpose. The two that stood here — Vedha Varshini S and Shree —
+ * were the opening lines of two Beauty Drops reviews, quoted before the
+ * reviews themselves had been brought across. They are in REVIEWS_BY_HANDLE
+ * now, in full and against the product they were written about, so leaving the
+ * excerpts here as well printed each of them twice on the homepage.
+ */
+const TESTIMONIALS: Array<{
+  authorName: string;
+  body: string;
+  rating: number;
+  position: number;
+}> = [];
 
 const ARTICLES = [
   {
@@ -840,6 +961,7 @@ async function main() {
 
   const productIdsByCategory = new Map<string, string[]>();
   let imported = 0;
+  let reviewsImported = 0;
 
   for (const [index, p] of raw.products.entries()) {
     const categorySlug = CATEGORY_BY_HANDLE[p.handle] ?? "super-foods";
@@ -960,6 +1082,27 @@ async function main() {
       });
     }
 
+    // The reviews this product actually has on the live shop. Approved on the
+    // way in — they are already published there — and carrying their original
+    // dates, so "2 years ago" on a card stays true rather than resetting to
+    // the day the database was last rebuilt.
+    const reviews = REVIEWS_BY_HANDLE[p.handle];
+    if (reviews?.length) {
+      await prisma.review.createMany({
+        data: reviews.map((r) => ({
+          productId: product.id,
+          authorName: r.authorName,
+          rating: r.rating,
+          title: r.title,
+          body: r.body,
+          status: "approved",
+          isVerified: r.isVerified ?? false,
+          createdAt: new Date(r.at),
+        })),
+      });
+      reviewsImported += reviews.length;
+    }
+
     const bucket = productIdsByCategory.get(categorySlug) ?? [];
     bucket.push(product.id);
     productIdsByCategory.set(categorySlug, bucket);
@@ -982,7 +1125,7 @@ async function main() {
     }
   }
 
-  console.log(`✓ ${imported} products imported`);
+  console.log(`✓ ${imported} products imported, ${reviewsImported} customer reviews`);
 
   // ---- content
   await prisma.faq.createMany({

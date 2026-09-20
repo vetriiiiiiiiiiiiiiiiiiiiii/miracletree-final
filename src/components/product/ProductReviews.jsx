@@ -17,6 +17,7 @@ export function ProductReviews({
 }) {
   const [writing, setWriting] = useState(false);
   const [visible, setVisible] = useState(4);
+  const verifiedCount = reviews.filter((r) => r.isVerified).length;
   return (
     <div className="grid gap-12 lg:grid-cols-[20rem_1fr] lg:gap-16">
       {/* Summary */}
@@ -35,8 +36,18 @@ export function ProductReviews({
 
             <div className="mt-3">
               <Rating value={average} count={count} size="md" showCount={false} />
+              {/* "6 verified reviews" over six reviews of which one carries a
+                  purchase badge is a claim, not a count. The count is the
+                  count; how many are verified purchases is stated separately,
+                  and only when some are. */}
               <p className="mt-2 text-xs text-cream-400">
-                {count} verified {count === 1 ? "review" : "reviews"}
+                {count} {count === 1 ? "review" : "reviews"}
+                {verifiedCount > 0 ? (
+                  <>
+                    {" · "}
+                    {verifiedCount} verified {verifiedCount === 1 ? "purchase" : "purchases"}
+                  </>
+                ) : null}
               </p>
             </div>
 
