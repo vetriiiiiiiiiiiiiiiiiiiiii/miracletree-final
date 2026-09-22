@@ -20,10 +20,12 @@ const FACTS = [
     body: "Each part is processed differently and ends up in a different product. Very little of the tree is thrown away.",
   },
   {
-    figure: "20+",
-    unit: "years",
-    title: "Working with the same growers",
-    body: "Miracletree Life Science has sourced from moringa farms around Madurai since the early 2000s.",
+    // Supplied as a figure, a unit and one paragraph, with no heading line —
+    // so this card has none, rather than carrying a title written here.
+    figure: "40+",
+    unit: "grower families",
+    title: null,
+    body: "A network of over forty farming families around Madurai grows with the company, and the planting trials and SOPs were shared with them, not kept.",
   },
 ];
 export function WhyMoringa({ title, subtitle }) {
@@ -38,7 +40,7 @@ export function WhyMoringa({ title, subtitle }) {
         >
           {FACTS.map((fact) => (
             <article
-              key={fact.title}
+              key={fact.figure}
               data-animate="fade-up"
               className="border-t border-border-subtle pt-6"
             >
@@ -53,10 +55,16 @@ export function WhyMoringa({ title, subtitle }) {
                   {fact.unit}
                 </span>
               </p>
-              <h3 className="mt-5 text-[1.05rem] leading-snug text-cream-100">
-                {fact.title}
-              </h3>
-              <p className="mt-3 text-sm leading-relaxed text-cream-400">{fact.body}</p>
+              {fact.title ? (
+                <h3 className="mt-5 text-[1.05rem] leading-snug text-cream-100">
+                  {fact.title}
+                </h3>
+              ) : null}
+              <p
+                className={`text-sm leading-relaxed text-cream-400 ${fact.title ? "mt-3" : "mt-5"}`}
+              >
+                {fact.body}
+              </p>
             </article>
           ))}
         </Reveal>
