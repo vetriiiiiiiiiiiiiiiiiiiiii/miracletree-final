@@ -2,6 +2,7 @@ import "server-only";
 import { auth, signIn, signOut } from "@/auth";
 import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
+import { prisma } from "./prisma";
 import { signSessionToken, readSessionToken, SESSION_COOKIE_NAME, SESSION_TTL_SECONDS } from "./session";
 
 export const getSession = async () => {
@@ -9,17 +10,28 @@ export const getSession = async () => {
 };
 
 export const getCurrentUser = async () => {
-  const session = await auth();
-  if (session?.user) return session.user;
+  let userId = null;
 
-  const cookieStore = await cookies();
-  const token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
-  if (token) {
-    const payload = await readSessionToken(token);
-    if (payload) {
-      return { id: payload.sub, email: payload.email, role: payload.role };
+  const session = await auth();
+  if (session?.user?.id) {
+    userId = session.user.id;
+  } else {
+    const cookieStore = await cookies();
+    const token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
+    if (token) {
+      const payload = await readSessionToken(token);
+      if (payload?.sub) {
+        userId = payload.sub;
+      }
     }
   }
+
+  if (userId) {
+    return await prisma.user.findUnique({
+      where: { id: userId },
+    });
+  }
+
   return null;
 };
 

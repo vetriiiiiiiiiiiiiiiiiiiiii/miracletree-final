@@ -44,6 +44,26 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
+    async signIn({ user }) {
+      if (user && user.email) {
+        const adminEmails = (process.env.ADMIN_EMAILS || "").split(",").map(e => e.trim().toLowerCase());
+        if (adminEmails.includes(user.email.toLowerCase()) && user.role !== "admin") {
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { role: "admin" }
+          });
+          user.role = "admin";
+        }
+      }
+      return true;
+    },
+    async redirect({ url, baseUrl }) {
+      // Allow relative callback URLs
+      if (url.startsWith("/")) return `${baseUrl}${url}`
+      // Allows callback URLs on the same origin
+      else if (new URL(url).origin === baseUrl) return url
+      return baseUrl
+    },
     async jwt({ token, user }) {
       if (user) {
         token.role = user.role

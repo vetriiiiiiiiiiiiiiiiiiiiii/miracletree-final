@@ -72,6 +72,10 @@ export async function registerAction(_prev, formData) {
       errors: { email: "Try signing in instead." },
     };
   }
+
+  const adminEmails = (process.env.ADMIN_EMAILS || "").split(",").map(e => e.trim().toLowerCase());
+  const role = adminEmails.includes(parsed.data.email.toLowerCase()) ? "admin" : "customer";
+
   const user = await prisma.user.create({
     data: {
       email: parsed.data.email,
@@ -79,8 +83,7 @@ export async function registerAction(_prev, formData) {
       firstName: parsed.data.firstName,
       lastName: parsed.data.lastName || null,
       marketingOptIn: parsed.data.marketingOptIn,
-      // New accounts are always customers. Elevation happens only in admin.
-      role: "customer",
+      role: role,
     },
     select: { id: true, email: true, role: true },
   });
@@ -164,6 +167,68 @@ export async function loginAction(_prev, formData) {
 }
 /** A real bcrypt hash of an unusable password, used only for timing parity. */
 const DUMMY_HASH = "$2b$12$C6UzMDM.H6dfI/f/IKcEeO3G6zGvUgKO6ZQyE3dOoqvxG8VmOZ0.C";
+
+export async function adminLoginAction(_prev, formData) {
+  const parsed = loginSchema.safeParse({
+    email: formData.get("email"),
+    password: formData.get("password"),
+  });
+  if (!parsed.success) {
+    return { status: "error", message: "Enter your email and password." };
+  }
+  const ip = await clientIp();
+  const [byIp, byAccount] = await Promise.all([
+    rateLimit({ key: `login-ip:${ip}`, limit: 15, windowSeconds: 900 }),
+    rateLimit({ key: `login-acct:${parsed.data.email}`, limit: 8, windowSeconds: 900 }),
+  ]);
+  if (!byIp.ok || !byAccount.ok) {
+    return {
+      status: "error",
+      message: "Too many attempts. Please wait a few minutes and try again.",
+    };
+  }
+  const user = await prisma.user.findUnique({
+    where: { email: parsed.data.email },
+    select: { id: true, email: true, role: true, passwordHash: true },
+  });
+  const invalid = {
+    status: "error",
+    message: "That email and password don't match.",
+  };
+  if (!user) {
+    await verifyPassword(parsed.data.password, DUMMY_HASH);
+    return invalid;
+  }
+  if (!(await verifyPassword(parsed.data.password, user.passwordHash))) {
+    await recordAudit({
+      action: "auth.login_failed",
+      entity: "User",
+      entityId: user.id,
+    });
+    return invalid;
+  }
+  
+  if (user.role !== "admin" && user.role !== "staff") {
+    return {
+      status: "error",
+      message: "You do not have administrative access.",
+    };
+  }
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { lastLoginAt: new Date() },
+  });
+  await createSession({ sub: user.id, email: user.email, role: user.role });
+  await ensureCart();
+  await recordAudit({
+    actorId: user.id,
+    action: "auth.admin_login",
+    entity: "User",
+    entityId: user.id,
+  });
+  redirect(safeNext(formData.get("next"), "/admin"));
+}
 export async function logoutAction() {
   const user = await getCurrentUser();
   if (user) {
@@ -300,6 +365,14 @@ export async function updateProfileAction(_prev, formData) {
 }
 
 export async function completeOnboardingAction(_prev, formData) {
+  const phone = formData.get("phone");
+  if (!phone || typeof phone !== "string" || phone.trim() === "") {
+    return {
+      status: "error",
+      message: "Please check the highlighted fields.",
+      errors: { phone: ["Phone number is required."] },
+    };
+  }
   const result = await updateProfileAction(_prev, formData);
   if (result.status === "error") return result;
   redirect("/account");

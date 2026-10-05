@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import {
   forgotPasswordAction,
   loginAction,
+  adminLoginAction,
   registerAction,
   resetPasswordAction,
   googleAuthAction,
@@ -124,6 +125,46 @@ export function LoginForm({ next, justReset, error }) {
     </div>
   );
 }
+export function AdminLoginForm({ next }) {
+  const [state, action] = useActionState(adminLoginAction, INITIAL);
+  return (
+    <div className="grid gap-5">
+      <form action={action} className="grid gap-5">
+        {next ? <input type="hidden" name="next" value={next} /> : null}
+
+        {state.status === "error" ? <FormMessage>{state.message}</FormMessage> : null}
+
+        <Input
+          label="Email"
+          name="email"
+          type="email"
+          autoComplete="email"
+          required
+          placeholder="admin@example.com"
+        />
+
+        <div className="grid gap-2">
+          <Input
+            label="Password"
+            name="password"
+            type="password"
+            autoComplete="current-password"
+            required
+          />
+          <Link
+            href="/forgot-password"
+            className="justify-self-end py-1.5 text-xs text-cream-400 underline underline-offset-4 hover:text-cream-100"
+          >
+            Forgotten your password?
+          </Link>
+        </div>
+
+        <Submit>Sign in</Submit>
+      </form>
+    </div>
+  );
+}
+
 export function RegisterForm({ next, error }) {
   const [state, action] = useActionState(registerAction, INITIAL);
   useEffect(() => {
