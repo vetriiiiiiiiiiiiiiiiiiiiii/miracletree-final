@@ -25,12 +25,18 @@ export async function middleware(request) {
     }
     return NextResponse.next();
   }
-  if (pathname.startsWith("/account") && !session) {
+  const hasNextAuth =
+    request.cookies.has("authjs.session-token") ||
+    request.cookies.has("__Secure-authjs.session-token") ||
+    request.cookies.has("next-auth.session-token") ||
+    request.cookies.has("__Secure-next-auth.session-token");
+
+  if (pathname.startsWith("/account") && !session && !hasNextAuth) {
     const url = new URL("/login", request.url);
     url.searchParams.set("next", `${pathname}${search}`);
     return NextResponse.redirect(url);
   }
-  if ((pathname === "/login" || pathname === "/register") && session) {
+  if ((pathname === "/login" || pathname === "/register") && (session || hasNextAuth)) {
     return NextResponse.redirect(new URL("/account", request.url));
   }
   return NextResponse.next();

@@ -22,6 +22,12 @@ import {
 } from "@/lib/validation";
 import { clientIp, pruneRateLimits, rateLimit } from "@/lib/rate-limit";
 import { recordAudit } from "@/lib/audit";
+import { signIn } from "@/auth";
+
+export async function googleAuthAction() {
+  await signIn("google", { redirectTo: "/account" });
+}
+
 /** Only same-origin, path-relative destinations are honoured after sign-in. */
 function safeNext(value, fallback) {
   const next = typeof value === "string" ? value : "";
@@ -291,4 +297,10 @@ export async function updateProfileAction(_prev, formData) {
     },
   });
   return { status: "success", message: "Your details have been saved." };
+}
+
+export async function completeOnboardingAction(_prev, formData) {
+  const result = await updateProfileAction(_prev, formData);
+  if (result.status === "error") return result;
+  redirect("/account");
 }

@@ -1,64 +1,57 @@
 import "server-only";
+import { auth, signIn, signOut } from "@/auth";
 import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
-import { cache } from "react";
-import { prisma } from "./prisma";
-import {
-  SESSION_COOKIE_NAME,
-  SESSION_TTL_SECONDS,
-  signSessionToken,
-  readSessionToken,
-} from "./session";
-export { SESSION_COOKIE_NAME, readSessionToken };
-export async function hashPassword(plain) {
-  return bcrypt.hash(plain, 12);
-}
-export async function verifyPassword(plain, hash) {
-  return bcrypt.compare(plain, hash);
-}
-export async function createSession(payload) {
+import { signSessionToken, readSessionToken, SESSION_COOKIE_NAME, SESSION_TTL_SECONDS } from "./session";
+
+export const getSession = async () => {
+  return await auth();
+};
+
+export const getCurrentUser = async () => {
+  const session = await auth();
+  if (session?.user) return session.user;
+
+  const cookieStore = await cookies();
+  const token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
+  if (token) {
+    const payload = await readSessionToken(token);
+    if (payload) {
+      return { id: payload.sub, email: payload.email, role: payload.role };
+    }
+  }
+  return null;
+};
+
+export const hashPassword = async (password) => {
+  return await bcrypt.hash(password, 12);
+};
+
+export const verifyPassword = async (password, hash) => {
+  return await bcrypt.compare(password, hash);
+};
+
+export const createSession = async (payload) => {
   const token = await signSessionToken(payload);
-  const store = await cookies();
-  store.set(SESSION_COOKIE_NAME, token, {
+  const cookieStore = await cookies();
+  cookieStore.set(SESSION_COOKIE_NAME, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
-    path: "/",
     maxAge: SESSION_TTL_SECONDS,
+    path: "/",
   });
-}
-export async function destroySession() {
-  const store = await cookies();
-  store.delete(SESSION_COOKIE_NAME);
-}
-export const getSession = cache(async () => {
-  const store = await cookies();
-  const token = store.get(SESSION_COOKIE_NAME)?.value;
-  if (!token) return null;
-  return readSessionToken(token);
-});
-/**
- * Loads the user fresh from the database. Always prefer this over the JWT claims
- * for authorization decisions — a role revoked in admin must take effect at once,
- * and an already-issued token would still carry the old one.
- */
-export const getCurrentUser = cache(async () => {
-  const session = await getSession();
-  if (!session) return null;
-  return prisma.user.findUnique({
-    where: { id: session.sub },
-    select: {
-      id: true,
-      email: true,
-      firstName: true,
-      lastName: true,
-      phone: true,
-      role: true,
-      marketingOptIn: true,
-      createdAt: true,
-    },
-  });
-});
+};
+
+export const destroySession = async () => {
+  const cookieStore = await cookies();
+  cookieStore.delete(SESSION_COOKIE_NAME);
+  cookieStore.delete("authjs.session-token");
+  cookieStore.delete("__Secure-authjs.session-token");
+  cookieStore.delete("next-auth.session-token");
+  cookieStore.delete("__Secure-next-auth.session-token");
+};
+
 export class AuthError extends Error {
   status;
   constructor(message, status = 401) {
@@ -67,11 +60,13 @@ export class AuthError extends Error {
     this.name = "AuthError";
   }
 }
+
 export async function requireUser() {
   const user = await getCurrentUser();
   if (!user) throw new AuthError("Sign in to continue.", 401);
   return user;
 }
+
 export async function requireAdmin() {
   const user = await getCurrentUser();
   if (!user) throw new AuthError("Sign in to continue.", 401);
@@ -80,7 +75,7 @@ export async function requireAdmin() {
   }
   return user;
 }
-/** Destructive operations are restricted to full admins, never staff. */
+
 export async function requireFullAdmin() {
   const user = await requireAdmin();
   if (user.role !== "admin") {

@@ -14,7 +14,7 @@ export default async function RegisterPage({ searchParams }) {
       title="Start here."
       lede="Faster checkout, order tracking, and a place to keep the things you want to come back to."
     >
-      <RegisterForm next={params.next} />
+      <RegisterForm next={params.next} error={params.error} />
     </AuthShell>
   );
 }

@@ -1,13 +1,27 @@
 import { redirect } from "next/navigation";
+import { prisma } from "@/lib/prisma";
 import { Container } from "@/components/layout/Section";
 import { AccountNav } from "@/components/account/AccountNav";
 import { getCurrentUser } from "@/lib/auth";
 export default async function AccountLayout({ children }) {
   // Middleware already gates this; re-checking here means a route can never be
   // reached with a stale or forged token if the matcher is ever changed.
-  const user = await getCurrentUser();
-  if (!user) redirect("/login?next=/account");
-  const name = [user.firstName, user.lastName].filter(Boolean).join(" ") || user.email;
+  const sessionUser = await getCurrentUser();
+  if (!sessionUser) redirect("/login?next=/account");
+
+  const dbUser = await prisma.user.findUnique({
+    where: { id: sessionUser.id },
+    select: { firstName: true, lastName: true, phone: true, email: true, role: true }
+  });
+
+  if (!dbUser) redirect("/login?next=/account");
+
+  if (!dbUser.phone) {
+    redirect("/onboarding");
+  }
+
+  const name = [dbUser.firstName, dbUser.lastName].filter(Boolean).join(" ") || dbUser.email;
+  const user = { ...sessionUser, ...dbUser }; // Preserve role and other session fields if needed
   return (
     <div className="grain bg-ink pb-24 pt-12 md:pt-16">
       <Container>
