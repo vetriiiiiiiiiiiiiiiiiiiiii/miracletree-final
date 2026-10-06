@@ -21,6 +21,8 @@ if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
  * local development on SQLite working and makes the switch to Postgres the
  * single line in the schema that DEPLOYMENT.md claims it is.
  */
-export const insensitive = (process.env.DATABASE_URL ?? "").startsWith("postgres")
-  ? { mode: "insensitive" }
-  : {};
+export const insensitive =
+  (process.env.DATABASE_URL ?? "").startsWith("postgres") ||
+  (process.env.DATABASE_URL ?? "").startsWith("mongodb")
+    ? { mode: "insensitive" }
+    : {};

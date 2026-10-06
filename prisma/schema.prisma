@@ -433,7 +433,7 @@ model Order {
 
   paymentProvider String?
   paymentRef      String?
-  paymentOrderId String? @db.ObjectId
+  paymentOrderId  String?
   trackingNumber  String?
   trackingUrl     String?
   notes           String?

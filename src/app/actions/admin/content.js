@@ -630,6 +630,51 @@ export async function deleteReviewAction(id) {
     return { ok: false, error: "Could not delete that review." };
   }
 }
+
+export async function createReviewAction(_prev, formData) {
+  try {
+    const admin = await requireFullAdmin();
+    const productId = formData.get("productId");
+    const authorName = formData.get("authorName");
+    const authorEmail = formData.get("authorEmail") || null;
+    const rating = parseInt(formData.get("rating"), 10);
+    const title = formData.get("title") || null;
+    const body = formData.get("body");
+
+    if (!productId || !authorName || !rating || !body) {
+      return { status: "error", message: "Missing required fields." };
+    }
+
+    const review = await prisma.review.create({
+      data: {
+        productId,
+        authorName,
+        authorEmail,
+        rating,
+        title,
+        body,
+        status: "approved",
+        isVerified: true, 
+      },
+      select: { id: true, product: { select: { slug: true } } },
+    });
+
+    await recordAudit({
+      actorId: admin.id,
+      action: "review.created_manually",
+      entity: "Review",
+      entityId: review.id,
+    });
+
+    revalidatePath("/admin/reviews");
+    revalidatePath(`/product/${review.product.slug}`);
+
+    return { status: "success" };
+  } catch (error) {
+    if (error instanceof AuthError) return { status: "error", message: error.message };
+    return { status: "error", message: "Could not create review." };
+  }
+}
 // ---------------------------------------------------------------- customers
 export async function setUserRoleAction(input) {
   try {

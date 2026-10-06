@@ -55,6 +55,14 @@ export default async function AdminReviewsPage({ searchParams }) {
       <PageHeader
         title="Reviews"
         description="Nothing appears on the storefront until it is approved here. Reviews are never generated — every one was submitted by a visitor."
+        actions={
+          <Link
+            href="/admin/reviews/new"
+            className="inline-flex h-8 items-center bg-gold-400 px-4 text-[0.68rem] uppercase tracking-[0.14em] text-ink transition-colors hover:bg-gold-300"
+          >
+            New Review
+          </Link>
+        }
       />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
