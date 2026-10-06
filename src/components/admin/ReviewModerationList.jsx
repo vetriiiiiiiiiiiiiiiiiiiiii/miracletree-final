@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Rating } from "@/components/ui/Rating";
@@ -66,6 +67,18 @@ export function ReviewModerationList({ reviews }) {
               <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-cream-300">
                 {review.body}
               </p>
+
+              {review.imageUrl ? (
+                <div className="mt-4">
+                  <Image
+                    src={review.imageUrl}
+                    alt="Review attachment"
+                    width={100}
+                    height={100}
+                    className="rounded-sm object-cover"
+                  />
+                </div>
+              ) : null}
 
               <p className="mt-4 text-xs text-cream-400">
                 {review.authorName}

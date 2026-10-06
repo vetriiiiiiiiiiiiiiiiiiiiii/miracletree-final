@@ -158,6 +158,26 @@ export async function saveProductAction(_prev, formData) {
         meta: { name: input.name },
       });
     }
+
+    // Handle Collections & Tags mapping
+    const collectionIds = formData.getAll("collectionIds");
+    const tagIds = formData.getAll("tagIds");
+
+    await prisma.$transaction([
+      prisma.productCollection.deleteMany({ where: { productId } }),
+      prisma.productTag.deleteMany({ where: { productId } }),
+      ...collectionIds.map((collectionId) =>
+        prisma.productCollection.create({
+          data: { productId, collectionId: String(collectionId) },
+        })
+      ),
+      ...tagIds.map((tagId) =>
+        prisma.productTag.create({
+          data: { productId, tagId: String(tagId) },
+        })
+      ),
+    ]);
+
     revalidatePath("/admin/products");
     revalidatePath("/shop");
     revalidatePath(`/product/${input.slug}`);
@@ -525,5 +545,190 @@ export async function reorderProductImagesAction(productId, orderedIds) {
   } catch (error) {
     if (error instanceof AuthError) return { ok: false, error: error.message };
     return { ok: false, error: "Could not reorder the images." };
+  }
+}
+
+// ---------------------------------------------------------------- content
+
+export async function saveProductBenefitAction(_prev, formData) {
+  try {
+    const admin = await requireAdmin();
+    const productId = String(formData.get("productId") ?? "");
+    const id = formData.get("id") ? String(formData.get("id")) : undefined;
+    const title = String(formData.get("title") ?? "").trim();
+    const body = String(formData.get("body") ?? "").trim();
+    const icon = String(formData.get("icon") ?? "").trim();
+
+    if (!productId || !title) return { status: "error", message: "Title is required." };
+
+    if (id) {
+      await prisma.productBenefit.update({
+        where: { id },
+        data: { title, body: body || null, icon: icon || null },
+      });
+    } else {
+      const count = await prisma.productBenefit.count({ where: { productId } });
+      await prisma.productBenefit.create({
+        data: {
+          productId,
+          title,
+          body: body || null,
+          icon: icon || null,
+          position: count,
+        },
+      });
+    }
+
+    revalidatePath(`/admin/products/${productId}`);
+    return { status: "success", message: "Benefit saved." };
+  } catch (error) {
+    return guard(error);
+  }
+}
+
+export async function deleteProductBenefitAction(benefitId) {
+  try {
+    await requireAdmin();
+    const benefit = await prisma.productBenefit.findUnique({
+      where: { id: benefitId },
+      select: { productId: true },
+    });
+    if (!benefit) return { ok: false, error: "Benefit not found." };
+    
+    await prisma.productBenefit.delete({ where: { id: benefitId } });
+    revalidatePath(`/admin/products/${benefit.productId}`);
+    return { ok: true };
+  } catch (error) {
+    if (error instanceof AuthError) return { ok: false, error: error.message };
+    return { ok: false, error: "Could not delete benefit." };
+  }
+}
+
+export async function saveUsageStepAction(_prev, formData) {
+  try {
+    const admin = await requireAdmin();
+    const productId = String(formData.get("productId") ?? "");
+    const id = formData.get("id") ? String(formData.get("id")) : undefined;
+    const title = String(formData.get("title") ?? "").trim();
+    const body = String(formData.get("body") ?? "").trim();
+    const imageUrl = String(formData.get("imageUrl") ?? "").trim();
+
+    if (!productId || !title) return { status: "error", message: "Title is required." };
+
+    if (id) {
+      await prisma.usageStep.update({
+        where: { id },
+        data: { title, body: body || null, imageUrl: imageUrl || null },
+      });
+    } else {
+      const count = await prisma.usageStep.count({ where: { productId } });
+      await prisma.usageStep.create({
+        data: {
+          productId,
+          step: count + 1,
+          title,
+          body: body || null,
+          imageUrl: imageUrl || null,
+        },
+      });
+    }
+
+    revalidatePath(`/admin/products/${productId}`);
+    return { status: "success", message: "Usage step saved." };
+  } catch (error) {
+    return guard(error);
+  }
+}
+
+export async function deleteUsageStepAction(stepId) {
+  try {
+    await requireAdmin();
+    const step = await prisma.usageStep.findUnique({
+      where: { id: stepId },
+      select: { productId: true },
+    });
+    if (!step) return { ok: false, error: "Usage step not found." };
+    
+    await prisma.usageStep.delete({ where: { id: stepId } });
+    
+    // Reorder remaining steps
+    const remaining = await prisma.usageStep.findMany({
+      where: { productId: step.productId },
+      orderBy: { step: "asc" },
+    });
+    
+    await prisma.$transaction(
+      remaining.map((s, index) => 
+        prisma.usageStep.update({
+          where: { id: s.id },
+          data: { step: index + 1 }
+        })
+      )
+    );
+
+    revalidatePath(`/admin/products/${step.productId}`);
+    return { ok: true };
+  } catch (error) {
+    if (error instanceof AuthError) return { ok: false, error: error.message };
+    return { ok: false, error: "Could not delete usage step." };
+  }
+}
+
+export async function saveProductIngredientAction(_prev, formData) {
+  try {
+    const admin = await requireAdmin();
+    const productId = String(formData.get("productId") ?? "");
+    const ingredientId = String(formData.get("ingredientId") ?? "");
+    const amount = String(formData.get("amount") ?? "").trim();
+    const id = formData.get("id") ? String(formData.get("id")) : undefined;
+
+    if (!productId || !ingredientId) return { status: "error", message: "Ingredient is required." };
+
+    if (id) {
+      await prisma.productIngredient.update({
+        where: { id },
+        data: { ingredientId, amount: amount || null },
+      });
+    } else {
+      const clash = await prisma.productIngredient.findUnique({
+        where: { productId_ingredientId: { productId, ingredientId } }
+      });
+      if (clash) {
+        return { status: "error", message: "This ingredient is already added to the product." };
+      }
+      
+      const count = await prisma.productIngredient.count({ where: { productId } });
+      await prisma.productIngredient.create({
+        data: {
+          productId,
+          ingredientId,
+          amount: amount || null,
+          position: count,
+        },
+      });
+    }
+
+    revalidatePath(`/admin/products/${productId}`);
+    return { status: "success", message: "Ingredient mapped." };
+  } catch (error) {
+    return guard(error);
+  }
+}
+
+export async function removeProductIngredientAction(mappingId) {
+  try {
+    await requireAdmin();
+    const mapping = await prisma.productIngredient.findUnique({
+      where: { id: mappingId },
+      select: { productId: true },
+    });
+    if (!mapping) return { ok: false, error: "Mapping not found." };
+    
+    await prisma.productIngredient.delete({ where: { id: mappingId } });
+    revalidatePath(`/admin/products/${mapping.productId}`);
+    return { ok: true };
+  } catch (error) {
+    if (error instanceof AuthError) return { ok: false, error: error.message };
+    return { ok: false, error: "Could not remove ingredient." };
   }
 }

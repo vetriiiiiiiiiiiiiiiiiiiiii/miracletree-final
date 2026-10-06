@@ -71,12 +71,12 @@ export const addressSchema = z.object({
 });
 // ---------------------------------------------------------------- cart
 export const cartAddSchema = z.object({
-  productId: z.string().cuid(),
-  variantId: z.string().cuid(),
+  productId: z.string().regex(/^[0-9a-fA-F]{24}$/),
+  variantId: z.string().regex(/^[0-9a-fA-F]{24}$/),
   quantity: z.coerce.number().int().min(1).max(20).default(1),
 });
 export const cartUpdateSchema = z.object({
-  itemId: z.string().cuid(),
+  itemId: z.string().regex(/^[0-9a-fA-F]{24}$/),
   quantity: z.coerce.number().int().min(0).max(20),
 });
 export const couponSchema = z.object({
@@ -107,11 +107,11 @@ export const razorpayVerifySchema = z.object({
   razorpay_order_id: z.string().min(4),
   razorpay_payment_id: z.string().min(4),
   razorpay_signature: z.string().min(4),
-  orderId: z.string().cuid(),
+  orderId: z.string().regex(/^[0-9a-fA-F]{24}$/),
 });
 // ---------------------------------------------------------------- reviews
 export const reviewSchema = z.object({
-  productId: z.string().cuid(),
+  productId: z.string().regex(/^[0-9a-fA-F]{24}$/),
   rating: z.coerce.number().int().min(1, "Choose a rating.").max(5),
   title: z.string().trim().max(120).optional().or(z.literal("")),
   body: z
@@ -119,6 +119,7 @@ export const reviewSchema = z.object({
     .trim()
     .min(20, "Tell us a little more — at least 20 characters.")
     .max(2000),
+  imageUrl: z.string().trim().max(500).optional().or(z.literal("")),
   authorName: z.string().trim().min(2, "Enter your name.").max(80),
   authorEmail: emailSchema.optional(),
 });
@@ -146,7 +147,7 @@ export const adminProductSchema = z.object({
     .regex(/^[a-z0-9-]+$/, "Use lowercase letters, numbers and hyphens only."),
   sku: z.string().trim().max(60).optional().or(z.literal("")),
   productType: z.string().trim().max(40).optional().or(z.literal("")),
-  categoryId: z.string().cuid().optional().nullable().or(z.literal("")),
+  categoryId: z.string().regex(/^[0-9a-fA-F]{24}$/).optional().nullable().or(z.literal("")),
   shortDescription: z.string().trim().max(400).optional().or(z.literal("")),
   description: z.string().max(20000).optional().or(z.literal("")),
   story: z.string().max(8000).optional().or(z.literal("")),
@@ -170,7 +171,7 @@ export const adminProductSchema = z.object({
   ogImageUrl: z.string().trim().max(500).optional().or(z.literal("")),
 });
 export const adminVariantSchema = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().regex(/^[0-9a-fA-F]{24}$/).optional(),
   name: z.string().trim().min(1, "Variant name is required.").max(80),
   sku: z.string().trim().max(60).optional().or(z.literal("")),
   price: z.coerce.number().min(0).max(10_000_000),
@@ -182,14 +183,14 @@ export const adminVariantSchema = z.object({
   lowStockAt: z.coerce.number().int().min(0).max(10_000).default(10),
 });
 export const adminOrderStatusSchema = z.object({
-  orderId: z.string().cuid(),
+  orderId: z.string().regex(/^[0-9a-fA-F]{24}$/),
   status: z.enum(ORDER_STATUSES),
   message: z.string().trim().max(300).optional().or(z.literal("")),
   trackingNumber: z.string().trim().max(80).optional().or(z.literal("")),
   trackingUrl: z.string().trim().max(400).optional().or(z.literal("")),
 });
 export const adminPaymentStatusSchema = z.object({
-  orderId: z.string().cuid(),
+  orderId: z.string().regex(/^[0-9a-fA-F]{24}$/),
   paymentStatus: z.enum(PAYMENT_STATUSES),
 });
 /**
@@ -205,7 +206,7 @@ export const adminPaymentStatusSchema = z.object({
  * price, a quantity or a discount — all three are derived on the server.
  */
 export const ritualSchema = z.object({
-  variantIds: z.array(z.string().cuid()).min(1).max(8),
+  variantIds: z.array(z.string().regex(/^[0-9a-fA-F]{24}$/)).min(1).max(8),
 });
 export const adminMilestoneSchema = z.object({
   year: z.string().trim().min(1, "Give the year.").max(24),
@@ -307,7 +308,7 @@ export const adminFaqSchema = z.object({
   question: z.string().trim().min(4).max(300),
   answer: z.string().trim().min(4).max(4000),
   category: z.enum(FAQ_CATEGORIES),
-  productId: z.string().cuid().optional().nullable().or(z.literal("")),
+  productId: z.string().regex(/^[0-9a-fA-F]{24}$/).optional().nullable().or(z.literal("")),
   position: z.coerce.number().int().min(0).max(999).default(0),
   isActive: z.boolean().default(true),
 });
@@ -323,7 +324,7 @@ export const adminArticleSchema = z.object({
   content: z.string().min(20, "Write the article body."),
   heroImageUrl: z.string().trim().max(500).optional().or(z.literal("")),
   authorName: z.string().trim().max(80).default("Miracle Tree"),
-  categoryId: z.string().cuid().optional().nullable().or(z.literal("")),
+  categoryId: z.string().regex(/^[0-9a-fA-F]{24}$/).optional().nullable().or(z.literal("")),
   tags: z.string().trim().max(300).optional().or(z.literal("")),
   status: z.enum(["draft", "published"]),
   seoTitle: z.string().trim().max(70).optional().or(z.literal("")),
@@ -373,17 +374,17 @@ export const adminCategorySchema = z.object({
   seoDescription: z.string().trim().max(180).optional().or(z.literal("")),
 });
 export const adminInventorySchema = z.object({
-  variantId: z.string().cuid(),
+  variantId: z.string().regex(/^[0-9a-fA-F]{24}$/),
   delta: z.coerce.number().int().min(-100000).max(100000),
   reason: z.enum(["restock", "adjustment"]),
   reference: z.string().trim().max(120).optional().or(z.literal("")),
 });
 export const adminUserRoleSchema = z.object({
-  userId: z.string().cuid(),
+  userId: z.string().regex(/^[0-9a-fA-F]{24}$/),
   role: z.enum(ROLES),
 });
 export const adminReviewModerationSchema = z.object({
-  reviewId: z.string().cuid(),
+  reviewId: z.string().regex(/^[0-9a-fA-F]{24}$/),
   status: z.enum(REVIEW_STATUSES).optional(),
   isFeatured: z.boolean().optional(),
   isVerified: z.boolean().optional(),

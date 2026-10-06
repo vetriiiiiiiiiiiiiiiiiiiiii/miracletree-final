@@ -34,10 +34,20 @@ const EMPTY = {
 };
 export default async function NewProductPage() {
   await requireAdmin();
-  const categories = await prisma.category.findMany({
-    orderBy: { position: "asc" },
-    select: { id: true, name: true },
-  });
+  const [categories, allCollections, allTags] = await Promise.all([
+    prisma.category.findMany({
+      orderBy: { position: "asc" },
+      select: { id: true, name: true },
+    }),
+    prisma.collection.findMany({
+      orderBy: { position: "asc" },
+      select: { id: true, name: true },
+    }),
+    prisma.tag.findMany({
+      orderBy: { name: "asc" },
+      select: { id: true, name: true },
+    }),
+  ]);
   return (
     <>
       <PageHeader
@@ -49,6 +59,10 @@ export default async function NewProductPage() {
       <ProductEditor
         draft={EMPTY}
         categories={categories}
+        collections={allCollections}
+        tags={allTags}
+        selectedCollectionIds={[]}
+        selectedTagIds={[]}
         productTypes={PRODUCT_TYPE_OPTIONS}
         images={[]}
         variants={[]}

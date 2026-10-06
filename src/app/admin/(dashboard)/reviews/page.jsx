@@ -28,6 +28,7 @@ export default async function AdminReviewsPage({ searchParams }) {
         status: true,
         isVerified: true,
         isFeatured: true,
+        imageUrl: true,
         createdAt: true,
         product: { select: { id: true, name: true, slug: true } },
         user: { select: { id: true, email: true } },

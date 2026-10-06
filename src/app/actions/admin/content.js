@@ -761,3 +761,163 @@ export async function deleteAnnouncementAction(id) {
     return { ok: false, error: "Could not delete that announcement." };
   }
 }
+
+// ---------------------------------------------------------------- ingredients
+
+export async function saveIngredientAction(_prev, formData) {
+  try {
+    await requireAdmin();
+    const name = String(formData.get("name") ?? "").trim();
+    if (name.length < 2) {
+      return { status: "error", message: "Ingredient name is required." };
+    }
+    
+    const slugValue = slugify(name);
+    const id = String(formData.get("id") ?? "");
+    const data = {
+      name,
+      slug: slugValue,
+      description: String(formData.get("description") ?? "").trim() || null,
+      imageUrl: String(formData.get("imageUrl") ?? "").trim() || null,
+      origin: String(formData.get("origin") ?? "").trim() || null,
+    };
+    
+    // Check slug collision
+    const clash = await prisma.ingredient.findFirst({
+      where: { slug: slugValue, ...(id ? { NOT: { id } } : {}) },
+      select: { id: true },
+    });
+    if (clash) {
+      return {
+        status: "error",
+        message: "Another ingredient already uses that name/slug.",
+      };
+    }
+    
+    if (id) await prisma.ingredient.update({ where: { id }, data });
+    else await prisma.ingredient.create({ data });
+    
+    revalidatePath("/admin/content/ingredients");
+    return { status: "success", message: "Ingredient saved." };
+  } catch (error) {
+    return fail(error, "Could not save that ingredient.");
+  }
+}
+
+export async function deleteIngredientAction(id) {
+  try {
+    await requireAdmin();
+    
+    const count = await prisma.productIngredient.count({ where: { ingredientId: id } });
+    if (count > 0) {
+      return { ok: false, error: "Cannot delete an ingredient that is linked to products." };
+    }
+    
+    await prisma.ingredient.delete({ where: { id } });
+    revalidatePath("/admin/content/ingredients");
+    return { ok: true };
+  } catch (error) {
+    if (error instanceof AuthError) return { ok: false, error: error.message };
+    return { ok: false, error: "Could not delete that ingredient." };
+  }
+}
+
+// ---------------------------------------------------------------- collections
+
+export async function saveCollectionAction(_prev, formData) {
+  try {
+    await requireAdmin();
+    const name = String(formData.get("name") ?? "").trim();
+    if (name.length < 2) {
+      return { status: "error", message: "Collection name is required." };
+    }
+    
+    const slugValue = slugify(name);
+    const id = String(formData.get("id") ?? "");
+    const data = {
+      name,
+      slug: slugValue,
+      description: String(formData.get("description") ?? "").trim() || null,
+      imageUrl: String(formData.get("imageUrl") ?? "").trim() || null,
+      isActive: bool(formData, "isActive"),
+      position: Number(formData.get("position") ?? 0) || 0,
+    };
+    
+    const clash = await prisma.collection.findFirst({
+      where: { slug: slugValue, ...(id ? { NOT: { id } } : {}) },
+      select: { id: true },
+    });
+    if (clash) {
+      return { status: "error", message: "Another collection uses that name/slug." };
+    }
+    
+    if (id) await prisma.collection.update({ where: { id }, data });
+    else await prisma.collection.create({ data });
+    
+    revalidatePath("/admin/content/collections");
+    return { status: "success", message: "Collection saved." };
+  } catch (error) {
+    return fail(error, "Could not save that collection.");
+  }
+}
+
+export async function deleteCollectionAction(id) {
+  try {
+    await requireAdmin();
+    await prisma.$transaction([
+      prisma.productCollection.deleteMany({ where: { collectionId: id } }),
+      prisma.collection.delete({ where: { id } })
+    ]);
+    revalidatePath("/admin/content/collections");
+    return { ok: true };
+  } catch (error) {
+    if (error instanceof AuthError) return { ok: false, error: error.message };
+    return { ok: false, error: "Could not delete that collection." };
+  }
+}
+
+// ---------------------------------------------------------------- tags
+
+export async function saveTagAction(_prev, formData) {
+  try {
+    await requireAdmin();
+    const name = String(formData.get("name") ?? "").trim();
+    if (name.length < 2) {
+      return { status: "error", message: "Tag name is required." };
+    }
+    
+    const slugValue = slugify(name);
+    const id = String(formData.get("id") ?? "");
+    
+    const clash = await prisma.tag.findFirst({
+      where: { slug: slugValue, ...(id ? { NOT: { id } } : {}) },
+      select: { id: true },
+    });
+    if (clash) {
+      return { status: "error", message: "Another tag uses that name/slug." };
+    }
+    
+    if (id) await prisma.tag.update({ where: { id }, data: { name, slug: slugValue } });
+    else await prisma.tag.create({ data: { name, slug: slugValue } });
+    
+    revalidatePath("/admin/content/tags");
+    return { status: "success", message: "Tag saved." };
+  } catch (error) {
+    return fail(error, "Could not save that tag.");
+  }
+}
+
+export async function deleteTagAction(id) {
+  try {
+    await requireAdmin();
+    await prisma.$transaction([
+      prisma.productTag.deleteMany({ where: { tagId: id } }),
+      prisma.tag.delete({ where: { id } })
+    ]);
+    revalidatePath("/admin/content/tags");
+    return { ok: true };
+  } catch (error) {
+    if (error instanceof AuthError) return { ok: false, error: error.message };
+    return { ok: false, error: "Could not delete that tag." };
+  }
+}

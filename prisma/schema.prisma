@@ -519,6 +519,7 @@ model Review {
   rating      Int
   title       String?
   body        String
+  imageUrl    String?
   status      String   @default("pending") // pending | approved | rejected
   isVerified  Boolean  @default(false)
   isFeatured  Boolean  @default(false)
@@ -673,7 +674,7 @@ model AuditLog {
 }
 
 model RateLimit {
-  id String @id @map("_id") @db.ObjectId
+  id String @id @map("_id")
   count     Int      @default(0)
   expiresAt DateTime
 }

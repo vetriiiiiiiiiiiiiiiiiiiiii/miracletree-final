@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { Rating, RatingInput } from "@/components/ui/Rating";
@@ -14,6 +15,8 @@ export function ProductReviews({
   average,
   count,
   breakdown,
+  user,
+  canReview,
 }) {
   const [writing, setWriting] = useState(false);
   const [visible, setVisible] = useState(4);
@@ -78,7 +81,7 @@ export function ProductReviews({
           </div>
         )}
 
-        {!writing ? (
+        {!writing && canReview ? (
           <Button
             variant="secondary"
             size="md"
@@ -96,6 +99,7 @@ export function ProductReviews({
           <ReviewForm
             productId={productId}
             productName={productName}
+            user={user}
             onDone={() => setWriting(false)}
           />
         ) : null}
@@ -125,6 +129,18 @@ export function ProductReviews({
 
                   <p className="mt-3 leading-relaxed text-cream-300">{review.body}</p>
 
+                  {review.imageUrl ? (
+                    <div className="mt-4">
+                      <Image
+                        src={review.imageUrl}
+                        alt="Customer photo"
+                        width={120}
+                        height={120}
+                        className="rounded-sm object-cover"
+                      />
+                    </div>
+                  ) : null}
+
                   <p className="mt-4 text-xs text-cream-400">
                     {review.authorName} · {formatDate(review.createdAt)}
                   </p>
@@ -148,9 +164,39 @@ export function ProductReviews({
     </div>
   );
 }
-function ReviewForm({ productId, productName, onDone }) {
+function ReviewForm({ productId, productName, user, onDone }) {
   const [state, action] = useActionState(submitReviewAction, INITIAL);
   const [rating, setRating] = useState(0);
+  const [imageUrl, setImageUrl] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState(null);
+
+  const handleUpload = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    
+    setUploading(true);
+    setUploadError(null);
+    
+    const body = new FormData();
+    body.set("file", file);
+    
+    try {
+      const response = await fetch("/api/upload", { method: "POST", body });
+      const data = await response.json();
+      
+      if (!response.ok) {
+        setUploadError(data.error ?? "Upload failed.");
+      } else {
+        setImageUrl(data.url);
+      }
+    } catch {
+      setUploadError("Could not upload image. Check your connection.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
   if (state.status === "success") {
     return (
       <div className="mb-10 border border-emerald-400/30 bg-emerald-500/8 p-6">
@@ -168,6 +214,7 @@ function ReviewForm({ productId, productName, onDone }) {
     >
       <input type="hidden" name="productId" value={productId} />
       <input type="hidden" name="rating" value={rating} />
+      {imageUrl ? <input type="hidden" name="imageUrl" value={imageUrl} /> : null}
 
       <div>
         <h3 className="text-title text-cream-50">Review {productName}</h3>
@@ -204,20 +251,64 @@ function ReviewForm({ productId, productName, onDone }) {
         error={state.status === "error" ? state.errors?.body : undefined}
       />
 
-      <div className="grid gap-5 sm:grid-cols-2">
-        <Input
-          label="Your name"
-          name="authorName"
-          required
-          error={state.status === "error" ? state.errors?.authorName : undefined}
-        />
-        <Input
-          label="Email"
-          name="authorEmail"
-          type="email"
-          hint="Not published. Used only to verify your order."
-        />
+      <div>
+        <p className="eyebrow mb-2 text-cream-400">Photo (optional)</p>
+        {imageUrl ? (
+          <div className="relative inline-block">
+            <Image
+              src={imageUrl}
+              alt="Uploaded photo"
+              width={100}
+              height={100}
+              className="rounded-sm object-cover"
+            />
+            <button
+              type="button"
+              onClick={() => setImageUrl(null)}
+              className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-ink text-cream-50 border border-border-subtle"
+              aria-label="Remove photo"
+            >
+              ×
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-4">
+            <label className="cursor-pointer border border-border-subtle px-4 py-2 text-sm text-cream-100 hover:bg-ink-700/60 transition-colors">
+              {uploading ? "Uploading..." : "Add photo"}
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/avif"
+                className="hidden"
+                onChange={handleUpload}
+                disabled={uploading}
+              />
+            </label>
+            {uploadError ? <p className="text-xs text-danger">{uploadError}</p> : null}
+          </div>
+        )}
       </div>
+
+      {user ? (
+        <>
+          <input type="hidden" name="authorName" value={[user.firstName, user.lastName].filter(Boolean).join(" ")} />
+          <input type="hidden" name="authorEmail" value={user.email} />
+        </>
+      ) : (
+        <div className="grid gap-5 sm:grid-cols-2">
+          <Input
+            label="Your name"
+            name="authorName"
+            required
+            error={state.status === "error" ? state.errors?.authorName : undefined}
+          />
+          <Input
+            label="Email"
+            name="authorEmail"
+            type="email"
+            hint="Not published. Used only to verify your order."
+          />
+        </div>
+      )}
 
       <div className="flex flex-wrap gap-3">
         <SubmitReview />
