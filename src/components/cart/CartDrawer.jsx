@@ -348,15 +348,6 @@ function EmptyBag({ onClose }) {
         <LinkButton href="/shop" size="md" className="w-full" onClick={onClose}>
           Explore the collection
         </LinkButton>
-        <LinkButton
-          href="/shop/herbal-supplements"
-          variant="secondary"
-          size="md"
-          className="w-full"
-          onClick={onClose}
-        >
-          Start with leaf powder
-        </LinkButton>
       </div>
     </div>
   );

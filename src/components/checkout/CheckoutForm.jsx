@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Script from "next/script";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input, Textarea, Checkbox, FormMessage } from "@/components/ui/Field";
 import { Button } from "@/components/ui/Button";
 import { useCart } from "@/components/cart/CartProvider";
@@ -35,6 +35,17 @@ export function CheckoutForm({
   const [errors, setErrors] = useState({});
   const address = addresses.find((a) => a.id === selectedAddress) ?? null;
   const useSaved = Boolean(address);
+
+  // If the user presses the back button while the Razorpay modal is open,
+  // Next.js swaps the page out but leaves the Razorpay iframe stuck in the DOM.
+  // This cleans it up on unmount.
+  useEffect(() => {
+    return () => {
+      const modal = document.querySelector(".razorpay-container");
+      if (modal) modal.remove();
+    };
+  }, []);
+
   const onSubmit = async (event) => {
     event.preventDefault();
     setPending(true);
@@ -324,7 +335,6 @@ export function CheckoutForm({
 
                 <input type="hidden" name="country" value="India" />
 
-                <Checkbox name="saveAddress" label="Save this address for next time" />
               </div>
             ) : null}
           </section>
