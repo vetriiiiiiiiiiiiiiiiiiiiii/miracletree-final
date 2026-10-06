@@ -225,3 +225,71 @@ ${SITE.legalName} · ${SITE.phone}`,
     ),
   };
 }
+
+/** New account welcome email */
+export function welcomeEmail(input) {
+  const accountUrl = siteUrl("/account");
+  const shopUrl = siteUrl("/shop");
+  
+  return {
+    to: input.email,
+    subject: `Welcome to ${SITE.name}!`,
+    text: `Hi ${input.firstName},\n\nWelcome to ${SITE.name}! We're thrilled to have you here.\n\nYou can manage your account and view your orders here: ${accountUrl}\nOr start exploring our collection here: ${shopUrl}\n\n${SITE.legalName} · ${SITE.phone}`,
+    html: shell(
+      "Welcome to Miracle Tree!",
+      `<p style="margin:0 0 18px;font-size:15px;line-height:1.6;">
+         Hi ${escape(input.firstName)},
+       </p>
+       <p style="margin:0 0 18px;font-size:15px;line-height:1.6;">
+         Welcome to ${escape(SITE.name)}! We're thrilled to have you here. Everything we make starts as a seed, and we're excited for you to pick where yours begins.
+       </p>
+       ${button(shopUrl, "Explore the collection")}
+       <p style="margin:0 0 18px;font-size:15px;line-height:1.6;">
+         You can manage your saved addresses, track your orders, and update your details at any time from your account page.
+       </p>
+       ${button(accountUrl, "View your account")}`
+    ),
+  };
+}
+
+/** Low stock alert for admins */
+export function lowStockAlert(input) {
+  const inventoryUrl = siteUrl("/admin/inventory");
+  return {
+    to: input.ops,
+    subject: `Low Stock Alert: ${input.name}`,
+    text: `The following item is running low on stock:\n\n${input.name}\nCurrent available stock: ${input.stock}\n\nPlease restock soon: ${inventoryUrl}`,
+    html: shell(
+      "Low Stock Alert",
+      `<p style="margin:0 0 18px;font-size:15px;line-height:1.6;">
+         The following item has fallen to or below the low stock threshold:
+       </p>
+       <p style="margin:0 0 8px;font-size:13px;color:${MUTED};">Item</p>
+       <p style="margin:0 0 18px;font-family:Georgia,serif;font-size:20px;">${escape(input.name)}</p>
+       
+       <p style="margin:0 0 8px;font-size:13px;color:${MUTED};">Current available stock</p>
+       <p style="margin:0 0 26px;font-family:Georgia,serif;font-size:20px;color:${input.stock <= 0 ? '#b0322c' : INK};">${escape(input.stock.toString())}</p>
+       
+       ${button(inventoryUrl, "Manage inventory")}`
+    ),
+  };
+}
+
+/** Payment failed alert for admins */
+export function paymentFailedAlert(input) {
+  return {
+    to: input.ops,
+    subject: `Payment Failed: Order ${input.orderNumber}`,
+    text: `Payment failed for Order ${input.orderNumber}.\n\nReason: ${input.reason}\n\nRazorpay Order ID: ${input.razorpayOrderId}\nRazorpay Payment ID: ${input.razorpayPaymentId || "N/A"}`,
+    html: shell(
+      "Payment Failed",
+      `<p style="margin:0 0 18px;font-size:15px;line-height:1.6;">
+         Payment failed for Order <strong>${escape(input.orderNumber)}</strong>.
+       </p>
+       <p style="margin:0 0 8px;font-size:13px;color:${MUTED};">Reason</p>
+       <p style="margin:0 0 18px;font-size:15px;line-height:1.6;">${escape(input.reason)}</p>
+       <p style="margin:0 0 8px;font-size:13px;color:${MUTED};">Razorpay Order ID</p>
+       <p style="margin:0 0 18px;font-size:15px;line-height:1.6;">${escape(input.razorpayOrderId)}</p>`
+    ),
+  };
+}

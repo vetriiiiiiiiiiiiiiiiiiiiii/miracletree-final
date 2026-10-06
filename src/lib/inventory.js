@@ -1,5 +1,31 @@
 import "server-only";
 import { prisma } from "./prisma";
+import { sendInBackground, opsRecipient } from "./mail";
+import { lowStockAlert } from "./mail-templates";
+
+async function checkThreshold(inventory, newAvailable) {
+  const threshold = Number(process.env.STOCK_ALERT_THRESHOLD || 5);
+  const oldAvailable = inventory.onHand - inventory.reserved;
+  if (oldAvailable > threshold && newAvailable <= threshold) {
+    const ops = opsRecipient();
+    if (ops) {
+      const variant = await prisma.productVariant.findUnique({
+        where: { id: inventory.variantId },
+        include: { product: { select: { name: true } } },
+      });
+      if (variant) {
+        sendInBackground(
+          lowStockAlert({
+            name: `${variant.product.name} — ${variant.name}`,
+            stock: newAvailable,
+            ops,
+          })
+        );
+      }
+    }
+  }
+}
+
 export async function reserveStock(tx, lines, reference, actorId) {
   for (const line of lines) {
     const inventory = await tx.inventory.findUnique({
@@ -10,6 +36,10 @@ export async function reserveStock(tx, lines, reference, actorId) {
     if (available < line.quantity) {
       throw new InsufficientStockError(line.variantId, Math.max(0, available));
     }
+    
+    // Check threshold *before* we actually deduct it, then alert for the new value
+    await checkThreshold(inventory, available - line.quantity);
+
     await tx.inventory.update({
       where: { id: inventory.id },
       data: { reserved: { increment: line.quantity } },
@@ -83,6 +113,10 @@ export async function adjustStock(input) {
     where: { id: inventory.id },
     data: { onHand: next },
   });
+  
+  // Check if we crossed the threshold (passing newAvailable)
+  // We use updated.onHand - inventory.reserved for available
+  await checkThreshold(inventory, updated.onHand - inventory.reserved);
   await prisma.inventoryMovement.create({
     data: {
       inventoryId: inventory.id,

@@ -1,4 +1,7 @@
 import { SITE } from "@/lib/constants";
+import { createTransport, sendViaSmtp } from "@/lib/mail-transport";
+import { enqueueMail } from "@/lib/mail-queue";
+
 function from() {
   return process.env.MAIL_FROM ?? `${SITE.name} <onboarding@resend.dev>`;
 }
@@ -7,15 +10,22 @@ export function opsRecipient() {
   return process.env.MAIL_OPS ?? SITE.email ?? null;
 }
 export function mailConfigured() {
-  return Boolean(process.env.RESEND_API_KEY);
+  return Boolean(process.env.RESEND_API_KEY || process.env.SMTP_HOST);
 }
+
+const transport = createTransport();
+
 export async function send(message) {
-  if (!mailConfigured()) {
+  if (transport) {
+    return sendViaSmtp(message, transport);
+  }
+
+  if (!process.env.RESEND_API_KEY) {
     // Loud in development, harmless in production. The subject and recipient
     // are enough to confirm the trigger fired without dumping personal data
     // into the logs.
     console.info(`[mail:unconfigured] → ${message.to} — ${message.subject}`);
-    return { ok: false, error: "RESEND_API_KEY is not set" };
+    return { ok: false, error: "Neither SMTP_HOST nor RESEND_API_KEY is set" };
   }
   try {
     const response = await fetch("https://api.resend.com/emails", {
@@ -53,14 +63,16 @@ export async function send(message) {
     };
   }
 }
+
+
 /**
- * Fire an email without making the caller wait or care.
+ * Fire an email by enqueueing it to the database for the worker to process.
  *
  * Used on paths where the work is already done and the email is a courtesy:
  * the order exists whether or not the receipt arrives.
  */
 export function sendInBackground(message) {
-  void send(message).catch(() => {
-    // `send` already logs; this only stops an unhandled rejection.
+  void enqueueMail(message).catch((error) => {
+    console.error("[mail] failed to enqueue", error);
   });
 }

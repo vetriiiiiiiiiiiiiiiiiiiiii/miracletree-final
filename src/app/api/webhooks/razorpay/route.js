@@ -42,6 +42,33 @@ export async function POST(req) {
         });
       }
     }
+  } else if (event.event === "payment.failed") {
+    const rzpOrderId = event.payload?.payment?.entity?.order_id;
+    const rzpPaymentId = event.payload?.payment?.entity?.id;
+    const reason = event.payload?.payment?.entity?.error_description || "Unknown error";
+
+    if (rzpOrderId) {
+      const order = await prisma.order.findFirst({
+        where: { paymentOrderId: rzpOrderId },
+        select: { orderNumber: true }
+      });
+
+      const { sendInBackground, opsRecipient } = require("@/lib/mail");
+      const { paymentFailedAlert } = require("@/lib/mail-templates");
+
+      const ops = opsRecipient();
+      if (ops) {
+        sendInBackground(
+          paymentFailedAlert({
+            ops,
+            orderNumber: order?.orderNumber || "Unknown",
+            reason,
+            razorpayOrderId: rzpOrderId,
+            razorpayPaymentId: rzpPaymentId,
+          })
+        );
+      }
+    }
   }
 
   return NextResponse.json({ received: true });

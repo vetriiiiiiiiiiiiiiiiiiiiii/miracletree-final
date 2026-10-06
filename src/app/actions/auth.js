@@ -1,8 +1,8 @@
 "use server";
 import { redirect } from "next/navigation";
 import { randomBytes, createHash } from "node:crypto";
-import { send, mailConfigured } from "@/lib/mail";
-import { passwordReset } from "@/lib/mail-templates";
+import { send, sendInBackground, mailConfigured } from "@/lib/mail";
+import { passwordReset, welcomeEmail } from "@/lib/mail-templates";
 import { prisma } from "@/lib/prisma";
 import {
   createSession,
@@ -85,8 +85,11 @@ export async function registerAction(_prev, formData) {
       marketingOptIn: parsed.data.marketingOptIn,
       role: role,
     },
-    select: { id: true, email: true, role: true },
+    select: { id: true, email: true, role: true, firstName: true },
   });
+
+  sendInBackground(welcomeEmail({ email: user.email, firstName: user.firstName }));
+
   if (parsed.data.marketingOptIn) {
     await prisma.newsletterSubscriber.upsert({
       where: { email: parsed.data.email },
