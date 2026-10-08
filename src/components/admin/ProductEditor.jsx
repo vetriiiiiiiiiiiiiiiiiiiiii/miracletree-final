@@ -7,6 +7,9 @@ import { Input, Textarea, Select, Checkbox, FormMessage } from "@/components/ui/
 import { Card, FieldGroup, Pill } from "@/components/admin/ui";
 import { ImageManager } from "@/components/admin/ImageManager";
 import { VariantEditor } from "@/components/admin/VariantEditor";
+import { BenefitEditor } from "@/components/admin/BenefitEditor";
+import { UsageStepEditor } from "@/components/admin/UsageStepEditor";
+import { ProductIngredientEditor } from "@/components/admin/ProductIngredientEditor";
 import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import { saveProductAction } from "@/app/actions/admin/products";
 const INITIAL = { status: "idle" };
@@ -16,6 +19,9 @@ const TABS = [
   "Pricing",
   "Variants",
   "Description",
+  "Benefits",
+  "Usage",
+  "Ingredients",
   "SEO",
   "Advanced",
 ];
@@ -25,6 +31,14 @@ export function ProductEditor({
   productTypes,
   images,
   variants,
+  benefits = [],
+  usageSteps = [],
+  ingredients = [],
+  allIngredients = [],
+  collections = [],
+  tags = [],
+  selectedCollectionIds = [],
+  selectedTagIds = [],
   reviewCount,
 }) {
   const [state, action] = useActionState(saveProductAction, INITIAL);
@@ -84,7 +98,7 @@ export function ProductEditor({
           className="flex flex-wrap gap-1 border-b border-border-subtle"
         >
           {TABS.map((item) => {
-            const disabled = isNew && (item === "Media" || item === "Variants");
+            const disabled = isNew && (item === "Media" || item === "Variants" || item === "Benefits" || item === "Usage" || item === "Ingredients");
             return (
               <button
                 key={item}
@@ -165,6 +179,40 @@ export function ProductEditor({
                   options={[{ value: "", label: "Unspecified" }, ...productTypes]}
                   hint="Drives the storefront type filter."
                 />
+              </div>
+              
+              <div className="mt-6">
+                <label className="mb-2 block text-xs font-medium uppercase tracking-[0.14em] text-cream-400">
+                  Collections
+                </label>
+                <div className="flex flex-wrap gap-4">
+                  {collections.map(c => (
+                    <Checkbox
+                      key={c.id}
+                      name="collectionIds"
+                      value={c.id}
+                      label={c.name}
+                      defaultChecked={selectedCollectionIds.includes(c.id)}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-6">
+                <label className="mb-2 block text-xs font-medium uppercase tracking-[0.14em] text-cream-400">
+                  Tags
+                </label>
+                <div className="flex flex-wrap gap-4">
+                  {tags.map(t => (
+                    <Checkbox
+                      key={t.id}
+                      name="tagIds"
+                      value={t.id}
+                      label={t.name}
+                      defaultChecked={selectedTagIds.includes(t.id)}
+                    />
+                  ))}
+                </div>
               </div>
 
               <Textarea
@@ -322,6 +370,33 @@ export function ProductEditor({
             >
               <RichTextEditor label="Story" value={story} onChange={setStory} />
             </FieldGroup>
+          </Panel>
+
+          {/* BENEFITS */}
+          <Panel active={tab === "Benefits"}>
+            {draft.id ? (
+              <BenefitEditor productId={draft.id} benefits={benefits} />
+            ) : (
+              <p className="text-sm text-cream-400">Save the product first.</p>
+            )}
+          </Panel>
+
+          {/* USAGE */}
+          <Panel active={tab === "Usage"}>
+            {draft.id ? (
+              <UsageStepEditor productId={draft.id} steps={usageSteps} />
+            ) : (
+              <p className="text-sm text-cream-400">Save the product first.</p>
+            )}
+          </Panel>
+
+          {/* INGREDIENTS */}
+          <Panel active={tab === "Ingredients"}>
+            {draft.id ? (
+              <ProductIngredientEditor productId={draft.id} productIngredients={ingredients} allIngredients={allIngredients} />
+            ) : (
+              <p className="text-sm text-cream-400">Save the product first.</p>
+            )}
           </Panel>
 
           {/* SEO */}

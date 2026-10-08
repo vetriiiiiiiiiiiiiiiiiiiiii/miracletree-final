@@ -16,6 +16,7 @@ import { getProductBySlug, getRelatedProducts } from "@/lib/queries";
 import { breadcrumbSchema, buildMetadata, faqSchema, productSchema } from "@/lib/seo";
 import { stripHtml, truncate } from "@/lib/utils";
 import { sanitizeHtml } from "@/lib/sanitize";
+import { getCurrentUser } from "@/lib/auth";
 export const revalidate = 300;
 export const dynamicParams = true;
 export async function generateStaticParams() {
@@ -52,6 +53,21 @@ export default async function ProductPage({ params }) {
   const { slug } = await params;
   const product = await getProductBySlug(slug);
   if (!product) notFound();
+  
+  const user = await getCurrentUser();
+  let canReview = false;
+  if (user) {
+    canReview = Boolean(
+      await prisma.orderItem.findFirst({
+        where: {
+          productId: product.id,
+          order: { userId: user.id, status: "delivered" },
+        },
+        select: { id: true },
+      }),
+    );
+  }
+
   const related = await getRelatedProducts(product.id, product.categoryId, 4);
   const crumbs = [
     { name: "Home", path: "/" },
@@ -301,6 +317,8 @@ export default async function ProductPage({ params }) {
             average={product.ratingAverage}
             count={product.ratingCount}
             breakdown={product.ratingBreakdown}
+            user={user}
+            canReview={canReview}
           />
         </Container>
       </Section>

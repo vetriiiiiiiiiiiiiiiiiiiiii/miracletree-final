@@ -46,6 +46,14 @@ export function Footer({ shop, company, support }) {
               >
                 {SITE.phone}
               </a>
+              {SITE.mobile && (
+                <a
+                  href={`tel:${SITE.mobile.replace(/\s/g, "")}`}
+                  className="inline-block py-1 text-cream-200 transition-colors hover:text-gold-300"
+                >
+                  {SITE.mobile}
+                </a>
+              )}
               <span className="text-xs text-cream-400">{SITE.phoneHours}</span>
               <a
                 href={`mailto:${SITE.email}`}

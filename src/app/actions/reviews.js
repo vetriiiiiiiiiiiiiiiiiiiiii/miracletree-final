@@ -18,6 +18,7 @@ export async function submitReviewAction(_prev, formData) {
     rating: formData.get("rating"),
     title: formData.get("title"),
     body: formData.get("body"),
+    imageUrl: formData.get("imageUrl") || undefined,
     authorName:
       formData.get("authorName") ||
       [user?.firstName, user?.lastName].filter(Boolean).join(" ") ||
@@ -80,6 +81,7 @@ export async function submitReviewAction(_prev, formData) {
       rating: parsed.data.rating,
       title: parsed.data.title || null,
       body: parsed.data.body,
+      imageUrl: parsed.data.imageUrl || null,
       status: "pending",
       isVerified: verified,
     },

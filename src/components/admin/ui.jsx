@@ -131,7 +131,7 @@ export function StatCard({ label, value, delta, hint, href, tone = "default" }) 
 }
 export function Table({ head, children, empty, className }) {
   return (
-    <div className={cn("overflow-x-auto", className)}>
+    <div className={cn("overflow-visible", className)}>
       <table className="w-full min-w-[42rem] border-collapse text-sm">
         <thead>
           <tr className="border-b border-border-subtle">

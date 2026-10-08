@@ -89,6 +89,21 @@ export default async function AdminContentPage() {
           body="Shop categories, their copy and SEO."
         />
         <SubLink
+          href="/admin/content/collections"
+          title="Collections"
+          body="Curated collections of products."
+        />
+        <SubLink
+          href="/admin/content/ingredients"
+          title="Ingredients"
+          body="Base ingredients mapped to products."
+        />
+        <SubLink
+          href="/admin/content/tags"
+          title="Tags"
+          body="Simple tags to categorize products."
+        />
+        <SubLink
           href="/admin/content/announcements"
           title="Announcement bar"
           body="The strip above the header."

@@ -77,18 +77,17 @@ export const SITE = {
   tagline: "From the Miracle Tree.",
   description:
     "Moringa-grown wellness from Madurai, Tamil Nadu. Leaf powders, teas, tablets and superfoods made from the miracle tree.",
-  email: "info@miracletree.in",
-  supportEmail: "support@miracletree.in",
-  phone: "+91 452 2663425",
-  /** Mobile, from the company's own brochure back page. */
-  mobile: "+91 99763 27601",
+  email: "Miracletree.in@gmail.com",
+  supportEmail: "Miracletree.in@gmail.com",
+  phone: "+91 79040 57352",
+  mobile: "+91 99763 27888",
   phoneHours: "Mon–Sat, 10am–5pm IST",
   address: {
-    line1: "Plot 7 - Door 121/2",
-    line2: "Milakaranai Bus Stop",
+    line1: "Survey No : 65/A, Door No: 3/152, Middle Street",
+    line2: "Keelakarai Village, Near New Jallikattu Stadium, Alanganallur Taluk",
     city: "Madurai",
     state: "Tamil Nadu",
-    postalCode: "625018",
+    postalCode: "625501",
     country: "India",
   },
   social: {

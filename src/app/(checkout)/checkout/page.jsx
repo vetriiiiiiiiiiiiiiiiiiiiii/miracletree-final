@@ -21,7 +21,7 @@ export default async function CheckoutPage() {
   // An empty bag has nothing to check out; send them somewhere useful instead.
   if (!cart.lines.length) redirect("/cart");
   const [user, settings] = await Promise.all([getCurrentUser(), getSettings()]);
-  const addresses = user
+  let addresses = user
     ? await prisma.address.findMany({
         where: { userId: user.id },
         orderBy: [{ isDefault: "desc" }, { createdAt: "desc" }],
@@ -40,6 +40,49 @@ export default async function CheckoutPage() {
         },
       })
     : [];
+
+  if (user) {
+    const pastOrders = await prisma.order.findMany({
+      where: { userId: user.id },
+      orderBy: { placedAt: "desc" },
+      take: 10,
+      select: {
+        id: true,
+        shippingName: true,
+        shippingLine1: true,
+        shippingLine2: true,
+        shippingCity: true,
+        shippingState: true,
+        shippingPostalCode: true,
+        shippingPhone: true,
+      },
+    });
+
+    for (const order of pastOrders) {
+      const exists = addresses.some(
+        (a) =>
+          a.line1.toLowerCase().trim() === order.shippingLine1.toLowerCase().trim() &&
+          a.postalCode === order.shippingPostalCode
+      );
+      if (!exists && addresses.length < 4) {
+        const parts = order.shippingName.trim().split(" ");
+        const firstName = parts[0] || "";
+        const lastName = parts.slice(1).join(" ") || "";
+        addresses.push({
+          id: `past-order-${order.id}`,
+          label: "From past order",
+          firstName,
+          lastName,
+          line1: order.shippingLine1,
+          line2: order.shippingLine2 || "",
+          city: order.shippingCity,
+          state: order.shippingState,
+          postalCode: order.shippingPostalCode,
+          phone: order.shippingPhone,
+        });
+      }
+    }
+  }
   return (
     <div className="bg-ink pb-24 pt-10">
       <Container>

@@ -11,28 +11,30 @@ export async function middleware(request) {
   const { pathname, search } = request.nextUrl;
   const token = request.cookies.get(SESSION_COOKIE_NAME)?.value;
   const session = token ? await readSessionToken(token) : null;
+  const hasNextAuth =
+    request.cookies.has("authjs.session-token") ||
+    request.cookies.has("__Secure-authjs.session-token") ||
+    request.cookies.has("next-auth.session-token") ||
+    request.cookies.has("__Secure-next-auth.session-token");
+
   if (pathname.startsWith("/admin")) {
-    if (pathname === "/admin/login") {
-      if (session && isStaff(session.role)) {
-        return NextResponse.redirect(new URL("/admin", request.url));
-      }
+    if (hasNextAuth) {
       return NextResponse.next();
     }
     if (!session || !isStaff(session.role)) {
-      const url = new URL("/admin/login", request.url);
+      const url = new URL("/login", request.url);
       url.searchParams.set("next", pathname);
       return NextResponse.redirect(url);
     }
     return NextResponse.next();
   }
-  if (pathname.startsWith("/account") && !session) {
+
+  if (pathname.startsWith("/account") && !session && !hasNextAuth) {
     const url = new URL("/login", request.url);
     url.searchParams.set("next", `${pathname}${search}`);
     return NextResponse.redirect(url);
   }
-  if ((pathname === "/login" || pathname === "/register") && session) {
-    return NextResponse.redirect(new URL("/account", request.url));
-  }
+  
   return NextResponse.next();
 }
 export const config = {

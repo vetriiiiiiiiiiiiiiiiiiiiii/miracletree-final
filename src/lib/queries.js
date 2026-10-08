@@ -1,6 +1,7 @@
 import "server-only";
 import { cache } from "react";
 import { prisma, insensitive } from "./prisma";
+import { redis } from "./redis";
 /**
  * Storefront reads. Everything here is wrapped in React `cache` so a page that
  * needs the same data in metadata and in the tree only queries once.
@@ -56,13 +57,18 @@ function isInStock(variants) {
   );
 }
 export const getFeaturedProducts = cache(async (take = 6) => {
+  const cacheKey = `products:featured:${take}`;
+  const cached = await redis.get(cacheKey);
+  if (cached) return JSON.parse(cached);
   const rows = await prisma.product.findMany({
     where: { status: "published", isFeatured: true },
     orderBy: { position: "asc" },
     take,
     select: PRODUCT_CARD_SELECT,
   });
-  return rows.map(withRating);
+  const products = rows.map(withRating);
+  await redis.set(cacheKey, JSON.stringify(products), "EX", 3600);
+  return products;
 });
 export const getBestSellers = cache(async (take = 4) => {
   const rows = await prisma.product.findMany({

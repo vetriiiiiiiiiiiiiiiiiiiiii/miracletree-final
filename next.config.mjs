@@ -23,7 +23,7 @@ const csp = [
   "worker-src 'self' blob:",
   "object-src 'none'",
   "base-uri 'self'",
-  "form-action 'self'",
+  "form-action 'self' https://accounts.google.com",
   "frame-ancestors 'none'",
   // Only in production: on a local HTTP dev server this would force the browser
   // to upgrade every request to HTTPS and fail.

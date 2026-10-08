@@ -8,21 +8,23 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
 // ---------------------------------------------------------------- identity
 
 model User {
-  id             String    @id @default(cuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   email          String    @unique
-  passwordHash   String
+  passwordHash   String?
   firstName      String?
   lastName       String?
+  name           String?
+  image          String?
   phone          String?
   role           String    @default("customer") // customer | staff | admin
-  emailVerified  Boolean   @default(false)
+  emailVerified  DateTime?
   marketingOptIn Boolean   @default(false)
   lastLoginAt    DateTime?
   createdAt      DateTime  @default(now())
@@ -36,26 +38,28 @@ model User {
   resetTokens   PasswordResetToken[]
   auditLogs     AuditLog[]
   notes         CustomerNote[]
+  accounts      Account[]
+  sessions      Session[]
 
   @@index([role])
 }
 
 model PasswordResetToken {
-  id        String    @id @default(cuid())
-  userId    String
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @db.ObjectId
   tokenHash String    @unique
   expiresAt DateTime
   usedAt    DateTime?
   createdAt DateTime  @default(now())
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }
 
 model Address {
-  id         String   @id @default(cuid())
-  userId     String
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @db.ObjectId
   label      String?
   firstName  String
   lastName   String
@@ -70,20 +74,20 @@ model Address {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User    @relation(fields: [userId], references: [id])
   orders Order[]
 
   @@index([userId])
 }
 
 model CustomerNote {
-  id        String   @id @default(cuid())
-  userId    String
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @db.ObjectId
   body      String
-  authorId  String?
+  authorId String? @db.ObjectId
   createdAt DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }
@@ -91,12 +95,12 @@ model CustomerNote {
 // ---------------------------------------------------------------- catalogue
 
 model Category {
-  id             String   @id @default(cuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   name           String
   slug           String   @unique
   description    String?
   imageUrl       String?
-  parentId       String?
+  parentId String? @db.ObjectId
   position       Int      @default(0)
   isActive       Boolean  @default(true)
   seoTitle       String?
@@ -104,7 +108,7 @@ model Category {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  parent   Category?  @relation("CategoryTree", fields: [parentId], references: [id])
+  parent   Category?  @relation("CategoryTree", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   children Category[] @relation("CategoryTree")
   products Product[]
 
@@ -112,7 +116,7 @@ model Category {
 }
 
 model Collection {
-  id          String   @id @default(cuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   slug        String   @unique
   description String?
@@ -126,23 +130,24 @@ model Collection {
 }
 
 model ProductCollection {
-  productId    String
-  collectionId String
+  productId String @db.ObjectId
+  collectionId String @db.ObjectId
   position     Int    @default(0)
 
-  product    Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
-  collection Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  product    Product    @relation(fields: [productId], references: [id])
+  collection Collection @relation(fields: [collectionId], references: [id])
 
-  @@id([productId, collectionId])
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  @@unique([productId, collectionId])
 }
 
 model Product {
-  id               String  @id @default(cuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   name             String
   slug             String  @unique
   sku              String?
   productType      String?
-  categoryId       String?
+  categoryId String? @db.ObjectId
   shortDescription String?
   description      String?
   story            String?
@@ -201,38 +206,39 @@ model Product {
 }
 
 model ProductRelation {
-  id       String @id @default(cuid())
-  sourceId String
-  targetId String
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  sourceId String @db.ObjectId
+  targetId String @db.ObjectId
   kind     String @default("related") // related | crosssell | upsell
   position Int    @default(0)
 
-  source Product @relation("RelationSource", fields: [sourceId], references: [id], onDelete: Cascade)
-  target Product @relation("RelationTarget", fields: [targetId], references: [id], onDelete: Cascade)
+  source Product @relation("RelationSource", fields: [sourceId], references: [id])
+  target Product @relation("RelationTarget", fields: [targetId], references: [id])
 
   @@unique([sourceId, targetId, kind])
 }
 
 model Tag {
-  id       String       @id @default(cuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   name     String       @unique
   slug     String       @unique
   products ProductTag[]
 }
 
 model ProductTag {
-  productId String
-  tagId     String
+  productId String @db.ObjectId
+  tagId String @db.ObjectId
 
-  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  tag     Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+  tag     Tag     @relation(fields: [tagId], references: [id])
 
-  @@id([productId, tagId])
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  @@unique([productId, tagId])
 }
 
 model ProductVariant {
-  id             String   @id @default(cuid())
-  productId      String
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  productId String @db.ObjectId
   name           String
   // Unique because a stock-keeping unit that names two products keeps no
   // stock. Nullable, so variants without a code are simply absent from the
@@ -247,7 +253,7 @@ model ProductVariant {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  product    Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product    Product     @relation(fields: [productId], references: [id])
   inventory  Inventory?
   cartItems  CartItem[]
   orderItems OrderItem[]
@@ -256,8 +262,8 @@ model ProductVariant {
 }
 
 model ProductImage {
-  id        String  @id @default(cuid())
-  productId String
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  productId String @db.ObjectId
   url       String
   alt       String?
   width     Int?
@@ -265,13 +271,13 @@ model ProductImage {
   position  Int     @default(0)
   kind      String  @default("gallery")
 
-  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
 
   @@index([productId])
 }
 
 model Ingredient {
-  id          String  @id @default(cuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   name        String  @unique
   slug        String  @unique
   description String?
@@ -282,39 +288,40 @@ model Ingredient {
 }
 
 model ProductIngredient {
-  productId    String
-  ingredientId String
+  productId String @db.ObjectId
+  ingredientId String @db.ObjectId
   amount       String?
   position     Int     @default(0)
 
-  product    Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
-  ingredient Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+  product    Product    @relation(fields: [productId], references: [id])
+  ingredient Ingredient @relation(fields: [ingredientId], references: [id])
 
-  @@id([productId, ingredientId])
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  @@unique([productId, ingredientId])
 }
 
 model ProductBenefit {
-  id        String  @id @default(cuid())
-  productId String
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  productId String @db.ObjectId
   title     String
   body      String?
   icon      String?
   position  Int     @default(0)
 
-  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
 
   @@index([productId])
 }
 
 model UsageStep {
-  id        String  @id @default(cuid())
-  productId String
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  productId String @db.ObjectId
   step      Int
   title     String
   body      String?
   imageUrl  String?
 
-  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
 
   @@index([productId])
 }
@@ -322,28 +329,28 @@ model UsageStep {
 // ---------------------------------------------------------------- inventory
 
 model Inventory {
-  id             String   @id @default(cuid())
-  variantId      String   @unique
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  variantId String @db.ObjectId   @unique
   onHand         Int      @default(0)
   reserved       Int      @default(0)
   lowStockAt     Int      @default(10)
   trackInventory Boolean  @default(true)
   updatedAt      DateTime @updatedAt
 
-  variant   ProductVariant      @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  variant   ProductVariant      @relation(fields: [variantId], references: [id])
   movements InventoryMovement[]
 }
 
 model InventoryMovement {
-  id          String   @id @default(cuid())
-  inventoryId String
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  inventoryId String @db.ObjectId
   delta       Int
   reason      String
   reference   String?
-  actorId     String?
+  actorId String? @db.ObjectId
   createdAt   DateTime @default(now())
 
-  inventory Inventory @relation(fields: [inventoryId], references: [id], onDelete: Cascade)
+  inventory Inventory @relation(fields: [inventoryId], references: [id])
 
   @@index([inventoryId])
 }
@@ -351,44 +358,44 @@ model InventoryMovement {
 // ---------------------------------------------------------------- cart
 
 model Cart {
-  id        String   @id @default(cuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   token     String   @unique
-  userId    String?
-  couponId  String?
+  userId String? @db.ObjectId
+  couponId String? @db.ObjectId
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user   User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
-  coupon Coupon?    @relation(fields: [couponId], references: [id], onDelete: SetNull)
+  user   User?      @relation(fields: [userId], references: [id])
+  coupon Coupon?    @relation(fields: [couponId], references: [id])
   items  CartItem[]
 
   @@index([userId])
 }
 
 model CartItem {
-  id        String   @id @default(cuid())
-  cartId    String
-  productId String
-  variantId String
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  cartId String @db.ObjectId
+  productId String @db.ObjectId
+  variantId String @db.ObjectId
   quantity  Int      @default(1)
   createdAt DateTime @default(now())
 
-  cart    Cart           @relation(fields: [cartId], references: [id], onDelete: Cascade)
-  product Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
-  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  cart    Cart           @relation(fields: [cartId], references: [id])
+  product Product        @relation(fields: [productId], references: [id])
+  variant ProductVariant @relation(fields: [variantId], references: [id])
 
   @@unique([cartId, variantId])
   @@index([cartId])
 }
 
 model WishlistItem {
-  id        String   @id @default(cuid())
-  userId    String
-  productId String
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @db.ObjectId
+  productId String @db.ObjectId
   createdAt DateTime @default(now())
 
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
 
   @@unique([userId, productId])
 }
@@ -396,9 +403,9 @@ model WishlistItem {
 // ---------------------------------------------------------------- orders
 
 model Order {
-  id          String  @id @default(cuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   orderNumber String  @unique
-  userId      String?
+  userId String? @db.ObjectId
   email       String
   phone       String?
 
@@ -413,7 +420,7 @@ model Order {
   grandTotal    Int
 
   couponCode String?
-  addressId  String?
+  addressId String? @db.ObjectId
 
   shippingName       String
   shippingLine1      String
@@ -434,8 +441,8 @@ model Order {
   placedAt  DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user    User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
-  address Address?     @relation(fields: [addressId], references: [id], onDelete: SetNull)
+  user    User?        @relation(fields: [userId], references: [id])
+  address Address?     @relation(fields: [addressId], references: [id])
   items   OrderItem[]
   events  OrderEvent[]
 
@@ -445,10 +452,10 @@ model Order {
 }
 
 model OrderItem {
-  id          String  @id @default(cuid())
-  orderId     String
-  productId   String?
-  variantId   String?
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  orderId String @db.ObjectId
+  productId String? @db.ObjectId
+  variantId String? @db.ObjectId
   productName String
   variantName String
   sku         String?
@@ -457,22 +464,22 @@ model OrderItem {
   quantity    Int
   lineTotal   Int
 
-  order   Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product Product?        @relation(fields: [productId], references: [id], onDelete: SetNull)
-  variant ProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
+  order   Order           @relation(fields: [orderId], references: [id])
+  product Product?        @relation(fields: [productId], references: [id])
+  variant ProductVariant? @relation(fields: [variantId], references: [id])
 
   @@index([orderId])
 }
 
 model OrderEvent {
-  id        String   @id @default(cuid())
-  orderId   String
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  orderId String @db.ObjectId
   status    String
   message   String?
-  actorId   String?
+  actorId String? @db.ObjectId
   createdAt DateTime @default(now())
 
-  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  order Order @relation(fields: [orderId], references: [id])
 
   @@index([orderId])
 }
@@ -480,7 +487,7 @@ model OrderEvent {
 // ---------------------------------------------------------------- promotions
 
 model Coupon {
-  id           String    @id @default(cuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   code         String    @unique
   description  String?
   kind         String    @default("percentage") // percentage | fixed | free_shipping
@@ -504,29 +511,30 @@ model Coupon {
 // ---------------------------------------------------------------- content
 
 model Review {
-  id          String   @id @default(cuid())
-  productId   String
-  userId      String?
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  productId String @db.ObjectId
+  userId String? @db.ObjectId
   authorName  String
   authorEmail String?
   rating      Int
   title       String?
   body        String
+  imageUrl    String?
   status      String   @default("pending") // pending | approved | rejected
   isVerified  Boolean  @default(false)
   isFeatured  Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  user    User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  product Product @relation(fields: [productId], references: [id])
+  user    User?   @relation(fields: [userId], references: [id])
 
   @@index([productId])
   @@index([status])
 }
 
 model Testimonial {
-  id         String   @id @default(cuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   authorName String
   location   String?
   body       String
@@ -538,37 +546,37 @@ model Testimonial {
 }
 
 model Faq {
-  id        String   @id @default(cuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   question  String
   answer    String
   category  String   @default("general")
-  productId String?
+  productId String? @db.ObjectId
   position  Int      @default(0)
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  product Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product Product? @relation(fields: [productId], references: [id])
 
   @@index([category])
 }
 
 model ArticleCategory {
-  id       String    @id @default(cuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   name     String    @unique
   slug     String    @unique
   articles Article[]
 }
 
 model Article {
-  id             String    @id @default(cuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   title          String
   slug           String    @unique
   excerpt        String?
   content        String
   heroImageUrl   String?
   authorName     String    @default("Miracle Tree")
-  categoryId     String?
+  categoryId String? @db.ObjectId
   tags           String?
   readingMinutes Int       @default(4)
   status         String    @default("draft")
@@ -578,13 +586,13 @@ model Article {
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 
-  category ArticleCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  category ArticleCategory? @relation(fields: [categoryId], references: [id])
 
   @@index([status])
 }
 
 model HomepageSection {
-  id        String   @id @default(cuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   key       String   @unique
   kind      String
   title     String?
@@ -600,20 +608,20 @@ model HomepageSection {
 }
 
 model NavigationItem {
-  id       String  @id @default(cuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   label    String
   href     String
   group    String  @default("header")
-  parentId String?
+  parentId String? @db.ObjectId
   position Int     @default(0)
   isActive Boolean @default(true)
 
-  parent   NavigationItem?  @relation("NavTree", fields: [parentId], references: [id])
+  parent   NavigationItem?  @relation("NavTree", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   children NavigationItem[] @relation("NavTree")
 }
 
 model Announcement {
-  id       String    @id @default(cuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   message  String
   href     String?
   isActive Boolean   @default(true)
@@ -623,7 +631,7 @@ model Announcement {
 }
 
 model Media {
-  id        String   @id @default(cuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   url       String
   kind      String   @default("image")
   alt       String?
@@ -636,13 +644,13 @@ model Media {
 }
 
 model SiteSetting {
-  key       String   @id
+  key       String   @id @map("_id")
   value     String
   updatedAt DateTime @updatedAt
 }
 
 model NewsletterSubscriber {
-  id        String   @id @default(cuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   email     String   @unique
   source    String?
   isActive  Boolean  @default(true)
@@ -650,23 +658,23 @@ model NewsletterSubscriber {
 }
 
 model AuditLog {
-  id        String   @id @default(cuid())
-  actorId   String?
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  actorId String? @db.ObjectId
   action    String
   entity    String
-  entityId  String?
+  entityId String? @db.ObjectId
   meta      String?
   ip        String?
   createdAt DateTime @default(now())
 
-  actor User? @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  actor User? @relation(fields: [actorId], references: [id])
 
   @@index([entity])
   @@index([createdAt])
 }
 
 model RateLimit {
-  id        String   @id
+  id String @id @map("_id")
   count     Int      @default(0)
   expiresAt DateTime
 }
@@ -678,7 +686,7 @@ model RateLimit {
  * business can add to its own history without a deploy.
  */
 model Milestone {
-  id        String   @id @default(cuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   year      String
   title     String
   body      String?
@@ -702,7 +710,7 @@ model Milestone {
  * it was published.
  */
 model Accolade {
-  id        String   @id @default(cuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   kind      String   @default("award") // award | certification | recognition
   title     String
   issuer    String?
@@ -722,7 +730,7 @@ model Accolade {
  * A named person or partner shown in the credits.
  */
 model Credit {
-  id        String   @id @default(cuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   name      String
   role      String
   body      String?
@@ -753,7 +761,7 @@ model Credit {
  * /leadership; the rest render as the team below.
  */
 model Leader {
-  id         String  @id @default(cuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   name       String
   role       String
   /// A short qualifier under the name — "Engineer-agriculturist", "MS, Ophthalmology".
@@ -787,9 +795,9 @@ model Leader {
  * Postgres unchanged.
  */
 model LeaderHighlight {
-  id       String  @id @default(cuid())
-  leaderId String
-  leader   Leader  @relation(fields: [leaderId], references: [id], onDelete: Cascade)
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  leaderId String @db.ObjectId
+  leader   Leader  @relation(fields: [leaderId], references: [id])
   /// "2022–23", or blank for an undated standing fact.
   year     String?
   title    String
@@ -802,4 +810,47 @@ model LeaderHighlight {
   updatedAt DateTime @updatedAt
 
   @@index([leaderId])
+}
+
+// NextAuth models
+model Account {
+  id                 String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId             String  @db.ObjectId
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?
+  access_token       String?
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  sessionToken String   @unique
+  userId       String   @db.ObjectId
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model EmailJob {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  to          String
+  subject     String
+  text        String
+  html        String?
+  replyTo     String?
+  attempts    Int      @default(0)
+  maxAttempts Int      @default(3)
+  status      String   @default("pending") // pending | sent | failed
+  error       String?
+  createdAt   DateTime @default(now())
+  nextRetryAt DateTime @default(now())
 }

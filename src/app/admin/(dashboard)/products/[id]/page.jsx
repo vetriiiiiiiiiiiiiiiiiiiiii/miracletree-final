@@ -10,7 +10,7 @@ export default async function EditProductPage({ params, searchParams }) {
   await requireAdmin();
   const { id } = await params;
   const { created } = await searchParams;
-  const [product, categories] = await Promise.all([
+  const [product, categories, allIngredients, allCollections, allTags] = await Promise.all([
     prisma.product.findUnique({
       where: { id },
       include: {
@@ -19,11 +19,31 @@ export default async function EditProductPage({ params, searchParams }) {
           orderBy: { position: "asc" },
           include: { inventory: true },
         },
+        benefits: { orderBy: { position: "asc" } },
+        usageSteps: { orderBy: { step: "asc" } },
+        ingredients: {
+          orderBy: { position: "asc" },
+          include: { ingredient: { select: { id: true, name: true } } },
+        },
+        collections: { select: { collectionId: true } },
+        tags: { select: { tagId: true } },
         _count: { select: { reviews: true } },
       },
     }),
     prisma.category.findMany({
       orderBy: { position: "asc" },
+      select: { id: true, name: true },
+    }),
+    prisma.ingredient.findMany({
+      orderBy: { name: "asc" },
+      select: { id: true, name: true },
+    }),
+    prisma.collection.findMany({
+      orderBy: { position: "asc" },
+      select: { id: true, name: true },
+    }),
+    prisma.tag.findMany({
+      orderBy: { name: "asc" },
       select: { id: true, name: true },
     }),
   ]);
@@ -100,6 +120,25 @@ export default async function EditProductPage({ params, searchParams }) {
           reserved: variant.inventory?.reserved ?? 0,
           lowStockAt: variant.inventory?.lowStockAt ?? 10,
         }))}
+        benefits={product.benefits.map((benefit) => ({
+          id: benefit.id,
+          title: benefit.title,
+          body: benefit.body,
+          icon: benefit.icon,
+        }))}
+        usageSteps={product.usageSteps.map((step) => ({
+          id: step.id,
+          step: step.step,
+          title: step.title,
+          body: step.body,
+          imageUrl: step.imageUrl,
+        }))}
+        ingredients={product.ingredients}
+        allIngredients={allIngredients}
+        collections={allCollections}
+        tags={allTags}
+        selectedCollectionIds={product.collections.map(c => c.collectionId)}
+        selectedTagIds={product.tags.map(t => t.tagId)}
         reviewCount={product._count.reviews}
       />
     </>

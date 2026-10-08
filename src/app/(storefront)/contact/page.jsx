@@ -42,12 +42,22 @@ export default async function ContactPage({ searchParams }) {
             <aside className="grid gap-10 lg:border-l lg:border-border-subtle lg:pl-14">
               <section>
                 <h2 className="eyebrow mb-4 text-gold-400">Call</h2>
-                <a
-                  href={`tel:${SITE.phone.replace(/\s/g, "")}`}
-                  className="inline-block py-1 text-[1.35rem] text-cream-50 transition-colors hover:text-gold-300"
-                >
-                  {SITE.phone}
-                </a>
+                <div className="flex flex-col gap-1">
+                  <a
+                    href={`tel:${SITE.phone.replace(/\s/g, "")}`}
+                    className="inline-block py-1 text-[1.35rem] text-cream-50 transition-colors hover:text-gold-300"
+                  >
+                    {SITE.phone}
+                  </a>
+                  {SITE.mobile && (
+                    <a
+                      href={`tel:${SITE.mobile.replace(/\s/g, "")}`}
+                      className="inline-block py-1 text-[1.35rem] text-cream-50 transition-colors hover:text-gold-300"
+                    >
+                      {SITE.mobile}
+                    </a>
+                  )}
+                </div>
                 <p className="mt-2 text-sm text-cream-400">{SITE.phoneHours}</p>
               </section>
 
@@ -59,12 +69,14 @@ export default async function ContactPage({ searchParams }) {
                 >
                   {SITE.email}
                 </a>
-                <a
-                  href={`mailto:${SITE.supportEmail}`}
-                  className="mt-1 block py-1 text-sm text-cream-400 transition-colors hover:text-gold-300"
-                >
-                  {SITE.supportEmail} — order support
-                </a>
+                {SITE.supportEmail && SITE.supportEmail !== SITE.email && (
+                  <a
+                    href={`mailto:${SITE.supportEmail}`}
+                    className="mt-1 block py-1 text-sm text-cream-400 transition-colors hover:text-gold-300"
+                  >
+                    {SITE.supportEmail} — order support
+                  </a>
+                )}
               </section>
 
               <section>

@@ -45,8 +45,6 @@ export function CartPageClient() {
           body="Nothing here yet. Everything we make starts as a seed — pick where yours begins."
           actionLabel="Explore the collection"
           actionHref="/shop"
-          secondaryLabel="Start with leaf powder"
-          secondaryHref="/shop/herbal-supplements"
         />
         <div className="mt-16">
           <RecentlyViewedRail />

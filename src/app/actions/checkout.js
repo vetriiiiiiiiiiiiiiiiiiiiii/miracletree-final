@@ -87,21 +87,30 @@ export async function placeOrderAction(formData) {
       // Throws if any line no longer has stock, rolling the whole order back.
       await reserveStock(tx, stockLines, orderNumber, user?.id);
       let addressId = null;
-      if (user && input.saveAddress) {
-        const address = await tx.address.create({
-          data: {
+      if (user) {
+        let address = await tx.address.findFirst({
+          where: {
             userId: user.id,
-            firstName: input.firstName,
-            lastName: input.lastName || "",
             line1: input.line1,
-            line2: input.line2 || null,
-            city: input.city,
-            state: input.state,
             postalCode: input.postalCode,
-            country: input.country,
-            phone: input.phone,
           },
         });
+        if (!address) {
+          address = await tx.address.create({
+            data: {
+              userId: user.id,
+              firstName: input.firstName,
+              lastName: input.lastName || "",
+              line1: input.line1,
+              line2: input.line2 || null,
+              city: input.city,
+              state: input.state,
+              postalCode: input.postalCode,
+              country: input.country,
+              phone: input.phone,
+            },
+          });
+        }
         addressId = address.id;
       }
       const created = await tx.order.create({

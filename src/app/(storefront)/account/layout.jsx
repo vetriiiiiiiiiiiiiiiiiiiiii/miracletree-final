@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { prisma } from "@/lib/prisma";
 import { Container } from "@/components/layout/Section";
 import { AccountNav } from "@/components/account/AccountNav";
 import { getCurrentUser } from "@/lib/auth";
@@ -7,6 +8,12 @@ export default async function AccountLayout({ children }) {
   // reached with a stale or forged token if the matcher is ever changed.
   const user = await getCurrentUser();
   if (!user) redirect("/login?next=/account");
+
+  const isOAuthUser = !user.passwordHash;
+  if (!user.phone && isOAuthUser) {
+    redirect("/onboarding");
+  }
+
   const name = [user.firstName, user.lastName].filter(Boolean).join(" ") || user.email;
   return (
     <div className="grain bg-ink pb-24 pt-12 md:pt-16">
