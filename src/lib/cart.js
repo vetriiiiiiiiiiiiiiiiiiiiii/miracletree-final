@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { cache } from "react";
 import { nanoid } from "nanoid";
 import { prisma } from "./prisma";
-import { getSession } from "./auth";
+import { getCurrentUser } from "./auth";
 import { COMMERCE_DEFAULTS } from "./constants";
 import { settingNumber } from "./queries";
 const CART_COOKIE = "mt_cart";
@@ -36,7 +36,7 @@ export async function getCartToken() {
  */
 export async function ensureCart() {
   const store = await cookies();
-  const session = await getSession();
+  const sessionUser = await getCurrentUser();
   const existingToken = store.get(CART_COOKIE)?.value;
   if (existingToken) {
     const found = await prisma.cart.findUnique({
@@ -45,19 +45,19 @@ export async function ensureCart() {
     });
     if (found) {
       // Claim an anonymous cart for the user who just signed in.
-      if (session && !found.userId) {
+      if (sessionUser && !found.userId) {
         await prisma.cart.update({
           where: { id: found.id },
-          data: { userId: session.sub },
+          data: { userId: sessionUser.id },
         });
       }
       return { id: found.id, token: found.token };
     }
   }
   // A signed-in shopper returning on a new device picks their cart back up.
-  if (session) {
+  if (sessionUser) {
     const previous = await prisma.cart.findFirst({
-      where: { userId: session.sub },
+      where: { userId: sessionUser.id },
       orderBy: { updatedAt: "desc" },
       select: { id: true, token: true },
     });
@@ -68,7 +68,7 @@ export async function ensureCart() {
   }
   const token = nanoid(32);
   const created = await prisma.cart.create({
-    data: { token, userId: session?.sub ?? null },
+    data: { token, userId: sessionUser?.id ?? null },
     select: { id: true, token: true },
   });
   setCartCookie(store, token);

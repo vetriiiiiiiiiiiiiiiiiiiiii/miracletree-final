@@ -139,7 +139,7 @@ export async function loginAction(_prev, formData) {
     status: "error",
     message: "That email and password don't match.",
   };
-  if (!user) {
+  if (!user || !user.passwordHash) {
     // Burn comparable time on a dummy hash to avoid a timing oracle.
     await verifyPassword(parsed.data.password, DUMMY_HASH);
     return invalid;
@@ -198,7 +198,7 @@ export async function adminLoginAction(_prev, formData) {
     status: "error",
     message: "That email and password don't match.",
   };
-  if (!user) {
+  if (!user || !user.passwordHash) {
     await verifyPassword(parsed.data.password, DUMMY_HASH);
     return invalid;
   }
