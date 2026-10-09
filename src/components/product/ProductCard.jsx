@@ -28,20 +28,32 @@ export function ProductCard({
   const [adding, setAdding] = useState(false);
   const primary = product.images[0];
   const secondary = product.images[1];
-  const discount = discountPercent(product.price, product.compareAtPrice);
-  const multipleSizes = product.variants.length > 1;
+  const displayPrice =
+    product.variants?.length > 0
+      ? Math.min(...product.variants.map((v) => v.price))
+      : product.price;
+
+  const displayCompareAt =
+    product.variants?.length === 1
+      ? product.variants[0].compareAtPrice
+      : product.compareAtPrice;
+
+  const discount = discountPercent(displayPrice, displayCompareAt);
+
+  const multipleSizes = product.variants?.length > 1;
   const inStock =
     product.inStock ??
-    product.variants.some(
+    product.variants?.some(
       (v) =>
         !v.inventory?.trackInventory ||
         (v.inventory ? v.inventory.onHand - v.inventory.reserved > 0 : true),
     );
+
   const analyticsItem = {
     item_id: product.id,
     item_name: product.name,
     item_category: product.category?.name,
-    price: product.price / 100,
+    price: displayPrice / 100,
     index,
   };
   const handleQuickAdd = async () => {
@@ -234,11 +246,11 @@ export function ProductCard({
         <div className="mt-auto flex items-baseline gap-2 pt-2">
           <span className="text-[1.05rem] tabular-nums text-cream-50">
             {multipleSizes ? "From " : ""}
-            {formatPrice(product.price)}
+            {formatPrice(displayPrice)}
           </span>
-          {product.compareAtPrice && product.compareAtPrice > product.price ? (
+          {displayCompareAt && displayCompareAt > displayPrice ? (
             <span className="text-sm tabular-nums text-cream-400 line-through">
-              {formatPrice(product.compareAtPrice)}
+              {formatPrice(displayCompareAt)}
             </span>
           ) : null}
         </div>
