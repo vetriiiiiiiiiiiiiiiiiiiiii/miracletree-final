@@ -158,12 +158,12 @@ export async function saveProductAction(_prev, formData) {
       // If the product only has a single variant (e.g. a simple product),
       // changing the base price/SKU in the general tab should sync to that variant.
       // Otherwise, the user edits the variant prices individually in the Variants tab.
-      const existingVariants = await prisma.variant.findMany({
+      const existingVariants = await prisma.productVariant.findMany({
         where: { productId: id },
         select: { id: true }
       });
       if (existingVariants.length === 1) {
-        await prisma.variant.update({
+        await prisma.productVariant.update({
           where: { id: existingVariants[0].id },
           data: {
             price: data.price,
