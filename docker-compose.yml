@@ -18,11 +18,9 @@ services:
       - redis
 
   mongodb:
-    image: mongo:8
+    image: mongo:7.0.14
     container_name: miracletree-mongo
     restart: unless-stopped
-    ports:
-      - "27017:27017"
     volumes:
       - miracletree_mongo_data:/data/db
 
@@ -30,8 +28,6 @@ services:
     image: redis:alpine
     container_name: miracletree-redis
     restart: unless-stopped
-    ports:
-      - "6379:6379"
 
 volumes:
   miracletree_mongo_data:
