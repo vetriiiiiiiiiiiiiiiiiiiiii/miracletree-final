@@ -122,10 +122,11 @@ export async function saveProductAction(_prev, formData) {
         errors: { slug: "Choose a different slug." },
       };
     }
+    const autoSku = `MT-${input.slug.toUpperCase()}`;
     const data = {
       name: input.name,
       slug: input.slug,
-      sku: input.sku || null,
+      sku: input.sku || autoSku,
       productType: input.productType || null,
       categoryId: input.categoryId || null,
       shortDescription: input.shortDescription || null,
@@ -203,7 +204,7 @@ export async function saveProductAction(_prev, formData) {
             create: {
               name: "Standard",
               price: data.price,
-              sku: input.sku || undefined,
+              sku: data.sku,
               position: 0,
               inventory: { create: { onHand: 0, lowStockAt: 10 } },
             },
@@ -259,7 +260,7 @@ export async function saveVariantAction(_prev, formData) {
     const input = parsed.data;
     const variantData = {
       name: input.name,
-      sku: input.sku || undefined,
+      sku: input.sku || `MT-VAR-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
       price: rupeesToPaise(input.price),
       compareAtPrice: optionalPaise(input.compareAtPrice),
       weightGrams: input.weightGrams ?? null,
@@ -473,7 +474,7 @@ export async function duplicateProductAction(productId) {
         variants: {
           create: source.variants.map((v) => ({
             name: v.name,
-            sku: undefined,
+            sku: `MT-COPY-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
             price: v.price,
             compareAtPrice: v.compareAtPrice,
             weightGrams: v.weightGrams,
