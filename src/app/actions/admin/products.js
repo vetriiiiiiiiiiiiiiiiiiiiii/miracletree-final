@@ -182,7 +182,7 @@ export async function saveProductAction(_prev, formData) {
           data: {
             price: data.price,
             compareAtPrice: data.compareAtPrice,
-            sku: data.sku
+            sku: data.sku || undefined
           }
         });
       }
@@ -203,7 +203,7 @@ export async function saveProductAction(_prev, formData) {
             create: {
               name: "Standard",
               price: data.price,
-              sku: input.sku || null,
+              sku: input.sku || undefined,
               position: 0,
               inventory: { create: { onHand: 0, lowStockAt: 10 } },
             },
@@ -259,7 +259,7 @@ export async function saveVariantAction(_prev, formData) {
     const input = parsed.data;
     const variantData = {
       name: input.name,
-      sku: input.sku || null,
+      sku: input.sku || undefined,
       price: rupeesToPaise(input.price),
       compareAtPrice: optionalPaise(input.compareAtPrice),
       weightGrams: input.weightGrams ?? null,
@@ -473,7 +473,7 @@ export async function duplicateProductAction(productId) {
         variants: {
           create: source.variants.map((v) => ({
             name: v.name,
-            sku: null,
+            sku: undefined,
             price: v.price,
             compareAtPrice: v.compareAtPrice,
             weightGrams: v.weightGrams,
