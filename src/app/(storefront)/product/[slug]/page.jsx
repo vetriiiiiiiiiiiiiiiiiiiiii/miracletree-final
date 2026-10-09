@@ -25,7 +25,6 @@ import {
 } from "@/lib/seo";
 import { stripHtml, truncate } from "@/lib/utils";
 import { sanitizeHtml } from "@/lib/sanitize";
-import { getCurrentUser } from "@/lib/auth";
 export const revalidate = 300;
 export const dynamicParams = true;
 export async function generateStaticParams() {
@@ -37,7 +36,12 @@ export async function generateStaticParams() {
 }
 export async function generateMetadata({ params }) {
   const { slug } = await params;
-  const product = await getProductBySlug(slug);
+  let product = null;
+  try {
+    product = await getProductBySlug(slug);
+  } catch (err) {
+    console.error("[generateMetadata] DB error for slug:", slug, err);
+  }
   if (!product) {
     return buildMetadata({
       title: "Product not found",
@@ -60,12 +64,23 @@ export async function generateMetadata({ params }) {
 }
 export default async function ProductPage({ params }) {
   const { slug } = await params;
-  const product = await getProductBySlug(slug);
+  let product = null;
+  try {
+    product = await getProductBySlug(slug);
+  } catch (err) {
+    console.error("[ProductPage] DB error for slug:", slug, err);
+    notFound();
+  }
   if (!product) notFound();
 
   const user = null;
   let canReview = false;
-  const related = await getRelatedProducts(product.id, product.categoryId, 4);
+  let related = [];
+  try {
+    related = await getRelatedProducts(product.id, product.categoryId, 4);
+  } catch (err) {
+    console.error("[ProductPage] getRelatedProducts error:", err);
+  }
   const crumbs = [
     { name: "Home", path: "/" },
     { name: "Shop", path: "/shop" },
