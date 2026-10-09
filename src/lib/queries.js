@@ -86,8 +86,8 @@ export const getBestSellers = cache(async (take = 4) => {
   });
   return rows.map(withRating).filter(Boolean);
 });
-export const getCategories = cache(async () =>
-  prisma.category.findMany({
+export const getCategories = cache(async () => {
+  const categories = await prisma.category.findMany({
     where: { isActive: true },
     orderBy: { position: "asc" },
     select: {
@@ -98,10 +98,20 @@ export const getCategories = cache(async () =>
       imageUrl: true,
       seoTitle: true,
       seoDescription: true,
-      _count: { select: { products: { where: { status: "published" } } } },
+      products: {
+        where: { status: "published" },
+        select: { id: true },
+      },
     },
-  }),
-);
+  });
+
+  return categories.map((c) => {
+    const count = c.products.length;
+    // Strip the products array so it matches the expected return shape
+    const { products, ...rest } = c;
+    return { ...rest, _count: { products: count } };
+  });
+});
 
 export const getIngredients = cache(async () =>
   prisma.ingredient.findMany({
@@ -201,7 +211,7 @@ export async function searchProducts(query) {
 }
 export const getProductBySlug = cache(async (slug) => {
   const product = await prisma.product.findFirst({
-    where: { slug },
+    where: { slug, status: "published" },
     include: {
       category: { select: { id: true, name: true, slug: true } },
       images: { orderBy: { position: "asc" } },

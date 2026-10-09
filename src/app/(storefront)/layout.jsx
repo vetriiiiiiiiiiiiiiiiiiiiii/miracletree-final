@@ -18,15 +18,24 @@ export default async function StorefrontLayout({ children }) {
   // still cannot leak stock to abandoned checkouts; see scripts/sweep-reservations.mjs
   // for the scheduled version, which is the one to prefer.
   sweepOpportunistically();
-  const [cart, user, navigation, categories, announcements] = await Promise.all(
-    [
-      getCart(),
-      getCurrentUser(),
-      getNavigation(),
-      getCategories(),
-      getAnnouncements(),
-    ],
-  );
+  const safeCatch = (fallback) => (e) => {
+    console.error("[StorefrontLayout] Data fetch error:", e);
+    return fallback;
+  };
+
+  const [cart, user, navigation, categories, announcements] = await Promise.all([
+    getCart().catch(safeCatch(null)),
+    getCurrentUser().catch(safeCatch(null)),
+    getNavigation().catch(safeCatch({
+      header: [],
+      headerCompany: [],
+      footerShop: [],
+      footerCompany: [],
+      footerSupport: []
+    })),
+    getCategories().catch(safeCatch([])),
+    getAnnouncements().catch(safeCatch([])),
+  ]);
   // Checked on the server: probing for the asset from the browser fired a 404
   // on every page load, which is both noise and a real (if small) request.
   const hasCursorPhoto = existsSync(
