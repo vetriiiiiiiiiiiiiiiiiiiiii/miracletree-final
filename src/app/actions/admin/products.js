@@ -41,9 +41,12 @@ export async function createCategoryInlineAction(name) {
   try {
     await requireAdmin();
     const slug = slugify(name);
-    const category = await prisma.category.create({
-      data: { name, slug, isActive: true },
-    });
+    let category = await prisma.category.findUnique({ where: { slug } });
+    if (!category) {
+      category = await prisma.category.create({
+        data: { name, slug, isActive: true },
+      });
+    }
     return { success: true, data: { id: category.id, name: category.name } };
   } catch (error) {
     console.error("[admin/products] createCategoryInlineAction error:", error);

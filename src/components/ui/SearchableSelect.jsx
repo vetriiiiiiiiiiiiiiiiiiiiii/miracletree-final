@@ -214,6 +214,8 @@ export default function SearchableSelect({
       let item = await onAddNew(search.trim());
       if (item && item.success && item.data) {
         item = item.data;
+      } else if (item && item.success === false) {
+        throw new Error(item.error || "Failed to add new item");
       }
       if (item) {
         if (isMulti) {
