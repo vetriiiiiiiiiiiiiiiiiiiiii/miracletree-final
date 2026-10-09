@@ -69,7 +69,8 @@ export default async function ProductPage({ params }) {
   try {
     product = await getProductBySlug(slug);
   } catch (err) {
-    console.error("[ProductPage] DB error for slug:", slug, err);
+    console.error(`[ProductPage] DB error retrieving product for slug '${slug}':`, err?.message || err);
+    if (err?.stack) console.error(err.stack);
     dbError = true;
   }
   if (dbError || !product) notFound();
