@@ -44,18 +44,23 @@ const PRODUCT_CARD_SELECT = {
 };
 /** Collapses the approved-review rows a card carries into an average + count. */
 function withRating(product) {
-  const { reviews, ...rest } = product;
-  const count = reviews.length;
+  if (!product) return null;
+  const { reviews = [], ...rest } = product;
+  const reviewList = Array.isArray(reviews) ? reviews : [];
+  const count = reviewList.length;
   const average = count
-    ? Math.round((reviews.reduce((s, r) => s + r.rating, 0) / count) * 10) / 10
+    ? Math.round(
+        (reviewList.reduce((s, r) => s + (r?.rating ?? 0), 0) / count) * 10,
+      ) / 10
     : null;
   return { ...rest, ratingAverage: average, ratingCount: count };
 }
 function isInStock(variants) {
+  if (!Array.isArray(variants)) return false;
   return variants.some(
     (v) =>
       !v.inventory?.trackInventory ||
-      (v.inventory ? v.inventory.onHand - v.inventory.reserved > 0 : false),
+      (v.inventory ? (v.inventory.onHand ?? 0) - (v.inventory.reserved ?? 0) > 0 : false),
   );
 }
 export const getFeaturedProducts = cache(async (take = 6) => {
@@ -68,7 +73,7 @@ export const getFeaturedProducts = cache(async (take = 6) => {
     take,
     select: PRODUCT_CARD_SELECT,
   });
-  const products = rows.map(withRating);
+  const products = rows.map(withRating).filter(Boolean);
   await redis.set(cacheKey, JSON.stringify(products), "EX", 3600);
   return products;
 });
@@ -79,7 +84,7 @@ export const getBestSellers = cache(async (take = 4) => {
     take,
     select: PRODUCT_CARD_SELECT,
   });
-  return rows.map(withRating);
+  return rows.map(withRating).filter(Boolean);
 });
 export const getCategories = cache(async () =>
   prisma.category.findMany({
@@ -176,6 +181,7 @@ export async function searchProducts(query) {
   });
   let products = rows
     .map(withRating)
+    .filter(Boolean)
     .map((p) => ({ ...p, inStock: isInStock(p.variants) }));
   if (query.availability === "in-stock")
     products = products.filter((p) => p.inStock);
@@ -228,22 +234,24 @@ export const getProductBySlug = cache(async (slug) => {
     },
   });
   if (!product) return null;
-  const count = product.reviews.length;
+  const reviews = Array.isArray(product.reviews) ? product.reviews : [];
+  const count = reviews.length;
   const average = count
     ? Math.round(
-        (product.reviews.reduce((s, r) => s + r.rating, 0) / count) * 10,
+        (reviews.reduce((s, r) => s + (r?.rating ?? 0), 0) / count) * 10,
       ) / 10
     : null;
   const breakdown = [5, 4, 3, 2, 1].map((star) => ({
     star,
-    count: product.reviews.filter((r) => r.rating === star).length,
+    count: reviews.filter((r) => r?.rating === star).length,
   }));
+  const variants = Array.isArray(product.variants) ? product.variants : [];
   return {
     ...product,
     ratingAverage: average,
     ratingCount: count,
     ratingBreakdown: breakdown,
-    inStock: product.variants.some(
+    inStock: variants.some(
       (v) =>
         !v.inventory?.trackInventory ||
         (v.inventory?.onHand ?? 0) - (v.inventory?.reserved ?? 0) > 0,
@@ -262,7 +270,7 @@ export const getRelatedProducts = cache(
       take,
       select: { target: { select: PRODUCT_CARD_SELECT } },
     });
-    const picked = explicit.map((r) => r.target);
+    const picked = explicit.map((r) => r?.target).filter(Boolean);
     const have = new Set([productId, ...picked.map((p) => p.id)]);
     if (picked.length < take && categoryId) {
       const filler = await prisma.product.findMany({
@@ -277,7 +285,7 @@ export const getRelatedProducts = cache(
       });
       picked.push(...filler);
     }
-    return picked.map(withRating);
+    return picked.map(withRating).filter(Boolean);
   },
 );
 export const getProductsByIds = cache(async (ids) => {
