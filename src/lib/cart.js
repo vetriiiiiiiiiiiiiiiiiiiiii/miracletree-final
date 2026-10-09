@@ -87,7 +87,7 @@ function setCartCookie(store, token) {
  * Builds the full cart view: live prices, live stock, discount and shipping.
  * Prices are always re-read from the variant, never trusted from the client.
  */
-export const getCart = cache(async () => {
+export const getCart = async () => {
   const token = await getCartToken();
   if (!token) return EMPTY_CART;
   const cart = await prisma.cart.findUnique({
@@ -233,7 +233,7 @@ export const getCart = cache(async () => {
       : null,
     couponWarning,
   };
-});
+};
 /** Splits the admin's comma-separated list, tolerating spaces and blanks. */
 function parseScopeIds(raw) {
   if (!raw) return new Set();
