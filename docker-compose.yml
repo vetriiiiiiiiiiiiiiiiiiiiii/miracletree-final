@@ -18,7 +18,7 @@ services:
       - redis
 
   mongodb:
-    image: mongo:latest
+    image: mongo:8
     container_name: miracletree-mongo
     restart: unless-stopped
     ports:
