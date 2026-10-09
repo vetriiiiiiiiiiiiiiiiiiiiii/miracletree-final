@@ -1,10 +1,24 @@
 import { PrismaClient } from "@prisma/client";
 const globalForPrisma = globalThis;
+const createMockPrisma = () => new Proxy({}, {
+  get: (target, model) => new Proxy({}, {
+    get: (target, method) => async () => {
+      if (method.startsWith('findMany')) return [];
+      if (method.startsWith('findFirst') || method.startsWith('findUnique')) return null;
+      if (method === 'count') return 0;
+      return null;
+    }
+  })
+});
+
 export const prisma =
   globalForPrisma.prisma ??
-  new PrismaClient({
-    log: process.env.NODE_ENV === "development" ? ["warn", "error"] : ["error"],
-  });
+  (process.env.DOCKER_BUILD === "1"
+    ? createMockPrisma()
+    : new PrismaClient({
+        log: process.env.NODE_ENV === "development" ? ["warn", "error"] : ["error"],
+      }));
+
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 /**
  * Case-insensitive text matching, portable across providers.

@@ -11,6 +11,7 @@ RUN npm ci
 COPY . .
 
 # Build the application
+ENV DOCKER_BUILD="1"
 RUN npx prisma generate
 RUN npm run build
 
