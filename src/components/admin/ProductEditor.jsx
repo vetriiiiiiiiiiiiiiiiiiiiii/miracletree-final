@@ -56,6 +56,7 @@ export function ProductEditor({
   const [categoryId, setCategoryId] = useState(draft.categoryId);
   const [description, setDescription] = useState(draft.description);
   const [story, setStory] = useState(draft.story);
+  const [price, setPrice] = useState(draft.price ?? "");
   const [seoTitle, setSeoTitle] = useState(draft.seoTitle);
   const [seoDescription, setSeoDescription] = useState(draft.seoDescription);
   // A new product's slug follows its name until the user edits the slug.
@@ -64,6 +65,7 @@ export function ProductEditor({
   }, [name, slugTouched]);
   const errors = state.status === "error" ? (state.errors ?? {}) : {};
   const isNew = !draft.id;
+  const canSave = Boolean(name?.trim()) && Boolean(slug?.trim()) && (!isNew || String(price).trim() !== "");
   // Jump to the tab holding the first error, so a validation message is never
   // hidden behind a tab the user cannot see.
   useEffect(() => {
@@ -309,6 +311,7 @@ export function ProductEditor({
                   required
                   defaultValue={draft.price}
                   error={errors.price}
+                  onChange={(e) => setPrice(e.target.value)}
                 />
                 <Input
                   label="Compare-at price (₹)"
@@ -555,7 +558,7 @@ export function ProductEditor({
               ]}
             />
 
-            <SaveButton isNew={isNew} />
+            <SaveButton isNew={isNew} disabled={!canSave} />
 
             {draft.id ? (
               <Link
@@ -622,12 +625,12 @@ function Panel({ active, children }) {
     </div>
   );
 }
-function SaveButton({ isNew }) {
+function SaveButton({ isNew, disabled }) {
   const { pending } = useFormStatus();
   return (
     <button
       type="submit"
-      disabled={pending}
+      disabled={pending || disabled}
       className="w-full bg-emerald-500 px-5 py-3 text-[0.7rem] font-medium uppercase tracking-[0.14em] text-on-accent transition-colors hover:bg-emerald-400 disabled:opacity-60"
     >
       {pending ? "Saving…" : isNew ? "Create product" : "Save changes"}

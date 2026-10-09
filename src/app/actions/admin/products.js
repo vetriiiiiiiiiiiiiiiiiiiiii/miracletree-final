@@ -191,7 +191,7 @@ export async function saveProductAction(_prev, formData) {
     revalidatePath("/admin/products");
     revalidatePath("/shop");
     revalidatePath(`/product/${input.slug}`);
-    if (!id) redirect(`/admin/products/${productId}?created=1`);
+    if (!id) redirect(`/admin/products`);
     return { status: "success", message: "Product saved." };
   } catch (error) {
     // `redirect` throws by design; let it through.
