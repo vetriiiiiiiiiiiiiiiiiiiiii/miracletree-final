@@ -35,6 +35,7 @@ COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/scripts/repair-duplicate-skus.mjs ./scripts/repair-duplicate-skus.mjs
 COPY --from=builder /app/scripts/sync-content.mjs ./scripts/sync-content.mjs
+COPY --from=builder /app/scripts/inject-admin.mjs ./scripts/inject-admin.mjs
 
 # Copy start script
 COPY start.sh ./start.sh
