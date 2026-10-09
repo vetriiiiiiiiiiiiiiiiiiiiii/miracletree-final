@@ -18,7 +18,7 @@ import { UsageStepEditor } from "@/components/admin/UsageStepEditor";
 import { ProductIngredientEditor } from "@/components/admin/ProductIngredientEditor";
 import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import SearchableSelect from "@/components/ui/SearchableSelect";
-import { saveProductAction } from "@/app/actions/admin/products";
+import { saveProductAction, createCategoryInlineAction } from "@/app/actions/admin/products";
 const INITIAL = { status: "idle" };
 const TABS = [
   "General",
@@ -195,6 +195,7 @@ export function ProductEditor({
                       pagination: { hasMore: false },
                     };
                   }}
+                  onAddNew={createCategoryInlineAction}
                 />
                 <input
                   type="hidden"

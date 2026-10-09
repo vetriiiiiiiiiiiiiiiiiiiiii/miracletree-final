@@ -394,9 +394,20 @@ export default function SearchableSelect({
                 />
               </div>
             )}
-            {!loading && items.length === 0 && (
+            {!loading && items.length === 0 && !onAddNew && (
               <div className="py-6 text-center text-sm opacity-40 text-cream-100">
                 No results found
+              </div>
+            )}
+            {onAddNew && search.trim() && !hasExactMatch && (
+              <div
+                onClick={handleAddNew}
+                className="flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors hover:bg-white/5 text-emerald-400 font-medium"
+              >
+                <Plus size={16} className="shrink-0" />
+                <div className="text-sm truncate">
+                  {addingNew ? "Adding..." : `Add "${search.trim()}"`}
+                </div>
               </div>
             )}
             {items.map((item, index) => {

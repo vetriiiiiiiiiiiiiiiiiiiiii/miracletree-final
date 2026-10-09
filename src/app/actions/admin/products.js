@@ -37,6 +37,19 @@ function optionalPaise(value) {
   const n = Number(value);
   return Number.isFinite(n) && n > 0 ? rupeesToPaise(n) : null;
 }
+export async function createCategoryInlineAction(name) {
+  try {
+    await requireAdmin();
+    const slug = slugify(name);
+    const category = await prisma.category.create({
+      data: { name, slug, isActive: true },
+    });
+    return { success: true, data: { id: category.id, name: category.name } };
+  } catch (error) {
+    return { success: false, error: "Failed to create category" };
+  }
+}
+
 export async function saveProductAction(_prev, formData) {
   try {
     const admin = await requireAdmin();
@@ -469,7 +482,40 @@ export async function deleteProductAction(productId) {
       where: { id: productId },
       select: { name: true, slug: true },
     });
-    await prisma.product.delete({ where: { id: productId } });
+    await prisma.$transaction(async (tx) => {
+      const variants = await tx.productVariant.findMany({
+        where: { productId },
+        select: { id: true },
+      });
+      const variantIds = variants.map((v) => v.id);
+
+      const inventories = await tx.inventory.findMany({
+        where: { variantId: { in: variantIds } },
+        select: { id: true },
+      });
+      const inventoryIds = inventories.map((i) => i.id);
+
+      await tx.inventoryMovement.deleteMany({
+        where: { inventoryId: { in: inventoryIds } },
+      });
+      await tx.inventory.deleteMany({
+        where: { variantId: { in: variantIds } },
+      });
+      await tx.cartItem.deleteMany({ where: { productId } });
+      await tx.productVariant.deleteMany({ where: { productId } });
+
+      await tx.productImage.deleteMany({ where: { productId } });
+      await tx.productIngredient.deleteMany({ where: { productId } });
+      await tx.productBenefit.deleteMany({ where: { productId } });
+      await tx.usageStep.deleteMany({ where: { productId } });
+      await tx.faq.deleteMany({ where: { productId } });
+      await tx.review.deleteMany({ where: { productId } });
+      await tx.productRelation.deleteMany({ where: { sourceId: productId } });
+      await tx.productRelation.deleteMany({ where: { targetId: productId } });
+      await tx.wishlistItem.deleteMany({ where: { productId } });
+
+      await tx.product.delete({ where: { id: productId } });
+    });
     await recordAudit({
       actorId: admin.id,
       action: "product.deleted",

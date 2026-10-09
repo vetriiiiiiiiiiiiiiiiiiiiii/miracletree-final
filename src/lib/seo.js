@@ -116,7 +116,7 @@ export function productSchema(product) {
     image: product.images.slice(0, 5).map((i) => i.url),
     brand: { "@type": "Brand", name: SITE.name },
     url: siteUrl(`/product/${product.slug}`),
-    offers: {
+    offers: product.variants.length > 0 ? {
       "@type": "AggregateOffer",
       priceCurrency: "INR",
       lowPrice: Math.min(...prices).toFixed(2),
@@ -127,7 +127,7 @@ export function productSchema(product) {
         : "https://schema.org/OutOfStock",
       url: siteUrl(`/product/${product.slug}`),
       seller: { "@id": siteUrl("/#organization") },
-    },
+    } : undefined,
   };
   // Only emit ratings that actually exist — never a placeholder aggregate.
   if (product.ratingAverage !== null && product.ratingCount > 0) {
