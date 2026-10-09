@@ -91,6 +91,7 @@ export function ProductEditor({
   return (
     <form
       action={action}
+      noValidate
       className="grid gap-6 xl:grid-cols-[1fr_18rem] xl:items-start"
     >
       {draft.id ? <input type="hidden" name="id" value={draft.id} /> : null}
