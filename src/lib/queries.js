@@ -200,6 +200,10 @@ export async function searchProducts(query) {
   };
 }
 export const getProductBySlug = cache(async (slug) => {
+  const cacheKey = `product:slug:${slug}`;
+  const cached = await redis.get(cacheKey);
+  if (cached) return JSON.parse(cached);
+
   const product = await prisma.product.findFirst({
     where: { slug },
     include: {
@@ -233,7 +237,10 @@ export const getProductBySlug = cache(async (slug) => {
       },
     },
   });
-  if (!product) return null;
+  if (!product) {
+    await redis.set(cacheKey, JSON.stringify(null), "EX", 300);
+    return null;
+  }
   const reviews = Array.isArray(product.reviews) ? product.reviews : [];
   const count = reviews.length;
   const average = count
@@ -246,7 +253,7 @@ export const getProductBySlug = cache(async (slug) => {
     count: reviews.filter((r) => r?.rating === star).length,
   }));
   const variants = Array.isArray(product.variants) ? product.variants : [];
-  return {
+  const result = {
     ...product,
     ratingAverage: average,
     ratingCount: count,
@@ -257,6 +264,8 @@ export const getProductBySlug = cache(async (slug) => {
         (v.inventory?.onHand ?? 0) - (v.inventory?.reserved ?? 0) > 0,
     ),
   };
+  await redis.set(cacheKey, JSON.stringify(result), "EX", 300);
+  return result;
 });
 /**
  * Recommendations. Explicit admin-set relations come first; the remainder is
@@ -264,6 +273,10 @@ export const getProductBySlug = cache(async (slug) => {
  */
 export const getRelatedProducts = cache(
   async (productId, categoryId, take = 4) => {
+    const cacheKey = `products:related:${productId}:${take}`;
+    const cached = await redis.get(cacheKey);
+    if (cached) return JSON.parse(cached);
+
     const explicit = await prisma.productRelation.findMany({
       where: { sourceId: productId, kind: "related" },
       orderBy: { position: "asc" },
@@ -285,7 +298,9 @@ export const getRelatedProducts = cache(
       });
       picked.push(...filler);
     }
-    return picked.map(withRating).filter(Boolean);
+    const result = picked.map(withRating).filter(Boolean);
+    await redis.set(cacheKey, JSON.stringify(result), "EX", 300);
+    return result;
   },
 );
 export const getProductsByIds = cache(async (ids) => {
