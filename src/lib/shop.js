@@ -6,7 +6,7 @@ export const PRODUCT_TYPE_OPTIONS = [
   { label: "Snacks & bars", value: "snack" },
   { label: "Oils & skin", value: "oil" },
 ];
-export function buildFilterGroups(categories, collections, ingredients) {
+export function buildFilterGroups(categories, ingredients) {
   return {
     categories: categories.map((c) => ({
       label: c.name,
@@ -17,7 +17,6 @@ export function buildFilterGroups(categories, collections, ingredients) {
     ingredients: ingredients
       .filter((i) => i._count.products > 0)
       .map((i) => ({ label: i.name, value: i.slug, count: i._count.products })),
-    collections: collections.map((c) => ({ label: c.name, value: c.slug })),
   };
 }
 export function countActiveFilters(params) {
@@ -25,7 +24,6 @@ export function countActiveFilters(params) {
     "category",
     "type",
     "ingredient",
-    "collection",
     "availability",
     "offers",
   ];
