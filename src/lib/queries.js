@@ -195,7 +195,7 @@ export async function searchProducts(query) {
 }
 export const getProductBySlug = cache(async (slug) => {
   const product = await prisma.product.findFirst({
-    where: { slug, status: "published" },
+    where: { slug },
     include: {
       category: { select: { id: true, name: true, slug: true } },
       images: { orderBy: { position: "asc" } },

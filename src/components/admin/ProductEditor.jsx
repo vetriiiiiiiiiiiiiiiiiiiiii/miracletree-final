@@ -561,14 +561,14 @@ export function ProductEditor({
             <SaveButton isNew={isNew} disabled={!canSave} />
 
             {draft.id ? (
-              <Link
+              <a
                 href={`/product/${draft.slug}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-center text-xs text-cream-400 underline underline-offset-4 hover:text-cream-100"
               >
                 View on store
-              </Link>
+              </a>
             ) : null}
           </div>
         </Card>

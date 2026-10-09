@@ -167,11 +167,23 @@ export function ProductRowActions({ productId, slug, status }) {
   );
 }
 function MenuLink({ href, children, external }) {
+  if (external) {
+    return (
+      <a
+        href={href}
+        role="menuitem"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block px-4 py-2 text-left text-sm text-cream-200 transition-colors hover:bg-white/[0.05] hover:text-cream-50"
+      >
+        {children}
+      </a>
+    );
+  }
   return (
     <Link
       href={href}
       role="menuitem"
-      {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
       className="block px-4 py-2 text-left text-sm text-cream-200 transition-colors hover:bg-white/[0.05] hover:text-cream-50"
     >
       {children}

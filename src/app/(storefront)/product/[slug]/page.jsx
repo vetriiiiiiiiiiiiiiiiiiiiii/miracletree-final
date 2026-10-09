@@ -63,20 +63,8 @@ export default async function ProductPage({ params }) {
   const product = await getProductBySlug(slug);
   if (!product) notFound();
 
-  const user = await getCurrentUser();
+  const user = null;
   let canReview = false;
-  if (user) {
-    canReview = Boolean(
-      await prisma.orderItem.findFirst({
-        where: {
-          productId: product.id,
-          order: { userId: user.id, status: "delivered" },
-        },
-        select: { id: true },
-      }),
-    );
-  }
-
   const related = await getRelatedProducts(product.id, product.categoryId, 4);
   const crumbs = [
     { name: "Home", path: "/" },
