@@ -1,11 +1,6 @@
 #!/bin/sh
 
-# Initialize database if it doesn't exist in the volume
-if [ ! -f /data/miracletree.db ]; then
-  echo "Initializing new database in volume..."
-  mkdir -p /data
-  cp /app/dev.db /data/miracletree.db
-fi
+# (SQLite database init removed for MongoDB)
 
 # Duplicates first. The schema push below adds the unique index on
 # ProductVariant.sku, and a database from an older image still holds the
@@ -15,10 +10,10 @@ fi
 # a table the old database does not have. This renames duplicates and deletes
 # nothing; on a clean database it does nothing at all.
 echo "Checking SKUs..."
-DATABASE_URL="file:/data/miracletree.db" node ./scripts/repair-duplicate-skus.mjs || echo "SKU repair skipped."
+node ./scripts/repair-duplicate-skus.mjs || echo "SKU repair skipped."
 
 echo "Updating database schema..."
-DATABASE_URL="file:/data/miracletree.db" npx -y prisma@6 db push --schema=node_modules/.prisma/client/schema.prisma --accept-data-loss --skip-generate
+npx -y prisma@6 db push --schema=node_modules/.prisma/client/schema.prisma --accept-data-loss --skip-generate
 
 # Bring the editorial content up to date. The database above is whatever the
 # volume was holding, which after the first deploy is never refreshed — so
@@ -27,7 +22,7 @@ DATABASE_URL="file:/data/miracletree.db" npx -y prisma@6 db push --schema=node_m
 # differs from the one the database recorded, and touches nothing outside the
 # content tables: no products, no orders, no customers, no reviews.
 echo "Syncing content..."
-DATABASE_URL="file:/data/miracletree.db" node ./scripts/sync-content.mjs || echo "Content sync skipped."
+node ./scripts/sync-content.mjs || echo "Content sync skipped."
 
 # Start Nginx in background as daemon
 nginx
