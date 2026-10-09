@@ -1,1 +1,5 @@
 test.Dockerfile
+
+.next
+node_modules
+.git
