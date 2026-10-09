@@ -95,13 +95,7 @@ export const getCategories = cache(async () =>
     },
   }),
 );
-export const getCollections = cache(async () =>
-  prisma.collection.findMany({
-    where: { isActive: true },
-    orderBy: { position: "asc" },
-    select: { id: true, name: true, slug: true, description: true },
-  }),
-);
+
 export const getIngredients = cache(async () =>
   prisma.ingredient.findMany({
     orderBy: { name: "asc" },
@@ -142,8 +136,6 @@ export async function searchProducts(query) {
     });
   }
   if (query.category) and.push({ category: { slug: query.category } });
-  if (query.collection)
-    and.push({ collections: { some: { collection: { slug: query.collection } } } });
   if (query.type) and.push({ productType: query.type });
   if (query.ingredient)
     and.push({ ingredients: { some: { ingredient: { slug: query.ingredient } } } });
@@ -205,7 +197,7 @@ export const getProductBySlug = cache(async (slug) => {
       usageSteps: { orderBy: { step: "asc" } },
       ingredients: { orderBy: { position: "asc" }, include: { ingredient: true } },
       faqs: { where: { isActive: true }, orderBy: { position: "asc" } },
-      collections: { include: { collection: { select: { name: true, slug: true } } } },
+
       reviews: {
         where: { status: "approved" },
         orderBy: [{ isFeatured: "desc" }, { createdAt: "desc" }],

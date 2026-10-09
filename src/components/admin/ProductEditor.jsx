@@ -11,6 +11,7 @@ import { BenefitEditor } from "@/components/admin/BenefitEditor";
 import { UsageStepEditor } from "@/components/admin/UsageStepEditor";
 import { ProductIngredientEditor } from "@/components/admin/ProductIngredientEditor";
 import { RichTextEditor } from "@/components/admin/RichTextEditor";
+import SearchableSelect from "@/components/ui/SearchableSelect";
 import { saveProductAction } from "@/app/actions/admin/products";
 const INITIAL = { status: "idle" };
 const TABS = [
@@ -46,6 +47,7 @@ export function ProductEditor({
   const [name, setName] = useState(draft.name);
   const [slug, setSlug] = useState(draft.slug);
   const [slugTouched, setSlugTouched] = useState(Boolean(draft.slug));
+  const [categoryId, setCategoryId] = useState(draft.categoryId);
   const [description, setDescription] = useState(draft.description);
   const [story, setStory] = useState(draft.story);
   const [seoTitle, setSeoTitle] = useState(draft.seoTitle);
@@ -163,15 +165,20 @@ export function ProductEditor({
               />
 
               <div className="grid gap-5 sm:grid-cols-2">
-                <Select
+                <SearchableSelect
                   label="Category"
-                  name="categoryId"
-                  defaultValue={draft.categoryId}
-                  options={[
-                    { value: "", label: "No category" },
-                    ...categories.map((c) => ({ value: c.id, label: c.name })),
-                  ]}
+                  value={categoryId}
+                  onChange={(val) => setCategoryId(val)}
+                  valueKey="id"
+                  displayKey="name"
+                  placeholder="Select a category..."
+                  fetchFn={async (search) => {
+                    const filtered = categories.filter(c => c.name.toLowerCase().includes(search.toLowerCase()));
+                    return { success: true, data: filtered, pagination: { hasMore: false } };
+                  }}
                 />
+                <input type="hidden" name="categoryId" value={categoryId || ""} />
+                
                 <Select
                   label="Product type"
                   name="productType"
@@ -179,40 +186,6 @@ export function ProductEditor({
                   options={[{ value: "", label: "Unspecified" }, ...productTypes]}
                   hint="Drives the storefront type filter."
                 />
-              </div>
-              
-              <div className="mt-6">
-                <label className="mb-2 block text-xs font-medium uppercase tracking-[0.14em] text-cream-400">
-                  Collections
-                </label>
-                <div className="flex flex-wrap gap-4">
-                  {collections.map(c => (
-                    <Checkbox
-                      key={c.id}
-                      name="collectionIds"
-                      value={c.id}
-                      label={c.name}
-                      defaultChecked={selectedCollectionIds.includes(c.id)}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              <div className="mt-6">
-                <label className="mb-2 block text-xs font-medium uppercase tracking-[0.14em] text-cream-400">
-                  Tags
-                </label>
-                <div className="flex flex-wrap gap-4">
-                  {tags.map(t => (
-                    <Checkbox
-                      key={t.id}
-                      name="tagIds"
-                      value={t.id}
-                      label={t.name}
-                      defaultChecked={selectedTagIds.includes(t.id)}
-                    />
-                  ))}
-                </div>
               </div>
 
               <Textarea

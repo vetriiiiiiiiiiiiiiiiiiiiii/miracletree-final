@@ -394,7 +394,6 @@ export const adminSettingsSchema = z.record(z.string().max(80), z.string().max(2
 export const shopQuerySchema = z.object({
   q: z.string().trim().max(120).optional(),
   category: z.string().trim().max(80).optional(),
-  collection: z.string().trim().max(80).optional(),
   type: z.string().trim().max(40).optional(),
   ingredient: z.string().trim().max(80).optional(),
   min: z.coerce.number().min(0).optional(),

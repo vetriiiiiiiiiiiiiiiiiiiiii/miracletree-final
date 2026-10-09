@@ -10,7 +10,6 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { prisma } from "@/lib/prisma";
 import {
   getCategories,
-  getCollections,
   getIngredients,
   searchProducts,
 } from "@/lib/queries";
@@ -67,13 +66,12 @@ export default async function CategoryPage({ params, searchParams }) {
   if (!category) notFound();
   // The route segment is the category filter; a conflicting query param is ignored.
   const query = shopQuerySchema.parse({ ...raw, category: slug });
-  const [result, categories, collections, ingredients] = await Promise.all([
+  const [result, categories, ingredients] = await Promise.all([
     searchProducts(query),
     getCategories(),
-    getCollections(),
     getIngredients(),
   ]);
-  const groups = buildFilterGroups(categories, collections, ingredients);
+  const groups = buildFilterGroups(categories, ingredients);
   // The category itself is fixed by the URL here, so it is not offered as a filter.
   const scopedGroups = { ...groups, categories: [] };
   const crumbs = [

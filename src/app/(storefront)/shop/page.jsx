@@ -9,7 +9,6 @@ import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { JsonLd } from "@/components/seo/JsonLd";
 import {
   getCategories,
-  getCollections,
   getIngredients,
   searchProducts,
 } from "@/lib/queries";
@@ -33,13 +32,12 @@ export async function generateMetadata({ searchParams }) {
 export default async function ShopPage({ searchParams }) {
   const raw = await searchParams;
   const query = shopQuerySchema.parse(raw);
-  const [result, categories, collections, ingredients] = await Promise.all([
+  const [result, categories, ingredients] = await Promise.all([
     searchProducts(query),
     getCategories(),
-    getCollections(),
     getIngredients(),
   ]);
-  const groups = buildFilterGroups(categories, collections, ingredients);
+  const groups = buildFilterGroups(categories, ingredients);
   const activeCount = countActiveFilters(raw);
   const crumbs = [
     { name: "Home", path: "/" },

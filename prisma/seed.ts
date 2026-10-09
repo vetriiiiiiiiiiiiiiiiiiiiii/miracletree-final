@@ -233,12 +233,7 @@ const CATEGORIES = [
   },
 ];
 
-const COLLECTIONS = [
-  { slug: "bestsellers", name: "Bestsellers", position: 1 },
-  { slug: "new-arrivals", name: "New Arrivals", position: 2 },
-  { slug: "combos", name: "Combos & Value Packs", position: 3 },
-  { slug: "daily-ritual", name: "The Daily Ritual", position: 4 },
-];
+
 
 const BESTSELLER_HANDLES = new Set([
   "mogo-moringa-energy-bar",
@@ -891,9 +886,7 @@ async function main() {
     prisma.inventoryMovement.deleteMany(),
     prisma.inventory.deleteMany(),
     prisma.productRelation.deleteMany(),
-    prisma.productCollection.deleteMany(),
     prisma.productIngredient.deleteMany(),
-    prisma.productTag.deleteMany(),
     prisma.productBenefit.deleteMany(),
     prisma.usageStep.deleteMany(),
     prisma.productImage.deleteMany(),
@@ -902,7 +895,6 @@ async function main() {
     prisma.faq.deleteMany(),
     prisma.product.deleteMany(),
     prisma.ingredient.deleteMany(),
-    prisma.collection.deleteMany(),
     prisma.category.deleteMany(),
     prisma.article.deleteMany(),
     prisma.articleCategory.deleteMany(),
@@ -938,13 +930,7 @@ async function main() {
     categoryIds.set(c.slug, row.id);
   }
 
-  const collectionIds = new Map<string, string>();
-  for (const c of COLLECTIONS) {
-    const row = await prisma.collection.create({
-      data: { name: c.name, slug: c.slug, position: c.position },
-    });
-    collectionIds.set(c.slug, row.id);
-  }
+
 
   const ingredientIds = new Map<string, string>();
   for (const i of INGREDIENTS) {
@@ -1068,19 +1054,7 @@ async function main() {
       });
     }
 
-    // Collections
-    const memberships: string[] = ["daily-ritual"];
-    if (BESTSELLER_HANDLES.has(p.handle)) memberships.push("bestsellers");
-    if (isCombo) memberships.push("combos");
-    for (const [pos, slug] of memberships.entries()) {
-      await prisma.productCollection.create({
-        data: {
-          productId: product.id,
-          collectionId: collectionIds.get(slug)!,
-          position: pos,
-        },
-      });
-    }
+
 
     // The reviews this product actually has on the live shop. Approved on the
     // way in — they are already published there — and carrying their original

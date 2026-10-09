@@ -137,7 +137,7 @@ function ActiveChips({ groups, searchParams, setParam, onClear }) {
     ["category", groups.categories],
     ["type", groups.types],
     ["ingredient", groups.ingredients],
-    ["collection", groups.collections],
+
   ]) {
     const value = searchParams.get(key);
     if (value) chips.push({ key, label: label(options, value) });
@@ -236,12 +236,6 @@ export function ShopFilters({ groups }) {
         onSelect={(value) => setParam("ingredient", value)}
       />
 
-      <FilterGroup
-        title="Collection"
-        options={groups.collections}
-        value={searchParams.get("collection")}
-        onSelect={(value) => setParam("collection", value)}
-      />
 
       <fieldset className="grid gap-3">
         <legend className="eyebrow mb-3 text-gold-400">Availability</legend>

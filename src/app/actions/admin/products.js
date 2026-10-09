@@ -159,24 +159,6 @@ export async function saveProductAction(_prev, formData) {
       });
     }
 
-    // Handle Collections & Tags mapping
-    const collectionIds = formData.getAll("collectionIds");
-    const tagIds = formData.getAll("tagIds");
-
-    await prisma.$transaction([
-      prisma.productCollection.deleteMany({ where: { productId } }),
-      prisma.productTag.deleteMany({ where: { productId } }),
-      ...collectionIds.map((collectionId) =>
-        prisma.productCollection.create({
-          data: { productId, collectionId: String(collectionId) },
-        })
-      ),
-      ...tagIds.map((tagId) =>
-        prisma.productTag.create({
-          data: { productId, tagId: String(tagId) },
-        })
-      ),
-    ]);
 
     revalidatePath("/admin/products");
     revalidatePath("/shop");

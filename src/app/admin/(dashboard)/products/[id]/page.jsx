@@ -10,7 +10,7 @@ export default async function EditProductPage({ params, searchParams }) {
   await requireAdmin();
   const { id } = await params;
   const { created } = await searchParams;
-  const [product, categories, allIngredients, allCollections, allTags] = await Promise.all([
+  const [product, categories, allIngredients] = await Promise.all([
     prisma.product.findUnique({
       where: { id },
       include: {
@@ -25,8 +25,6 @@ export default async function EditProductPage({ params, searchParams }) {
           orderBy: { position: "asc" },
           include: { ingredient: { select: { id: true, name: true } } },
         },
-        collections: { select: { collectionId: true } },
-        tags: { select: { tagId: true } },
         _count: { select: { reviews: true } },
       },
     }),
@@ -35,14 +33,6 @@ export default async function EditProductPage({ params, searchParams }) {
       select: { id: true, name: true },
     }),
     prisma.ingredient.findMany({
-      orderBy: { name: "asc" },
-      select: { id: true, name: true },
-    }),
-    prisma.collection.findMany({
-      orderBy: { position: "asc" },
-      select: { id: true, name: true },
-    }),
-    prisma.tag.findMany({
       orderBy: { name: "asc" },
       select: { id: true, name: true },
     }),
@@ -135,10 +125,6 @@ export default async function EditProductPage({ params, searchParams }) {
         }))}
         ingredients={product.ingredients}
         allIngredients={allIngredients}
-        collections={allCollections}
-        tags={allTags}
-        selectedCollectionIds={product.collections.map(c => c.collectionId)}
-        selectedTagIds={product.tags.map(t => t.tagId)}
         reviewCount={product._count.reviews}
       />
     </>
