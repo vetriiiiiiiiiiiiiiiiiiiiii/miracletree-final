@@ -14,6 +14,9 @@ export const getSession = async () => {
   try {
     return await auth();
   } catch (error) {
+    if (error?.digest === "DYNAMIC_SERVER_USAGE" || error?.digest?.startsWith("NEXT_")) {
+      throw error;
+    }
     return null;
   }
 };
@@ -27,6 +30,10 @@ export const getCurrentUser = async () => {
       userId = session.user.id;
     }
   } catch (error) {
+    // Rethrow Next.js internal control-flow exceptions
+    if (error?.digest === "DYNAMIC_SERVER_USAGE" || error?.digest?.startsWith("NEXT_")) {
+      throw error;
+    }
     // NextAuth throws UntrustedHost or MissingSecret in some environments.
     // We swallow it and fall back to the native JWT cookie.
   }
