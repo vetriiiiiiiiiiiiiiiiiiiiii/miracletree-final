@@ -40,6 +40,7 @@ COPY --from=builder /app/scripts/inject-admin.mjs ./scripts/inject-admin.mjs
 # Copy start script
 COPY start.sh ./start.sh
 RUN chmod +x ./start.sh
+RUN npm install bcryptjs
 
 # Expose port 3009
 EXPOSE 3009
