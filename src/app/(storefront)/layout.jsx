@@ -1,6 +1,6 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
-import { getCart } from "@/lib/cart";
+import { getCart, EMPTY_CART } from "@/lib/cart";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getAnnouncements, getCategories, getNavigation } from "@/lib/queries";
@@ -29,7 +29,7 @@ export default async function StorefrontLayout({ children }) {
   };
 
   const [cart, user, navigation, categories, announcements] = await Promise.all([
-    getCart().catch(safeCatch(null)),
+    getCart().catch(safeCatch(EMPTY_CART)),
     getCurrentUser().catch(safeCatch(null)),
     getNavigation().catch(safeCatch({
       header: [],
