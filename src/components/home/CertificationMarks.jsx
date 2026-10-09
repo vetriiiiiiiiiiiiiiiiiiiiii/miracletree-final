@@ -19,8 +19,14 @@ import Image from "next/image";
  */
 const MARKS = [
   { src: "certified-plant-based", alt: "Certified Plant Based" },
-  { src: "gmp", alt: "GMP Quality — Good Manufacturing Practice Certification" },
-  { src: "tamilnadu-organic", alt: "Tamil Nadu Organic Certification Department" },
+  {
+    src: "gmp",
+    alt: "GMP Quality — Good Manufacturing Practice Certification",
+  },
+  {
+    src: "tamilnadu-organic",
+    alt: "Tamil Nadu Organic Certification Department",
+  },
   { src: "ascb", alt: "ASCB — Accreditation Services Worldwide" },
   { src: "non-gmo-verified", alt: "Non-GMO Project Verified" },
   { src: "india-organic", alt: "India Organic" },
@@ -39,7 +45,7 @@ export function CertificationMarks({ className }) {
               height={320}
               sizes="120px"
               className="h-[3.75rem] w-auto object-contain sm:h-[4.5rem]"
-             unoptimized={typeof `/brand/certs/${mark.src === "string" ? `/brand/certs/${mark.src.startsWith("/uploads/") : undefined} />
+            />
           </li>
         ))}
       </ul>
