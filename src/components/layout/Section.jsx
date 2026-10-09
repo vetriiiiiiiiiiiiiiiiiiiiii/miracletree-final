@@ -1,6 +1,11 @@
 import { cn } from "@/lib/utils";
 import { SplitText } from "@/components/motion/SplitText";
-export function Container({ children, className, size = "default", as: Tag = "div" }) {
+export function Container({
+  children,
+  className,
+  size = "default",
+  as: Tag = "div",
+}) {
   const sizes = {
     narrow: "max-w-3xl",
     default: "max-w-[88rem]",
@@ -9,7 +14,9 @@ export function Container({ children, className, size = "default", as: Tag = "di
   };
   const El = Tag;
   return (
-    <El className={cn("mx-auto w-full gutter", sizes[size], className)}>{children}</El>
+    <El className={cn("mx-auto w-full gutter", sizes[size], className)}>
+      {children}
+    </El>
   );
 }
 export function Section({
@@ -35,7 +42,11 @@ export function Section({
   };
   const El = Tag;
   return (
-    <El id={id} className={cn(tones[tone], spacings[spacing], className)} {...rest}>
+    <El
+      id={id}
+      className={cn(tones[tone], spacings[spacing], className)}
+      {...rest}
+    >
       {children}
     </El>
   );
@@ -44,7 +55,13 @@ export function Section({
  * The recurring section header: numbered eyebrow, display title, lede.
  * Numbering reinforces the homepage's chapter structure.
  */
-export function SectionHeading({ title, lede, align = "left", className, children }) {
+export function SectionHeading({
+  title,
+  lede,
+  align = "left",
+  className,
+  children,
+}) {
   return (
     <div
       className={cn(
@@ -83,5 +100,10 @@ export function SectionHeading({ title, lede, align = "left", className, childre
 }
 /** A hairline rule that only exists to give a section a top edge. */
 export function Rule({ className }) {
-  return <div className={cn("h-px w-full bg-border-subtle", className)} aria-hidden />;
+  return (
+    <div
+      className={cn("h-px w-full bg-border-subtle", className)}
+      aria-hidden
+    />
+  );
 }

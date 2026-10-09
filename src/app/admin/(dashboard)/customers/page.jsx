@@ -102,7 +102,8 @@ export default async function AdminCustomersPage({ searchParams }) {
                 0,
               );
               const name =
-                [user.firstName, user.lastName].filter(Boolean).join(" ") || "—";
+                [user.firstName, user.lastName].filter(Boolean).join(" ") ||
+                "—";
               return (
                 <Tr key={user.id}>
                   <Td>
@@ -169,7 +170,10 @@ export default async function AdminCustomersPage({ searchParams }) {
       </Card>
 
       {pages > 1 ? (
-        <nav aria-label="Pagination" className="mt-6 flex items-center justify-between">
+        <nav
+          aria-label="Pagination"
+          className="mt-6 flex items-center justify-between"
+        >
           <p className="text-xs tabular-nums text-cream-400">
             Page {page} of {pages}
           </p>

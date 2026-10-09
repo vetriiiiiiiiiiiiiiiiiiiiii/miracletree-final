@@ -2,7 +2,10 @@ import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth";
 import { PageHeader } from "@/components/admin/ui";
 import { RecordManager } from "@/components/admin/RecordManager";
-import { deleteIngredientAction, saveIngredientAction } from "@/app/actions/admin/content";
+import {
+  deleteIngredientAction,
+  saveIngredientAction,
+} from "@/app/actions/admin/content";
 import { truncate } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -52,7 +55,10 @@ export default async function AdminIngredientsPage() {
       <PageHeader
         title="Ingredients"
         description="The base ingredients that can be mapped to products. These appear in the 'From the tree' section."
-        breadcrumb={[{ label: "Content", href: "/admin/content" }, { label: "Ingredients" }]}
+        breadcrumb={[
+          { label: "Content", href: "/admin/content" },
+          { label: "Ingredients" },
+        ]}
       />
 
       <RecordManager
@@ -68,9 +74,7 @@ export default async function AdminIngredientsPage() {
           id: ing.id,
           title: ing.name,
           subtitle: truncate(ing.description ?? "No description", 160),
-          badges: [
-            { label: `${ing._count.products} products`, tone: "info" },
-          ],
+          badges: [{ label: `${ing._count.products} products`, tone: "info" }],
           values: {
             name: ing.name,
             origin: ing.origin ?? "",

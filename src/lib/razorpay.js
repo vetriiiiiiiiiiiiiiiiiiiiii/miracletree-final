@@ -12,10 +12,16 @@ import { createHmac, timingSafeEqual } from "node:crypto";
  * signature before an order is marked paid.
  */
 export function isRazorpayConfigured() {
-  return Boolean(process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET);
+  return Boolean(
+    process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET,
+  );
 }
 export function razorpayPublicKey() {
-  return process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY_ID || null;
+  return (
+    process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID ||
+    process.env.RAZORPAY_KEY_ID ||
+    null
+  );
 }
 export async function createRazorpayOrder(input) {
   if (!isRazorpayConfigured()) {
@@ -42,7 +48,9 @@ export async function createRazorpayOrder(input) {
   });
   if (!response.ok) {
     const detail = await response.text();
-    throw new Error(`Razorpay order creation failed (${response.status}): ${detail}`);
+    throw new Error(
+      `Razorpay order creation failed (${response.status}): ${detail}`,
+    );
   }
   return await response.json();
 }

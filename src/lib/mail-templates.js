@@ -137,7 +137,9 @@ ${SITE.legalName} · ${SITE.phone} · ${SITE.phoneHours}`;
 }
 /** The operational copy, so someone actually packs it. */
 export function newOrderAlert(order, to) {
-  const lines = order.items.map((i) => `  ${i.name} × ${i.quantity}`).join("\n");
+  const lines = order.items
+    .map((i) => `  ${i.name} × ${i.quantity}`)
+    .join("\n");
   return {
     to,
     subject: `New order ${order.orderNumber} — ${formatPrice(order.grandTotal)}`,
@@ -195,7 +197,9 @@ ${SITE.legalName} · ${SITE.phone}`,
 }
 /** The one email whose absence makes a feature non-functional. */
 export function passwordReset(input) {
-  const url = siteUrl(`/reset-password?token=${encodeURIComponent(input.token)}`);
+  const url = siteUrl(
+    `/reset-password?token=${encodeURIComponent(input.token)}`,
+  );
   return {
     to: input.email,
     subject: `Reset your ${SITE.name} password`,
@@ -230,7 +234,7 @@ ${SITE.legalName} · ${SITE.phone}`,
 export function welcomeEmail(input) {
   const accountUrl = siteUrl("/account");
   const shopUrl = siteUrl("/shop");
-  
+
   return {
     to: input.email,
     subject: `Welcome to ${SITE.name}!`,
@@ -247,7 +251,7 @@ export function welcomeEmail(input) {
        <p style="margin:0 0 18px;font-size:15px;line-height:1.6;">
          You can manage your saved addresses, track your orders, and update your details at any time from your account page.
        </p>
-       ${button(accountUrl, "View your account")}`
+       ${button(accountUrl, "View your account")}`,
     ),
   };
 }
@@ -268,9 +272,9 @@ export function lowStockAlert(input) {
        <p style="margin:0 0 18px;font-family:Georgia,serif;font-size:20px;">${escape(input.name)}</p>
        
        <p style="margin:0 0 8px;font-size:13px;color:${MUTED};">Current available stock</p>
-       <p style="margin:0 0 26px;font-family:Georgia,serif;font-size:20px;color:${input.stock <= 0 ? '#b0322c' : INK};">${escape(input.stock.toString())}</p>
+       <p style="margin:0 0 26px;font-family:Georgia,serif;font-size:20px;color:${input.stock <= 0 ? "#b0322c" : INK};">${escape(input.stock.toString())}</p>
        
-       ${button(inventoryUrl, "Manage inventory")}`
+       ${button(inventoryUrl, "Manage inventory")}`,
     ),
   };
 }
@@ -289,7 +293,7 @@ export function paymentFailedAlert(input) {
        <p style="margin:0 0 8px;font-size:13px;color:${MUTED};">Reason</p>
        <p style="margin:0 0 18px;font-size:15px;line-height:1.6;">${escape(input.reason)}</p>
        <p style="margin:0 0 8px;font-size:13px;color:${MUTED};">Razorpay Order ID</p>
-       <p style="margin:0 0 18px;font-size:15px;line-height:1.6;">${escape(input.razorpayOrderId)}</p>`
+       <p style="margin:0 0 18px;font-size:15px;line-height:1.6;">${escape(input.razorpayOrderId)}</p>`,
     ),
   };
 }

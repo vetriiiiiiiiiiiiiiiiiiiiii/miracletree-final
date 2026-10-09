@@ -1,6 +1,10 @@
 import { breadcrumbSchema, buildMetadata } from "@/lib/seo";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { Container, Section, SectionHeading } from "@/components/layout/Section";
+import {
+  Container,
+  Section,
+  SectionHeading,
+} from "@/components/layout/Section";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { LinkButton } from "@/components/ui/Button";
 import { Reveal } from "@/components/motion/Reveal";
@@ -40,9 +44,9 @@ export default function GalleryPage() {
               Fifteen years, photographed
             </h1>
             <p className="mt-6 text-[1.05rem] leading-relaxed text-cream-300">
-              Award ceremonies, agricultural officials and researchers who have visited
-              the farm and the factory, trade stands, and the premises at Madurai where
-              the range is made.
+              Award ceremonies, agricultural officials and researchers who have
+              visited the farm and the factory, trade stands, and the premises
+              at Madurai where the range is made.
             </p>
           </Reveal>
 
@@ -81,10 +85,12 @@ export default function GalleryPage() {
       <Section tone="forest" spacing="tight">
         <Container className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
           <div>
-            <h2 className="text-title text-cream-50">The record behind the pictures</h2>
+            <h2 className="text-title text-cream-50">
+              The record behind the pictures
+            </h2>
             <p className="mt-4 max-w-[48ch] text-cream-300">
-              The timeline, the certifications and their numbers, and the people who
-              built it.
+              The timeline, the certifications and their numbers, and the people
+              who built it.
             </p>
           </div>
           <div className="flex flex-wrap gap-4">

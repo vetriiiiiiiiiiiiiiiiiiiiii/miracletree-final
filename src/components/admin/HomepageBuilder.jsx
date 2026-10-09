@@ -53,7 +53,10 @@ export function HomepageBuilder({ sections }) {
     <ol className="grid gap-3">
       {order.map((section, index) => (
         <li key={section.key}>
-          <Card padded={false} className={cn(!section.isActive && "opacity-60")}>
+          <Card
+            padded={false}
+            className={cn(!section.isActive && "opacity-60")}
+          >
             <div className="flex flex-wrap items-center gap-4 px-5 py-4">
               {/* Reorder */}
               <div className="flex flex-col gap-0.5">
@@ -64,7 +67,13 @@ export function HomepageBuilder({ sections }) {
                   aria-label={`Move ${section.label} up`}
                   className="grid h-5 w-5 place-items-center text-cream-400 transition-colors hover:text-cream-50 disabled:opacity-25"
                 >
-                  <svg width="9" height="9" viewBox="0 0 10 10" fill="none" aria-hidden>
+                  <svg
+                    width="9"
+                    height="9"
+                    viewBox="0 0 10 10"
+                    fill="none"
+                    aria-hidden
+                  >
                     <path
                       d="M1 6.5L5 2.5l4 4"
                       stroke="currentColor"
@@ -79,7 +88,13 @@ export function HomepageBuilder({ sections }) {
                   aria-label={`Move ${section.label} down`}
                   className="grid h-5 w-5 place-items-center text-cream-400 transition-colors hover:text-cream-50 disabled:opacity-25"
                 >
-                  <svg width="9" height="9" viewBox="0 0 10 10" fill="none" aria-hidden>
+                  <svg
+                    width="9"
+                    height="9"
+                    viewBox="0 0 10 10"
+                    fill="none"
+                    aria-hidden
+                  >
                     <path
                       d="M1 3.5L5 7.5l4-4"
                       stroke="currentColor"
@@ -91,7 +106,9 @@ export function HomepageBuilder({ sections }) {
 
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2.5">
-                  <h2 className="text-[0.95rem] text-cream-50">{section.label}</h2>
+                  <h2 className="text-[0.95rem] text-cream-50">
+                    {section.label}
+                  </h2>
                   {!section.isActive ? <Pill>Hidden</Pill> : null}
                 </div>
                 <p className="mt-1 truncate text-xs text-cream-400">
@@ -129,7 +146,9 @@ export function HomepageBuilder({ sections }) {
 
               <button
                 type="button"
-                onClick={() => setOpen(open === section.key ? null : section.key)}
+                onClick={() =>
+                  setOpen(open === section.key ? null : section.key)
+                }
                 aria-expanded={open === section.key}
                 className="shrink-0 border border-border-strong px-4 py-2 text-[0.64rem] uppercase tracking-[0.12em] text-cream-200 transition-colors hover:border-cream-100"
               >
@@ -153,7 +172,10 @@ function SectionForm({ section, onSaved }) {
   }, [state, onSaved]);
   const errors = state.status === "error" ? (state.errors ?? {}) : {};
   return (
-    <form action={action} className="grid gap-5 border-t border-border-subtle p-5">
+    <form
+      action={action}
+      className="grid gap-5 border-t border-border-subtle p-5"
+    >
       <input type="hidden" name="key" value={section.key} />
       <input type="hidden" name="position" value={section.position} />
       <input
@@ -164,12 +186,19 @@ function SectionForm({ section, onSaved }) {
 
       <p className="text-xs leading-relaxed text-cream-400">{section.hint}</p>
 
-      {state.status === "error" ? <FormMessage>{state.message}</FormMessage> : null}
+      {state.status === "error" ? (
+        <FormMessage>{state.message}</FormMessage>
+      ) : null}
       {state.status === "success" ? (
         <FormMessage tone="success">{state.message}</FormMessage>
       ) : null}
 
-      <Input label="Title" name="title" defaultValue={section.title} maxLength={200} />
+      <Input
+        label="Title"
+        name="title"
+        defaultValue={section.title}
+        maxLength={200}
+      />
 
       <Textarea
         label="Subtitle"
@@ -180,7 +209,11 @@ function SectionForm({ section, onSaved }) {
       />
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <Input label="Button label" name="ctaLabel" defaultValue={section.ctaLabel} />
+        <Input
+          label="Button label"
+          name="ctaLabel"
+          defaultValue={section.ctaLabel}
+        />
         <Input
           label="Button link"
           name="ctaHref"

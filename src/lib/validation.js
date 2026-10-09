@@ -27,7 +27,10 @@ export const passwordSchema = z
 export const phoneSchema = z
   .string()
   .trim()
-  .regex(/^(\+?91[-\s]?)?[6-9]\d{9}$/, "Enter a valid 10-digit Indian mobile number.");
+  .regex(
+    /^(\+?91[-\s]?)?[6-9]\d{9}$/,
+    "Enter a valid 10-digit Indian mobile number.",
+  );
 export const postalCodeSchema = z
   .string()
   .trim()
@@ -147,13 +150,23 @@ export const adminProductSchema = z.object({
     .regex(/^[a-z0-9-]+$/, "Use lowercase letters, numbers and hyphens only."),
   sku: z.string().trim().max(60).optional().or(z.literal("")),
   productType: z.string().trim().max(40).optional().or(z.literal("")),
-  categoryId: z.string().regex(/^[0-9a-fA-F]{24}$/).optional().nullable().or(z.literal("")),
+  categoryId: z
+    .string()
+    .regex(/^[0-9a-fA-F]{24}$/)
+    .optional()
+    .nullable()
+    .or(z.literal("")),
   shortDescription: z.string().trim().max(400).optional().or(z.literal("")),
   description: z.string().max(20000).optional().or(z.literal("")),
   story: z.string().max(8000).optional().or(z.literal("")),
   /** Rupees in the form; converted to paise before it reaches the database. */
   price: z.coerce.number().min(0).max(10_000_000),
-  compareAtPrice: z.coerce.number().min(0).max(10_000_000).optional().nullable(),
+  compareAtPrice: z.coerce
+    .number()
+    .min(0)
+    .max(10_000_000)
+    .optional()
+    .nullable(),
   taxRatePct: z.coerce.number().int().min(0).max(50).default(0),
   weightGrams: optionalInt,
   dimensions: z.string().trim().max(60).optional().or(z.literal("")),
@@ -168,14 +181,22 @@ export const adminProductSchema = z.object({
   seoTitle: z.string().trim().max(70).optional().or(z.literal("")),
   seoDescription: z.string().trim().max(180).optional().or(z.literal("")),
   seoKeywords: z.string().trim().max(300).optional().or(z.literal("")),
-  ogImageUrl: z.string().trim().max(500).optional().or(z.literal("")),
+  position: z.coerce.number().int().min(0).max(9999).default(9999),
 });
 export const adminVariantSchema = z.object({
-  id: z.string().regex(/^[0-9a-fA-F]{24}$/).optional(),
+  id: z
+    .string()
+    .regex(/^[0-9a-fA-F]{24}$/)
+    .optional(),
   name: z.string().trim().min(1, "Variant name is required.").max(80),
   sku: z.string().trim().max(60).optional().or(z.literal("")),
   price: z.coerce.number().min(0).max(10_000_000),
-  compareAtPrice: z.coerce.number().min(0).max(10_000_000).optional().nullable(),
+  compareAtPrice: z.coerce
+    .number()
+    .min(0)
+    .max(10_000_000)
+    .optional()
+    .nullable(),
   weightGrams: optionalInt,
   imageUrl: z.string().trim().max(500).optional().or(z.literal("")),
   isActive: z.boolean().default(true),
@@ -206,7 +227,10 @@ export const adminPaymentStatusSchema = z.object({
  * price, a quantity or a discount — all three are derived on the server.
  */
 export const ritualSchema = z.object({
-  variantIds: z.array(z.string().regex(/^[0-9a-fA-F]{24}$/)).min(1).max(8),
+  variantIds: z
+    .array(z.string().regex(/^[0-9a-fA-F]{24}$/))
+    .min(1)
+    .max(8),
 });
 export const adminMilestoneSchema = z.object({
   year: z.string().trim().min(1, "Give the year.").max(24),
@@ -245,7 +269,13 @@ export const adminCreditSchema = z.object({
   role: z.string().trim().min(1, "Give a role.").max(160),
   body: z.string().trim().max(2000).optional().or(z.literal("")),
   group: z.enum(["team", "partner", "grower", "design"]).default("team"),
-  url: z.string().trim().url("Enter a full URL.").max(500).optional().or(z.literal("")),
+  url: z
+    .string()
+    .trim()
+    .url("Enter a full URL.")
+    .max(500)
+    .optional()
+    .or(z.literal("")),
   position: z.coerce.number().int().min(0).max(9999).default(0),
   isActive: z.boolean().default(true),
 });
@@ -277,7 +307,9 @@ export const adminLeaderSchema = z.object({
 /** One dated line on a leader's record. */
 export const adminLeaderHighlightSchema = z.object({
   leaderId: z.string().trim().min(1, "Pick who this belongs to."),
-  kind: z.enum(["award", "patent", "role", "recognition"]).default("recognition"),
+  kind: z
+    .enum(["award", "patent", "role", "recognition"])
+    .default("recognition"),
   year: z.string().trim().max(24).optional().or(z.literal("")),
   title: z.string().trim().min(1, "Give it a title.").max(200),
   body: z.string().trim().max(2000).optional().or(z.literal("")),
@@ -296,7 +328,9 @@ export const adminCouponSchema = z.object({
   value: z.coerce.number().min(0).max(1_000_000),
   minSubtotal: z.coerce.number().min(0).max(10_000_000).default(0),
   maxDiscount: z.coerce.number().min(0).max(10_000_000).optional().nullable(),
-  appliesTo: z.enum(["all", "product", "category", "first_order"]).default("all"),
+  appliesTo: z
+    .enum(["all", "product", "category", "first_order"])
+    .default("all"),
   appliesToIds: z.string().trim().max(2000).optional().or(z.literal("")),
   usageLimit: optionalInt,
   perUserLimit: optionalInt,
@@ -308,7 +342,12 @@ export const adminFaqSchema = z.object({
   question: z.string().trim().min(4).max(300),
   answer: z.string().trim().min(4).max(4000),
   category: z.enum(FAQ_CATEGORIES),
-  productId: z.string().regex(/^[0-9a-fA-F]{24}$/).optional().nullable().or(z.literal("")),
+  productId: z
+    .string()
+    .regex(/^[0-9a-fA-F]{24}$/)
+    .optional()
+    .nullable()
+    .or(z.literal("")),
   position: z.coerce.number().int().min(0).max(999).default(0),
   isActive: z.boolean().default(true),
 });
@@ -324,7 +363,12 @@ export const adminArticleSchema = z.object({
   content: z.string().min(20, "Write the article body."),
   heroImageUrl: z.string().trim().max(500).optional().or(z.literal("")),
   authorName: z.string().trim().max(80).default("Miracle Tree"),
-  categoryId: z.string().regex(/^[0-9a-fA-F]{24}$/).optional().nullable().or(z.literal("")),
+  categoryId: z
+    .string()
+    .regex(/^[0-9a-fA-F]{24}$/)
+    .optional()
+    .nullable()
+    .or(z.literal("")),
   tags: z.string().trim().max(300).optional().or(z.literal("")),
   status: z.enum(["draft", "published"]),
   seoTitle: z.string().trim().max(70).optional().or(z.literal("")),
@@ -389,7 +433,10 @@ export const adminReviewModerationSchema = z.object({
   isFeatured: z.boolean().optional(),
   isVerified: z.boolean().optional(),
 });
-export const adminSettingsSchema = z.record(z.string().max(80), z.string().max(2000));
+export const adminSettingsSchema = z.record(
+  z.string().max(80),
+  z.string().max(2000),
+);
 // ---------------------------------------------------------------- shop query
 export const shopQuerySchema = z.object({
   q: z.string().trim().max(120).optional(),

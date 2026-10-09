@@ -64,7 +64,10 @@ export function SplitText({
             aria-hidden
             // `inline-block` on the clip box would break the baseline of a
             // wrapped heading, so the clip is only applied while animating.
-            className={cn("inline-block", armed && "overflow-hidden align-bottom")}
+            className={cn(
+              "inline-block",
+              armed && "overflow-hidden align-bottom",
+            )}
           >
             <span
               className="inline-block"

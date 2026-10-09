@@ -14,8 +14,8 @@ export function Footer({ shop, company, support }) {
               Field notes from the tree.
             </h2>
             <p className="mt-5 max-w-[46ch] text-cream-300">
-              Harvest updates, growing notes and the occasional recipe. Roughly once a
-              month, never more.
+              Harvest updates, growing notes and the occasional recipe. Roughly
+              once a month, never more.
             </p>
           </div>
           <div className="lg:pt-4">
@@ -28,15 +28,16 @@ export function Footer({ shop, company, support }) {
           <div className="max-w-sm">
             <Logo className="h-9 w-auto" />
             <p className="mt-6 text-sm leading-relaxed text-cream-400">
-              {SITE.legalName} has worked with moringa growers around Madurai for more
-              than twenty years. Leaf, pod, flower, seed and gum — one tree, grown and
-              processed close to where it stands.
+              {SITE.legalName} has worked with moringa growers around Madurai
+              for more than twenty years. Leaf, pod, flower, seed and gum — one
+              tree, grown and processed close to where it stands.
             </p>
 
             <address className="mt-6 not-italic text-sm leading-relaxed text-cream-400">
               {SITE.address.line1}, {SITE.address.line2}
               <br />
-              {SITE.address.city}, {SITE.address.state} {SITE.address.postalCode}
+              {SITE.address.city}, {SITE.address.state}{" "}
+              {SITE.address.postalCode}
             </address>
 
             <div className="mt-5 grid gap-1 text-sm">
@@ -73,7 +74,8 @@ export function Footer({ shop, company, support }) {
         <div className="flex flex-col gap-6 border-t border-border-subtle py-8 md:flex-row md:items-center md:justify-between">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
             <p className="text-xs text-cream-400">
-              © {new Date().getFullYear()} {SITE.legalName}. All rights reserved.
+              © {new Date().getFullYear()} {SITE.legalName}. All rights
+              reserved.
             </p>
 
             {/* Build credit. `noopener` because the tab it opens would
@@ -101,7 +103,13 @@ export function Footer({ shop, company, support }) {
               <SocialLink href={SITE.social.instagram} label="Instagram">
                 <path d="M5 2h10a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3z" />
                 <circle cx="10" cy="10" r="3.4" />
-                <circle cx="14.8" cy="5.2" r="0.9" fill="currentColor" stroke="none" />
+                <circle
+                  cx="14.8"
+                  cy="5.2"
+                  r="0.9"
+                  fill="currentColor"
+                  stroke="none"
+                />
               </SocialLink>
               <SocialLink href={SITE.social.facebook} label="Facebook">
                 <path d="M11.5 18v-7h2.3l.4-2.7h-2.7V6.6c0-.8.2-1.3 1.4-1.3h1.4V2.9c-.3 0-1.1-.1-2-.1-2 0-3.4 1.2-3.4 3.5v2H6.6V11h2.3v7h2.6z" />

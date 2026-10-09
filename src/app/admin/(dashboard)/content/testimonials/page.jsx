@@ -10,7 +10,13 @@ import {
 import { truncate } from "@/lib/utils";
 export const dynamic = "force-dynamic";
 const FIELDS = [
-  { name: "authorName", label: "Name", type: "text", required: true, half: true },
+  {
+    name: "authorName",
+    label: "Name",
+    type: "text",
+    required: true,
+    half: true,
+  },
   {
     name: "location",
     label: "Location",
@@ -50,8 +56,9 @@ export default async function AdminTestimonialsPage() {
 
       <Card className="mb-6">
         <p className="text-sm leading-relaxed text-cream-300">
-          Testimonials should be real statements from real customers, used with their
-          permission. Product reviews submitted through the site are managed under{" "}
+          Testimonials should be real statements from real customers, used with
+          their permission. Product reviews submitted through the site are
+          managed under{" "}
           <Link
             href="/admin/reviews"
             className="underline underline-offset-4 hover:text-cream-50"

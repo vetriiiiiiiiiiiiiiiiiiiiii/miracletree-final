@@ -154,7 +154,7 @@ model Product {
   seoKeywords    String?
   ogImageUrl     String?
 
-  position    Int       @default(0)
+  position    Int       @default(9999)
   publishedAt DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt

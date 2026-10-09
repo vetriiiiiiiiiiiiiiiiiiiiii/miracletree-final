@@ -1,4 +1,8 @@
-import { Container, Section, SectionHeading } from "@/components/layout/Section";
+import {
+  Container,
+  Section,
+  SectionHeading,
+} from "@/components/layout/Section";
 import { Floating } from "@/components/motion/Floating";
 import { Reveal } from "@/components/motion/Reveal";
 import { COUNTRIES_REACHED, MARKETS, PROJECTS } from "@/lib/export-markets";
@@ -44,8 +48,8 @@ export function ExportReach() {
         {/* The count is larger than the list, and says so rather than being
             quietly padded out to match. */}
         <p className="mt-6 text-[0.85rem] text-cream-400">
-          {COUNTRIES_REACHED} countries reached in total; these nine are the ones
-          recorded by name.
+          {COUNTRIES_REACHED} countries reached in total; these nine are the
+          ones recorded by name.
         </p>
 
         <div className="mt-16 grid gap-4 lg:grid-cols-2">

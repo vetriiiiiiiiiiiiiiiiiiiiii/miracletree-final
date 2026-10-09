@@ -6,7 +6,12 @@ import { cn } from "@/lib/utils";
  * the open/close animation is smooth without a layout-thrashing keyframe.
  * Buttons carry aria-expanded/aria-controls, so it works from the keyboard.
  */
-export function Accordion({ items, allowMultiple = false, defaultOpen, className }) {
+export function Accordion({
+  items,
+  allowMultiple = false,
+  defaultOpen,
+  className,
+}) {
   const [open, setOpen] = useState(defaultOpen ?? []);
   const toggle = (id) => {
     setOpen((current) => {
@@ -75,7 +80,9 @@ function AccordionRow({ question, answer, meta, isOpen, onToggle }) {
       >
         <div ref={contentRef} className="pb-7 pr-10">
           <div className="prose-botanical text-[0.95rem]">{answer}</div>
-          {meta ? <div className="mt-3 text-xs text-cream-400">{meta}</div> : null}
+          {meta ? (
+            <div className="mt-3 text-xs text-cream-400">{meta}</div>
+          ) : null}
         </div>
       </div>
     </div>

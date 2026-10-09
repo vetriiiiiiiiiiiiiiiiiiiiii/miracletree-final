@@ -61,8 +61,9 @@ export default async function CheckoutPage() {
     for (const order of pastOrders) {
       const exists = addresses.some(
         (a) =>
-          a.line1.toLowerCase().trim() === order.shippingLine1.toLowerCase().trim() &&
-          a.postalCode === order.shippingPostalCode
+          a.line1.toLowerCase().trim() ===
+            order.shippingLine1.toLowerCase().trim() &&
+          a.postalCode === order.shippingPostalCode,
       );
       if (!exists && addresses.length < 4) {
         const parts = order.shippingName.trim().split(" ");
@@ -114,7 +115,10 @@ export default async function CheckoutPage() {
         <CheckoutForm
           defaultEmail={user?.email ?? ""}
           defaultPhone={user?.phone ?? ""}
-          defaultName={{ first: user?.firstName ?? "", last: user?.lastName ?? "" }}
+          defaultName={{
+            first: user?.firstName ?? "",
+            last: user?.lastName ?? "",
+          }}
           addresses={addresses}
           razorpayAvailable={isRazorpayConfigured()}
           codAvailable={settings.get("checkout.codEnabled") !== "false"}

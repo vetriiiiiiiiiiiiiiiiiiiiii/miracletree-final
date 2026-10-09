@@ -59,6 +59,11 @@ export function WishlistGrid({ items }) {
                   fill
                   sizes="(max-width: 640px) 90vw, 30vw"
                   className="object-contain p-6 transition-transform duration-700 ease-[var(--ease-organic)] group-hover:scale-105"
+                  unoptimized={
+                    typeof item.image === "string"
+                      ? item.image.startsWith("/uploads/")
+                      : undefined
+                  }
                 />
               ) : null}
 

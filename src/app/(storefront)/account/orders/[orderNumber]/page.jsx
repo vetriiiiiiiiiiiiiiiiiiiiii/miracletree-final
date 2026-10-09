@@ -55,9 +55,12 @@ export default async function OrderDetailPage({ params }) {
 
       <div className="mt-6 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h2 className="text-title tabular-nums text-cream-50">{order.orderNumber}</h2>
+          <h2 className="text-title tabular-nums text-cream-50">
+            {order.orderNumber}
+          </h2>
           <p className="mt-2 text-sm text-cream-400">
-            Placed {formatDate(order.placedAt, { hour: "numeric", minute: "2-digit" })}
+            Placed{" "}
+            {formatDate(order.placedAt, { hour: "numeric", minute: "2-digit" })}
           </p>
         </div>
         <OrderStatusPill status={status} />
@@ -94,15 +97,17 @@ export default async function OrderDetailPage({ params }) {
         </ol>
       ) : (
         <p className="mt-10 border border-danger/30 bg-danger/8 px-5 py-4 text-sm text-[#e8bab7]">
-          This order was {status}. If you were charged, the refund is processed to the
-          original payment method within 5–7 working days.
+          This order was {status}. If you were charged, the refund is processed
+          to the original payment method within 5–7 working days.
         </p>
       )}
 
       {order.trackingNumber ? (
         <div className="mt-8 border border-gold-400/30 bg-gold-400/5 p-5">
           <p className="eyebrow text-gold-400">Tracking</p>
-          <p className="mt-2 tabular-nums text-cream-50">{order.trackingNumber}</p>
+          <p className="mt-2 tabular-nums text-cream-50">
+            {order.trackingNumber}
+          </p>
           {order.trackingUrl ? (
             <a
               href={order.trackingUrl}
@@ -129,6 +134,11 @@ export default async function OrderDetailPage({ params }) {
                   fill
                   sizes="64px"
                   className="object-contain p-2"
+                  unoptimized={
+                    typeof item.imageUrl === "string"
+                      ? item.imageUrl.startsWith("/uploads/")
+                      : undefined
+                  }
                 />
               ) : null}
             </div>
@@ -155,7 +165,11 @@ export default async function OrderDetailPage({ params }) {
         ) : null}
         <Row
           label="Shipping"
-          value={order.shippingTotal === 0 ? "Free" : formatPrice(order.shippingTotal)}
+          value={
+            order.shippingTotal === 0
+              ? "Free"
+              : formatPrice(order.shippingTotal)
+          }
         />
         <div className="mt-2 flex items-baseline justify-between border-t border-border-subtle pt-3">
           <dt className="text-cream-100">Total</dt>
@@ -184,7 +198,8 @@ export default async function OrderDetailPage({ params }) {
               </>
             ) : null}
             <br />
-            {order.shippingCity}, {order.shippingState} {order.shippingPostalCode}
+            {order.shippingCity}, {order.shippingState}{" "}
+            {order.shippingPostalCode}
             <br />
             {order.shippingCountry}
             <br />
@@ -201,10 +216,15 @@ export default async function OrderDetailPage({ params }) {
                   {ORDER_STATUS_LABELS[event.status] ?? event.status}
                 </span>
                 {event.message ? (
-                  <span className="block text-xs text-cream-400">{event.message}</span>
+                  <span className="block text-xs text-cream-400">
+                    {event.message}
+                  </span>
                 ) : null}
                 <span className="block text-xs text-cream-400">
-                  {formatDate(event.createdAt, { hour: "numeric", minute: "2-digit" })}
+                  {formatDate(event.createdAt, {
+                    hour: "numeric",
+                    minute: "2-digit",
+                  })}
                 </span>
               </li>
             ))}

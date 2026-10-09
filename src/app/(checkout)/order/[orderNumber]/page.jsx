@@ -53,7 +53,9 @@ export default async function OrderConfirmationPage({ params }) {
 
       <Container className="relative z-10">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="eyebrow mb-6 text-gold-400">Order {order.orderNumber}</p>
+          <p className="eyebrow mb-6 text-gold-400">
+            Order {order.orderNumber}
+          </p>
           <h1
             className="text-hero text-cream-50"
             style={{ fontFamily: "var(--font-display)" }}
@@ -69,11 +71,15 @@ export default async function OrderConfirmationPage({ params }) {
           <dl className="mx-auto mt-10 grid max-w-md grid-cols-2 gap-x-8 gap-y-5 border-y border-border-subtle py-7 text-left text-sm">
             <div>
               <dt className="eyebrow text-cream-400">Order</dt>
-              <dd className="mt-1.5 tabular-nums text-cream-50">{order.orderNumber}</dd>
+              <dd className="mt-1.5 tabular-nums text-cream-50">
+                {order.orderNumber}
+              </dd>
             </div>
             <div>
               <dt className="eyebrow text-cream-400">Placed</dt>
-              <dd className="mt-1.5 text-cream-50">{formatDate(order.placedAt)}</dd>
+              <dd className="mt-1.5 text-cream-50">
+                {formatDate(order.placedAt)}
+              </dd>
             </div>
             <div>
               <dt className="eyebrow text-cream-400">Status</dt>
@@ -105,6 +111,11 @@ export default async function OrderConfirmationPage({ params }) {
                       fill
                       sizes="64px"
                       className="object-contain p-2"
+                      unoptimized={
+                        typeof item.imageUrl === "string"
+                          ? item.imageUrl.startsWith("/uploads/")
+                          : undefined
+                      }
                     />
                   ) : null}
                 </div>
@@ -132,7 +143,9 @@ export default async function OrderConfirmationPage({ params }) {
             <Row
               label="Shipping"
               value={
-                order.shippingTotal === 0 ? "Free" : formatPrice(order.shippingTotal)
+                order.shippingTotal === 0
+                  ? "Free"
+                  : formatPrice(order.shippingTotal)
               }
             />
             <div className="mt-2 flex items-baseline justify-between border-t border-border-subtle pt-3">
@@ -158,7 +171,8 @@ export default async function OrderConfirmationPage({ params }) {
                   </>
                 ) : null}
                 <br />
-                {order.shippingCity}, {order.shippingState} {order.shippingPostalCode}
+                {order.shippingCity}, {order.shippingState}{" "}
+                {order.shippingPostalCode}
                 <br />
                 {order.shippingCountry}
                 <br />

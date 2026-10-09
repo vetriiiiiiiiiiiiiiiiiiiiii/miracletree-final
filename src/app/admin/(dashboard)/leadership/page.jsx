@@ -147,7 +147,13 @@ export default async function LeadershipAdminPage() {
       required: true,
       maxLength: 200,
     },
-    { name: "body", label: "Detail", type: "textarea", rows: 3, maxLength: 2000 },
+    {
+      name: "body",
+      label: "Detail",
+      type: "textarea",
+      rows: 3,
+      maxLength: 2000,
+    },
     {
       name: "position",
       label: "Order",
@@ -177,18 +183,18 @@ export default async function LeadershipAdminPage() {
           {founder ? (
             <>
               <strong>{founder.name}</strong> is the featured profile — the full
-              biography, the pull quote and the record all show on the page. Everyone
-              else appears in the grid below it with their short bio.
+              biography, the pull quote and the record all show on the page.
+              Everyone else appears in the grid below it with their short bio.
             </>
           ) : (
             <>
               No profile is marked as the founder yet, so the page will feature
-              whichever profile sorts first. Tick &ldquo;Feature as founder&rdquo; on
-              one of them.
+              whichever profile sorts first. Tick &ldquo;Feature as
+              founder&rdquo; on one of them.
             </>
           )}{" "}
-          Unticking &ldquo;Show on the page&rdquo; hides a profile without deleting it —
-          useful while a claim is being verified.
+          Unticking &ldquo;Show on the page&rdquo; hides a profile without
+          deleting it — useful while a claim is being verified.
         </p>
       </Card>
 

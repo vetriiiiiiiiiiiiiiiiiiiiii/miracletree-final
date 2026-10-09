@@ -26,7 +26,8 @@ import { rupeesToPaise } from "@/lib/money";
  * and policies are database rows, not code.
  */
 function fail(error, fallback) {
-  if (error instanceof AuthError) return { status: "error", message: error.message };
+  if (error instanceof AuthError)
+    return { status: "error", message: error.message };
   console.error("[admin/content]", error);
   return { status: "error", message: fallback };
 }
@@ -124,7 +125,10 @@ export async function reorderSectionsAction(orderedKeys) {
     await requireAdmin();
     await prisma.$transaction(
       orderedKeys.map((key, position) =>
-        prisma.homepageSection.updateMany({ where: { key }, data: { position } }),
+        prisma.homepageSection.updateMany({
+          where: { key },
+          data: { position },
+        }),
       ),
     );
     revalidatePath("/");
@@ -353,7 +357,9 @@ export async function saveArticleAction(_prev, formData) {
         data: {
           ...data,
           publishedAt:
-            input.status === "published" ? (existing?.publishedAt ?? new Date()) : null,
+            input.status === "published"
+              ? (existing?.publishedAt ?? new Date())
+              : null,
         },
       });
     } else {
@@ -578,7 +584,8 @@ export async function moderateReviewAction(input) {
   try {
     const admin = await requireAdmin();
     const parsed = adminReviewModerationSchema.safeParse(input);
-    if (!parsed.success) return { ok: false, error: "Invalid moderation request." };
+    if (!parsed.success)
+      return { ok: false, error: "Invalid moderation request." };
     const review = await prisma.review.update({
       where: { id: parsed.data.reviewId },
       data: {
@@ -654,7 +661,7 @@ export async function createReviewAction(_prev, formData) {
         title,
         body,
         status: "approved",
-        isVerified: true, 
+        isVerified: true,
       },
       select: { id: true, product: { select: { slug: true } } },
     });
@@ -671,7 +678,8 @@ export async function createReviewAction(_prev, formData) {
 
     return { status: "success" };
   } catch (error) {
-    if (error instanceof AuthError) return { status: "error", message: error.message };
+    if (error instanceof AuthError)
+      return { status: "error", message: error.message };
     return { status: "error", message: "Could not create review." };
   }
 }
@@ -739,7 +747,8 @@ export async function saveSettingsAction(_prev, formData) {
       if (!/^[a-zA-Z0-9._-]{2,80}$/.test(key)) continue;
       entries.push([key, value.slice(0, 20000)]);
     }
-    if (!entries.length) return { status: "error", message: "Nothing to save." };
+    if (!entries.length)
+      return { status: "error", message: "Nothing to save." };
     await prisma.$transaction(
       entries.map(([key, value]) =>
         prisma.siteSetting.upsert({
@@ -816,7 +825,7 @@ export async function saveIngredientAction(_prev, formData) {
     if (name.length < 2) {
       return { status: "error", message: "Ingredient name is required." };
     }
-    
+
     const slugValue = slugify(name);
     const id = String(formData.get("id") ?? "");
     const data = {
@@ -826,7 +835,7 @@ export async function saveIngredientAction(_prev, formData) {
       imageUrl: String(formData.get("imageUrl") ?? "").trim() || null,
       origin: String(formData.get("origin") ?? "").trim() || null,
     };
-    
+
     // Check slug collision
     const clash = await prisma.ingredient.findFirst({
       where: { slug: slugValue, ...(id ? { NOT: { id } } : {}) },
@@ -838,10 +847,10 @@ export async function saveIngredientAction(_prev, formData) {
         message: "Another ingredient already uses that name/slug.",
       };
     }
-    
+
     if (id) await prisma.ingredient.update({ where: { id }, data });
     else await prisma.ingredient.create({ data });
-    
+
     revalidatePath("/admin/content/ingredients");
     return { status: "success", message: "Ingredient saved." };
   } catch (error) {
@@ -852,12 +861,17 @@ export async function saveIngredientAction(_prev, formData) {
 export async function deleteIngredientAction(id) {
   try {
     await requireAdmin();
-    
-    const count = await prisma.productIngredient.count({ where: { ingredientId: id } });
+
+    const count = await prisma.productIngredient.count({
+      where: { ingredientId: id },
+    });
     if (count > 0) {
-      return { ok: false, error: "Cannot delete an ingredient that is linked to products." };
+      return {
+        ok: false,
+        error: "Cannot delete an ingredient that is linked to products.",
+      };
     }
-    
+
     await prisma.ingredient.delete({ where: { id } });
     revalidatePath("/admin/content/ingredients");
     return { ok: true };
@@ -866,4 +880,3 @@ export async function deleteIngredientAction(id) {
     return { ok: false, error: "Could not delete that ingredient." };
   }
 }
-

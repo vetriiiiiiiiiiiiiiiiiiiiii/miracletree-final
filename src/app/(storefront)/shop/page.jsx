@@ -7,11 +7,7 @@ import { Pagination } from "@/components/shop/Pagination";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { JsonLd } from "@/components/seo/JsonLd";
-import {
-  getCategories,
-  getIngredients,
-  searchProducts,
-} from "@/lib/queries";
+import { getCategories, getIngredients, searchProducts } from "@/lib/queries";
 import { shopQuerySchema } from "@/lib/validation";
 import { buildFilterGroups, countActiveFilters } from "@/lib/shop";
 import { breadcrumbSchema, buildMetadata, itemListSchema } from "@/lib/seo";
@@ -100,7 +96,9 @@ export default async function ShopPage({ searchParams }) {
                     columns={3}
                     priorityCount={3}
                     className="mt-10"
-                    headingLabel={query.q ? `Results for ${query.q}` : "Products"}
+                    headingLabel={
+                      query.q ? `Results for ${query.q}` : "Products"
+                    }
                   />
 
                   <Pagination
@@ -128,7 +126,9 @@ export default async function ShopPage({ searchParams }) {
                     className="inline-block py-1.5 text-sm text-cream-300 underline-offset-4 hover:text-cream-50 hover:underline"
                   >
                     {category.name}{" "}
-                    <span className="text-cream-400">({category._count.products})</span>
+                    <span className="text-cream-400">
+                      ({category._count.products})
+                    </span>
                   </Link>
                 </li>
               ))}

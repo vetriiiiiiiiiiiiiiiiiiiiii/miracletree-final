@@ -13,11 +13,11 @@ export const metadata = buildMetadata({
 
 export default async function OnboardingPage() {
   const user = await requireUser();
-  
+
   // Fetch full user details from DB to check if they actually need onboarding
   const dbUser = await prisma.user.findUnique({
     where: { id: user.id },
-    select: { firstName: true, lastName: true, phone: true }
+    select: { firstName: true, lastName: true, phone: true },
   });
 
   // If they already have a phone number, they are considered onboarded
@@ -39,7 +39,8 @@ export default async function OnboardingPage() {
             Welcome to Miracle Tree
           </h1>
           <p className="text-cream-400">
-            Let's get to know you better. Please complete your profile to continue.
+            Let's get to know you better. Please complete your profile to
+            continue.
           </p>
         </div>
 

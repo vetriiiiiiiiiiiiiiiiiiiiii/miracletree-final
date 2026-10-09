@@ -6,7 +6,11 @@ import { ensureCart, availableStock } from "@/lib/cart";
 export async function toggleWishlistAction(productId) {
   const user = await getCurrentUser();
   if (!user) {
-    return { ok: false, error: "Sign in to save products.", requiresAuth: true };
+    return {
+      ok: false,
+      error: "Sign in to save products.",
+      requiresAuth: true,
+    };
   }
   const product = await prisma.product.findFirst({
     where: { id: productId, status: "published" },
@@ -48,14 +52,22 @@ export async function moveWishlistItemToCartAction(productId) {
       break;
     }
   }
-  if (!chosen) return { ok: false, error: "Every size is currently out of stock." };
+  if (!chosen)
+    return { ok: false, error: "Every size is currently out of stock." };
   const cart = await ensureCart();
   await prisma.cartItem.upsert({
     where: { cartId_variantId: { cartId: cart.id, variantId: chosen } },
-    create: { cartId: cart.id, productId: product.id, variantId: chosen, quantity: 1 },
+    create: {
+      cartId: cart.id,
+      productId: product.id,
+      variantId: chosen,
+      quantity: 1,
+    },
     update: { quantity: { increment: 1 } },
   });
-  await prisma.wishlistItem.deleteMany({ where: { userId: user.id, productId } });
+  await prisma.wishlistItem.deleteMany({
+    where: { userId: user.id, productId },
+  });
   revalidatePath("/", "layout");
   revalidatePath("/account/wishlist");
   return { ok: true };

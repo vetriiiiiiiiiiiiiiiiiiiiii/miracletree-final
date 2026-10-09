@@ -4,7 +4,10 @@ import { formatPrice } from "@/lib/money";
 import { formatDate } from "@/lib/utils";
 import { PageHeader, Card, StatCard } from "@/components/admin/ui";
 import { RecordManager } from "@/components/admin/RecordManager";
-import { deleteCouponAction, saveCouponAction } from "@/app/actions/admin/content";
+import {
+  deleteCouponAction,
+  saveCouponAction,
+} from "@/app/actions/admin/content";
 export const dynamic = "force-dynamic";
 const FIELDS = [
   {
@@ -72,8 +75,18 @@ const FIELDS = [
     type: "text",
     hint: "Comma separated. Only used for the two 'specific' options above.",
   },
-  { name: "usageLimit", label: "Total uses allowed", type: "number", half: true },
-  { name: "perUserLimit", label: "Uses per customer", type: "number", half: true },
+  {
+    name: "usageLimit",
+    label: "Total uses allowed",
+    type: "number",
+    half: true,
+  },
+  {
+    name: "perUserLimit",
+    label: "Uses per customer",
+    type: "number",
+    half: true,
+  },
   { name: "startsAt", label: "Starts", type: "date", half: true },
   { name: "endsAt", label: "Ends", type: "date", half: true },
   { name: "isActive", label: "Active", type: "checkbox" },
@@ -99,7 +112,10 @@ export default async function AdminPromotionsPage() {
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard label="Codes" value={String(coupons.length)} />
         <StatCard label="Active" value={String(active)} />
-        <StatCard label="Orders with a code" value={String(redeemed._count._all)} />
+        <StatCard
+          label="Orders with a code"
+          value={String(redeemed._count._all)}
+        />
         <StatCard
           label="Discount given"
           value={formatPrice(redeemed._sum.discountTotal ?? 0)}
@@ -109,8 +125,8 @@ export default async function AdminPromotionsPage() {
 
       <Card className="mt-8 mb-6">
         <p className="text-sm leading-relaxed text-cream-300">
-          A code that has already been redeemed is deactivated rather than deleted, so
-          the discount stays attached to the orders that used it.
+          A code that has already been redeemed is deactivated rather than
+          deleted, so the discount stays attached to the orders that used it.
         </p>
       </Card>
 
@@ -132,7 +148,9 @@ export default async function AdminPromotionsPage() {
               : coupon.kind === "fixed"
                 ? `${formatPrice(coupon.value)} off`
                 : "Free shipping",
-            coupon.minSubtotal > 0 ? `over ${formatPrice(coupon.minSubtotal)}` : null,
+            coupon.minSubtotal > 0
+              ? `over ${formatPrice(coupon.minSubtotal)}`
+              : null,
             coupon.endsAt ? `until ${formatDate(coupon.endsAt)}` : null,
           ]
             .filter(Boolean)
@@ -155,15 +173,20 @@ export default async function AdminPromotionsPage() {
             kind: coupon.kind,
             description: coupon.description ?? "",
             // Percentages are stored raw; money is stored in paise.
-            value: coupon.kind === "percentage" ? coupon.value : coupon.value / 100,
+            value:
+              coupon.kind === "percentage" ? coupon.value : coupon.value / 100,
             maxDiscount: coupon.maxDiscount ? coupon.maxDiscount / 100 : "",
             minSubtotal: coupon.minSubtotal / 100,
             appliesTo: coupon.appliesTo,
             appliesToIds: coupon.appliesToIds ?? "",
             usageLimit: coupon.usageLimit ?? "",
             perUserLimit: coupon.perUserLimit ?? "",
-            startsAt: coupon.startsAt ? coupon.startsAt.toISOString().slice(0, 10) : "",
-            endsAt: coupon.endsAt ? coupon.endsAt.toISOString().slice(0, 10) : "",
+            startsAt: coupon.startsAt
+              ? coupon.startsAt.toISOString().slice(0, 10)
+              : "",
+            endsAt: coupon.endsAt
+              ? coupon.endsAt.toISOString().slice(0, 10)
+              : "",
             isActive: coupon.isActive,
           },
         }))}

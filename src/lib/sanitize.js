@@ -93,7 +93,8 @@ function sanitizeAttributes(tag, raw) {
   if (tag === "a") {
     const href = out.find((a) => a.startsWith("href="));
     if (href && /^href="https?:/i.test(href)) {
-      if (!out.some((a) => a.startsWith("target="))) out.push('target="_blank"');
+      if (!out.some((a) => a.startsWith("target=")))
+        out.push('target="_blank"');
       const relIndex = out.findIndex((a) => a.startsWith("rel="));
       if (relIndex >= 0) out.splice(relIndex, 1);
       out.push('rel="noopener noreferrer"');

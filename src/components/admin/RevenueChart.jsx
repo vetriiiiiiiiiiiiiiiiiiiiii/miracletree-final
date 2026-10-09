@@ -22,7 +22,10 @@ export function RevenueChart({ data }) {
       aria-label="Daily revenue over the last 30 days"
     >
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: -8 }}>
+        <AreaChart
+          data={data}
+          margin={{ top: 8, right: 8, bottom: 0, left: -8 }}
+        >
           <defs>
             <linearGradient id="revenue-fill" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#2f9a5f" stopOpacity={0.35} />
@@ -30,7 +33,11 @@ export function RevenueChart({ data }) {
             </linearGradient>
           </defs>
 
-          <CartesianGrid stroke="#ffffff" strokeOpacity={0.06} vertical={false} />
+          <CartesianGrid
+            stroke="#ffffff"
+            strokeOpacity={0.06}
+            vertical={false}
+          />
 
           <XAxis
             dataKey="date"
@@ -73,7 +80,10 @@ export function RevenueChart({ data }) {
                 month: "long",
               })
             }
-            formatter={(value) => [formatPrice(Math.round(value * 100)), "Revenue"]}
+            formatter={(value) => [
+              formatPrice(Math.round(value * 100)),
+              "Revenue",
+            ]}
           />
 
           <Area

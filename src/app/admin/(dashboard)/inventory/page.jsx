@@ -106,10 +106,16 @@ export default async function AdminInventoryPage({ searchParams }) {
         <FilterLink href="/admin/inventory" active={!params.filter}>
           All variants
         </FilterLink>
-        <FilterLink href="/admin/inventory?filter=low" active={params.filter === "low"}>
+        <FilterLink
+          href="/admin/inventory?filter=low"
+          active={params.filter === "low"}
+        >
           Low stock
         </FilterLink>
-        <FilterLink href="/admin/inventory?filter=out" active={params.filter === "out"}>
+        <FilterLink
+          href="/admin/inventory?filter=out"
+          active={params.filter === "out"}
+        >
           Out of stock
         </FilterLink>
       </nav>
@@ -135,7 +141,10 @@ export default async function AdminInventoryPage({ searchParams }) {
                   ? "Nothing is out of stock. "
                   : "No variants yet."}
               {params.filter ? (
-                <Link href="/admin/inventory" className="underline underline-offset-4">
+                <Link
+                  href="/admin/inventory"
+                  className="underline underline-offset-4"
+                >
                   View all
                 </Link>
               ) : null}
@@ -165,7 +174,9 @@ export default async function AdminInventoryPage({ searchParams }) {
                     ) : null}
                   </Td>
 
-                  <Td className="text-xs text-cream-400">{row.variant.sku ?? "—"}</Td>
+                  <Td className="text-xs text-cream-400">
+                    {row.variant.sku ?? "—"}
+                  </Td>
 
                   <Td align="right" className="tabular-nums">
                     {row.trackInventory ? row.onHand : "—"}
@@ -215,7 +226,10 @@ export default async function AdminInventoryPage({ searchParams }) {
                   </Td>
 
                   <Td align="right">
-                    <InventoryRow variantId={row.variant.id} onHand={row.onHand} />
+                    <InventoryRow
+                      variantId={row.variant.id}
+                      onHand={row.onHand}
+                    />
                   </Td>
                 </Tr>
               );

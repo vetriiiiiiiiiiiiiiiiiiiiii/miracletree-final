@@ -14,7 +14,9 @@ import { formatDate } from "@/lib/utils";
 export async function PolicyPage({ slug, title, path, intro, fallback }) {
   const [setting, updated] = await Promise.all([
     prisma.siteSetting.findUnique({ where: { key: `policy.${slug}` } }),
-    prisma.siteSetting.findUnique({ where: { key: `policy.${slug}.updatedAt` } }),
+    prisma.siteSetting.findUnique({
+      where: { key: `policy.${slug}.updatedAt` },
+    }),
   ]);
   const body = sanitizeHtml(setting?.value ?? fallback);
   const crumbs = [

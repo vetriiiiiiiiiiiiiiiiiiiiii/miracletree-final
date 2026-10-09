@@ -86,6 +86,11 @@ export function CartDrawer() {
                       fill
                       sizes="80px"
                       className="object-contain p-2"
+                      unoptimized={
+                        typeof line.imageUrl === "string"
+                          ? line.imageUrl.startsWith("/uploads/")
+                          : undefined
+                      }
                     />
                   ) : null}
                 </Link>
@@ -128,7 +133,8 @@ export function CartDrawer() {
 
                   {line.overStock ? (
                     <p className="mt-1 text-xs text-[#e0a19c]">
-                      Only {line.available} left — quantity will be reduced at checkout.
+                      Only {line.available} left — quantity will be reduced at
+                      checkout.
                     </p>
                   ) : null}
 
@@ -154,7 +160,9 @@ export function CartDrawer() {
               <div className="mb-4 flex items-center justify-between gap-3 border border-emerald-400/30 bg-emerald-500/8 px-3 py-2.5">
                 <span className="text-xs text-leaf-200">
                   <strong className="font-medium">{cart.coupon.code}</strong>
-                  {cart.coupon.description ? ` — ${cart.coupon.description}` : ""}
+                  {cart.coupon.description
+                    ? ` — ${cart.coupon.description}`
+                    : ""}
                 </span>
                 <button
                   type="button"
@@ -176,7 +184,12 @@ export function CartDrawer() {
                   aria-label="Discount code"
                   className="min-w-0 flex-1 border border-border-subtle bg-white/[0.03] px-3 py-2.5 text-sm uppercase tracking-wider text-cream-50 placeholder:normal-case placeholder:tracking-normal placeholder:text-cream-400 focus:border-emerald-400 focus:outline-none"
                 />
-                <Button type="submit" variant="secondary" size="sm" loading={applying}>
+                <Button
+                  type="submit"
+                  variant="secondary"
+                  size="sm"
+                  loading={applying}
+                >
                   Apply
                 </Button>
               </form>

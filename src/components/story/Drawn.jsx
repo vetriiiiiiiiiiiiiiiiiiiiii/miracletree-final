@@ -86,7 +86,10 @@ export function Underlined({ children, className, tone = "ink" }) {
 export function Circled({ children, className }) {
   const ref = useDrawOnScroll();
   return (
-    <span ref={ref} className={cn("relative inline-block px-3 py-1", className)}>
+    <span
+      ref={ref}
+      className={cn("relative inline-block px-3 py-1", className)}
+    >
       {children}
       <svg
         className="absolute inset-0 h-full w-full"
@@ -161,8 +164,16 @@ export function BotanicalPlate({ subject, className, label }) {
         <path data-draw data-draw-delay="160" d="M100 20C97 70 96 130 99 186" />
         <path data-draw data-draw-delay="220" d="M92 34C104 31 112 31 114 33" />
         <path data-draw data-draw-delay="240" d="M90 78C104 75 112 75 115 77" />
-        <path data-draw data-draw-delay="260" d="M89 124C103 121 112 121 115 123" />
-        <path data-draw data-draw-delay="280" d="M91 162C104 159 112 159 114 161" />
+        <path
+          data-draw
+          data-draw-delay="260"
+          d="M89 124C103 121 112 121 115 123"
+        />
+        <path
+          data-draw
+          data-draw-delay="280"
+          d="M91 162C104 159 112 159 114 161"
+        />
         <path data-draw data-draw-delay="320" d="M96 14C99 8 105 8 108 14" />
       </>
     ),
@@ -183,7 +194,11 @@ export function BotanicalPlate({ subject, className, label }) {
           />
         ))}
         <circle data-draw data-draw-delay="460" cx="100" cy="108" r="7" />
-        <path data-draw data-draw-delay="520" d="M100 150C90 144 82 146 76 152" />
+        <path
+          data-draw
+          data-draw-delay="520"
+          d="M100 150C90 144 82 146 76 152"
+        />
       </>
     ),
     // The winged seed the whole story starts from.
@@ -191,9 +206,21 @@ export function BotanicalPlate({ subject, className, label }) {
       <>
         <ellipse data-draw cx="100" cy="112" rx="34" ry="42" />
         <path data-draw data-draw-delay="140" d="M100 70C82 80 72 96 70 116" />
-        <path data-draw data-draw-delay="180" d="M100 70C118 80 128 96 130 116" />
-        <path data-draw data-draw-delay="220" d="M100 154C90 142 86 128 87 114" />
-        <path data-draw data-draw-delay="300" d="M100 70C100 58 100 48 100 40" />
+        <path
+          data-draw
+          data-draw-delay="180"
+          d="M100 70C118 80 128 96 130 116"
+        />
+        <path
+          data-draw
+          data-draw-delay="220"
+          d="M100 154C90 142 86 128 87 114"
+        />
+        <path
+          data-draw
+          data-draw-delay="300"
+          d="M100 70C100 58 100 48 100 40"
+        />
       </>
     ),
   };
@@ -213,7 +240,9 @@ export function BotanicalPlate({ subject, className, label }) {
         {plates[subject]}
       </svg>
       {label ? (
-        <figcaption className="margin-note mt-2 text-center">{label}</figcaption>
+        <figcaption className="margin-note mt-2 text-center">
+          {label}
+        </figcaption>
       ) : null}
     </figure>
   );

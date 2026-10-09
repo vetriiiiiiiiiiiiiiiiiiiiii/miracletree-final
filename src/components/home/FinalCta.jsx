@@ -47,7 +47,9 @@ export function FinalCta({ title, subtitle, ctaLabel, ctaHref }) {
       </div>
 
       <div className="relative z-10 mx-auto max-w-3xl gutter text-center">
-        {subtitle ? <p className="eyebrow mb-8 text-gold-400">{subtitle}</p> : null}
+        {subtitle ? (
+          <p className="eyebrow mb-8 text-gold-400">{subtitle}</p>
+        ) : null}
 
         <h2
           className="text-hero text-cream-50"

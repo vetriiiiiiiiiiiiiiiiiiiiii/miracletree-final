@@ -24,9 +24,13 @@ function ScrollDepth() {
     const thresholds = [25, 50, 75, 100];
     const fired = new Set();
     const onScroll = () => {
-      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollable =
+        document.documentElement.scrollHeight - window.innerHeight;
       if (scrollable <= 0) return;
-      const percent = Math.min(100, Math.round((window.scrollY / scrollable) * 100));
+      const percent = Math.min(
+        100,
+        Math.round((window.scrollY / scrollable) * 100),
+      );
       for (const t of thresholds) {
         if (percent >= t && !fired.has(t)) {
           fired.add(t);

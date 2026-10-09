@@ -28,8 +28,8 @@ export default async function ContactPage({ searchParams }) {
             <p className="eyebrow mb-5 text-gold-400">Contact</p>
             <h1 className="text-display text-cream-50">Talk to us.</h1>
             <p className="mt-5 max-w-[52ch] leading-relaxed text-cream-300">
-              Questions about an order, a product, bulk supply or distribution — a real
-              person reads every message.
+              Questions about an order, a product, bulk supply or distribution —
+              a real person reads every message.
             </p>
           </header>
 
@@ -88,16 +88,20 @@ export default async function ContactPage({ searchParams }) {
                   <br />
                   {SITE.address.line2}
                   <br />
-                  {SITE.address.city}, {SITE.address.state} {SITE.address.postalCode}
+                  {SITE.address.city}, {SITE.address.state}{" "}
+                  {SITE.address.postalCode}
                   <br />
                   {SITE.address.country}
                 </address>
               </section>
 
               <section>
-                <h2 className="eyebrow mb-4 text-gold-400">Bulk &amp; export</h2>
+                <h2 className="eyebrow mb-4 text-gold-400">
+                  Bulk &amp; export
+                </h2>
                 <p className="text-sm leading-relaxed text-cream-400">
-                  Wholesale, private label and export enquiries are handled separately.
+                  Wholesale, private label and export enquiries are handled
+                  separately.
                 </p>
                 <a
                   href={SITE.bulkOrders}

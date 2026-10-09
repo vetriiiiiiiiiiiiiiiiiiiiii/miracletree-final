@@ -45,7 +45,9 @@ export function SmoothScroll() {
   // position; honour it instead.
   useEffect(() => {
     const hash = window.location.hash.slice(1);
-    const target = hash ? document.getElementById(decodeURIComponent(hash)) : null;
+    const target = hash
+      ? document.getElementById(decodeURIComponent(hash))
+      : null;
 
     if (!target) {
       window.scrollTo(0, 0);
@@ -72,7 +74,9 @@ export function SmoothScroll() {
 
     const land = () => {
       if (cancelled) return;
-      document.getElementById(decodeURIComponent(hash))?.scrollIntoView({ block: "start" });
+      document
+        .getElementById(decodeURIComponent(hash))
+        ?.scrollIntoView({ block: "start" });
     };
 
     requestAnimationFrame(() => requestAnimationFrame(land));

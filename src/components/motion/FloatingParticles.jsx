@@ -36,7 +36,9 @@ export function FloatingParticles({ className, density = 0.00004, max = 70 }) {
     // cream, and the toggle would leave them the wrong colour until reload.
     let rgb = "217, 188, 106";
     const readAccent = () => {
-      const hex = getComputedStyle(canvas).getPropertyValue("--mt-gold-400").trim();
+      const hex = getComputedStyle(canvas)
+        .getPropertyValue("--mt-gold-400")
+        .trim();
       const m = /^#?([0-9a-f]{6})$/i.exec(hex);
       if (!m) return;
       const n = parseInt(m[1], 16);
@@ -104,7 +106,8 @@ export function FloatingParticles({ className, density = 0.00004, max = 70 }) {
     resize();
     // Only paint while the canvas is on screen.
     const visible = new IntersectionObserver(
-      ([entry]) => (entry.isIntersecting && !document.hidden ? start() : stop()),
+      ([entry]) =>
+        entry.isIntersecting && !document.hidden ? start() : stop(),
       { threshold: 0 },
     );
     visible.observe(canvas);
@@ -126,7 +129,9 @@ export function FloatingParticles({ className, density = 0.00004, max = 70 }) {
     <canvas
       ref={ref}
       aria-hidden
-      className={className ?? "pointer-events-none absolute inset-0 h-full w-full"}
+      className={
+        className ?? "pointer-events-none absolute inset-0 h-full w-full"
+      }
     />
   );
 }

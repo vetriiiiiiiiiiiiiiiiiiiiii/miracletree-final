@@ -1,5 +1,9 @@
 import Link from "next/link";
-import { Container, Section, SectionHeading } from "@/components/layout/Section";
+import {
+  Container,
+  Section,
+  SectionHeading,
+} from "@/components/layout/Section";
 import { LinkButton } from "@/components/ui/Button";
 import { Reveal } from "@/components/motion/Reveal";
 import { INNOVATIONS } from "@/lib/innovation";

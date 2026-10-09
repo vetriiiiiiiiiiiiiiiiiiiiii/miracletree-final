@@ -47,7 +47,8 @@ export async function submitReviewAction(_prev, formData) {
     where: { id: parsed.data.productId, status: "published" },
     select: { id: true, slug: true },
   });
-  if (!product) return { status: "error", message: "That product is unavailable." };
+  if (!product)
+    return { status: "error", message: "That product is unavailable." };
   if (user) {
     const existing = await prisma.review.findFirst({
       where: { productId: product.id, userId: user.id },
@@ -56,7 +57,8 @@ export async function submitReviewAction(_prev, formData) {
     if (existing) {
       return {
         status: "error",
-        message: "You've already reviewed this product. Contact us to change it.",
+        message:
+          "You've already reviewed this product. Contact us to change it.",
       };
     }
   }

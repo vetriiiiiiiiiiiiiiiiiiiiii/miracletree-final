@@ -12,9 +12,12 @@
  */
 export const MOTTOS = {
   "The Moringa journey begins": "From the farm, the journey began",
-  "Farmer education and knowledge transfer": "Demonstrate → Educate → Transfer → Grow",
-  "ULTCD drying technology": "From moringa farming → to moringa processing technology",
-  "Moringa enters modern functional food": "Moringa leaf → nutritional ingredient → ready-to-eat food",
+  "Farmer education and knowledge transfer":
+    "Demonstrate → Educate → Transfer → Grow",
+  "ULTCD drying technology":
+    "From moringa farming → to moringa processing technology",
+  "Moringa enters modern functional food":
+    "Moringa leaf → nutritional ingredient → ready-to-eat food",
   "Moringa becomes skin food": "From nutrition → to natural personal care",
   "CLHPD processing technology": "ULTCD → CLHPD → premium plant processing",
   "60+ moringa innovations":

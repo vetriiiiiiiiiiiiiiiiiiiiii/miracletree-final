@@ -34,8 +34,14 @@ export function CustomCursor({ hasPhoto = false }) {
     if (!leaf || !sprig) return;
     document.documentElement.setAttribute("data-cursor-mode", "custom");
     const nodes = [leaf, sprig];
-    const setX = gsap.quickTo(nodes, "x", { duration: 0.075, ease: "power3.out" });
-    const setY = gsap.quickTo(nodes, "y", { duration: 0.075, ease: "power3.out" });
+    const setX = gsap.quickTo(nodes, "x", {
+      duration: 0.075,
+      ease: "power3.out",
+    });
+    const setY = gsap.quickTo(nodes, "y", {
+      duration: 0.075,
+      ease: "power3.out",
+    });
     // Sway is a fraction of travel, so a flick tips the leaf and a slow drift
     // barely moves it — the way a leaf behaves on air.
     const setSway = gsap.quickTo(leaf, "rotation", {
@@ -85,7 +91,8 @@ export function CustomCursor({ hasPhoto = false }) {
       if (target.closest("input, textarea, select, [contenteditable='true']")) {
         return "hidden";
       }
-      if (target.closest("a, button, [role='button'], label, summary")) return "link";
+      if (target.closest("a, button, [role='button'], label, summary"))
+        return "link";
       if (target.closest("img, picture, video")) return "image";
       return "default";
     };
@@ -118,7 +125,8 @@ export function CustomCursor({ hasPhoto = false }) {
       visible = false;
       gsap.to(nodes, { opacity: 0, duration: 0.22 });
     };
-    const onDown = () => gsap.to(nodes, { scale: SCALE[state] * 0.84, duration: 0.14 });
+    const onDown = () =>
+      gsap.to(nodes, { scale: SCALE[state] * 0.84, duration: 0.14 });
     const onUp = () => gsap.to(nodes, { scale: SCALE[state], duration: 0.24 });
     window.addEventListener("pointermove", onMove, { passive: true });
     window.addEventListener("pointerover", onOver, { passive: true });

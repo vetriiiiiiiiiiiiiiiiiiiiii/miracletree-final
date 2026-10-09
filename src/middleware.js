@@ -34,7 +34,7 @@ export async function middleware(request) {
     url.searchParams.set("next", `${pathname}${search}`);
     return NextResponse.redirect(url);
   }
-  
+
   return NextResponse.next();
 }
 export const config = {

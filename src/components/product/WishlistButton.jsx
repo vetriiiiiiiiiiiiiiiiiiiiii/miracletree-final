@@ -34,7 +34,9 @@ export function WishlistProvider({ productIds, children }) {
         const result = await toggleWishlistAction(productId);
         if (!result.ok) {
           if (result.requiresAuth) {
-            router.push(`/login?next=${encodeURIComponent(window.location.pathname)}`);
+            router.push(
+              `/login?next=${encodeURIComponent(window.location.pathname)}`,
+            );
           }
           router.refresh();
           return;
@@ -76,7 +78,9 @@ export function WishlistButton({
       type="button"
       onClick={onClick}
       aria-pressed={saved}
-      aria-label={saved ? `Remove ${productName} from saved` : `Save ${productName}`}
+      aria-label={
+        saved ? `Remove ${productName} from saved` : `Save ${productName}`
+      }
       className={cn(
         "relative z-20 inline-flex items-center gap-2 p-2 text-cream-300 transition-colors duration-300",
         "hover:text-gold-300",

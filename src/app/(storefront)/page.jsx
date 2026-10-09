@@ -55,7 +55,8 @@ const FALLBACK_HERO_SLUGS = [
   "moringa-leaf-powder-capsules-60-capsules",
   "moringa-gum-gond-powder-100-grams",
   "moringa-seed-capsule-90-capsules",
-];export const revalidate = 300;
+];
+export const revalidate = 300;
 export async function generateMetadata() {
   const settings = await getSettings();
   const base = buildMetadata({
@@ -109,7 +110,11 @@ export default async function HomePage() {
         slug: true,
         isHeroPack: true,
         images: { select: { url: true }, take: 1 },
-        variants: { select: { price: true }, orderBy: { price: "asc" }, take: 1 },
+        variants: {
+          select: { price: true },
+          orderBy: { price: "asc" },
+          take: 1,
+        },
       },
     }),
     prisma.leader.findFirst({

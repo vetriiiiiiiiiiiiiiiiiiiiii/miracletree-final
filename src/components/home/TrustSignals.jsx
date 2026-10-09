@@ -1,5 +1,9 @@
 import Link from "next/link";
-import { Container, Section, SectionHeading } from "@/components/layout/Section";
+import {
+  Container,
+  Section,
+  SectionHeading,
+} from "@/components/layout/Section";
 import { CertificationMarks } from "@/components/home/CertificationMarks";
 import { Floating } from "@/components/motion/Floating";
 /**
@@ -23,7 +27,9 @@ export function TrustSignals({ accolades }) {
   const certified = accolades.filter((a) =>
     /NPOP|FSSAI|ISO|Manufacturing|HACCP/i.test(a.title),
   );
-  const recognised = accolades.filter((a) => !certified.includes(a)).slice(0, 4);
+  const recognised = accolades
+    .filter((a) => !certified.includes(a))
+    .slice(0, 4);
   if (!certified.length && !recognised.length) return null;
   return (
     <Section id="trust" tone="raised" spacing="default">
@@ -46,7 +52,9 @@ export function TrustSignals({ accolades }) {
                   key={a.title}
                   className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 bg-ink-800 px-5 py-4"
                 >
-                  <span className="text-[0.95rem] text-cream-100">{a.title}</span>
+                  <span className="text-[0.95rem] text-cream-100">
+                    {a.title}
+                  </span>
                   <span className="text-[0.78rem] text-cream-400">
                     {[a.issuer, a.year].filter(Boolean).join(" · ")}
                   </span>
@@ -61,12 +69,17 @@ export function TrustSignals({ accolades }) {
                 </h3>
                 <ul className="mt-5 grid gap-4 sm:grid-cols-2">
                   {recognised.map((a) => (
-                    <li key={a.title} className="border-l-2 border-gold-400/60 pl-4">
+                    <li
+                      key={a.title}
+                      className="border-l-2 border-gold-400/60 pl-4"
+                    >
                       <p className="text-[0.95rem] leading-snug text-cream-100">
                         {a.title}
                       </p>
                       {a.issuer ? (
-                        <p className="mt-1 text-[0.78rem] text-cream-400">{a.issuer}</p>
+                        <p className="mt-1 text-[0.78rem] text-cream-400">
+                          {a.issuer}
+                        </p>
                       ) : null}
                     </li>
                   ))}
@@ -81,13 +94,17 @@ export function TrustSignals({ accolades }) {
                 Who has visited
               </h3>
               <p className="mt-3 text-[0.9rem] leading-relaxed text-cream-300">
-                Agricultural bodies, research institutes and food-technology scientists
-                who have been to the Milakaranai site or met the team.
+                Agricultural bodies, research institutes and food-technology
+                scientists who have been to the Milakaranai site or met the
+                team.
               </p>
 
               <ul className="mt-6 grid gap-4">
                 {VISITORS.map((v) => (
-                  <li key={v.name} className="border-t border-border-subtle pt-3.5">
+                  <li
+                    key={v.name}
+                    className="border-t border-border-subtle pt-3.5"
+                  >
                     <p className="text-[0.92rem] text-cream-100">{v.name}</p>
                     <p className="mt-0.5 text-[0.78rem] leading-snug text-cream-400">
                       {v.role}

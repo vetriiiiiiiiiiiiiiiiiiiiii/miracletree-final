@@ -46,7 +46,10 @@ export default async function AboutPage() {
       where: { isActive: true },
       orderBy: { position: "asc" },
     }),
-    prisma.credit.findMany({ where: { isActive: true }, orderBy: { position: "asc" } }),
+    prisma.credit.findMany({
+      where: { isActive: true },
+      orderBy: { position: "asc" },
+    }),
     getArticles({ take: 3 }),
   ]);
   const crumbs = [
@@ -66,8 +69,14 @@ export default async function AboutPage() {
           foundingDate: "2009",
           founders: credits
             .filter((c) => c.group === "team")
-            .map((c) => ({ "@type": "Person", name: c.name, jobTitle: c.role })),
-          award: accolades.filter((a) => a.kind === "award").map((a) => a.title),
+            .map((c) => ({
+              "@type": "Person",
+              name: c.name,
+              jobTitle: c.role,
+            })),
+          award: accolades
+            .filter((a) => a.kind === "award")
+            .map((a) => a.title),
         }}
       />
 
@@ -88,20 +97,22 @@ export default async function AboutPage() {
                 </h1>
 
                 <p className="mt-10 max-w-[50ch] text-[1.2rem] leading-relaxed text-[#3f4b39]">
-                  Fresh Moringa leaf is highly perishable inappropriate drying costs it
-                  colour, sensory quality and nutrition. Conventional drying leaves that
-                  step uncontrolled. We built a company around controlling it and every
-                  step after it, from seed and cultivation to traceability.
+                  Fresh Moringa leaf is highly perishable inappropriate drying
+                  costs it colour, sensory quality and nutrition. Conventional
+                  drying leaves that step uncontrolled. We built a company
+                  around controlling it and every step after it, from seed and
+                  cultivation to traceability.
                 </p>
 
                 <p className="mt-5 max-w-[56ch] leading-relaxed text-[#55614e]">
-                  Beginning in 2009 with 100% sustainable farming and an exclusive focus
-                  on Moringa oleifera, MiracleTree® grew from a farm into a complete
-                  value chain: four cultivation models up to 3,800 plants an acre, two
-                  proprietary drying technologies — ULTCD (2014) and CLHPD (2019) and
-                  more than 60 formulations across food, nutrition, supplements and
-                  personal care. What follows is the history, the technology, the
-                  people, and the notes we have kept along the way.
+                  Beginning in 2009 with 100% sustainable farming and an
+                  exclusive focus on Moringa oleifera, MiracleTree® grew from a
+                  farm into a complete value chain: four cultivation models up
+                  to 3,800 plants an acre, two proprietary drying technologies —
+                  ULTCD (2014) and CLHPD (2019) and more than 60 formulations
+                  across food, nutrition, supplements and personal care. What
+                  follows is the history, the technology, the people, and the
+                  notes we have kept along the way.
                 </p>
 
                 <nav
@@ -159,30 +170,32 @@ export default async function AboutPage() {
 
               <div className="prose-paper max-w-[62ch]">
                 <p>
-                  In 2009 <strong>Sujatha Rajendran</strong> started turning moringa
-                  into food instead of supplements, with nothing chemical added. The
-                  product line was hers.
+                  In 2009 <strong>Sujatha Rajendran</strong> started turning
+                  moringa into food instead of supplements, with nothing
+                  chemical added. The product line was hers.
                 </p>
                 <p>
-                  <strong>Saravanakumaran Rajendran</strong>, an engineer-agriculturist,
-                  came in to build the processing side: drying, milling and handling the
-                  leaf at a scale that could run every week without overheating it. He
-                  holds patents in moringa processing and has advised on growing the
-                  tree in arid conditions abroad.
+                  <strong>Saravanakumaran Rajendran</strong>, an
+                  engineer-agriculturist, came in to build the processing side:
+                  drying, milling and handling the leaf at a scale that could
+                  run every week without overheating it. He holds patents in
+                  moringa processing and has advised on growing the tree in arid
+                  conditions abroad.
                 </p>
                 <p>
-                  There are three farms. The original six-acre research farm has been
-                  run as sustainable organic ground since 2007 and is where the planting
-                  trials were done. Production is eighty-seven acres near the
-                  Vempakottai dam at Sattur. Beyond that, roughly three hundred and
-                  twelve acres are farmed under contract across south Tamil Nadu. The
-                  farm and its processes are certified organic under the Tamil Nadu
-                  Organic Certification Programme.
+                  There are three farms. The original six-acre research farm has
+                  been run as sustainable organic ground since 2007 and is where
+                  the planting trials were done. Production is eighty-seven
+                  acres near the Vempakottai dam at Sattur. Beyond that, roughly
+                  three hundred and twelve acres are farmed under contract
+                  across south Tamil Nadu. The farm and its processes are
+                  certified organic under the Tamil Nadu Organic Certification
+                  Programme.
                 </p>
                 <p>
-                  More than forty farming families now grow for the company. Several
-                  have moved from ₹30,000–40,000 a year to about ₹1 lakh within three
-                  years of supplying us.
+                  More than forty farming families now grow for the company.
+                  Several have moved from ₹30,000–40,000 a year to about ₹1 lakh
+                  within three years of supplying us.
                 </p>
 
                 <p className="!mt-8 text-[0.7rem] uppercase tracking-[0.12em] !text-[#6f6440]">
@@ -245,8 +258,8 @@ export default async function AboutPage() {
             </h2>
 
             <p className="mx-auto mt-8 max-w-[46ch] leading-relaxed text-[#55614e]">
-              Twenty-seven products, all from the same plant. Leaf, pod, flower, seed
-              and gum.
+              Twenty-seven products, all from the same plant. Leaf, pod, flower,
+              seed and gum.
             </p>
 
             <div className="mt-10 flex flex-wrap justify-center gap-3">

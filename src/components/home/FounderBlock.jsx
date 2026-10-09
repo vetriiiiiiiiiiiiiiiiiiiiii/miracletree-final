@@ -33,6 +33,11 @@ export function FounderBlock({ name, role, quote, imageUrl }) {
                   fill
                   sizes="(min-width: 1024px) 34vw, 100vw"
                   className="object-cover"
+                  unoptimized={
+                    typeof imageUrl === "string"
+                      ? imageUrl.startsWith("/uploads/")
+                      : undefined
+                  }
                 />
               </div>
             ) : (

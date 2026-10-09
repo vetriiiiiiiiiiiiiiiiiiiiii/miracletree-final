@@ -57,8 +57,18 @@ export function MobileMenu({
           aria-label="Close menu"
           className="-mr-2 p-2 text-cream-300 hover:text-cream-50"
         >
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden>
-            <path d="M3 3l12 12M15 3L3 15" stroke="currentColor" strokeWidth="1.4" />
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 18 18"
+            fill="none"
+            aria-hidden
+          >
+            <path
+              d="M3 3l12 12M15 3L3 15"
+              stroke="currentColor"
+              strokeWidth="1.4"
+            />
           </svg>
         </button>
       </div>
@@ -70,9 +80,25 @@ export function MobileMenu({
           data-menu-item
           className="mb-8 flex w-full items-center gap-3 border border-border-subtle bg-white/[0.03] px-4 py-3.5 text-left text-sm text-cream-400"
         >
-          <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden>
-            <circle cx="9" cy="9" r="6" stroke="currentColor" strokeWidth="1.4" />
-            <path d="M13.5 13.5L17 17" stroke="currentColor" strokeWidth="1.4" />
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 20 20"
+            fill="none"
+            aria-hidden
+          >
+            <circle
+              cx="9"
+              cy="9"
+              r="6"
+              stroke="currentColor"
+              strokeWidth="1.4"
+            />
+            <path
+              d="M13.5 13.5L17 17"
+              stroke="currentColor"
+              strokeWidth="1.4"
+            />
           </svg>
           Search products, ingredients, articles
         </button>
@@ -95,7 +121,10 @@ export function MobileMenu({
         </nav>
 
         {companyItems.length ? (
-          <div className="mt-10 border-t border-border-subtle pt-8" data-menu-item>
+          <div
+            className="mt-10 border-t border-border-subtle pt-8"
+            data-menu-item
+          >
             <p className="eyebrow mb-4 text-cream-400">Company</p>
             <ul className="grid gap-3">
               {companyItems.map((item) => (
@@ -113,7 +142,10 @@ export function MobileMenu({
           </div>
         ) : null}
 
-        <div className="mt-10 border-t border-border-subtle pt-8" data-menu-item>
+        <div
+          className="mt-10 border-t border-border-subtle pt-8"
+          data-menu-item
+        >
           <p className="eyebrow mb-4 text-cream-400">Shop by category</p>
           <ul className="grid gap-3">
             {categories.map((category) => (
@@ -151,7 +183,10 @@ export function MobileMenu({
           >
             Help &amp; FAQ
           </Link>
-          <a href={`tel:${SITE.phone.replace(/\s/g, "")}`} className="text-cream-200">
+          <a
+            href={`tel:${SITE.phone.replace(/\s/g, "")}`}
+            className="text-cream-200"
+          >
             {SITE.phone}
           </a>
           <p className="text-xs text-cream-400">{SITE.phoneHours}</p>
@@ -159,7 +194,10 @@ export function MobileMenu({
 
         {/* The header's one-tap toggle has no room to explain itself. Here it
             does, including the "System" setting that follows the device. */}
-        <div className="mt-10 border-t border-border-subtle pt-8" data-menu-item>
+        <div
+          className="mt-10 border-t border-border-subtle pt-8"
+          data-menu-item
+        >
           <p className="eyebrow mb-4 text-cream-400">Theme</p>
           <ThemeSegmented />
         </div>

@@ -15,7 +15,8 @@ import { analytics } from "@/lib/analytics";
  * this is the roomier view for editing a large order before checkout.
  */
 export function CartPageClient() {
-  const { cart, setQuantity, remove, applyCoupon, removeCoupon, pending } = useCart();
+  const { cart, setQuantity, remove, applyCoupon, removeCoupon, pending } =
+    useCart();
   const [code, setCode] = useState("");
   const [couponError, setCouponError] = useState(null);
   const [applying, setApplying] = useState(false);
@@ -82,6 +83,11 @@ export function CartPageClient() {
                     fill
                     sizes="128px"
                     className="object-contain p-3"
+                    unoptimized={
+                      typeof line.imageUrl === "string"
+                        ? line.imageUrl.startsWith("/uploads/")
+                        : undefined
+                    }
                   />
                 ) : null}
               </Link>
@@ -95,9 +101,13 @@ export function CartPageClient() {
                     >
                       {line.productName}
                     </Link>
-                    <p className="mt-1 text-sm text-cream-400">{line.variantName}</p>
+                    <p className="mt-1 text-sm text-cream-400">
+                      {line.variantName}
+                    </p>
                     {line.sku ? (
-                      <p className="mt-0.5 text-xs text-cream-400">SKU {line.sku}</p>
+                      <p className="mt-0.5 text-xs text-cream-400">
+                        SKU {line.sku}
+                      </p>
                     ) : null}
                   </div>
 
@@ -115,7 +125,8 @@ export function CartPageClient() {
 
                 {line.overStock ? (
                   <p className="mt-2 text-xs text-[#e0a19c]" role="status">
-                    Only {line.available} in stock. Reduce the quantity to continue.
+                    Only {line.available} in stock. Reduce the quantity to
+                    continue.
                   </p>
                 ) : null}
 
@@ -144,8 +155,18 @@ export function CartPageClient() {
           href="/shop"
           className="mt-8 inline-flex items-center gap-2 text-[0.72rem] uppercase tracking-[0.16em] text-cream-300 hover:text-cream-50"
         >
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
-            <path d="M8.5 3L4.5 7l4 4" stroke="currentColor" strokeWidth="1.3" />
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 14 14"
+            fill="none"
+            aria-hidden
+          >
+            <path
+              d="M8.5 3L4.5 7l4 4"
+              stroke="currentColor"
+              strokeWidth="1.3"
+            />
           </svg>
           Continue shopping
         </Link>
@@ -189,7 +210,9 @@ export function CartPageClient() {
               <div className="flex items-center justify-between gap-3 border border-emerald-400/30 bg-emerald-500/8 px-3 py-2.5">
                 <span className="text-xs text-leaf-200">
                   <strong className="font-medium">{cart.coupon.code}</strong>
-                  {cart.coupon.description ? ` — ${cart.coupon.description}` : ""}
+                  {cart.coupon.description
+                    ? ` — ${cart.coupon.description}`
+                    : ""}
                 </span>
                 <button
                   type="button"
@@ -211,7 +234,12 @@ export function CartPageClient() {
                   aria-label="Promo code"
                   className="min-w-0 flex-1 border border-border-subtle bg-white/[0.03] px-3 py-2.5 text-sm uppercase tracking-wider text-cream-50 placeholder:normal-case placeholder:tracking-normal placeholder:text-cream-400 focus:border-emerald-400 focus:outline-none"
                 />
-                <Button type="submit" variant="secondary" size="sm" loading={applying}>
+                <Button
+                  type="submit"
+                  variant="secondary"
+                  size="sm"
+                  loading={applying}
+                >
                   Apply
                 </Button>
               </form>
@@ -242,7 +270,9 @@ export function CartPageClient() {
             <Row
               label="Shipping"
               value={
-                totals.shippingTotal === 0 ? "Free" : formatPrice(totals.shippingTotal)
+                totals.shippingTotal === 0
+                  ? "Free"
+                  : formatPrice(totals.shippingTotal)
               }
             />
             <Row label="Tax" value="Included" muted />

@@ -75,7 +75,13 @@ const ACCOLADE_FIELDS = [
     half: true,
     hint: "Lowest first.",
   },
-  { name: "title", label: "Title", type: "text", required: true, maxLength: 200 },
+  {
+    name: "title",
+    label: "Title",
+    type: "text",
+    required: true,
+    maxLength: 200,
+  },
   {
     name: "issuer",
     label: "Awarded by",
@@ -84,7 +90,13 @@ const ACCOLADE_FIELDS = [
     maxLength: 160,
     placeholder: "FSSAI",
   },
-  { name: "year", label: "Year", type: "text", half: true, placeholder: "2021" },
+  {
+    name: "year",
+    label: "Year",
+    type: "text",
+    half: true,
+    placeholder: "2021",
+  },
   { name: "body", label: "Detail", type: "textarea", rows: 3, maxLength: 2000 },
   {
     name: "source",
@@ -149,9 +161,15 @@ const KIND_LABEL = {
 export default async function StoryAdminPage() {
   await requireAdmin();
   const [milestones, accolades, credits] = await Promise.all([
-    prisma.milestone.findMany({ orderBy: [{ position: "asc" }, { year: "asc" }] }),
-    prisma.accolade.findMany({ orderBy: [{ kind: "asc" }, { position: "asc" }] }),
-    prisma.credit.findMany({ orderBy: [{ group: "asc" }, { position: "asc" }] }),
+    prisma.milestone.findMany({
+      orderBy: [{ position: "asc" }, { year: "asc" }],
+    }),
+    prisma.accolade.findMany({
+      orderBy: [{ kind: "asc" }, { position: "asc" }],
+    }),
+    prisma.credit.findMany({
+      orderBy: [{ group: "asc" }, { position: "asc" }],
+    }),
   ]);
   const cited = accolades.filter((a) => a.sourceUrl).length;
   return (
@@ -173,9 +191,9 @@ export default async function StoryAdminPage() {
 
       <Card>
         <p className="text-sm leading-relaxed">
-          Everything on the Our Story page is stored here. Entries are shown in the
-          order below, and unticking &ldquo;Show on the page&rdquo; hides one without
-          deleting it — useful while a claim is being verified.
+          Everything on the Our Story page is stored here. Entries are shown in
+          the order below, and unticking &ldquo;Show on the page&rdquo; hides
+          one without deleting it — useful while a claim is being verified.
         </p>
       </Card>
 

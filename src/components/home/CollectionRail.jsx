@@ -11,7 +11,13 @@ import { analytics } from "@/lib/analytics";
  * pinned version would fight the browser's own gesture handling and cost more
  * than it adds.
  */
-export function CollectionRail({ title, subtitle, ctaLabel, ctaHref, products }) {
+export function CollectionRail({
+  title,
+  subtitle,
+  ctaLabel,
+  ctaHref,
+  products,
+}) {
   const sectionRef = useRef(null);
   const trackRef = useRef(null);
   const reported = useRef(false);
@@ -107,10 +113,15 @@ export function CollectionRail({ title, subtitle, ctaLabel, ctaHref, products })
               <div className="w-full border border-border-subtle p-10 text-center">
                 <p className="text-title text-cream-50">Twenty-seven in all</p>
                 <p className="mt-4 text-sm leading-relaxed text-cream-400">
-                  Powders, teas, tablets, mixes, bars and oil — every one of them from
-                  the same tree.
+                  Powders, teas, tablets, mixes, bars and oil — every one of
+                  them from the same tree.
                 </p>
-                <LinkButton href="/shop" size="md" className="mt-8 w-full" magnetic>
+                <LinkButton
+                  href="/shop"
+                  size="md"
+                  className="mt-8 w-full"
+                  magnetic
+                >
                   View the full catalogue
                 </LinkButton>
               </div>

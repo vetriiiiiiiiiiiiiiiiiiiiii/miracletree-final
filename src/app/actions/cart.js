@@ -8,7 +8,11 @@ import {
   evaluateCoupon,
   getCart,
 } from "@/lib/cart";
-import { cartAddSchema, cartUpdateSchema, couponSchema } from "@/lib/validation";
+import {
+  cartAddSchema,
+  cartUpdateSchema,
+  couponSchema,
+} from "@/lib/validation";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 /**
  * Cart mutations. Prices and stock are always re-read from the database here —
@@ -16,7 +20,8 @@ import { clientIp, rateLimit } from "@/lib/rate-limit";
  */
 export async function addToCartAction(input) {
   const parsed = cartAddSchema.safeParse(input);
-  if (!parsed.success) return { ok: false, error: "That product could not be added." };
+  if (!parsed.success)
+    return { ok: false, error: "That product could not be added." };
   const { productId, variantId, quantity } = parsed.data;
   const variant = await prisma.productVariant.findFirst({
     where: {
@@ -27,7 +32,8 @@ export async function addToCartAction(input) {
     },
     select: { id: true, name: true, product: { select: { name: true } } },
   });
-  if (!variant) return { ok: false, error: "That option is no longer available." };
+  if (!variant)
+    return { ok: false, error: "That option is no longer available." };
   const cart = await ensureCart();
   const existing = await prisma.cartItem.findUnique({
     where: { cartId_variantId: { cartId: cart.id, variantId } },
@@ -49,13 +55,17 @@ export async function addToCartAction(input) {
     create: { cartId: cart.id, productId, variantId, quantity },
     update: { quantity: desired },
   });
-  await prisma.cart.update({ where: { id: cart.id }, data: { updatedAt: new Date() } });
+  await prisma.cart.update({
+    where: { id: cart.id },
+    data: { updatedAt: new Date() },
+  });
   revalidatePath("/", "layout");
   return { ok: true, message: `${variant.product.name} added to your bag.` };
 }
 export async function updateCartItemAction(input) {
   const parsed = cartUpdateSchema.safeParse(input);
-  if (!parsed.success) return { ok: false, error: "That quantity isn't valid." };
+  if (!parsed.success)
+    return { ok: false, error: "That quantity isn't valid." };
   const { itemId, quantity } = parsed.data;
   const cart = await ensureCart();
   // Scoping the lookup by cartId is what stops one shopper editing another's bag.
@@ -70,7 +80,8 @@ export async function updateCartItemAction(input) {
     return { ok: true, message: "Removed from your bag." };
   }
   const stock = await availableStock(item.variantId);
-  if (quantity > stock) return { ok: false, error: `Only ${stock} left in stock.` };
+  if (quantity > stock)
+    return { ok: false, error: `Only ${stock} left in stock.` };
   await prisma.cartItem.update({ where: { id: item.id }, data: { quantity } });
   revalidatePath("/", "layout");
   return { ok: true };
@@ -88,9 +99,14 @@ export async function applyCouponAction(code) {
     windowSeconds: 300,
   });
   if (!limit.ok) {
-    return { ok: false, error: "Too many attempts. Try again in a few minutes." };
+    return {
+      ok: false,
+      error: "Too many attempts. Try again in a few minutes.",
+    };
   }
-  const coupon = await prisma.coupon.findUnique({ where: { code: parsed.data.code } });
+  const coupon = await prisma.coupon.findUnique({
+    where: { code: parsed.data.code },
+  });
   if (!coupon) return { ok: false, error: "We don't recognise that code." };
   const cart = await getCart();
   const check = evaluateCoupon(coupon, await couponContextFor(coupon, cart));
@@ -105,7 +121,10 @@ export async function applyCouponAction(code) {
 }
 export async function removeCouponAction() {
   const cart = await ensureCart();
-  await prisma.cart.update({ where: { id: cart.id }, data: { couponId: null } });
+  await prisma.cart.update({
+    where: { id: cart.id },
+    data: { couponId: null },
+  });
   revalidatePath("/", "layout");
   return { ok: true, message: "Discount removed." };
 }

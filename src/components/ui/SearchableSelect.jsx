@@ -1,7 +1,13 @@
-import React, { useState, useEffect, useRef, useCallback, useContext } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useContext,
+} from "react";
 import { ChevronDown, Search, Loader2, X, Plus } from "lucide-react";
 // We don't have ThemeContext in this project, so we'll mock it or just omit it safely
-const ThemeContext = React.createContext({ theme: { name: 'dark' } });
+const ThemeContext = React.createContext({ theme: { name: "dark" } });
 
 export default function SearchableSelect({
   label,
@@ -22,7 +28,8 @@ export default function SearchableSelect({
   hideSelectedPills = false,
 }) {
   const contextTheme = useContext(ThemeContext)?.theme;
-  const activeTheme = (theme && Object.keys(theme).length > 0) ? theme : contextTheme;
+  const activeTheme =
+    theme && Object.keys(theme).length > 0 ? theme : contextTheme;
 
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -66,8 +73,12 @@ export default function SearchableSelect({
           const newData = res.data || [];
           setItems((prev) => {
             if (!append) return newData;
-            const existingIds = new Set(prev.map(i => i._id || i.id || i[valueKey]));
-            const uniqueNewData = newData.filter(i => !existingIds.has(i._id || i.id || i[valueKey]));
+            const existingIds = new Set(
+              prev.map((i) => i._id || i.id || i[valueKey]),
+            );
+            const uniqueNewData = newData.filter(
+              (i) => !existingIds.has(i._id || i.id || i[valueKey]),
+            );
             return [...prev, ...uniqueNewData];
           });
           setHasMore(res.pagination?.hasMore ?? false);
@@ -79,7 +90,7 @@ export default function SearchableSelect({
         setLoading(false);
       }
     },
-    [fetchFn, disabled]
+    [fetchFn, disabled],
   );
 
   useEffect(() => {
@@ -96,7 +107,7 @@ export default function SearchableSelect({
   useEffect(() => {
     if (!isOpen) return;
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    
+
     if (search !== currentSearch.current) {
       setLoading(true);
     }
@@ -124,7 +135,9 @@ export default function SearchableSelect({
       const itemKey = item[valueKey] || item.id;
       if (currentValues.includes(itemKey)) {
         const newValues = currentValues.filter((v) => v !== itemKey);
-        const newSelected = selectedItem.filter((i) => (i[valueKey] || i.id) !== itemKey);
+        const newSelected = selectedItem.filter(
+          (i) => (i[valueKey] || i.id) !== itemKey,
+        );
         setSelectedItem(newSelected);
         onChange(newValues, newSelected);
       } else {
@@ -152,7 +165,9 @@ export default function SearchableSelect({
     const itemKey = itemToRemove[valueKey] || itemToRemove.id;
     const currentValues = Array.isArray(value) ? value : [];
     const newValues = currentValues.filter((v) => v !== itemKey);
-    const newSelected = selectedItem.filter((i) => (i[valueKey] || i.id) !== itemKey);
+    const newSelected = selectedItem.filter(
+      (i) => (i[valueKey] || i.id) !== itemKey,
+    );
     setSelectedItem(newSelected);
     onChange(newValues, newSelected);
   };
@@ -163,10 +178,12 @@ export default function SearchableSelect({
         setSelectedItem([]);
         return;
       }
-      const newSelected = value.map(val => {
-        const existing = selectedItem?.find(i => (i[valueKey] || i.id) === val);
+      const newSelected = value.map((val) => {
+        const existing = selectedItem?.find(
+          (i) => (i[valueKey] || i.id) === val,
+        );
         if (existing) return existing;
-        const found = items.find(i => (i[valueKey] || i.id) === val);
+        const found = items.find((i) => (i[valueKey] || i.id) === val);
         if (found) return found;
         return { [valueKey]: val, [displayKey]: val };
       });
@@ -182,9 +199,13 @@ export default function SearchableSelect({
       if (currentId === value) return;
       const found = items.find((i) => (i[valueKey] || i.id) === value);
       if (found) setSelectedItem(found);
-      else if (initialItem && (initialItem[valueKey] || initialItem.id) === value) setSelectedItem(initialItem);
+      else if (
+        initialItem &&
+        (initialItem[valueKey] || initialItem.id) === value
+      )
+        setSelectedItem(initialItem);
     }
-  }, [value, items, initialItem]); 
+  }, [value, items, initialItem]);
 
   const handleAddNew = async () => {
     if (!onAddNew || !search.trim() || addingNew) return;
@@ -218,19 +239,36 @@ export default function SearchableSelect({
     }
   };
 
-  const isLight = activeTheme?.name === "light" || activeTheme?.text === "#0F172A" || activeTheme?.text === "#0f172a" || activeTheme?.text === "#000000";
-  const borderColor = activeTheme?.card?.border || activeTheme?.navbar?.border || (isLight ? "#E2E8F0" : "rgba(255,255,255,0.12)");
-  const cardBg = activeTheme?.card?.bg || activeTheme?.cardBg || (isLight ? "#FFFFFF" : "#131b2e");
+  const isLight =
+    activeTheme?.name === "light" ||
+    activeTheme?.text === "#0F172A" ||
+    activeTheme?.text === "#0f172a" ||
+    activeTheme?.text === "#000000";
+  const borderColor =
+    activeTheme?.card?.border ||
+    activeTheme?.navbar?.border ||
+    (isLight ? "#E2E8F0" : "rgba(255,255,255,0.12)");
+  const cardBg =
+    activeTheme?.card?.bg ||
+    activeTheme?.cardBg ||
+    (isLight ? "#FFFFFF" : "#131b2e");
   const text = activeTheme?.text || (isLight ? "#0F172A" : "#ffffff");
 
   const hasExactMatch = items.some(
-    (i) => i[displayKey]?.toLowerCase() === search.trim().toLowerCase()
+    (i) => i[displayKey]?.toLowerCase() === search.trim().toLowerCase(),
   );
 
   return (
-    <div className="space-y-2" ref={containerRef} style={{ position: "relative", zIndex: isOpen ? 50 : "auto" }}>
+    <div
+      className="space-y-2"
+      ref={containerRef}
+      style={{ position: "relative", zIndex: isOpen ? 50 : "auto" }}
+    >
       {label && (
-        <label className="text-xs font-medium uppercase tracking-[0.14em] text-cream-400 block truncate" style={{ color: text }}>
+        <label
+          className="text-xs font-medium uppercase tracking-[0.14em] text-cream-400 block truncate"
+          style={{ color: text }}
+        >
           {label}
         </label>
       )}
@@ -244,42 +282,66 @@ export default function SearchableSelect({
       >
         <div className="flex-1 flex flex-wrap gap-2 items-center">
           {isMulti ? (
-            (selectedItem && selectedItem.length > 0 && !hideSelectedPills) ? (
+            selectedItem && selectedItem.length > 0 && !hideSelectedPills ? (
               selectedItem.map((item, idx) => (
-                <span key={item[valueKey] || item.id || idx} className={`flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-xs font-medium border bg-white/10 border-white/10`}>
+                <span
+                  key={item[valueKey] || item.id || idx}
+                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-xs font-medium border bg-white/10 border-white/10`}
+                >
                   {item.flag && <span className="text-sm">{item.flag}</span>}
                   {item[displayKey]}
-                  <button type="button" onClick={(e) => handleRemovePill(e, item)} className="opacity-50 hover:opacity-100 ml-1"><X size={12} /></button>
+                  <button
+                    type="button"
+                    onClick={(e) => handleRemovePill(e, item)}
+                    className="opacity-50 hover:opacity-100 ml-1"
+                  >
+                    <X size={12} />
+                  </button>
                 </span>
               ))
             ) : (
-              <span className="opacity-40 text-sm">{(selectedItem && selectedItem.length > 0) ? `${selectedItem.length} items selected` : placeholder}</span>
-            )
-          ) : (
-            selectedItem ? (
-              <span className="text-sm font-medium truncate flex items-center gap-2">
-                {selectedItem?.flag && <span className="text-base leading-none">{selectedItem.flag}</span>}
-                <span className="truncate">{selectedItem[selectedDisplayKey || displayKey]}</span>
-                {selectedItem.isVerified === false && (
-                  <span className="ml-1 text-yellow-400 text-xs font-bold" title="Unverified peer-added metadata">⚠️</span>
-                )}
+              <span className="opacity-40 text-sm">
+                {selectedItem && selectedItem.length > 0
+                  ? `${selectedItem.length} items selected`
+                  : placeholder}
               </span>
-            ) : (
-              <span className="opacity-40 text-sm">{placeholder}</span>
             )
+          ) : selectedItem ? (
+            <span className="text-sm font-medium truncate flex items-center gap-2">
+              {selectedItem?.flag && (
+                <span className="text-base leading-none">
+                  {selectedItem.flag}
+                </span>
+              )}
+              <span className="truncate">
+                {selectedItem[selectedDisplayKey || displayKey]}
+              </span>
+              {selectedItem.isVerified === false && (
+                <span
+                  className="ml-1 text-yellow-400 text-xs font-bold"
+                  title="Unverified peer-added metadata"
+                >
+                  ⚠️
+                </span>
+              )}
+            </span>
+          ) : (
+            <span className="opacity-40 text-sm">{placeholder}</span>
           )}
         </div>
 
         <div className="flex items-center gap-1 shrink-0">
-          {((isMulti && selectedItem?.length > 0) || (!isMulti && selectedItem)) && !disabled && (
-            <button
-              type="button"
-              onClick={handleClear}
-              className="opacity-40 hover:opacity-80 transition-opacity p-1 rounded-full hover:bg-black/10 dark:hover:bg-white/10"
-            >
-              <X size={12} />
-            </button>
-          )}
+          {((isMulti && selectedItem?.length > 0) ||
+            (!isMulti && selectedItem)) &&
+            !disabled && (
+              <button
+                type="button"
+                onClick={handleClear}
+                className="opacity-40 hover:opacity-80 transition-opacity p-1 rounded-full hover:bg-black/10 dark:hover:bg-white/10"
+              >
+                <X size={12} />
+              </button>
+            )}
           <ChevronDown
             size={14}
             className={`opacity-40 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
@@ -294,7 +356,10 @@ export default function SearchableSelect({
         >
           <div className="p-2 border-b border-border-strong bg-[#25262b]">
             <div className="flex items-center gap-2 px-3 py-2 rounded-sm bg-black/20">
-              <Search size={13} className="opacity-40 shrink-0 text-cream-100" />
+              <Search
+                size={13}
+                className="opacity-40 shrink-0 text-cream-100"
+              />
               <input
                 ref={searchRef}
                 type="text"
@@ -304,26 +369,42 @@ export default function SearchableSelect({
                 className="flex-1 bg-transparent outline-none text-sm text-cream-100 placeholder:opacity-40"
               />
               {search && (
-                <button type="button" onClick={() => setSearch("")} className="opacity-40 hover:opacity-80 transition-opacity">
+                <button
+                  type="button"
+                  onClick={() => setSearch("")}
+                  className="opacity-40 hover:opacity-80 transition-opacity"
+                >
                   <X size={11} />
                 </button>
               )}
             </div>
           </div>
 
-          <div ref={listRef} onScroll={handleScroll} className="overflow-y-auto" style={{ maxHeight: listMaxHeight }}>
+          <div
+            ref={listRef}
+            onScroll={handleScroll}
+            className="overflow-y-auto"
+            style={{ maxHeight: listMaxHeight }}
+          >
             {loading && items.length === 0 && (
               <div className="flex items-center justify-center py-8">
-                <Loader2 size={20} className="animate-spin opacity-40 text-cream-100" />
+                <Loader2
+                  size={20}
+                  className="animate-spin opacity-40 text-cream-100"
+                />
               </div>
             )}
             {!loading && items.length === 0 && (
-              <div className="py-6 text-center text-sm opacity-40 text-cream-100">No results found</div>
+              <div className="py-6 text-center text-sm opacity-40 text-cream-100">
+                No results found
+              </div>
             )}
             {items.map((item, index) => {
               const itemValue = item[valueKey] || item._id || item.id;
               const reactKey = item._id || item.id || itemValue || index;
-              const isSelected = isMulti ? Array.isArray(value) && value.includes(itemValue) : value === itemValue;
+              const isSelected = isMulti
+                ? Array.isArray(value) && value.includes(itemValue)
+                : value === itemValue;
               return (
                 <div
                   key={reactKey}
@@ -333,7 +414,9 @@ export default function SearchableSelect({
                     ${isSelected ? "bg-white/15 text-cream-50" : "hover:bg-white/5 text-cream-100"}
                   `}
                 >
-                  {isSelected && <div className="w-1.5 h-1.5 rounded-full shrink-0 bg-blue-400" />}
+                  {isSelected && (
+                    <div className="w-1.5 h-1.5 rounded-full shrink-0 bg-blue-400" />
+                  )}
                   <div className="flex-1 min-w-0">
                     <div className="text-sm truncate leading-snug flex items-center gap-2">
                       <span className="truncate">{item[displayKey]}</span>

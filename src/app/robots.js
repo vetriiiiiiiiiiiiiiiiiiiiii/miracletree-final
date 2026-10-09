@@ -4,7 +4,9 @@ export default function robots() {
   // identified by NEXT_PUBLIC_SITE_URL pointing at the real domain.
   const isProduction =
     process.env.NODE_ENV === "production" &&
-    !/localhost|vercel\.app|\.local/i.test(process.env.NEXT_PUBLIC_SITE_URL ?? "");
+    !/localhost|vercel\.app|\.local/i.test(
+      process.env.NEXT_PUBLIC_SITE_URL ?? "",
+    );
   if (!isProduction) {
     return {
       rules: [{ userAgent: "*", disallow: "/" }],

@@ -14,7 +14,8 @@ export default async function AccountLayout({ children }) {
     redirect("/onboarding");
   }
 
-  const name = [user.firstName, user.lastName].filter(Boolean).join(" ") || user.email;
+  const name =
+    [user.firstName, user.lastName].filter(Boolean).join(" ") || user.email;
   return (
     <div className="grain bg-ink pb-24 pt-12 md:pt-16">
       <Container>
@@ -25,7 +26,9 @@ export default async function AccountLayout({ children }) {
         </header>
 
         <div className="mt-12 grid gap-10 lg:grid-cols-[15rem_1fr] lg:gap-16">
-          <AccountNav isAdmin={user.role === "admin" || user.role === "staff"} />
+          <AccountNav
+            isAdmin={user.role === "admin" || user.role === "staff"}
+          />
           <div className="min-w-0">{children}</div>
         </div>
       </Container>

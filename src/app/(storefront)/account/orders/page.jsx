@@ -27,7 +27,12 @@ export default async function AccountOrdersPage() {
       grandTotal: true,
       trackingNumber: true,
       items: {
-        select: { id: true, productName: true, variantName: true, quantity: true },
+        select: {
+          id: true,
+          productName: true,
+          variantName: true,
+          quantity: true,
+        },
       },
     },
   });
@@ -58,7 +63,9 @@ export default async function AccountOrdersPage() {
             >
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
-                  <p className="tabular-nums text-cream-50">{order.orderNumber}</p>
+                  <p className="tabular-nums text-cream-50">
+                    {order.orderNumber}
+                  </p>
                   <p className="mt-1 text-xs text-cream-400">
                     Placed {formatDate(order.placedAt)}
                   </p>
@@ -75,11 +82,16 @@ export default async function AccountOrdersPage() {
                 {order.items.slice(0, 3).map((item) => (
                   <li key={item.id} className="truncate">
                     {item.quantity} × {item.productName}
-                    <span className="text-cream-400"> · {item.variantName}</span>
+                    <span className="text-cream-400">
+                      {" "}
+                      · {item.variantName}
+                    </span>
                   </li>
                 ))}
                 {order.items.length > 3 ? (
-                  <li className="text-cream-400">and {order.items.length - 3} more</li>
+                  <li className="text-cream-400">
+                    and {order.items.length - 3} more
+                  </li>
                 ) : null}
               </ul>
 
@@ -99,7 +111,11 @@ export default async function AccountOrdersPage() {
                   aria-hidden
                   className="transition-transform duration-300 group-hover:translate-x-1"
                 >
-                  <path d="M5 3l4 4-4 4" stroke="currentColor" strokeWidth="1.3" />
+                  <path
+                    d="M5 3l4 4-4 4"
+                    stroke="currentColor"
+                    strokeWidth="1.3"
+                  />
                 </svg>
               </span>
             </Link>

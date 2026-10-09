@@ -96,7 +96,11 @@ export function Header({
       >
         <div className="mx-auto flex h-16 max-w-[100rem] items-center justify-between gutter md:h-20">
           <div className="flex items-center gap-6 xl:gap-10">
-            <Link href="/" aria-label="Miracle Tree — home" className="shrink-0">
+            <Link
+              href="/"
+              aria-label="Miracle Tree — home"
+              className="shrink-0"
+            >
               <Logo className="h-6 w-auto text-cream-50 sm:h-7 md:h-8" />
             </Link>
 
@@ -131,9 +135,25 @@ export function Header({
               label="Search products, ingredients and articles"
               onClick={() => setSearchOpen(true)}
             >
-              <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden>
-                <circle cx="9" cy="9" r="6" stroke="currentColor" strokeWidth="1.4" />
-                <path d="M13.5 13.5L17 17" stroke="currentColor" strokeWidth="1.4" />
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 20 20"
+                fill="none"
+                aria-hidden
+              >
+                <circle
+                  cx="9"
+                  cy="9"
+                  r="6"
+                  stroke="currentColor"
+                  strokeWidth="1.4"
+                />
+                <path
+                  d="M13.5 13.5L17 17"
+                  stroke="currentColor"
+                  strokeWidth="1.4"
+                />
               </svg>
             </IconButton>
 
@@ -142,7 +162,13 @@ export function Header({
               aria-label={isAuthenticated ? "Your account" : "Sign in"}
               className="hidden h-10 w-10 items-center justify-center text-cream-200 transition-colors hover:text-cream-50 md:inline-flex"
             >
-              <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden>
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 20 20"
+                fill="none"
+                aria-hidden
+              >
                 <circle
                   cx="10"
                   cy="6.5"
@@ -171,7 +197,13 @@ export function Header({
               className="relative inline-flex h-10 items-center gap-1.5 px-1 text-cream-200 transition-colors hover:text-cream-50 sm:gap-2 sm:px-2"
               aria-label={`Open bag, ${cart.itemCount} item${cart.itemCount === 1 ? "" : "s"}`}
             >
-              <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden>
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 20 20"
+                fill="none"
+                aria-hidden
+              >
                 <path
                   d="M4 6h12l-1 11H5L4 6z"
                   stroke="currentColor"
@@ -238,7 +270,9 @@ export function Header({
 function CompanyMenu({ items, pathname }) {
   const [open, setOpen] = useState(false);
   const wrapper = useRef(null);
-  const active = items.some((item) => pathname.startsWith(item.href.split("#")[0]));
+  const active = items.some((item) =>
+    pathname.startsWith(item.href.split("#")[0]),
+  );
   useEffect(() => {
     if (!open) return;
     const onKey = (event) => {
@@ -270,7 +304,9 @@ function CompanyMenu({ items, pathname }) {
         aria-haspopup="true"
         className={cn(
           "group relative flex items-center gap-1.5 py-1.5 text-[0.72rem] font-medium uppercase tracking-[0.16em] transition-colors duration-300",
-          active || open ? "text-cream-50" : "text-cream-300 hover:text-cream-50",
+          active || open
+            ? "text-cream-50"
+            : "text-cream-300 hover:text-cream-50",
         )}
       >
         Company
@@ -280,7 +316,10 @@ function CompanyMenu({ items, pathname }) {
           viewBox="0 0 10 10"
           fill="none"
           aria-hidden
-          className={cn("transition-transform duration-300", open && "rotate-180")}
+          className={cn(
+            "transition-transform duration-300",
+            open && "rotate-180",
+          )}
         >
           <path
             d="M2 4l3 3 3-3"

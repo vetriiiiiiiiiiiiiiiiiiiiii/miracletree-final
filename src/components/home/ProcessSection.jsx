@@ -1,7 +1,11 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { Container, Section, SectionHeading } from "@/components/layout/Section";
+import {
+  Container,
+  Section,
+  SectionHeading,
+} from "@/components/layout/Section";
 import { initMotion, prefersReducedMotion, ScrollTrigger } from "@/lib/motion";
 const STEPS = [
   {
@@ -134,11 +138,11 @@ export function ProcessSection({ title, subtitle }) {
 
                 {step.id === "drying" ? (
                   <p className="mt-6 max-w-[48ch] text-sm leading-relaxed text-cream-300">
-                    Building on years of low-temperature expertise, CLHPD represents the
-                    next stage in MiracleTree&rsquo;s controlled dehydration journey.
-                    Developed specifically for premium Moringa and herbal materials, it
-                    safeguards the nutrients and integrity often lost to conventional
-                    drying.
+                    Building on years of low-temperature expertise, CLHPD
+                    represents the next stage in MiracleTree&rsquo;s controlled
+                    dehydration journey. Developed specifically for premium
+                    Moringa and herbal materials, it safeguards the nutrients
+                    and integrity often lost to conventional drying.
                   </p>
                 ) : null}
               </li>

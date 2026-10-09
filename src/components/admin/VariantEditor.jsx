@@ -5,7 +5,10 @@ import { useFormStatus } from "react-dom";
 import { Input, Checkbox, FormMessage } from "@/components/ui/Field";
 import { Card, Pill, Table, Td, Tr, EmptyRow } from "@/components/admin/ui";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
-import { deleteVariantAction, saveVariantAction } from "@/app/actions/admin/products";
+import {
+  deleteVariantAction,
+  saveVariantAction,
+} from "@/app/actions/admin/products";
 import { formatPrice } from "@/lib/money";
 const INITIAL = { status: "idle" };
 /**
@@ -65,7 +68,9 @@ export function VariantEditor({ productId, variants }) {
               return (
                 <Tr key={variant.id}>
                   <Td className="text-cream-50">{variant.name}</Td>
-                  <Td className="text-xs text-cream-400">{variant.sku ?? "—"}</Td>
+                  <Td className="text-xs text-cream-400">
+                    {variant.sku ?? "—"}
+                  </Td>
                   <Td align="right" className="tabular-nums">
                     {formatPrice(variant.price)}
                     {variant.compareAtPrice ? (
@@ -156,9 +161,13 @@ function VariantForm({ productId, variant, onDone, onCancel }) {
     <Card title={variant ? `Edit “${variant.name}”` : "New variant"}>
       <form action={action} className="grid gap-5">
         <input type="hidden" name="productId" value={productId} />
-        {variant ? <input type="hidden" name="variantId" value={variant.id} /> : null}
+        {variant ? (
+          <input type="hidden" name="variantId" value={variant.id} />
+        ) : null}
 
-        {state.status === "error" ? <FormMessage>{state.message}</FormMessage> : null}
+        {state.status === "error" ? (
+          <FormMessage>{state.message}</FormMessage>
+        ) : null}
 
         <div className="grid gap-5 sm:grid-cols-2">
           <Input
@@ -189,7 +198,9 @@ function VariantForm({ productId, variant, onDone, onCancel }) {
             type="number"
             min={0}
             step="0.01"
-            defaultValue={variant?.compareAtPrice ? variant.compareAtPrice / 100 : ""}
+            defaultValue={
+              variant?.compareAtPrice ? variant.compareAtPrice / 100 : ""
+            }
           />
           <Input
             label="Weight (g)"

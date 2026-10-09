@@ -58,7 +58,8 @@ export function NewsletterForm({ source = "site", className }) {
       ) : null}
 
       <p className="text-xs leading-relaxed text-cream-400">
-        We use your address only to send the journal. Unsubscribe from any email.
+        We use your address only to send the journal. Unsubscribe from any
+        email.
       </p>
     </form>
   );

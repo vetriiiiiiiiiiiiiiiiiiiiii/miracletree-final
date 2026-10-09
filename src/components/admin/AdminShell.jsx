@@ -9,7 +9,9 @@ import { CommandPalette } from "@/components/admin/CommandPalette";
 const NAVIGATION = [
   {
     title: "Overview",
-    items: [{ href: "/admin", label: "Dashboard", icon: "dashboard", exact: true }],
+    items: [
+      { href: "/admin", label: "Dashboard", icon: "dashboard", exact: true },
+    ],
   },
   {
     title: "Commerce",
@@ -124,8 +126,18 @@ export function AdminShell({ children, user, pendingCounts }) {
             className="p-2 text-cream-400 hover:text-cream-50 lg:hidden"
             aria-label="Close navigation"
           >
-            <svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden>
-              <path d="M3 3l12 12M15 3L3 15" stroke="currentColor" strokeWidth="1.4" />
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 18 18"
+              fill="none"
+              aria-hidden
+            >
+              <path
+                d="M3 3l12 12M15 3L3 15"
+                stroke="currentColor"
+                strokeWidth="1.4"
+              />
             </svg>
           </button>
         </div>
@@ -178,7 +190,10 @@ export function AdminShell({ children, user, pendingCounts }) {
           </p>
 
           <div className="mt-4 flex items-center gap-4">
-            <Link href="/" className="text-xs text-cream-400 hover:text-cream-100">
+            <Link
+              href="/"
+              className="text-xs text-cream-400 hover:text-cream-100"
+            >
               View store
             </Link>
             <form action={logoutAction}>
@@ -222,9 +237,25 @@ export function AdminShell({ children, user, pendingCounts }) {
             onClick={() => setPaletteOpen(true)}
             className="flex flex-1 items-center gap-3 border border-border-subtle bg-white/[0.02] px-3.5 py-2 text-left text-sm text-cream-400 transition-colors hover:border-border-strong md:max-w-md"
           >
-            <svg width="15" height="15" viewBox="0 0 20 20" fill="none" aria-hidden>
-              <circle cx="9" cy="9" r="6" stroke="currentColor" strokeWidth="1.4" />
-              <path d="M13.5 13.5L17 17" stroke="currentColor" strokeWidth="1.4" />
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 20 20"
+              fill="none"
+              aria-hidden
+            >
+              <circle
+                cx="9"
+                cy="9"
+                r="6"
+                stroke="currentColor"
+                strokeWidth="1.4"
+              />
+              <path
+                d="M13.5 13.5L17 17"
+                stroke="currentColor"
+                strokeWidth="1.4"
+              />
             </svg>
             <span className="flex-1">Search or jump to…</span>
             <kbd className="hidden shrink-0 border border-border-subtle px-1.5 py-0.5 text-[0.6rem] text-cream-400 md:block">
@@ -255,7 +286,8 @@ export function AdminShell({ children, user, pendingCounts }) {
 }
 function Icon({ name, active }) {
   const paths = {
-    dashboard: "M2.5 2.5h6v6h-6zM11.5 2.5h6v4h-6zM11.5 8.5h6v9h-6zM2.5 11.5h6v6h-6z",
+    dashboard:
+      "M2.5 2.5h6v6h-6zM11.5 2.5h6v4h-6zM11.5 8.5h6v9h-6zM2.5 11.5h6v6h-6z",
     products: "M4 6l6-3 6 3v8l-6 3-6-3V6zM4 6l6 3 6-3M10 9v8",
     orders: "M4 6h12l-1 11H5L4 6zM7.4 6V4.8a2.6 2.6 0 0 1 5.2 0V6",
     customers:
@@ -269,7 +301,8 @@ function Icon({ name, active }) {
     leadership:
       "M10 3.5a2.6 2.6 0 1 1 0 5.2 2.6 2.6 0 0 1 0-5.2M4.5 16.5c0-2.9 2.5-4.8 5.5-4.8s5.5 1.9 5.5 4.8",
     promotions: "M3 8l7-5 7 5v9H3V8zM7.5 10.5l5 5M12.5 10.5l-5 5",
-    media: "M3 4h14v12H3zM3 12l4-4 3 3 3-3 4 4M7.5 7.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z",
+    media:
+      "M3 4h14v12H3zM3 12l4-4 3 3 3-3 4 4M7.5 7.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z",
     settings:
       "M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM10 2.5v2M10 15.5v2M17.5 10h-2M4.5 10h-2M15.3 4.7l-1.4 1.4M6.1 13.9l-1.4 1.4M15.3 15.3l-1.4-1.4M6.1 6.1L4.7 4.7",
   };

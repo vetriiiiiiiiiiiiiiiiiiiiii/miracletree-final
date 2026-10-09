@@ -6,7 +6,8 @@ import { redirect } from "next/navigation";
 
 export const metadata = buildMetadata({
   title: "Create an account",
-  description: "Create a Miracle Tree account to track orders and save products.",
+  description:
+    "Create a Miracle Tree account to track orders and save products.",
   path: "/register",
   noIndex: true,
 });

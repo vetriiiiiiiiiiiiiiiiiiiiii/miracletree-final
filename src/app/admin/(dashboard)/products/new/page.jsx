@@ -31,6 +31,7 @@ const EMPTY = {
   seoDescription: "",
   seoKeywords: "",
   ogImageUrl: "",
+  position: 9999,
 };
 export default async function NewProductPage() {
   await requireAdmin();
@@ -45,7 +46,10 @@ export default async function NewProductPage() {
       <PageHeader
         title="New product"
         description="Fill in the essentials and save. Images, variants and stock come next."
-        breadcrumb={[{ label: "Products", href: "/admin/products" }, { label: "New" }]}
+        breadcrumb={[
+          { label: "Products", href: "/admin/products" },
+          { label: "New" },
+        ]}
       />
 
       <ProductEditor

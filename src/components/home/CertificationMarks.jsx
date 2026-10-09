@@ -39,7 +39,7 @@ export function CertificationMarks({ className }) {
               height={320}
               sizes="120px"
               className="h-[3.75rem] w-auto object-contain sm:h-[4.5rem]"
-            />
+             unoptimized={typeof `/brand/certs/${mark.src === "string" ? `/brand/certs/${mark.src.startsWith("/uploads/") : undefined} />
           </li>
         ))}
       </ul>

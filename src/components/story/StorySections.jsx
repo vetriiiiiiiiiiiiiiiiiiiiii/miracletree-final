@@ -48,7 +48,9 @@ function useSpineProgress(ref) {
       // Zero when the top of the list reaches the middle of the screen, one
       // when its bottom does — so the rule tracks what is being read.
       const travelled = window.innerHeight / 2 - box.top;
-      setProgress(Math.max(0, Math.min(1, travelled / Math.max(1, box.height))));
+      setProgress(
+        Math.max(0, Math.min(1, travelled / Math.max(1, box.height))),
+      );
     };
     const onScroll = () => {
       if (!frame) frame = requestAnimationFrame(measure);
@@ -138,8 +140,8 @@ export function Timeline({ milestones }) {
           <Underlined>A working history</Underlined>
         </h2>
         <p className="mt-5 max-w-[54ch] text-[1.05rem] leading-relaxed text-[#55614e]">
-          {first} to {last} — {milestones.length} milestones, from a first planting
-          to a moringa economy.
+          {first} to {last} — {milestones.length} milestones, from a first
+          planting to a moringa economy.
         </p>
       </header>
 
@@ -184,13 +186,17 @@ export function Timeline({ milestones }) {
 
                 {/* Alternating: odd entries take the right column and leave
                     the left empty, which is what makes the step. */}
-                {!isLeft ? <div aria-hidden className="hidden lg:block" /> : null}
+                {!isLeft ? (
+                  <div aria-hidden className="hidden lg:block" />
+                ) : null}
 
                 <div
                   className={cn(
                     isLeft ? "lg:pr-14 lg:text-right" : "lg:pl-14",
                     "transition-[opacity,transform] duration-700 ease-[var(--ease-organic)] motion-reduce:transition-none",
-                    shown ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0",
+                    shown
+                      ? "translate-y-0 opacity-100"
+                      : "translate-y-6 opacity-0",
                   )}
                   style={{ transitionDelay: shown ? "60ms" : "0ms" }}
                 >
@@ -266,8 +272,8 @@ export function Accolades({ accolades }) {
           <Underlined tone="gold">Awards &amp; certification</Underlined>
         </h2>
         <p className="mt-6 leading-relaxed text-[#55614e]">
-          Each of these links out to where it was published. Nothing is listed here that
-          cannot be checked.
+          Each of these links out to where it was published. Nothing is listed
+          here that cannot be checked.
         </p>
       </header>
 
@@ -345,7 +351,9 @@ export function Credits({ credits }) {
             <ul className="grid gap-8 md:grid-cols-2">
               {group.items.map((person) => (
                 <li key={person.id} className="border-t border-[#c9c0a8] pt-5">
-                  <h4 className="text-[1.15rem] text-[#23301f]">{person.name}</h4>
+                  <h4 className="text-[1.15rem] text-[#23301f]">
+                    {person.name}
+                  </h4>
                   <p
                     className="mt-1 text-[1.05rem] text-[#7a5c1f]"
                     style={{ fontFamily: "var(--font-hand)" }}
@@ -418,6 +426,11 @@ export function FieldNotes({ notes }) {
                       fill
                       sizes="(max-width: 768px) 90vw, 30vw"
                       className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      unoptimized={
+                        typeof note.heroImageUrl === "string"
+                          ? note.heroImageUrl.startsWith("/uploads/")
+                          : undefined
+                      }
                     />
                   ) : (
                     <div className="grid h-full place-items-center">
@@ -444,7 +457,6 @@ export function FieldNotes({ notes }) {
                       {note.excerpt}
                     </p>
                   ) : null}
-
                 </div>
               </div>
             </Link>

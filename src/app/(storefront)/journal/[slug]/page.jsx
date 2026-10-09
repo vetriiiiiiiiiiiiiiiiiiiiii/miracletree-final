@@ -112,6 +112,11 @@ export default async function ArticlePage({ params }) {
                 priority
                 sizes="(max-width: 1024px) 100vw, 64rem"
                 className="object-cover"
+                unoptimized={
+                  typeof article.heroImageUrl === "string"
+                    ? article.heroImageUrl.startsWith("/uploads/")
+                    : undefined
+                }
               />
             </div>
           ) : null}
@@ -138,7 +143,8 @@ export default async function ArticlePage({ params }) {
           <div className="mx-auto mt-20 max-w-[68ch] border-y border-border-subtle py-10">
             <h2 className="text-title text-cream-50">Get the next one</h2>
             <p className="mt-3 max-w-[46ch] text-sm leading-relaxed text-cream-400">
-              Roughly monthly. Harvest notes, growing notes and the occasional recipe.
+              Roughly monthly. Harvest notes, growing notes and the occasional
+              recipe.
             </p>
             <div className="mt-6 max-w-md">
               <NewsletterForm source="journal" />
@@ -179,6 +185,11 @@ export default async function ArticlePage({ params }) {
                           fill
                           sizes="(max-width: 768px) 90vw, 30vw"
                           className="object-cover transition-transform duration-700 group-hover:scale-105"
+                          unoptimized={
+                            typeof item.heroImageUrl === "string"
+                              ? item.heroImageUrl.startsWith("/uploads/")
+                              : undefined
+                          }
                         />
                       ) : (
                         <div

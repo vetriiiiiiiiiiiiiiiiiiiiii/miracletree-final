@@ -24,7 +24,12 @@ export default async function sitemap() {
   ]);
   const now = new Date();
   const staticRoutes = [
-    { url: siteUrl("/"), lastModified: now, changeFrequency: "weekly", priority: 1 },
+    {
+      url: siteUrl("/"),
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 1,
+    },
     {
       url: siteUrl("/shop"),
       lastModified: now,

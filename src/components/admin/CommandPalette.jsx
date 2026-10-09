@@ -40,9 +40,12 @@ export function CommandPalette({ open, onClose, commands }) {
     const controller = new AbortController();
     const id = window.setTimeout(async () => {
       try {
-        const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`, {
-          signal: controller.signal,
-        });
+        const response = await fetch(
+          `/api/search?q=${encodeURIComponent(query)}`,
+          {
+            signal: controller.signal,
+          },
+        );
         const data = await response.json();
         setResults((data.hits ?? []).slice(0, 6));
       } catch {
@@ -97,7 +100,10 @@ export function CommandPalette({ open, onClose, commands }) {
   let lastGroup = "";
   return createPortal(
     <div className="fixed inset-0 z-[400]">
-      <div className="absolute inset-0 bg-ink/75 backdrop-blur-sm" onClick={onClose} />
+      <div
+        className="absolute inset-0 bg-ink/75 backdrop-blur-sm"
+        onClick={onClose}
+      />
 
       <div
         role="dialog"
@@ -114,8 +120,18 @@ export function CommandPalette({ open, onClose, commands }) {
             aria-hidden
             className="text-cream-400"
           >
-            <circle cx="9" cy="9" r="6" stroke="currentColor" strokeWidth="1.4" />
-            <path d="M13.5 13.5L17 17" stroke="currentColor" strokeWidth="1.4" />
+            <circle
+              cx="9"
+              cy="9"
+              r="6"
+              stroke="currentColor"
+              strokeWidth="1.4"
+            />
+            <path
+              d="M13.5 13.5L17 17"
+              stroke="currentColor"
+              strokeWidth="1.4"
+            />
           </svg>
           <input
             ref={inputRef}
@@ -143,9 +159,13 @@ export function CommandPalette({ open, onClose, commands }) {
                 const showGroup = group !== lastGroup;
                 lastGroup = group;
                 const label =
-                  entry.type === "command" ? entry.command.label : entry.result.title;
+                  entry.type === "command"
+                    ? entry.command.label
+                    : entry.result.title;
                 const subtitle =
-                  entry.type === "command" ? entry.command.hint : entry.result.subtitle;
+                  entry.type === "command"
+                    ? entry.command.hint
+                    : entry.result.subtitle;
                 return (
                   <li key={`${entry.type}-${index}`}>
                     {showGroup ? (
@@ -180,7 +200,8 @@ export function CommandPalette({ open, onClose, commands }) {
                         ) : null}
                       </span>
 
-                      {entry.type === "result" && entry.result.price !== null ? (
+                      {entry.type === "result" &&
+                      entry.result.price !== null ? (
                         <span className="shrink-0 text-xs tabular-nums text-cream-400">
                           {formatPrice(entry.result.price)}
                         </span>

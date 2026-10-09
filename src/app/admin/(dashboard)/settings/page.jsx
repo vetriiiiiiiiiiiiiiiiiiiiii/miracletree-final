@@ -39,25 +39,26 @@ export default async function AdminSettingsPage() {
               : "Razorpay is not configured. Checkout is running in cash-on-delivery-only mode."}
           </p>
           <p className="mt-3 text-xs leading-relaxed text-cream-400">
-            API keys are read from environment variables and are never stored in the
-            database or sent to the browser. Set{" "}
+            API keys are read from environment variables and are never stored in
+            the database or sent to the browser. Set{" "}
             <code className="text-cream-300">RAZORPAY_KEY_ID</code>,{" "}
             <code className="text-cream-300">RAZORPAY_KEY_SECRET</code> and{" "}
-            <code className="text-cream-300">RAZORPAY_WEBHOOK_SECRET</code> to enable
-            it.
+            <code className="text-cream-300">RAZORPAY_WEBHOOK_SECRET</code> to
+            enable it.
           </p>
         </Card>
 
         <Card title="Search Console">
           <p className="text-sm leading-relaxed text-cream-300">
             The sitemap is generated automatically at{" "}
-            <code className="text-cream-300">/sitemap.xml</code> and includes every
-            published product, category and article.
+            <code className="text-cream-300">/sitemap.xml</code> and includes
+            every published product, category and article.
           </p>
           <p className="mt-3 text-xs leading-relaxed text-cream-400">
             To verify ownership, set{" "}
-            <code className="text-cream-300">GOOGLE_SITE_VERIFICATION</code> to the
-            token Google gives you — it is rendered as a meta tag on every page.
+            <code className="text-cream-300">GOOGLE_SITE_VERIFICATION</code> to
+            the token Google gives you — it is rendered as a meta tag on every
+            page.
           </p>
         </Card>
       </div>

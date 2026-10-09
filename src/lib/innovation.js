@@ -63,7 +63,11 @@ export const INNOVATIONS = [
  * story itself.
  */
 export const STAGES = [
-  { stage: "01", title: "Farm", body: "Growing moringa, and learning what it needs." },
+  {
+    stage: "01",
+    title: "Farm",
+    body: "Growing moringa, and learning what it needs.",
+  },
   {
     stage: "02",
     title: "Process",
@@ -90,7 +94,11 @@ export const STAGES = [
  * figures they replaced are documented in prisma/story.ts.
  */
 export const FIGURES = [
-  { value: "15+", label: "Years on one crop", note: "Exclusively moringa since 2009" },
+  {
+    value: "15+",
+    label: "Years on one crop",
+    note: "Exclusively moringa since 2009",
+  },
   {
     value: "60+",
     label: "Products & formulations",

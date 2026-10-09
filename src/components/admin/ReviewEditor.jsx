@@ -34,51 +34,44 @@ export function ReviewEditor({ products }) {
           </p>
         ) : null}
 
-        <Select 
-          label="Product" 
-          name="productId" 
+        <Select
+          label="Product"
+          name="productId"
           required
           options={[
             { label: "Select a product...", value: "" },
-            ...products.map(p => ({ label: p.name, value: p.id }))
+            ...products.map((p) => ({ label: p.name, value: p.id })),
           ]}
         />
 
         <div className="grid gap-6 sm:grid-cols-2">
-          <Input 
-            label="Author Name" 
-            name="authorName" 
-            required 
-            error={state.errors?.authorName} 
+          <Input
+            label="Author Name"
+            name="authorName"
+            required
+            error={state.errors?.authorName}
           />
-          <Input 
-            label="Author Email" 
-            name="authorEmail" 
-            type="email" 
-          />
+          <Input label="Author Email" name="authorEmail" type="email" />
         </div>
 
-        <Input 
-          label="Rating (1-5)" 
-          name="rating" 
-          type="number" 
-          min="1" 
-          max="5" 
-          defaultValue="5" 
-          required 
+        <Input
+          label="Rating (1-5)"
+          name="rating"
+          type="number"
+          min="1"
+          max="5"
+          defaultValue="5"
+          required
         />
 
-        <Input 
-          label="Headline" 
-          name="title" 
-        />
+        <Input label="Headline" name="title" />
 
-        <Textarea 
-          label="Review Body" 
-          name="body" 
-          required 
-          rows={5} 
-          error={state.errors?.body} 
+        <Textarea
+          label="Review Body"
+          name="body"
+          required
+          rows={5}
+          error={state.errors?.body}
         />
 
         <div className="flex gap-4 border-t border-border-subtle pt-6">

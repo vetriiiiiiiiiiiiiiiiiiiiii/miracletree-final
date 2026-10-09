@@ -10,7 +10,10 @@ export default async function AdminMediaPage() {
       orderBy: { createdAt: "desc" },
       take: 200,
     }),
-    prisma.media.aggregate({ _sum: { sizeBytes: true }, _count: { _all: true } }),
+    prisma.media.aggregate({
+      _sum: { sizeBytes: true },
+      _count: { _all: true },
+    }),
   ]);
   const bytes = totals._sum.sizeBytes ?? 0;
   return (
@@ -35,9 +38,10 @@ export default async function AdminMediaPage() {
 
       <Card className="mt-8 mb-6">
         <p className="text-sm leading-relaxed text-cream-300">
-          Copy a URL from here and paste it into a product image, an article hero or a
-          homepage section. Deleting a file removes it from this library but leaves the
-          file itself in place, because another product may still point at the same URL.
+          Copy a URL from here and paste it into a product image, an article
+          hero or a homepage section. Deleting a file removes it from this
+          library but leaves the file itself in place, because another product
+          may still point at the same URL.
         </p>
       </Card>
 

@@ -24,7 +24,11 @@ export default async function LoginPage({ searchParams }) {
       title="Sign in"
       lede="Your orders, addresses and saved products, in one place."
     >
-      <LoginForm next={params.next} justReset={params.reset === "1"} error={params.error} />
+      <LoginForm
+        next={params.next}
+        justReset={params.reset === "1"}
+        error={params.error}
+      />
     </AuthShell>
   );
 }

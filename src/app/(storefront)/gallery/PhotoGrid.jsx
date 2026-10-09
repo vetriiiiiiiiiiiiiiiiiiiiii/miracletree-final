@@ -16,7 +16,9 @@ export function PhotoGrid({ photos }) {
   const step = useCallback(
     (delta) =>
       setOpen((current) =>
-        current === null ? null : (current + delta + photos.length) % photos.length,
+        current === null
+          ? null
+          : (current + delta + photos.length) % photos.length,
       ),
     [photos.length],
   );
@@ -55,6 +57,11 @@ export function PhotoGrid({ photos }) {
                 height={photo.height}
                 sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                 className="h-auto w-full transition-transform duration-700 ease-[var(--ease-organic)] group-hover:scale-[1.03]"
+                unoptimized={
+                  typeof photo.src === "string"
+                    ? photo.src.startsWith("/uploads/")
+                    : undefined
+                }
               />
             </button>
             {photo.caption ? (
@@ -99,6 +106,11 @@ export function PhotoGrid({ photos }) {
               sizes="100vw"
               className="max-h-full w-auto max-w-full object-contain"
               priority
+              unoptimized={
+                typeof active.src === "string"
+                  ? active.src.startsWith("/uploads/")
+                  : undefined
+              }
             />
           </div>
 
@@ -122,7 +134,9 @@ function Arrow({ direction, onClick }) {
     <button
       type="button"
       onClick={onClick}
-      aria-label={direction === "prev" ? "Previous photograph" : "Next photograph"}
+      aria-label={
+        direction === "prev" ? "Previous photograph" : "Next photograph"
+      }
       className="shrink-0 rounded-full border border-border-subtle p-3 text-cream-300 transition-colors hover:border-border-strong hover:text-cream-50"
     >
       <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden>
@@ -140,7 +154,10 @@ function Arrow({ direction, onClick }) {
 /** Anchor nav across the groups, so the page is navigable without scrolling it all. */
 export function GroupNav({ groups }) {
   return (
-    <nav aria-label="Photograph sections" className="flex flex-wrap gap-x-6 gap-y-3">
+    <nav
+      aria-label="Photograph sections"
+      className="flex flex-wrap gap-x-6 gap-y-3"
+    >
       {groups.map((group) => (
         <a
           key={group.slug}

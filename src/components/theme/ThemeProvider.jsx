@@ -11,7 +11,9 @@ export const THEME_STORAGE_KEY = "mt-theme";
 const ThemeContext = createContext(null);
 function systemTheme() {
   if (typeof window === "undefined") return "dark";
-  return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+  return window.matchMedia("(prefers-color-scheme: light)").matches
+    ? "light"
+    : "dark";
 }
 function readSetting() {
   if (typeof window === "undefined") return "dark";
@@ -86,7 +88,9 @@ export function ThemeProvider({ children }) {
     () => ({ setting, theme, setSetting, toggle }),
     [setting, theme, setSetting, toggle],
   );
-  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+  return (
+    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
+  );
 }
 /**
  * Read the theme. Safe outside the provider — admin and error boundaries render

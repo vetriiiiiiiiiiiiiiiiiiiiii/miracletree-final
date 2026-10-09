@@ -31,7 +31,11 @@ export async function subscribeAction(_prev, formData) {
   // an existing address never leaks through a duplicate-key error.
   await prisma.newsletterSubscriber.upsert({
     where: { email: parsed.data.email },
-    create: { email: parsed.data.email, source: parsed.data.source, isActive: true },
+    create: {
+      email: parsed.data.email,
+      source: parsed.data.source,
+      isActive: true,
+    },
     update: { isActive: true },
   });
   return {
@@ -60,7 +64,10 @@ export async function contactAction(_prev, formData) {
     windowSeconds: 3600,
   });
   if (!limit.ok) {
-    return { status: "error", message: "Too many messages. Please try again later." };
+    return {
+      status: "error",
+      message: "Too many messages. Please try again later.",
+    };
   }
   // Enquiries are recorded in the audit log so nothing is lost before an email
   // integration is configured; admin can read them under Settings → Activity.

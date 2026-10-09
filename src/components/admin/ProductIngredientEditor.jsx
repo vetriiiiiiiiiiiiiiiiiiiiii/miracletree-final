@@ -4,11 +4,18 @@ import { useRouter } from "next/navigation";
 import { Input, Select, FormMessage } from "@/components/ui/Field";
 import { Card, Table, Td, Tr, EmptyRow } from "@/components/admin/ui";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
-import { removeProductIngredientAction, saveProductIngredientAction } from "@/app/actions/admin/products";
+import {
+  removeProductIngredientAction,
+  saveProductIngredientAction,
+} from "@/app/actions/admin/products";
 
 const INITIAL = { status: "idle" };
 
-export function ProductIngredientEditor({ productId, productIngredients, allIngredients }) {
+export function ProductIngredientEditor({
+  productId,
+  productIngredients,
+  allIngredients,
+}) {
   const router = useRouter();
   const [editing, setEditing] = useState(null);
   const [deleting, setDeleting] = useState(null);
@@ -55,7 +62,9 @@ export function ProductIngredientEditor({ productId, productIngredients, allIngr
           ) : (
             productIngredients.map((mapping) => (
               <Tr key={mapping.id}>
-                <Td className="text-cream-50 font-medium">{mapping.ingredient.name}</Td>
+                <Td className="text-cream-50 font-medium">
+                  {mapping.ingredient.name}
+                </Td>
                 <Td className="text-xs text-cream-400">
                   {mapping.amount || "—"}
                 </Td>
@@ -107,7 +116,10 @@ export function ProductIngredientEditor({ productId, productIngredients, allIngr
 }
 
 function IngredientModal({ productId, mapping, allIngredients, onClose }) {
-  const [state, action, pending] = useActionState(saveProductIngredientAction, INITIAL);
+  const [state, action, pending] = useActionState(
+    saveProductIngredientAction,
+    INITIAL,
+  );
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -142,7 +154,10 @@ function IngredientModal({ productId, mapping, allIngredients, onClose }) {
             defaultValue={mapping?.ingredientId ?? ""}
             options={[
               { value: "", label: "Select an ingredient..." },
-              ...allIngredients.map((ing) => ({ value: ing.id, label: ing.name }))
+              ...allIngredients.map((ing) => ({
+                value: ing.id,
+                label: ing.name,
+              })),
             ]}
             hint="Manage base ingredients in Content > Ingredients."
           />

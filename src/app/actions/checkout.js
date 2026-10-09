@@ -18,7 +18,11 @@ import {
   razorpayPublicKey,
   verifyPaymentSignature,
 } from "@/lib/razorpay";
-import { checkoutSchema, fieldErrors, razorpayVerifySchema } from "@/lib/validation";
+import {
+  checkoutSchema,
+  fieldErrors,
+  razorpayVerifySchema,
+} from "@/lib/validation";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 import { recordAudit } from "@/lib/audit";
 /**
@@ -175,7 +179,10 @@ export async function placeOrderAction(formData) {
       return { ok: false, error: error.message };
     }
     console.error("[checkout] order creation failed", error);
-    return { ok: false, error: "We couldn't place that order. Please try again." };
+    return {
+      ok: false,
+      error: "We couldn't place that order. Please try again.",
+    };
   }
   // Lets this browser — and only this browser — read the confirmation page for
   // a guest order. Set for signed-in shoppers too, so a confirmation opened
@@ -195,7 +202,10 @@ export async function placeOrderAction(formData) {
       data: {
         status: "confirmed",
         events: {
-          create: { status: "confirmed", message: "Cash on delivery confirmed." },
+          create: {
+            status: "confirmed",
+            message: "Cash on delivery confirmed.",
+          },
         },
       },
     });
@@ -241,7 +251,10 @@ export async function placeOrderAction(formData) {
           status: "cancelled",
           paymentStatus: "failed",
           events: {
-            create: { status: "cancelled", message: "Payment could not be started." },
+            create: {
+              status: "cancelled",
+              message: "Payment could not be started.",
+            },
           },
         },
       });
@@ -320,7 +333,9 @@ export async function markOrderPaid(orderId, paymentRef) {
         paymentStatus: "paid",
         status: "confirmed",
         paymentRef,
-        events: { create: { status: "confirmed", message: "Payment received." } },
+        events: {
+          create: { status: "confirmed", message: "Payment received." },
+        },
       },
     });
     // The units are sold now, not merely spoken for.

@@ -3,7 +3,10 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/admin/ui";
 import { Textarea, Select, FormMessage } from "@/components/ui/Field";
-import { addCustomerNoteAction, setUserRoleAction } from "@/app/actions/admin/content";
+import {
+  addCustomerNoteAction,
+  setUserRoleAction,
+} from "@/app/actions/admin/content";
 /**
  * Role changes and internal notes.
  *
@@ -54,7 +57,10 @@ export function CustomerControls({ userId, role, canChangeRole, notes }) {
               onChange={(event) => void changeRole(event.target.value)}
               options={[
                 { value: "customer", label: "Customer — storefront only" },
-                { value: "staff", label: "Staff — admin, no destructive actions" },
+                {
+                  value: "staff",
+                  label: "Staff — admin, no destructive actions",
+                },
                 { value: "admin", label: "Admin — full access" },
               ]}
               hint="Staff can manage orders, stock and content but cannot delete products or change roles."
@@ -71,7 +77,10 @@ export function CustomerControls({ userId, role, canChangeRole, notes }) {
         </div>
       </Card>
 
-      <Card title="Internal notes" description="Only visible to you and your team.">
+      <Card
+        title="Internal notes"
+        description="Only visible to you and your team."
+      >
         <div className="grid gap-4">
           <Textarea
             label="Add a note"
@@ -97,7 +106,9 @@ export function CustomerControls({ userId, role, canChangeRole, notes }) {
                   <p className="whitespace-pre-line text-sm leading-relaxed text-cream-300">
                     {entry.body}
                   </p>
-                  <p className="mt-1.5 text-xs text-cream-400">{entry.createdAt}</p>
+                  <p className="mt-1.5 text-xs text-cream-400">
+                    {entry.createdAt}
+                  </p>
                 </li>
               ))}
             </ul>

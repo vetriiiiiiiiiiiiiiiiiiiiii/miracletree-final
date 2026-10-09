@@ -48,7 +48,8 @@ const STEP_PLAN = [
     category: "healthy-snacks",
     eyebrow: "On the move",
     title: "Something to carry",
-    blurb: "Bars and laddus for the afternoon, when you want something to hand.",
+    blurb:
+      "Bars and laddus for the afternoon, when you want something to hand.",
   },
   {
     key: "after",
@@ -72,7 +73,11 @@ export default async function RitualPage() {
             name: true,
             slug: true,
             shortDescription: true,
-            images: { take: 1, orderBy: { position: "asc" }, select: { url: true } },
+            images: {
+              take: 1,
+              orderBy: { position: "asc" },
+              select: { url: true },
+            },
             variants: {
               where: { isActive: true },
               orderBy: { position: "asc" },
@@ -82,7 +87,11 @@ export default async function RitualPage() {
                 name: true,
                 price: true,
                 inventory: {
-                  select: { onHand: true, reserved: true, trackInventory: true },
+                  select: {
+                    onHand: true,
+                    reserved: true,
+                    trackInventory: true,
+                  },
                 },
               },
             },
@@ -102,7 +111,8 @@ export default async function RitualPage() {
       const variant = product.variants[0];
       if (!variant) return [];
       const inv = variant.inventory;
-      const inStock = !inv || !inv.trackInventory || inv.onHand - inv.reserved > 0;
+      const inStock =
+        !inv || !inv.trackInventory || inv.onHand - inv.reserved > 0;
       return [
         {
           variantId: variant.id,
@@ -155,11 +165,14 @@ export default async function RitualPage() {
 
         <header className="mt-10 max-w-3xl">
           <p className="eyebrow text-cream-400">Build your ritual</p>
-          <h1 className="mt-5 text-hero text-cream-50">A day around the tree</h1>
+          <h1 className="mt-5 text-hero text-cream-50">
+            A day around the tree
+          </h1>
           <p className="mt-7 max-w-[54ch] text-[1.1rem] leading-relaxed text-cream-300">
-            Most people who stick with moringa do it the same way: a cup in the morning,
-            a spoon stirred into something they already cook, and a snack in the bag for
-            the afternoon. Build the version of that you will keep up.
+            Most people who stick with moringa do it the same way: a cup in the
+            morning, a spoon stirred into something they already cook, and a
+            snack in the bag for the afternoon. Build the version of that you
+            will keep up.
           </p>
           {promo ? (
             <p className="mt-5 text-sm text-leaf-300">

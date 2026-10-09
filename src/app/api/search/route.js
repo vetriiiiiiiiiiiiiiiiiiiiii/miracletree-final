@@ -13,73 +13,93 @@ export async function GET(request) {
   // The most exposed endpoint on the site: no auth, and five LIKE queries per
   // call. The ceiling is high because this fires on every keystroke — a real
   // shopper searching hard might spend twenty in a minute, not sixty.
-  const limited = await limitRoute({ name: "search", limit: 60, windowSeconds: 60 });
+  const limited = await limitRoute({
+    name: "search",
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (limited) return limited;
-  const term = (request.nextUrl.searchParams.get("q") ?? "").trim().slice(0, 80);
+  const term = (request.nextUrl.searchParams.get("q") ?? "")
+    .trim()
+    .slice(0, 80);
   if (term.length < 2) {
     return NextResponse.json({ hits: [], suggestions: await suggestions() });
   }
-  const [products, articles, faqs, categories, ingredients] = await Promise.all([
-    prisma.product.findMany({
-      where: {
-        status: "published",
-        OR: [
-          { name: { contains: term, ...insensitive } },
-          { shortDescription: { contains: term, ...insensitive } },
-          { category: { name: { contains: term, ...insensitive } } },
-          {
-            ingredients: {
-              some: { ingredient: { name: { contains: term, ...insensitive } } },
+  const [products, articles, faqs, categories, ingredients] = await Promise.all(
+    [
+      prisma.product.findMany({
+        where: {
+          status: "published",
+          OR: [
+            { name: { contains: term, ...insensitive } },
+            { shortDescription: { contains: term, ...insensitive } },
+            { category: { name: { contains: term, ...insensitive } } },
+            {
+              ingredients: {
+                some: {
+                  ingredient: { name: { contains: term, ...insensitive } },
+                },
+              },
             },
+          ],
+        },
+        take: 6,
+        orderBy: [{ isFeatured: "desc" }, { position: "asc" }],
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          price: true,
+          shortDescription: true,
+          images: {
+            take: 1,
+            orderBy: { position: "asc" },
+            select: { url: true },
           },
-        ],
-      },
-      take: 6,
-      orderBy: [{ isFeatured: "desc" }, { position: "asc" }],
-      select: {
-        id: true,
-        name: true,
-        slug: true,
-        price: true,
-        shortDescription: true,
-        images: { take: 1, orderBy: { position: "asc" }, select: { url: true } },
-        category: { select: { name: true } },
-      },
-    }),
-    prisma.article.findMany({
-      where: {
-        status: "published",
-        OR: [
-          { title: { contains: term, ...insensitive } },
-          { excerpt: { contains: term, ...insensitive } },
-          { content: { contains: term, ...insensitive } },
-        ],
-      },
-      take: 3,
-      select: { id: true, title: true, slug: true, excerpt: true, heroImageUrl: true },
-    }),
-    prisma.faq.findMany({
-      where: {
-        isActive: true,
-        OR: [
-          { question: { contains: term, ...insensitive } },
-          { answer: { contains: term, ...insensitive } },
-        ],
-      },
-      take: 3,
-      select: { id: true, question: true, answer: true },
-    }),
-    prisma.category.findMany({
-      where: { isActive: true, name: { contains: term, ...insensitive } },
-      take: 3,
-      select: { id: true, name: true, slug: true, description: true },
-    }),
-    prisma.ingredient.findMany({
-      where: { name: { contains: term, ...insensitive } },
-      take: 3,
-      select: { id: true, name: true, slug: true, description: true },
-    }),
-  ]);
+          category: { select: { name: true } },
+        },
+      }),
+      prisma.article.findMany({
+        where: {
+          status: "published",
+          OR: [
+            { title: { contains: term, ...insensitive } },
+            { excerpt: { contains: term, ...insensitive } },
+            { content: { contains: term, ...insensitive } },
+          ],
+        },
+        take: 3,
+        select: {
+          id: true,
+          title: true,
+          slug: true,
+          excerpt: true,
+          heroImageUrl: true,
+        },
+      }),
+      prisma.faq.findMany({
+        where: {
+          isActive: true,
+          OR: [
+            { question: { contains: term, ...insensitive } },
+            { answer: { contains: term, ...insensitive } },
+          ],
+        },
+        take: 3,
+        select: { id: true, question: true, answer: true },
+      }),
+      prisma.category.findMany({
+        where: { isActive: true, name: { contains: term, ...insensitive } },
+        take: 3,
+        select: { id: true, name: true, slug: true, description: true },
+      }),
+      prisma.ingredient.findMany({
+        where: { name: { contains: term, ...insensitive } },
+        take: 3,
+        select: { id: true, name: true, slug: true, description: true },
+      }),
+    ],
+  );
   const hits = [
     ...products.map((p) => ({
       kind: "product",

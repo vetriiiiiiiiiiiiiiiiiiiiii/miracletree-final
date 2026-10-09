@@ -1,10 +1,9 @@
 import { SITE } from "./constants";
 import { stripHtml, truncate } from "./utils";
 export function siteUrl(path = "/") {
-  const base = (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(
-    /\/$/,
-    "",
-  );
+  const base = (
+    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
+  ).replace(/\/$/, "");
   return `${base}${path.startsWith("/") ? path : `/${path}`}`;
 }
 /**
@@ -25,7 +24,11 @@ export function buildMetadata(input) {
       : {
           index: true,
           follow: true,
-          googleBot: { index: true, follow: true, "max-image-preview": "large" },
+          googleBot: {
+            index: true,
+            follow: true,
+            "max-image-preview": "large",
+          },
         },
     openGraph: {
       title: input.title,
@@ -104,7 +107,9 @@ export function productSchema(product) {
     "@type": "Product",
     name: product.name,
     description: truncate(
-      stripHtml(product.shortDescription ?? product.description ?? product.name),
+      stripHtml(
+        product.shortDescription ?? product.description ?? product.name,
+      ),
       300,
     ),
     sku: product.sku ?? product.variants[0]?.sku ?? undefined,

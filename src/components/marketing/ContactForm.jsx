@@ -76,8 +76,8 @@ export function ContactForm({ defaultTopic, defaultMessage }) {
       <Submit />
 
       <p className="text-xs leading-relaxed text-cream-400">
-        We use what you send here only to answer you. Nothing is added to a marketing
-        list unless you ask.
+        We use what you send here only to answer you. Nothing is added to a
+        marketing list unless you ask.
       </p>
     </form>
   );

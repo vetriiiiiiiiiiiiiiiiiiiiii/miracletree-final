@@ -1,5 +1,9 @@
 import Link from "next/link";
-import { Container, Section, SectionHeading } from "@/components/layout/Section";
+import {
+  Container,
+  Section,
+  SectionHeading,
+} from "@/components/layout/Section";
 import { TestimonialCarousel } from "@/components/home/TestimonialCarousel";
 /**
  * Social proof, drawn entirely from real submissions. Nothing is seeded or
@@ -15,8 +19,9 @@ export function SocialProof({ title, subtitle, items }) {
         {items.length === 0 ? (
           <div className="mt-14 max-w-[52ch] border-l border-gold-500/40 pl-6">
             <p className="leading-relaxed text-cream-300">
-              We are rebuilding this section around verified reviews only. If you have
-              bought from us before, your review will appear here once it is approved.
+              We are rebuilding this section around verified reviews only. If
+              you have bought from us before, your review will appear here once
+              it is approved.
             </p>
             <Link
               href="/shop"

@@ -37,13 +37,19 @@ export function ImageManager({ productId, images }) {
       body.set("file", file);
       body.set("folder", "products");
       try {
-        const response = await fetch("/api/admin/upload", { method: "POST", body });
+        const response = await fetch("/api/admin/upload", {
+          method: "POST",
+          body,
+        });
         const data = await response.json();
         if (!response.ok) {
           setError(data.error ?? "That upload failed.");
           break;
         }
-        const result = await addProductImageAction({ productId, url: data.url });
+        const result = await addProductImageAction({
+          productId,
+          url: data.url,
+        });
         if (!result.ok) {
           setError(result.error ?? "Could not attach that image.");
           break;
@@ -119,6 +125,11 @@ export function ImageManager({ productId, images }) {
                 fill
                 sizes="140px"
                 className="object-contain p-2"
+                unoptimized={
+                  typeof image.url === "string"
+                    ? image.url.startsWith("/uploads/")
+                    : undefined
+                }
               />
 
               {index === 0 ? (
@@ -133,7 +144,13 @@ export function ImageManager({ productId, images }) {
                 aria-label="Remove image"
                 className="absolute right-1.5 top-1.5 grid h-6 w-6 place-items-center bg-ink/85 text-cream-300 opacity-0 transition-opacity hover:text-danger group-hover:opacity-100 focus-visible:opacity-100"
               >
-                <svg width="10" height="10" viewBox="0 0 12 12" fill="none" aria-hidden>
+                <svg
+                  width="10"
+                  height="10"
+                  viewBox="0 0 12 12"
+                  fill="none"
+                  aria-hidden
+                >
                   <path
                     d="M2 2l8 8M10 2l-8 8"
                     stroke="currentColor"

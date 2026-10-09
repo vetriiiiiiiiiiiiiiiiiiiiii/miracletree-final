@@ -21,10 +21,10 @@ export default async function CartPage() {
   // If the bag already holds the bestsellers, fall back to same-category picks.
   if (recommended.length < 3 && cart.lines.length) {
     const extra = await getProductsByIds(cart.lines.map((l) => l.productId));
-    recommended = [...recommended, ...extra.filter((p) => !inCart.has(p.id))].slice(
-      0,
-      4,
-    );
+    recommended = [
+      ...recommended,
+      ...extra.filter((p) => !inCart.has(p.id)),
+    ].slice(0, 4);
   }
   return (
     <div className="grain bg-ink pb-24 pt-12 md:pt-16">

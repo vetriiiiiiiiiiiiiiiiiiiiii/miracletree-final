@@ -53,16 +53,24 @@ export default async function AdminCustomerPage({ params }) {
     },
   });
   if (!user) notFound();
-  const paidOrders = user.orders.filter((order) => order.paymentStatus === "paid");
+  const paidOrders = user.orders.filter(
+    (order) => order.paymentStatus === "paid",
+  );
   const spend = paidOrders.reduce((sum, order) => sum + order.grandTotal, 0);
-  const averageOrder = paidOrders.length ? Math.round(spend / paidOrders.length) : 0;
-  const name = [user.firstName, user.lastName].filter(Boolean).join(" ") || user.email;
+  const averageOrder = paidOrders.length
+    ? Math.round(spend / paidOrders.length)
+    : 0;
+  const name =
+    [user.firstName, user.lastName].filter(Boolean).join(" ") || user.email;
   return (
     <>
       <PageHeader
         title={name}
         description={user.email}
-        breadcrumb={[{ label: "Customers", href: "/admin/customers" }, { label: name }]}
+        breadcrumb={[
+          { label: "Customers", href: "/admin/customers" },
+          { label: name },
+        ]}
         actions={
           <Pill
             tone={
@@ -106,7 +114,9 @@ export default async function AdminCustomerPage({ params }) {
               ]}
             >
               {user.orders.length === 0 ? (
-                <EmptyRow colSpan={5}>This customer hasn&rsquo;t ordered yet.</EmptyRow>
+                <EmptyRow colSpan={5}>
+                  This customer hasn&rsquo;t ordered yet.
+                </EmptyRow>
               ) : (
                 user.orders.map((order) => (
                   <Tr key={order.id}>
@@ -122,14 +132,19 @@ export default async function AdminCustomerPage({ params }) {
                       </span>
                     </Td>
                     <Td align="right" className="tabular-nums text-cream-400">
-                      {order.items.reduce((sum, item) => sum + item.quantity, 0)}
+                      {order.items.reduce(
+                        (sum, item) => sum + item.quantity,
+                        0,
+                      )}
                     </Td>
                     <Td align="center">
                       <OrderStatusPill status={order.status} />
                     </Td>
                     <Td align="center">
                       <Pill
-                        tone={order.paymentStatus === "paid" ? "success" : "neutral"}
+                        tone={
+                          order.paymentStatus === "paid" ? "success" : "neutral"
+                        }
                       >
                         {order.paymentStatus}
                       </Pill>
@@ -167,7 +182,11 @@ export default async function AdminCustomerPage({ params }) {
                       {review.rating}/5
                     </Td>
                     <Td align="center">
-                      <Pill tone={review.status === "approved" ? "success" : "warning"}>
+                      <Pill
+                        tone={
+                          review.status === "approved" ? "success" : "warning"
+                        }
+                      >
                         {review.status}
                       </Pill>
                     </Td>
@@ -200,7 +219,9 @@ export default async function AdminCustomerPage({ params }) {
               <ul className="grid gap-5">
                 {user.addresses.map((address) => (
                   <li key={address.id} className="text-sm">
-                    {address.isDefault ? <Pill tone="warning">Default</Pill> : null}
+                    {address.isDefault ? (
+                      <Pill tone="warning">Default</Pill>
+                    ) : null}
                     <address className="mt-2 not-italic leading-relaxed text-cream-300">
                       {address.firstName} {address.lastName}
                       <br />
@@ -241,8 +262,8 @@ export default async function AdminCustomerPage({ params }) {
                 : "Not subscribed to the newsletter."}
             </p>
             <p className="mt-2 text-xs text-cream-400">
-              Preference is set by the customer and can only be changed by them, or by
-              unsubscribing on their behalf on request.
+              Preference is set by the customer and can only be changed by them,
+              or by unsubscribing on their behalf on request.
             </p>
           </Card>
         </div>

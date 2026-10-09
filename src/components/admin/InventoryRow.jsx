@@ -22,7 +22,10 @@ export function InventoryRow({ variantId, onHand }) {
     }
   }, [state, router]);
   return (
-    <form action={action} className="relative flex items-center justify-end gap-1.5">
+    <form
+      action={action}
+      className="relative flex items-center justify-end gap-1.5"
+    >
       <input type="hidden" name="variantId" value={variantId} />
 
       <label className="sr-only" htmlFor={`delta-${variantId}`}>

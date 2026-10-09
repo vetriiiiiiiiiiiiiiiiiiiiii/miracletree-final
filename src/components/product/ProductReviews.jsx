@@ -38,7 +38,12 @@ export function ProductReviews({
             </p>
 
             <div className="mt-3">
-              <Rating value={average} count={count} size="md" showCount={false} />
+              <Rating
+                value={average}
+                count={count}
+                size="md"
+                showCount={false}
+              />
               {/* "6 verified reviews" over six reviews of which one carries a
                   purchase badge is a claim, not a count. The count is the
                   count; how many are verified purchases is stated separately,
@@ -48,7 +53,8 @@ export function ProductReviews({
                 {verifiedCount > 0 ? (
                   <>
                     {" · "}
-                    {verifiedCount} verified {verifiedCount === 1 ? "purchase" : "purchases"}
+                    {verifiedCount} verified{" "}
+                    {verifiedCount === 1 ? "purchase" : "purchases"}
                   </>
                 ) : null}
               </p>
@@ -57,11 +63,15 @@ export function ProductReviews({
             <ul className="mt-7 grid gap-2">
               {breakdown.map((row) => (
                 <li key={row.star} className="flex items-center gap-3 text-xs">
-                  <span className="w-8 tabular-nums text-cream-400">{row.star}★</span>
+                  <span className="w-8 tabular-nums text-cream-400">
+                    {row.star}★
+                  </span>
                   <span className="h-1 flex-1 bg-border-subtle">
                     <span
                       className="block h-1 bg-gold-400"
-                      style={{ width: count ? `${(row.count / count) * 100}%` : "0%" }}
+                      style={{
+                        width: count ? `${(row.count / count) * 100}%` : "0%",
+                      }}
                     />
                   </span>
                   <span className="w-6 text-right tabular-nums text-cream-400">
@@ -75,8 +85,8 @@ export function ProductReviews({
           <div>
             <p className="text-title text-cream-50">No reviews yet</p>
             <p className="mt-4 text-sm leading-relaxed text-cream-400">
-              We publish reviews only after checking them, and we never write our own.
-              If you have used this product, yours would be the first.
+              We publish reviews only after checking them, and we never write
+              our own. If you have used this product, yours would be the first.
             </p>
           </div>
         )}
@@ -124,10 +134,14 @@ export function ProductReviews({
                   </div>
 
                   {review.title ? (
-                    <h3 className="mt-4 text-[1.1rem] text-cream-50">{review.title}</h3>
+                    <h3 className="mt-4 text-[1.1rem] text-cream-50">
+                      {review.title}
+                    </h3>
                   ) : null}
 
-                  <p className="mt-3 leading-relaxed text-cream-300">{review.body}</p>
+                  <p className="mt-3 leading-relaxed text-cream-300">
+                    {review.body}
+                  </p>
 
                   {review.imageUrl ? (
                     <div className="mt-4">
@@ -137,6 +151,11 @@ export function ProductReviews({
                         width={120}
                         height={120}
                         className="rounded-sm object-cover"
+                        unoptimized={
+                          typeof review.imageUrl === "string"
+                            ? review.imageUrl.startsWith("/uploads/")
+                            : undefined
+                        }
                       />
                     </div>
                   ) : null}
@@ -174,17 +193,17 @@ function ReviewForm({ productId, productName, user, onDone }) {
   const handleUpload = async (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
-    
+
     setUploading(true);
     setUploadError(null);
-    
+
     const body = new FormData();
     body.set("file", file);
-    
+
     try {
       const response = await fetch("/api/upload", { method: "POST", body });
       const data = await response.json();
-      
+
       if (!response.ok) {
         setUploadError(data.error ?? "Upload failed.");
       } else {
@@ -214,16 +233,21 @@ function ReviewForm({ productId, productName, user, onDone }) {
     >
       <input type="hidden" name="productId" value={productId} />
       <input type="hidden" name="rating" value={rating} />
-      {imageUrl ? <input type="hidden" name="imageUrl" value={imageUrl} /> : null}
+      {imageUrl ? (
+        <input type="hidden" name="imageUrl" value={imageUrl} />
+      ) : null}
 
       <div>
         <h3 className="text-title text-cream-50">Review {productName}</h3>
         <p className="mt-2 text-sm text-cream-400">
-          Reviews are checked before they appear. Please describe your own experience.
+          Reviews are checked before they appear. Please describe your own
+          experience.
         </p>
       </div>
 
-      {state.status === "error" ? <FormMessage>{state.message}</FormMessage> : null}
+      {state.status === "error" ? (
+        <FormMessage>{state.message}</FormMessage>
+      ) : null}
 
       <div>
         <p className="eyebrow mb-2 text-cream-400">Your rating *</p>
@@ -261,6 +285,11 @@ function ReviewForm({ productId, productName, user, onDone }) {
               width={100}
               height={100}
               className="rounded-sm object-cover"
+              unoptimized={
+                typeof imageUrl === "string"
+                  ? imageUrl.startsWith("/uploads/")
+                  : undefined
+              }
             />
             <button
               type="button"
@@ -283,14 +312,20 @@ function ReviewForm({ productId, productName, user, onDone }) {
                 disabled={uploading}
               />
             </label>
-            {uploadError ? <p className="text-xs text-danger">{uploadError}</p> : null}
+            {uploadError ? (
+              <p className="text-xs text-danger">{uploadError}</p>
+            ) : null}
           </div>
         )}
       </div>
 
       {user ? (
         <>
-          <input type="hidden" name="authorName" value={[user.firstName, user.lastName].filter(Boolean).join(" ")} />
+          <input
+            type="hidden"
+            name="authorName"
+            value={[user.firstName, user.lastName].filter(Boolean).join(" ")}
+          />
           <input type="hidden" name="authorEmail" value={user.email} />
         </>
       ) : (
@@ -299,7 +334,9 @@ function ReviewForm({ productId, productName, user, onDone }) {
             label="Your name"
             name="authorName"
             required
-            error={state.status === "error" ? state.errors?.authorName : undefined}
+            error={
+              state.status === "error" ? state.errors?.authorName : undefined
+            }
           />
           <Input
             label="Email"

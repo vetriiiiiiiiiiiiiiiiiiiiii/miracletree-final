@@ -26,14 +26,23 @@ const REASONS = [
     body: "Save products to come back to, on any device.",
   },
 ];
-const CERTIFICATIONS = ["Organic", "ISO 9001:2015", "HACCP", "GMP", "HALAL", "APEDA"];
+const CERTIFICATIONS = [
+  "Organic",
+  "ISO 9001:2015",
+  "HACCP",
+  "GMP",
+  "HALAL",
+  "APEDA",
+];
 export function AuthShell({ title, lede, children }) {
   return (
     <div className="grain relative grid min-h-[80svh] items-center bg-ink py-20 lg:grid-cols-2 lg:py-0">
       <div className="relative z-10 mx-auto w-full max-w-md gutter">
         <h1 className="text-display text-cream-50">{title}</h1>
         {lede ? (
-          <p className="mt-5 max-w-[42ch] leading-relaxed text-cream-300">{lede}</p>
+          <p className="mt-5 max-w-[42ch] leading-relaxed text-cream-300">
+            {lede}
+          </p>
         ) : null}
 
         <div className="mt-10">{children}</div>

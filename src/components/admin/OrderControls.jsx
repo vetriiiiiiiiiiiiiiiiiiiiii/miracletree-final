@@ -9,7 +9,11 @@ import {
   updateOrderStatusAction,
   updatePaymentStatusAction,
 } from "@/app/actions/admin/orders";
-import { ORDER_STATUSES, ORDER_STATUS_LABELS, PAYMENT_STATUSES } from "@/lib/constants";
+import {
+  ORDER_STATUSES,
+  ORDER_STATUS_LABELS,
+  PAYMENT_STATUSES,
+} from "@/lib/constants";
 const INITIAL = { status: "idle" };
 /**
  * The order's control surface. Status changes carry stock consequences, so the
@@ -23,7 +27,10 @@ export function OrderControls({
   trackingUrl,
 }) {
   const router = useRouter();
-  const [statusState, statusAction] = useActionState(updateOrderStatusAction, INITIAL);
+  const [statusState, statusAction] = useActionState(
+    updateOrderStatusAction,
+    INITIAL,
+  );
   const [paymentState, paymentAction] = useActionState(
     updatePaymentStatusAction,
     INITIAL,
@@ -33,7 +40,9 @@ export function OrderControls({
   const [noteBusy, setNoteBusy] = useState(false);
   const [, startTransition] = useTransition();
   const consequence = (() => {
-    const dispatched = ["shipped", "out_for_delivery", "delivered"].includes(status);
+    const dispatched = ["shipped", "out_for_delivery", "delivered"].includes(
+      status,
+    );
     if ((next === "shipped" || next === "out_for_delivery") && !dispatched) {
       return "Stock will be deducted from on-hand when you save this.";
     }
@@ -125,7 +134,10 @@ export function OrderControls({
               label="Payment status"
               name="paymentStatus"
               defaultValue={paymentStatus}
-              options={PAYMENT_STATUSES.map((value) => ({ value, label: value }))}
+              options={PAYMENT_STATUSES.map((value) => ({
+                value,
+                label: value,
+              }))}
               hint="Only change this to reconcile a payment you have confirmed elsewhere."
             />
 

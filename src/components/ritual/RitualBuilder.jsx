@@ -36,7 +36,8 @@ export function RitualBuilder({ steps, promo }) {
       ...prev,
       // Tapping the selected one again clears it — skipping a step has to be
       // as easy as filling it.
-      [stepKey]: prev[stepKey]?.variantId === choice.variantId ? undefined : choice,
+      [stepKey]:
+        prev[stepKey]?.variantId === choice.variantId ? undefined : choice,
     }));
   };
   const addRitual = () => {
@@ -62,7 +63,10 @@ export function RitualBuilder({ steps, promo }) {
               <p className="eyebrow text-cream-400">
                 Step {index + 1} · {step.eyebrow}
               </p>
-              <h2 id={`step-${step.key}`} className="mt-3 text-title text-cream-50">
+              <h2
+                id={`step-${step.key}`}
+                className="mt-3 text-title text-cream-50"
+              >
                 {step.title}
               </h2>
               <p className="mt-3 max-w-[52ch] text-sm leading-relaxed text-cream-400">
@@ -72,7 +76,8 @@ export function RitualBuilder({ steps, promo }) {
 
             <ul className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-4">
               {step.choices.map((choice) => {
-                const selected = picked[step.key]?.variantId === choice.variantId;
+                const selected =
+                  picked[step.key]?.variantId === choice.variantId;
                 return (
                   <li key={choice.variantId}>
                     <button
@@ -97,6 +102,11 @@ export function RitualBuilder({ steps, promo }) {
                             fill
                             sizes="(max-width: 768px) 45vw, 20vw"
                             className="object-contain p-4 transition-transform duration-700 group-hover:scale-[1.05]"
+                            unoptimized={
+                              typeof choice.imageUrl === "string"
+                                ? choice.imageUrl.startsWith("/uploads/")
+                                : undefined
+                            }
                           />
                         ) : null}
 
@@ -111,7 +121,12 @@ export function RitualBuilder({ steps, promo }) {
                               : "scale-75 border-on-photo/20 bg-photo-from/70 opacity-0 group-hover:opacity-100",
                           )}
                         >
-                          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                          <svg
+                            width="12"
+                            height="12"
+                            viewBox="0 0 12 12"
+                            fill="none"
+                          >
                             <path
                               d="M2.5 6.2 4.8 8.5 9.5 3.8"
                               stroke={selected ? "#ffffff" : "#5a6552"}
@@ -159,7 +174,8 @@ export function RitualBuilder({ steps, promo }) {
 
           {chosen.length === 0 ? (
             <p className="mt-4 text-sm leading-relaxed text-cream-400">
-              Nothing chosen yet. Pick whatever fits your day — every step is optional.
+              Nothing chosen yet. Pick whatever fits your day — every step is
+              optional.
             </p>
           ) : (
             <ul className="mt-5 grid gap-3">
@@ -192,7 +208,9 @@ export function RitualBuilder({ steps, promo }) {
             <dl className="mt-6 grid gap-2 border-t border-border-subtle pt-5 text-sm">
               <div className="flex justify-between">
                 <dt className="text-cream-400">Subtotal</dt>
-                <dd className="tabular-nums text-cream-100">{formatPrice(subtotal)}</dd>
+                <dd className="tabular-nums text-cream-100">
+                  {formatPrice(subtotal)}
+                </dd>
               </div>
 
               {saving > 0 && promo ? (

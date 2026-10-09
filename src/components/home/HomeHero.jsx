@@ -98,7 +98,9 @@ function Stat({ item, animate }) {
       <dd className="font-display text-[1.6rem] leading-none tabular-nums text-cream-50">
         {item.plain ? value : `${value}${item.plus ? "+" : ""}`}
       </dd>
-      <dt className="mt-1 text-[0.7rem] leading-snug text-cream-400">{item.label}</dt>
+      <dt className="mt-1 text-[0.7rem] leading-snug text-cream-400">
+        {item.label}
+      </dt>
     </div>
   );
 }
@@ -120,7 +122,9 @@ export function HomeHero({ title, subtitle, products }) {
    * failure mode.
    */
   const rise = (delay) =>
-    animate ? { animation: `hero-rise 0.7s var(--ease-organic) ${delay} both` } : {};
+    animate
+      ? { animation: `hero-rise 0.7s var(--ease-organic) ${delay} both` }
+      : {};
 
   const [flagship, ...rest] = products;
 
@@ -138,7 +142,10 @@ export function HomeHero({ title, subtitle, products }) {
   }, [animate, rest.length]);
 
   const minis = rest.length
-    ? Array.from({ length: Math.min(3, rest.length) }, (_, i) => rest[(offset + i) % rest.length])
+    ? Array.from(
+        { length: Math.min(3, rest.length) },
+        (_, i) => rest[(offset + i) % rest.length],
+      )
     : [];
 
   // The flagship leans towards the pointer. The lean lives on an inner element
@@ -172,7 +179,10 @@ export function HomeHero({ title, subtitle, products }) {
 
       {/* The cells are translucent, so the drift reads through them and in the
           gaps between rather than sitting on top of anything. */}
-      <FloatingParticles className="pointer-events-none absolute inset-0 h-full w-full" max={45} />
+      <FloatingParticles
+        className="pointer-events-none absolute inset-0 h-full w-full"
+        max={45}
+      />
 
       <div className="relative mx-auto grid h-full max-w-[100rem] gap-3 lg:grid-cols-12 lg:grid-rows-6">
         {/* The statement. Carries the page's only h1. */}
@@ -191,8 +201,16 @@ export function HomeHero({ title, subtitle, products }) {
             strokeWidth="0.6"
           >
             <path d="M50 96V22" />
-            <path d="M50 60c0-17-12-28.5-29-29.5C21.5 47 33.5 60 50 60z" fill="currentColor" fillOpacity="0.5" />
-            <path d="M50 44c0-17 12-28.5 29-29.5C78.5 31 66.5 44 50 44z" fill="currentColor" fillOpacity="0.5" />
+            <path
+              d="M50 60c0-17-12-28.5-29-29.5C21.5 47 33.5 60 50 60z"
+              fill="currentColor"
+              fillOpacity="0.5"
+            />
+            <path
+              d="M50 44c0-17 12-28.5 29-29.5C78.5 31 66.5 44 50 44z"
+              fill="currentColor"
+              fillOpacity="0.5"
+            />
           </svg>
           <p className="flex items-center gap-3 text-[0.7rem] uppercase tracking-[0.22em] text-gold-400">
             MiracleTree Life Science · Madurai
@@ -201,7 +219,9 @@ export function HomeHero({ title, subtitle, products }) {
               className="h-px w-10 origin-left bg-gold-400/50"
               style={
                 animate
-                  ? { animation: "hero-rule 0.7s var(--ease-organic) 0.5s both" }
+                  ? {
+                      animation: "hero-rule 0.7s var(--ease-organic) 0.5s both",
+                    }
                   : undefined
               }
             />
@@ -243,7 +263,10 @@ export function HomeHero({ title, subtitle, products }) {
             style={{ ...rise("0.14s"), backgroundImage: GROUND.flagship }}
           >
             {/* The pool the pack stands in. */}
-            <div aria-hidden className="product-pool pointer-events-none absolute inset-0" />
+            <div
+              aria-hidden
+              className="product-pool pointer-events-none absolute inset-0"
+            />
             <div className="relative z-[1] my-4 min-h-[12rem] flex-1 lg:min-h-[9rem]">
               {/* Two nested wrappers: the outer one breathes on a loop, the
                   inner one answers the pointer. One element cannot hold both
@@ -270,6 +293,11 @@ export function HomeHero({ title, subtitle, products }) {
                     sizes="(min-width: 1024px) 40vw, 90vw"
                     priority
                     className="object-contain transition-transform duration-700 ease-[var(--ease-organic)] group-hover:scale-[1.05]"
+                    unoptimized={
+                      typeof flagship.image === "string"
+                        ? flagship.image.startsWith("/uploads/")
+                        : undefined
+                    }
                   />
                 </div>
               </div>
@@ -330,14 +358,20 @@ export function HomeHero({ title, subtitle, products }) {
           ))}
         </dl>
 
-        <ul className="grid grid-cols-3 gap-3 lg:col-span-5 lg:row-span-2" style={rise("0.34s")}>
+        <ul
+          className="grid grid-cols-3 gap-3 lg:col-span-5 lg:row-span-2"
+          style={rise("0.34s")}
+        >
           {minis.map((p, i) => (
             <li
               key={`${p.slug}-${i}`}
               className={`group relative flex flex-col overflow-hidden ${CELL} p-3 hover:-translate-y-1 hover:border-gold-400/60 hover:shadow-[0_18px_40px_-24px_#000]`}
               style={{ backgroundImage: GROUND.quiet }}
             >
-              <span aria-hidden className="product-pool pointer-events-none absolute inset-0 opacity-70" />
+              <span
+                aria-hidden
+                className="product-pool pointer-events-none absolute inset-0 opacity-70"
+              />
               <div className="relative z-[1] min-h-[4.5rem] flex-1">
                 <Image
                   // Keying on the slug restarts the fade when the cell cycles
@@ -354,10 +388,18 @@ export function HomeHero({ title, subtitle, products }) {
                       ? { animation: "hero-rise 0.6s var(--ease-organic) both" }
                       : undefined
                   }
+                  unoptimized={
+                    typeof p.image === "string"
+                      ? p.image.startsWith("/uploads/")
+                      : undefined
+                  }
                 />
               </div>
               <p className="relative mt-2 line-clamp-2 text-[0.74rem] leading-snug text-cream-200">
-                <Link href={`/product/${p.slug}`} className="before:absolute before:inset-0">
+                <Link
+                  href={`/product/${p.slug}`}
+                  className="before:absolute before:inset-0"
+                >
                   {p.name}
                 </Link>
               </p>
@@ -396,7 +438,11 @@ export function HomeHero({ title, subtitle, products }) {
                 strokeWidth="1.4"
                 className="shrink-0 text-gold-400/70"
               >
-                <path d="M2 6.4 4.6 9 10 3.2" strokeLinecap="round" strokeLinejoin="round" />
+                <path
+                  d="M2 6.4 4.6 9 10 3.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
               {m}
             </span>

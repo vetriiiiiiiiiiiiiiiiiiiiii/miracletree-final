@@ -1,6 +1,9 @@
 import { SITE } from "@/lib/constants";
 import { organizationSchema, siteUrl, websiteSchema } from "@/lib/seo";
-import { ThemeProvider, themeInitScript } from "@/components/theme/ThemeProvider";
+import {
+  ThemeProvider,
+  themeInitScript,
+} from "@/components/theme/ThemeProvider";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Analytics } from "@/components/analytics/Analytics";
 import { Preloader } from "@/components/motion/Preloader";

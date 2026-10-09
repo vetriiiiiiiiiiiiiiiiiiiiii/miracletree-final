@@ -2,7 +2,13 @@
 import { useActionState, useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useFormStatus } from "react-dom";
-import { Input, Textarea, Select, Checkbox, FormMessage } from "@/components/ui/Field";
+import {
+  Input,
+  Textarea,
+  Select,
+  Checkbox,
+  FormMessage,
+} from "@/components/ui/Field";
 import { Card, Pill } from "@/components/admin/ui";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { cn } from "@/lib/utils";
@@ -177,10 +183,15 @@ function RecordForm({ fields, record, saveAction, onDone, onCancel }) {
     <form action={action} className="grid gap-5">
       {record ? <input type="hidden" name="id" value={record.id} /> : null}
 
-      {state.status === "error" ? <FormMessage>{state.message}</FormMessage> : null}
+      {state.status === "error" ? (
+        <FormMessage>{state.message}</FormMessage>
+      ) : null}
 
       {rows.map((row, index) => (
-        <div key={index} className={cn(row.length > 1 && "grid gap-5 sm:grid-cols-2")}>
+        <div
+          key={index}
+          className={cn(row.length > 1 && "grid gap-5 sm:grid-cols-2")}
+        >
           {row.map((field) => {
             const value = record?.values[field.name];
             const common = {

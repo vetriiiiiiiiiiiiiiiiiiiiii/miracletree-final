@@ -7,7 +7,11 @@ import { recordAudit } from "@/lib/audit";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { slugify } from "@/lib/utils";
 import { rupeesToPaise } from "@/lib/money";
-import { adminProductSchema, adminVariantSchema, fieldErrors } from "@/lib/validation";
+import {
+  adminProductSchema,
+  adminVariantSchema,
+  fieldErrors,
+} from "@/lib/validation";
 /**
  * Product administration.
  *
@@ -17,9 +21,13 @@ import { adminProductSchema, adminVariantSchema, fieldErrors } from "@/lib/valid
  * written to the audit log.
  */
 function guard(error) {
-  if (error instanceof AuthError) return { status: "error", message: error.message };
+  if (error instanceof AuthError)
+    return { status: "error", message: error.message };
   console.error("[admin/products]", error);
-  return { status: "error", message: "Something went wrong. Please try again." };
+  return {
+    status: "error",
+    message: "Something went wrong. Please try again.",
+  };
 }
 function bool(formData, key) {
   return formData.get(key) === "on" || formData.get(key) === "true";
@@ -61,6 +69,7 @@ export async function saveProductAction(_prev, formData) {
       seoDescription: formData.get("seoDescription"),
       seoKeywords: formData.get("seoKeywords"),
       ogImageUrl: formData.get("ogImageUrl"),
+      position: formData.get("position"),
     });
     if (!parsed.success) {
       return {
@@ -108,6 +117,7 @@ export async function saveProductAction(_prev, formData) {
       seoDescription: input.seoDescription || null,
       seoKeywords: input.seoKeywords || null,
       ogImageUrl: input.ogImageUrl || null,
+      position: input.position,
       publishedAt: input.status === "published" ? new Date() : null,
     };
     let productId = id;
@@ -122,7 +132,9 @@ export async function saveProductAction(_prev, formData) {
           ...data,
           // Keep the original publish date once it has one.
           publishedAt:
-            input.status === "published" ? (existing?.publishedAt ?? new Date()) : null,
+            input.status === "published"
+              ? (existing?.publishedAt ?? new Date())
+              : null,
         },
       });
       await recordAudit({
@@ -158,7 +170,6 @@ export async function saveProductAction(_prev, formData) {
         meta: { name: input.name },
       });
     }
-
 
     revalidatePath("/admin/products");
     revalidatePath("/shop");
@@ -210,7 +221,8 @@ export async function saveVariantAction(_prev, formData) {
         where: { id: input.id, productId },
         select: { id: true },
       });
-      if (!owned) return { status: "error", message: "That variant no longer exists." };
+      if (!owned)
+        return { status: "error", message: "That variant no longer exists." };
       await prisma.productVariant.update({
         where: { id: owned.id },
         data: variantData,
@@ -541,7 +553,8 @@ export async function saveProductBenefitAction(_prev, formData) {
     const body = String(formData.get("body") ?? "").trim();
     const icon = String(formData.get("icon") ?? "").trim();
 
-    if (!productId || !title) return { status: "error", message: "Title is required." };
+    if (!productId || !title)
+      return { status: "error", message: "Title is required." };
 
     if (id) {
       await prisma.productBenefit.update({
@@ -576,7 +589,7 @@ export async function deleteProductBenefitAction(benefitId) {
       select: { productId: true },
     });
     if (!benefit) return { ok: false, error: "Benefit not found." };
-    
+
     await prisma.productBenefit.delete({ where: { id: benefitId } });
     revalidatePath(`/admin/products/${benefit.productId}`);
     return { ok: true };
@@ -595,7 +608,8 @@ export async function saveUsageStepAction(_prev, formData) {
     const body = String(formData.get("body") ?? "").trim();
     const imageUrl = String(formData.get("imageUrl") ?? "").trim();
 
-    if (!productId || !title) return { status: "error", message: "Title is required." };
+    if (!productId || !title)
+      return { status: "error", message: "Title is required." };
 
     if (id) {
       await prisma.usageStep.update({
@@ -630,22 +644,22 @@ export async function deleteUsageStepAction(stepId) {
       select: { productId: true },
     });
     if (!step) return { ok: false, error: "Usage step not found." };
-    
+
     await prisma.usageStep.delete({ where: { id: stepId } });
-    
+
     // Reorder remaining steps
     const remaining = await prisma.usageStep.findMany({
       where: { productId: step.productId },
       orderBy: { step: "asc" },
     });
-    
+
     await prisma.$transaction(
-      remaining.map((s, index) => 
+      remaining.map((s, index) =>
         prisma.usageStep.update({
           where: { id: s.id },
-          data: { step: index + 1 }
-        })
-      )
+          data: { step: index + 1 },
+        }),
+      ),
     );
 
     revalidatePath(`/admin/products/${step.productId}`);
@@ -664,7 +678,8 @@ export async function saveProductIngredientAction(_prev, formData) {
     const amount = String(formData.get("amount") ?? "").trim();
     const id = formData.get("id") ? String(formData.get("id")) : undefined;
 
-    if (!productId || !ingredientId) return { status: "error", message: "Ingredient is required." };
+    if (!productId || !ingredientId)
+      return { status: "error", message: "Ingredient is required." };
 
     if (id) {
       await prisma.productIngredient.update({
@@ -673,13 +688,18 @@ export async function saveProductIngredientAction(_prev, formData) {
       });
     } else {
       const clash = await prisma.productIngredient.findUnique({
-        where: { productId_ingredientId: { productId, ingredientId } }
+        where: { productId_ingredientId: { productId, ingredientId } },
       });
       if (clash) {
-        return { status: "error", message: "This ingredient is already added to the product." };
+        return {
+          status: "error",
+          message: "This ingredient is already added to the product.",
+        };
       }
-      
-      const count = await prisma.productIngredient.count({ where: { productId } });
+
+      const count = await prisma.productIngredient.count({
+        where: { productId },
+      });
       await prisma.productIngredient.create({
         data: {
           productId,
@@ -705,7 +725,7 @@ export async function removeProductIngredientAction(mappingId) {
       select: { productId: true },
     });
     if (!mapping) return { ok: false, error: "Mapping not found." };
-    
+
     await prisma.productIngredient.delete({ where: { id: mappingId } });
     revalidatePath(`/admin/products/${mapping.productId}`);
     return { ok: true };

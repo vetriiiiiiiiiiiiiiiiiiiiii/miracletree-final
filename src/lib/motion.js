@@ -189,7 +189,12 @@ export function parallax(element, options = {}) {
 // ---------------------------------------------------------------- product
 /** Card entrance for a product grid. */
 export function productReveal(cards, trigger) {
-  return revealOnScroll(cards, { trigger, y: 40, stagger: 0.07, start: "top 88%" });
+  return revealOnScroll(cards, {
+    trigger,
+    y: 40,
+    stagger: 0.07,
+    start: "top 88%",
+  });
 }
 /**
  * Scrubs a product's image sequence (or a 3D model's rotation) against scroll.
@@ -263,10 +268,13 @@ export function heroTimeline(refs) {
   const reduced = prefersReducedMotion();
   const tl = gsap.timeline({ onComplete: refs.onComplete });
   if (reduced) {
-    tl.set([refs.headline, refs.sub, refs.actions, refs.scrollCue].filter(Boolean), {
-      opacity: 1,
-      y: 0,
-    });
+    tl.set(
+      [refs.headline, refs.sub, refs.actions, refs.scrollCue].filter(Boolean),
+      {
+        opacity: 1,
+        y: 0,
+      },
+    );
     return tl;
   }
   if (refs.seed) {
@@ -288,7 +296,11 @@ export function heroTimeline(refs) {
     tl.to(refs.sub, { opacity: 1, y: 0, duration: DURATION.base }, "-=0.8");
   }
   if (refs.actions) {
-    tl.to(refs.actions, { opacity: 1, y: 0, duration: DURATION.base }, "-=0.55");
+    tl.to(
+      refs.actions,
+      { opacity: 1, y: 0, duration: DURATION.base },
+      "-=0.55",
+    );
   }
   if (refs.scrollCue) {
     tl.to(refs.scrollCue, { opacity: 1, duration: DURATION.base }, "-=0.4");
@@ -303,8 +315,14 @@ export function heroTimeline(refs) {
 export function magneticButton(element, options = {}) {
   if (prefersReducedMotion() || isTouchDevice()) return () => {};
   const strength = options.strength ?? 0.3;
-  const moveX = gsap.quickTo(element, "x", { duration: 0.5, ease: EASE.organic });
-  const moveY = gsap.quickTo(element, "y", { duration: 0.5, ease: EASE.organic });
+  const moveX = gsap.quickTo(element, "x", {
+    duration: 0.5,
+    ease: EASE.organic,
+  });
+  const moveY = gsap.quickTo(element, "y", {
+    duration: 0.5,
+    ease: EASE.organic,
+  });
   const onMove = (event) => {
     const rect = element.getBoundingClientRect();
     const relX = event.clientX - (rect.left + rect.width / 2);

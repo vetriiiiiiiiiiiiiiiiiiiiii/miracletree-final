@@ -1,10 +1,10 @@
-import NextAuth from "next-auth"
-import Google from "next-auth/providers/google"
-import GitHub from "next-auth/providers/github"
-import Credentials from "next-auth/providers/credentials"
-import { PrismaAdapter } from "@auth/prisma-adapter"
-import { prisma } from "./lib/prisma"
-import bcrypt from "bcryptjs"
+import NextAuth from "next-auth";
+import Google from "next-auth/providers/google";
+import GitHub from "next-auth/providers/github";
+import Credentials from "next-auth/providers/credentials";
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import { prisma } from "./lib/prisma";
+import bcrypt from "bcryptjs";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   trustHost: true,
@@ -36,22 +36,30 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       authorize: async (credentials) => {
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
-        })
-        if (!user) return null
-        const isValid = await bcrypt.compare(credentials.password, user.passwordHash)
-        if (!isValid) return null
-        return user
+        });
+        if (!user) return null;
+        const isValid = await bcrypt.compare(
+          credentials.password,
+          user.passwordHash,
+        );
+        if (!isValid) return null;
+        return user;
       },
     }),
   ],
   callbacks: {
     async signIn({ user }) {
       if (user && user.email) {
-        const adminEmails = (process.env.ADMIN_EMAILS || "").split(",").map(e => e.trim().toLowerCase());
-        if (adminEmails.includes(user.email.toLowerCase()) && user.role !== "admin") {
+        const adminEmails = (process.env.ADMIN_EMAILS || "")
+          .split(",")
+          .map((e) => e.trim().toLowerCase());
+        if (
+          adminEmails.includes(user.email.toLowerCase()) &&
+          user.role !== "admin"
+        ) {
           await prisma.user.update({
             where: { id: user.id },
-            data: { role: "admin" }
+            data: { role: "admin" },
           });
           user.role = "admin";
         }
@@ -60,24 +68,24 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     async redirect({ url, baseUrl }) {
       // Allow relative callback URLs
-      if (url.startsWith("/")) return `${baseUrl}${url}`
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
       // Allows callback URLs on the same origin
-      else if (new URL(url).origin === baseUrl) return url
-      return baseUrl
+      else if (new URL(url).origin === baseUrl) return url;
+      return baseUrl;
     },
     async jwt({ token, user }) {
       if (user) {
-        token.role = user.role
-        token.id = user.id
+        token.role = user.role;
+        token.id = user.id;
       }
-      return token
+      return token;
     },
     async session({ session, token }) {
       if (session.user) {
-        session.user.role = token.role
-        session.user.id = token.id
+        session.user.role = token.role;
+        session.user.id = token.id;
       }
-      return session
+      return session;
     },
   },
-})
+});

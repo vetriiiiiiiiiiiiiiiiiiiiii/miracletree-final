@@ -25,7 +25,7 @@ const MAX_DIMENSION = 1200;
 
 export async function POST(request) {
   const ip = await clientIp();
-  
+
   // Very strict rate limit for public uploads: 10 uploads per hour per IP.
   const limited = await limitRoute({
     name: "public_upload",

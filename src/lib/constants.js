@@ -84,7 +84,8 @@ export const SITE = {
   phoneHours: "Mon–Sat, 10am–5pm IST",
   address: {
     line1: "Survey No : 65/A, Door No: 3/152, Middle Street",
-    line2: "Keelakarai Village, Near New Jallikattu Stadium, Alanganallur Taluk",
+    line2:
+      "Keelakarai Village, Near New Jallikattu Stadium, Alanganallur Taluk",
     city: "Madurai",
     state: "Tamil Nadu",
     postalCode: "625501",

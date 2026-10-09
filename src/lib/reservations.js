@@ -23,7 +23,9 @@ import { releaseStock } from "./inventory";
  */
 /** How long an unpaid order may hold its stock. */
 export const RESERVATION_TTL_MINUTES = 45;
-export async function releaseStaleReservations(ttlMinutes = RESERVATION_TTL_MINUTES) {
+export async function releaseStaleReservations(
+  ttlMinutes = RESERVATION_TTL_MINUTES,
+) {
   const cutoff = new Date(Date.now() - ttlMinutes * 60_000);
   const stale = await prisma.order.findMany({
     where: {

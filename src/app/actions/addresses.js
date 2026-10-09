@@ -52,7 +52,8 @@ export async function saveAddressAction(_prev, formData) {
       where: { id, userId: user.id },
       select: { id: true },
     });
-    if (!owned) return { status: "error", message: "That address no longer exists." };
+    if (!owned)
+      return { status: "error", message: "That address no longer exists." };
     await prisma.address.update({ where: { id: owned.id }, data });
   } else {
     const count = await prisma.address.count({ where: { userId: user.id } });
@@ -63,7 +64,11 @@ export async function saveAddressAction(_prev, formData) {
       };
     }
     await prisma.address.create({
-      data: { ...data, userId: user.id, isDefault: data.isDefault || count === 0 },
+      data: {
+        ...data,
+        userId: user.id,
+        isDefault: data.isDefault || count === 0,
+      },
     });
   }
   revalidatePath("/account/addresses");
@@ -76,7 +81,8 @@ export async function deleteAddressAction(id) {
     where: { id, userId: user.id },
     select: { id: true, isDefault: true },
   });
-  if (!owned) return { status: "error", message: "That address no longer exists." };
+  if (!owned)
+    return { status: "error", message: "That address no longer exists." };
   await prisma.address.delete({ where: { id: owned.id } });
   // Promote another address so the account is never left without a default.
   if (owned.isDefault) {

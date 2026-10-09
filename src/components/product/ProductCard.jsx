@@ -90,6 +90,11 @@ export function ProductCard({
               "group-hover:scale-[1.06]",
               secondary && "group-hover:opacity-0",
             )}
+            unoptimized={
+              typeof primary.url === "string"
+                ? primary.url.startsWith("/uploads/")
+                : undefined
+            }
           />
         ) : (
           <div className="absolute inset-0 grid place-items-center text-cream-400">
@@ -105,6 +110,11 @@ export function ProductCard({
             fill
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
             className="object-contain p-6 opacity-0 transition-all duration-[900ms] ease-[var(--ease-organic)] group-hover:scale-[1.04] group-hover:opacity-100"
+            unoptimized={
+              typeof secondary.url === "string"
+                ? secondary.url.startsWith("/uploads/")
+                : undefined
+            }
           />
         ) : null}
 
@@ -134,8 +144,20 @@ export function ProductCard({
                 "max-md:hidden",
               )}
             >
-              <svg width="15" height="15" viewBox="0 0 20 20" fill="none" aria-hidden>
-                <circle cx="9" cy="9" r="6" stroke="currentColor" strokeWidth="1.4" />
+              <svg
+                width="15"
+                height="15"
+                viewBox="0 0 20 20"
+                fill="none"
+                aria-hidden
+              >
+                <circle
+                  cx="9"
+                  cy="9"
+                  r="6"
+                  stroke="currentColor"
+                  strokeWidth="1.4"
+                />
                 <path
                   d="M13.5 13.5L17 17M9 6.5v5M6.5 9h5"
                   stroke="currentColor"
@@ -203,7 +225,11 @@ export function ProductCard({
           </p>
         ) : null}
 
-        <Rating value={product.ratingAverage} count={product.ratingCount} size="xs" />
+        <Rating
+          value={product.ratingAverage}
+          count={product.ratingCount}
+          size="xs"
+        />
 
         <div className="mt-auto flex items-baseline gap-2 pt-2">
           <span className="text-[1.05rem] tabular-nums text-cream-50">

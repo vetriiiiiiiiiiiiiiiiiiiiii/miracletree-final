@@ -27,7 +27,9 @@ export function SearchOverlay({ open, onClose }) {
     if (!open) return;
     setActive(0);
     try {
-      setRecent(JSON.parse(localStorage.getItem(RECENT_KEY) ?? "[]").slice(0, 5));
+      setRecent(
+        JSON.parse(localStorage.getItem(RECENT_KEY) ?? "[]").slice(0, 5),
+      );
     } catch {
       setRecent([]);
     }
@@ -42,9 +44,12 @@ export function SearchOverlay({ open, onClose }) {
     const id = window.setTimeout(async () => {
       setLoading(term.trim().length >= 2);
       try {
-        const response = await fetch(`/api/search?q=${encodeURIComponent(term)}`, {
-          signal: controller.signal,
-        });
+        const response = await fetch(
+          `/api/search?q=${encodeURIComponent(term)}`,
+          {
+            signal: controller.signal,
+          },
+        );
         const data = await response.json();
         setHits(data.hits ?? []);
         setFallback(data.fallback ?? []);
@@ -69,7 +74,10 @@ export function SearchOverlay({ open, onClose }) {
       const trimmed = value.trim();
       if (trimmed.length < 2) return;
       try {
-        const next = [trimmed, ...recent.filter((r) => r !== trimmed)].slice(0, 5);
+        const next = [trimmed, ...recent.filter((r) => r !== trimmed)].slice(
+          0,
+          5,
+        );
         localStorage.setItem(RECENT_KEY, JSON.stringify(next));
         setRecent(next);
       } catch {
@@ -119,8 +127,18 @@ export function SearchOverlay({ open, onClose }) {
             aria-hidden
             className="shrink-0 text-cream-400"
           >
-            <circle cx="9" cy="9" r="6" stroke="currentColor" strokeWidth="1.4" />
-            <path d="M13.5 13.5L17 17" stroke="currentColor" strokeWidth="1.4" />
+            <circle
+              cx="9"
+              cy="9"
+              r="6"
+              stroke="currentColor"
+              strokeWidth="1.4"
+            />
+            <path
+              d="M13.5 13.5L17 17"
+              stroke="currentColor"
+              strokeWidth="1.4"
+            />
           </svg>
           <input
             ref={inputRef}
@@ -194,7 +212,8 @@ export function SearchOverlay({ open, onClose }) {
             <>
               {hits.length === 0 && !loading ? (
                 <p className="mb-6 text-sm text-cream-400">
-                  Nothing matched &ldquo;{term}&rdquo;. Here is what people buy most.
+                  Nothing matched &ldquo;{term}&rdquo;. Here is what people buy
+                  most.
                 </p>
               ) : null}
 
@@ -228,6 +247,11 @@ export function SearchOverlay({ open, onClose }) {
                             fill
                             sizes="48px"
                             className="object-contain p-1"
+                            unoptimized={
+                              typeof hit.image === "string"
+                                ? hit.image.startsWith("/uploads/")
+                                : undefined
+                            }
                           />
                         ) : (
                           <KindIcon kind={hit.kind} />
@@ -260,7 +284,9 @@ export function SearchOverlay({ open, onClose }) {
               {term.trim().length >= 2 ? (
                 <button
                   type="button"
-                  onClick={() => go(`/shop?q=${encodeURIComponent(term.trim())}`)}
+                  onClick={() =>
+                    go(`/shop?q=${encodeURIComponent(term.trim())}`)
+                  }
                   className="mt-6 w-full border border-border-subtle py-3 text-center text-[0.7rem] uppercase tracking-[0.16em] text-cream-300 hover:border-border-strong hover:text-cream-50"
                 >
                   See all results for &ldquo;{term.trim()}&rdquo;

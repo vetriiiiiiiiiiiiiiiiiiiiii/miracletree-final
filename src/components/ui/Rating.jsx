@@ -3,11 +3,19 @@ import { cn } from "@/lib/utils";
  * Stars render as a single accessible value. Partial fills use a clipped
  * overlay rather than half-star glyphs, so 4.3 looks like 4.3.
  */
-export function Rating({ value, count, size = "sm", showCount = true, className }) {
+export function Rating({
+  value,
+  count,
+  size = "sm",
+  showCount = true,
+  className,
+}) {
   const dimensions = { xs: 11, sm: 13, md: 17 }[size];
   if (value === null || !count) {
     return showCount ? (
-      <span className={cn("text-xs text-cream-400", className)}>No reviews yet</span>
+      <span className={cn("text-xs text-cream-400", className)}>
+        No reviews yet
+      </span>
     ) : null;
   }
   const percent = Math.max(0, Math.min(100, (value / 5) * 100));

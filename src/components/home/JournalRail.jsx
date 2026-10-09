@@ -1,6 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Container, Section, SectionHeading } from "@/components/layout/Section";
+import {
+  Container,
+  Section,
+  SectionHeading,
+} from "@/components/layout/Section";
 import { LinkButton } from "@/components/ui/Button";
 import { Reveal } from "@/components/motion/Reveal";
 import { formatDate } from "@/lib/utils";
@@ -22,7 +26,10 @@ export function JournalRail({ title, subtitle, ctaLabel, ctaHref, articles }) {
           ) : null}
         </div>
 
-        <Reveal className="mt-16 grid gap-x-8 gap-y-12 md:grid-cols-3" stagger={0.1}>
+        <Reveal
+          className="mt-16 grid gap-x-8 gap-y-12 md:grid-cols-3"
+          stagger={0.1}
+        >
           {articles.map((article) => (
             <article key={article.id} data-animate="fade-up" className="group">
               <Link href={`/journal/${article.slug}`} className="block">
@@ -34,6 +41,11 @@ export function JournalRail({ title, subtitle, ctaLabel, ctaHref, articles }) {
                       fill
                       sizes="(max-width: 768px) 90vw, 30vw"
                       className="object-cover transition-transform duration-[900ms] ease-[var(--ease-organic)] group-hover:scale-105"
+                      unoptimized={
+                        typeof article.heroImageUrl === "string"
+                          ? article.heroImageUrl.startsWith("/uploads/")
+                          : undefined
+                      }
                     />
                   ) : (
                     <div
@@ -49,7 +61,9 @@ export function JournalRail({ title, subtitle, ctaLabel, ctaHref, articles }) {
 
                 <div className="mt-5 flex items-center gap-3 text-[0.66rem] uppercase tracking-[0.14em] text-cream-400">
                   {article.category ? (
-                    <span className="text-gold-400">{article.category.name}</span>
+                    <span className="text-gold-400">
+                      {article.category.name}
+                    </span>
                   ) : null}
                   {article.category ? (
                     <span aria-hidden className="text-border-subtle">

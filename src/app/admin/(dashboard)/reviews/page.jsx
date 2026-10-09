@@ -44,7 +44,10 @@ export default async function AdminReviewsPage({ searchParams }) {
   const byStatus = Object.fromEntries(
     counts.map((row) => [row.status, row._count._all]),
   );
-  const approvedTotal = ratingRows.reduce((sum, row) => sum + row._count._all, 0);
+  const approvedTotal = ratingRows.reduce(
+    (sum, row) => sum + row._count._all,
+    0,
+  );
   const average =
     approvedTotal > 0
       ? ratingRows.reduce((sum, row) => sum + row.rating * row._count._all, 0) /

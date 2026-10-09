@@ -49,7 +49,9 @@ export default async function EditProductPage({ params, searchParams }) {
     description: product.description ?? "",
     story: product.story ?? "",
     price: String(product.price / 100),
-    compareAtPrice: product.compareAtPrice ? String(product.compareAtPrice / 100) : "",
+    compareAtPrice: product.compareAtPrice
+      ? String(product.compareAtPrice / 100)
+      : "",
     taxRatePct: String(product.taxRatePct),
     weightGrams: product.weightGrams ? String(product.weightGrams) : "",
     dimensions: product.dimensions ?? "",
@@ -65,6 +67,7 @@ export default async function EditProductPage({ params, searchParams }) {
     seoDescription: product.seoDescription ?? "",
     seoKeywords: product.seoKeywords ?? "",
     ogImageUrl: product.ogImageUrl ?? "",
+    position: product.position,
   };
   return (
     <>
@@ -80,8 +83,8 @@ export default async function EditProductPage({ params, searchParams }) {
       {created ? (
         <div className="mb-6">
           <FormMessage tone="success">
-            Product created. Add images and variants, then publish it when it&rsquo;s
-            ready.
+            Product created. Add images and variants, then publish it when
+            it&rsquo;s ready.
           </FormMessage>
         </div>
       ) : null}

@@ -54,7 +54,10 @@ export default async function AdminFaqsPage() {
       hint: "Leave blank for a general question.",
       options: [
         { value: "", label: "General — shown site-wide" },
-        ...products.map((product) => ({ value: product.id, label: product.name })),
+        ...products.map((product) => ({
+          value: product.id,
+          label: product.name,
+        })),
       ],
     },
     {
@@ -64,14 +67,22 @@ export default async function AdminFaqsPage() {
       half: true,
       hint: "Lower numbers appear first within a category.",
     },
-    { name: "isActive", label: "Visible on the site", type: "checkbox", half: true },
+    {
+      name: "isActive",
+      label: "Visible on the site",
+      type: "checkbox",
+      half: true,
+    },
   ];
   return (
     <>
       <PageHeader
         title="FAQs"
         description="Shown on the FAQ page, grouped by category, and on the homepage. Product-specific questions also appear on that product's page."
-        breadcrumb={[{ label: "Content", href: "/admin/content" }, { label: "FAQs" }]}
+        breadcrumb={[
+          { label: "Content", href: "/admin/content" },
+          { label: "FAQs" },
+        ]}
       />
 
       <RecordManager

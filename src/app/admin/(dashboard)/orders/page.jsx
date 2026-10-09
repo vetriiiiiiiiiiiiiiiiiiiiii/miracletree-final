@@ -23,7 +23,9 @@ export default async function AdminOrdersPage({ searchParams }) {
   const params = await searchParams;
   const page = Math.max(1, Number(params.page ?? 1) || 1);
   const where = {
-    ...(params.status && params.status !== "all" ? { status: params.status } : {}),
+    ...(params.status && params.status !== "all"
+      ? { status: params.status }
+      : {}),
     ...(params.payment ? { paymentStatus: params.payment } : {}),
     ...(params.q
       ? {
@@ -86,7 +88,10 @@ export default async function AdminOrdersPage({ searchParams }) {
           label="Revenue today"
           value={formatPrice(revenueToday._sum.grandTotal ?? 0)}
         />
-        <StatCard label="Paid orders today" value={String(revenueToday._count._all)} />
+        <StatCard
+          label="Paid orders today"
+          value={String(revenueToday._count._all)}
+        />
         <StatCard
           label="Awaiting dispatch"
           value={String(unfulfilled)}
@@ -143,12 +148,17 @@ export default async function AdminOrdersPage({ searchParams }) {
                     {order.orderNumber}
                   </Link>
                   <span className="mt-0.5 block text-xs text-cream-400">
-                    {formatDate(order.placedAt, { hour: "numeric", minute: "2-digit" })}
+                    {formatDate(order.placedAt, {
+                      hour: "numeric",
+                      minute: "2-digit",
+                    })}
                   </span>
                 </Td>
 
                 <Td>
-                  <span className="block text-cream-100">{order.shippingName}</span>
+                  <span className="block text-cream-100">
+                    {order.shippingName}
+                  </span>
                   <span className="mt-0.5 block truncate text-xs text-cream-400">
                     {order.shippingCity} · {order.email}
                   </span>
@@ -193,7 +203,10 @@ export default async function AdminOrdersPage({ searchParams }) {
       </Card>
 
       {pages > 1 ? (
-        <nav aria-label="Pagination" className="mt-6 flex items-center justify-between">
+        <nav
+          aria-label="Pagination"
+          className="mt-6 flex items-center justify-between"
+        >
           <p className="text-xs tabular-nums text-cream-400">
             Page {page} of {pages}
           </p>

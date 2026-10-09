@@ -1,5 +1,9 @@
 import Link from "next/link";
-import { Container, Section, SectionHeading } from "@/components/layout/Section";
+import {
+  Container,
+  Section,
+  SectionHeading,
+} from "@/components/layout/Section";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { TreeGrowth } from "@/components/home/TreeGrowth";
 import { ProcessSection } from "@/components/home/ProcessSection";
@@ -60,12 +64,13 @@ export default async function MoringaPage() {
             </h1>
             <p className="mt-8 max-w-[56ch] text-[1.15rem] leading-relaxed text-cream-300">
               Known affectionately in Tamil Nadu as{" "}
-              <em className="text-leaf-200">murungai</em>, Our Moringa is cultivated in
-              meticulously enriched earth along the beautiful foothills of the Western
-              Ghats and Sirumalai. A true testament to natural resilience, it thrives
-              even with very little water easily surviving a failed monsoon and reaches a
-              harvestable height in under a year. A miracle of nature, almost every part
-              of this incredible tree is wonderfully edible.
+              <em className="text-leaf-200">murungai</em>, Our Moringa is
+              cultivated in meticulously enriched earth along the beautiful
+              foothills of the Western Ghats and Sirumalai. A true testament to
+              natural resilience, it thrives even with very little water easily
+              surviving a failed monsoon and reaches a harvestable height in
+              under a year. A miracle of nature, almost every part of this
+              incredible tree is wonderfully edible.
             </p>
           </header>
 
@@ -85,7 +90,9 @@ export default async function MoringaPage() {
                 className="border-t border-border-subtle pt-5"
               >
                 <dt className="eyebrow text-cream-400">{item.term}</dt>
-                <dd className="mt-3 text-[1.15rem] text-cream-50">{item.detail}</dd>
+                <dd className="mt-3 text-[1.15rem] text-cream-50">
+                  {item.detail}
+                </dd>
               </div>
             ))}
           </Reveal>
@@ -191,16 +198,17 @@ export default async function MoringaPage() {
         <Container size="narrow">
           <h2 className="text-title text-cream-50">What we are not saying</h2>
           <p className="mt-5 leading-relaxed text-cream-300">
-            You will find a great deal written online about what moringa does to the
-            human body. We do not repeat it. These are food products, not medicines, and
-            nothing here is intended to diagnose, treat, cure or prevent any disease.
+            You will find a great deal written online about what moringa does to
+            the human body. We do not repeat it. These are food products, not
+            medicines, and nothing here is intended to diagnose, treat, cure or
+            prevent any disease.
           </p>
           <p className="mt-4 leading-relaxed text-cream-400">
-            What we can tell you is how the plant grows, which part of it is in each
-            pack, where it was grown, and how it was dried. If you are pregnant,
-            nursing, taking prescribed medication or managing a health condition, speak
-            to a qualified medical practitioner before adding any supplement to your
-            diet.
+            What we can tell you is how the plant grows, which part of it is in
+            each pack, where it was grown, and how it was dried. If you are
+            pregnant, nursing, taking prescribed medication or managing a health
+            condition, speak to a qualified medical practitioner before adding
+            any supplement to your diet.
           </p>
         </Container>
       </Section>
@@ -209,7 +217,11 @@ export default async function MoringaPage() {
       {faqs.length ? (
         <FaqSection
           title="About the plant"
-          faqs={faqs.map((f) => ({ id: f.id, question: f.question, answer: f.answer }))}
+          faqs={faqs.map((f) => ({
+            id: f.id,
+            question: f.question,
+            answer: f.answer,
+          }))}
         />
       ) : null}
 

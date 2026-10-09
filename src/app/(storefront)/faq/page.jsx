@@ -51,8 +51,8 @@ export default async function FaqPage() {
             <p className="eyebrow mb-5 text-gold-400">FAQ</p>
             <h1 className="text-display text-cream-50">Questions, answered.</h1>
             <p className="mt-5 max-w-[52ch] leading-relaxed text-cream-300">
-              If what you need isn't here, write to us — we answer within one working
-              day.
+              If what you need isn't here, write to us — we answer within one
+              working day.
             </p>
           </header>
 
@@ -79,7 +79,9 @@ export default async function FaqPage() {
             <div className="grid gap-16">
               {grouped.map((group) => (
                 <section key={group.category} id={`faq-${group.category}`}>
-                  <h2 className="mb-6 text-title text-cream-50">{group.label}</h2>
+                  <h2 className="mb-6 text-title text-cream-50">
+                    {group.label}
+                  </h2>
                   <Accordion
                     allowMultiple
                     items={group.items.map((faq) => ({
@@ -96,8 +98,8 @@ export default async function FaqPage() {
           <div className="mt-20 border-t border-border-subtle pt-10">
             <h2 className="text-title text-cream-50">Still stuck?</h2>
             <p className="mt-3 max-w-[48ch] text-sm leading-relaxed text-cream-400">
-              Call us Monday to Saturday, 10am–5pm, or send a message and we'll come
-              back to you.
+              Call us Monday to Saturday, 10am–5pm, or send a message and we'll
+              come back to you.
             </p>
             <Link
               href="/contact"

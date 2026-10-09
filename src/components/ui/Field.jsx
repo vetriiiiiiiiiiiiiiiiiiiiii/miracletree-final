@@ -134,7 +134,11 @@ export function Select({
           {...props}
         >
           {options.map((option) => (
-            <option key={option.value} value={option.value} className="bg-ink-800">
+            <option
+              key={option.value}
+              value={option.value}
+              className="bg-ink-800"
+            >
               {option.label}
             </option>
           ))}
@@ -177,7 +181,9 @@ export function Checkbox({ label, id, className, description, ...props }) {
       >
         {label}
         {description ? (
-          <span className="mt-0.5 block text-xs text-cream-400">{description}</span>
+          <span className="mt-0.5 block text-xs text-cream-400">
+            {description}
+          </span>
         ) : null}
       </label>
     </div>

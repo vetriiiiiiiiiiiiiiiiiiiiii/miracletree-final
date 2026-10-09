@@ -4,7 +4,8 @@ import { buildMetadata } from "@/lib/seo";
 export const revalidate = 3600;
 export const metadata = buildMetadata({
   title: "Privacy policy",
-  description: "Privacy policy for Miracle Tree — Miracletree Life Science, Madurai.",
+  description:
+    "Privacy policy for Miracle Tree — Miracletree Life Science, Madurai.",
   path: "/privacy",
 });
 export default function Page() {

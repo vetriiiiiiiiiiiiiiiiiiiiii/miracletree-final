@@ -34,7 +34,9 @@ export function QuickView({ slug, open, onClose }) {
     setData(null);
     setVariantIndex(0);
     setQuantity(1);
-    fetch(`/api/products/${encodeURIComponent(slug)}`, { signal: controller.signal })
+    fetch(`/api/products/${encodeURIComponent(slug)}`, {
+      signal: controller.signal,
+    })
       .then(async (response) => {
         if (!response.ok) throw new Error("unavailable");
         return response.json();
@@ -53,7 +55,8 @@ export function QuickView({ slug, open, onClose }) {
         });
       })
       .catch((err) => {
-        if (err.name !== "AbortError") setError("We couldn't load that product.");
+        if (err.name !== "AbortError")
+          setError("We couldn't load that product.");
       })
       .finally(() => setLoading(false));
     return () => controller.abort();
@@ -103,8 +106,15 @@ export function QuickView({ slug, open, onClose }) {
           </div>
         ) : error || !data || !variant ? (
           <div className="p-12 text-center">
-            <p className="text-cream-200">{error ?? "That product is unavailable."}</p>
-            <Button variant="secondary" size="md" className="mt-6" onClick={onClose}>
+            <p className="text-cream-200">
+              {error ?? "That product is unavailable."}
+            </p>
+            <Button
+              variant="secondary"
+              size="md"
+              className="mt-6"
+              onClick={onClose}
+            >
               Close
             </Button>
           </div>
@@ -119,6 +129,11 @@ export function QuickView({ slug, open, onClose }) {
                   fill
                   sizes="(max-width: 768px) 90vw, 26rem"
                   className="object-contain p-8"
+                  unoptimized={
+                    typeof image === "string"
+                      ? image.startsWith("/uploads/")
+                      : undefined
+                  }
                 />
               ) : null}
 
@@ -138,7 +153,11 @@ export function QuickView({ slug, open, onClose }) {
               <h2 className="mt-3 text-title text-cream-50">{data.name}</h2>
 
               <div className="mt-3">
-                <Rating value={data.ratingAverage} count={data.ratingCount} size="sm" />
+                <Rating
+                  value={data.ratingAverage}
+                  count={data.ratingCount}
+                  size="sm"
+                />
               </div>
 
               {data.shortDescription ? (
@@ -168,7 +187,8 @@ export function QuickView({ slug, open, onClose }) {
                 <span className="text-[1.6rem] tabular-nums text-cream-50">
                   {formatPrice(variant.price)}
                 </span>
-                {variant.compareAtPrice && variant.compareAtPrice > variant.price ? (
+                {variant.compareAtPrice &&
+                variant.compareAtPrice > variant.price ? (
                   <span className="tabular-nums text-cream-400 line-through">
                     {formatPrice(variant.compareAtPrice)}
                   </span>
@@ -177,7 +197,9 @@ export function QuickView({ slug, open, onClose }) {
 
               {data.variants.length > 1 ? (
                 <fieldset className="mt-5">
-                  <legend className="eyebrow mb-2.5 text-cream-400">Size</legend>
+                  <legend className="eyebrow mb-2.5 text-cream-400">
+                    Size
+                  </legend>
                   <div className="flex flex-wrap gap-2">
                     {data.variants.map((option, index) => {
                       const out = option.tracked && option.available <= 0;
@@ -196,7 +218,8 @@ export function QuickView({ slug, open, onClose }) {
                             index === variantIndex
                               ? "border-gold-400 text-cream-50"
                               : "border-border-subtle text-cream-300 hover:border-border-strong",
-                            out && "cursor-not-allowed text-cream-400 line-through",
+                            out &&
+                              "cursor-not-allowed text-cream-400 line-through",
                           )}
                         >
                           {option.name}
@@ -210,8 +233,8 @@ export function QuickView({ slug, open, onClose }) {
               <div className="mt-auto pt-7">
                 {soldOut ? (
                   <p className="border border-border-subtle bg-white/[0.02] p-4 text-sm text-cream-300">
-                    This size is sold out. Pick another, or open the full page to be
-                    notified when it returns.
+                    This size is sold out. Pick another, or open the full page
+                    to be notified when it returns.
                   </p>
                 ) : (
                   <div className="flex flex-wrap items-center gap-3">

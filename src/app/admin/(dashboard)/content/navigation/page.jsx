@@ -2,7 +2,10 @@ import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth";
 import { PageHeader } from "@/components/admin/ui";
 import { RecordManager } from "@/components/admin/RecordManager";
-import { deleteNavItemAction, saveNavItemAction } from "@/app/actions/admin/content";
+import {
+  deleteNavItemAction,
+  saveNavItemAction,
+} from "@/app/actions/admin/content";
 export const dynamic = "force-dynamic";
 const GROUP_LABELS = {
   header: "Header",
@@ -11,7 +14,13 @@ const GROUP_LABELS = {
   "footer-support": "Footer · Support",
 };
 const FIELDS = [
-  { name: "label", label: "Link text", type: "text", required: true, half: true },
+  {
+    name: "label",
+    label: "Link text",
+    type: "text",
+    required: true,
+    half: true,
+  },
   {
     name: "href",
     label: "Destination",
@@ -26,7 +35,10 @@ const FIELDS = [
     label: "Where it appears",
     type: "select",
     half: true,
-    options: Object.entries(GROUP_LABELS).map(([value, label]) => ({ value, label })),
+    options: Object.entries(GROUP_LABELS).map(([value, label]) => ({
+      value,
+      label,
+    })),
   },
   { name: "position", label: "Order", type: "number", half: true },
   { name: "isActive", label: "Visible", type: "checkbox" },

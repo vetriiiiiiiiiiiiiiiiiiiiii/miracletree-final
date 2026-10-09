@@ -22,7 +22,11 @@ const PAID = { paymentStatus: "paid" };
 export default async function AdminDashboard() {
   await requireAdmin();
   const now = new Date();
-  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const startOfToday = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+  );
   const last30 = new Date(startOfToday.getTime() - 29 * 86400000);
   const previous30 = new Date(startOfToday.getTime() - 59 * 86400000);
   const [
@@ -50,9 +54,13 @@ export default async function AdminDashboard() {
       _sum: { grandTotal: true },
     }),
     prisma.order.count({ where: { placedAt: { gte: last30 } } }),
-    prisma.order.count({ where: { placedAt: { gte: previous30, lt: last30 } } }),
+    prisma.order.count({
+      where: { placedAt: { gte: previous30, lt: last30 } },
+    }),
     prisma.user.count({ where: { role: "customer" } }),
-    prisma.user.count({ where: { role: "customer", createdAt: { gte: last30 } } }),
+    prisma.user.count({
+      where: { role: "customer", createdAt: { gte: last30 } },
+    }),
     prisma.product.count({ where: { status: "published" } }),
     prisma.product.count({ where: { status: "draft" } }),
     prisma.order.count({
@@ -123,7 +131,9 @@ export default async function AdminDashboard() {
   }));
   const productImages = await prisma.product.findMany({
     where: {
-      id: { in: topProducts.map((p) => p.productId).filter((id) => Boolean(id)) },
+      id: {
+        in: topProducts.map((p) => p.productId).filter((id) => Boolean(id)),
+      },
     },
     select: {
       id: true,
@@ -149,7 +159,9 @@ export default async function AdminDashboard() {
           ) : null}
           {pendingReviews > 0 ? (
             <Link href="/admin/reviews?status=pending">
-              <Pill tone="warning">{pendingReviews} reviews awaiting moderation</Pill>
+              <Pill tone="warning">
+                {pendingReviews} reviews awaiting moderation
+              </Pill>
             </Link>
           ) : null}
           {lowStock.length > 0 ? (
@@ -308,7 +320,9 @@ export default async function AdminDashboard() {
           ) : (
             <ul className="divide-y divide-border-subtle">
               {topProducts.map((row) => {
-                const product = row.productId ? imageById.get(row.productId) : null;
+                const product = row.productId
+                  ? imageById.get(row.productId)
+                  : null;
                 return (
                   <li
                     key={row.productId ?? row.productName}
@@ -322,6 +336,11 @@ export default async function AdminDashboard() {
                           fill
                           sizes="36px"
                           className="object-contain p-1"
+                          unoptimized={
+                            typeof product.images[0].url === "string"
+                              ? product.images[0].url.startsWith("/uploads/")
+                              : undefined
+                          }
                         />
                       ) : null}
                     </div>
@@ -383,7 +402,9 @@ export default async function AdminDashboard() {
                     </Link>
                   </Td>
                   <Td>{row.variant.name}</Td>
-                  <Td className="text-xs text-cream-400">{row.variant.sku ?? "—"}</Td>
+                  <Td className="text-xs text-cream-400">
+                    {row.variant.sku ?? "—"}
+                  </Td>
                   <Td align="right" className="tabular-nums">
                     {row.onHand}
                   </Td>

@@ -38,7 +38,10 @@ const SECTION_META = {
     label: "08 — Brand story",
     hint: "The About teaser, with its own image.",
   },
-  journal: { label: "09 — Journal", hint: "The three most recent published articles." },
+  journal: {
+    label: "09 — Journal",
+    hint: "The three most recent published articles.",
+  },
   faq: { label: "10 — FAQ", hint: "The first six active questions." },
   "final-cta": {
     label: "11 — Closing",

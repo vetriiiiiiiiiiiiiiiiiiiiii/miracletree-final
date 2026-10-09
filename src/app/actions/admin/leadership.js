@@ -19,7 +19,8 @@ import {
  * started; this is what keeps it true without a deploy.
  */
 function fail(error, fallback) {
-  if (error instanceof AuthError) return { status: "error", message: error.message };
+  if (error instanceof AuthError)
+    return { status: "error", message: error.message };
   console.error("[admin/leadership]", error);
   return { status: "error", message: fallback };
 }
@@ -90,7 +91,10 @@ export async function saveLeaderAction(_prev, formData) {
       meta: { name: record.name, role: record.role },
     });
     revalidateLeadership();
-    return { status: "success", message: id ? "Profile updated." : "Profile added." };
+    return {
+      status: "success",
+      message: id ? "Profile updated." : "Profile added.",
+    };
   } catch (error) {
     return fail(error, "Could not save that profile.");
   }
@@ -159,7 +163,10 @@ export async function saveLeaderHighlightAction(_prev, formData) {
       meta: { title: record.title, year: record.year },
     });
     revalidateLeadership();
-    return { status: "success", message: id ? "Entry updated." : "Entry added." };
+    return {
+      status: "success",
+      message: id ? "Entry updated." : "Entry added.",
+    };
   } catch (error) {
     return fail(error, "Could not save that entry.");
   }

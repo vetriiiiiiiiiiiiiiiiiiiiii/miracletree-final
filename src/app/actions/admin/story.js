@@ -22,7 +22,8 @@ import {
  * rendered — without it a correction would not appear until the next deploy.
  */
 function fail(error, fallback) {
-  if (error instanceof AuthError) return { status: "error", message: error.message };
+  if (error instanceof AuthError)
+    return { status: "error", message: error.message };
   console.error("[admin/story]", error);
   return { status: "error", message: fallback };
 }
@@ -134,7 +135,9 @@ export async function saveAccoladeAction(_prev, formData) {
       return {
         status: "error",
         message: "Add a link for that source.",
-        errors: { sourceUrl: "A cited claim needs somewhere a reader can verify it." },
+        errors: {
+          sourceUrl: "A cited claim needs somewhere a reader can verify it.",
+        },
       };
     }
     const data = {
@@ -232,7 +235,10 @@ export async function saveCreditAction(_prev, formData) {
       meta: { name: record.name, group: record.group },
     });
     revalidateStory();
-    return { status: "success", message: id ? "Credit updated." : "Credit added." };
+    return {
+      status: "success",
+      message: id ? "Credit updated." : "Credit added.",
+    };
   } catch (error) {
     return fail(error, "Could not save that credit.");
   }

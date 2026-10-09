@@ -86,7 +86,11 @@ export function ShopToolbar({ total, groups, activeCount }) {
               aria-label="Sort products"
             >
               {SORTS.map((option) => (
-                <option key={option.value} value={option.value} className="bg-ink-800">
+                <option
+                  key={option.value}
+                  value={option.value}
+                  className="bg-ink-800"
+                >
                   {option.label}
                 </option>
               ))}
@@ -137,7 +141,6 @@ function ActiveChips({ groups, searchParams, setParam, onClear }) {
     ["category", groups.categories],
     ["type", groups.types],
     ["ingredient", groups.ingredients],
-
   ]) {
     const value = searchParams.get(key);
     if (value) chips.push({ key, label: label(options, value) });
@@ -145,13 +148,15 @@ function ActiveChips({ groups, searchParams, setParam, onClear }) {
   if (searchParams.get("availability") === "in-stock") {
     chips.push({ key: "availability", label: "In stock" });
   }
-  if (searchParams.get("offers")) chips.push({ key: "offers", label: "On offer" });
+  if (searchParams.get("offers"))
+    chips.push({ key: "offers", label: "On offer" });
   if (searchParams.get("min") || searchParams.get("max")) {
     const min = searchParams.get("min");
     const max = searchParams.get("max");
     chips.push({
       key: "price",
-      label: min && max ? `₹${min}–₹${max}` : min ? `Over ₹${min}` : `Under ₹${max}`,
+      label:
+        min && max ? `₹${min}–₹${max}` : min ? `Over ₹${min}` : `Under ₹${max}`,
     });
   }
   if (!chips.length) return null;
@@ -173,7 +178,11 @@ function ActiveChips({ groups, searchParams, setParam, onClear }) {
         >
           {chip.label}
           <svg width="9" height="9" viewBox="0 0 10 10" fill="none" aria-hidden>
-            <path d="M1 1l8 8M9 1L1 9" stroke="currentColor" strokeWidth="1.3" />
+            <path
+              d="M1 1l8 8M9 1L1 9"
+              stroke="currentColor"
+              strokeWidth="1.3"
+            />
           </svg>
           <span className="sr-only">Remove filter</span>
         </button>
@@ -236,7 +245,6 @@ export function ShopFilters({ groups }) {
         onSelect={(value) => setParam("ingredient", value)}
       />
 
-
       <fieldset className="grid gap-3">
         <legend className="eyebrow mb-3 text-gold-400">Availability</legend>
         <Toggle
@@ -269,14 +277,18 @@ function FilterGroup({ title, options, value, onSelect }) {
                 onClick={() => onSelect(active ? null : option.value)}
                 className={cn(
                   "flex w-full items-baseline justify-between gap-3 py-1 text-left text-sm transition-colors",
-                  active ? "text-cream-50" : "text-cream-400 hover:text-cream-200",
+                  active
+                    ? "text-cream-50"
+                    : "text-cream-400 hover:text-cream-200",
                 )}
               >
                 <span className="flex items-center gap-2.5">
                   <span
                     className={cn(
                       "h-2 w-2 shrink-0 border transition-colors",
-                      active ? "border-gold-400 bg-gold-400" : "border-border-strong",
+                      active
+                        ? "border-gold-400 bg-gold-400"
+                        : "border-border-strong",
                     )}
                     aria-hidden
                   />

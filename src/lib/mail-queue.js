@@ -59,7 +59,7 @@ export async function flushQueue() {
     } else {
       const nextAttempts = job.attempts + 1;
       const hasMoreAttempts = nextAttempts < job.maxAttempts;
-      
+
       // Exponential backoff: next retry in 5, 25, 125... minutes
       const backoffMinutes = Math.pow(5, nextAttempts);
       const nextRetryAt = new Date(Date.now() + backoffMinutes * 60 * 1000);

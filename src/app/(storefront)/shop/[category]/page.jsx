@@ -8,11 +8,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { prisma } from "@/lib/prisma";
-import {
-  getCategories,
-  getIngredients,
-  searchProducts,
-} from "@/lib/queries";
+import { getCategories, getIngredients, searchProducts } from "@/lib/queries";
 import { shopQuerySchema } from "@/lib/validation";
 import { buildFilterGroups, countActiveFilters } from "@/lib/shop";
 import { breadcrumbSchema, buildMetadata, itemListSchema } from "@/lib/seo";

@@ -1,5 +1,9 @@
 import Link from "next/link";
-import { Container, Section, SectionHeading } from "@/components/layout/Section";
+import {
+  Container,
+  Section,
+  SectionHeading,
+} from "@/components/layout/Section";
 import { Accordion } from "@/components/ui/Accordion";
 export function FaqSection({ title, subtitle, faqs, showAllLink = true }) {
   if (!faqs.length) return null;

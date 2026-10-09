@@ -58,12 +58,15 @@ export function PackViewer({ images, productName, className }) {
       const step = Math.round(dx / 6);
       // Wraps, so the pack can be turned round and round in either direction.
       setFrame(
-        (((start.frame + step) % images.length) + images.length) % images.length,
+        (((start.frame + step) % images.length) + images.length) %
+          images.length,
       );
       return;
     }
     setYaw(clamp(start.yaw + dx * DRAG_SENSITIVITY, -MAX_YAW, MAX_YAW));
-    setPitch(clamp(start.pitch - dy * DRAG_SENSITIVITY * 0.7, -MAX_PITCH, MAX_PITCH));
+    setPitch(
+      clamp(start.pitch - dy * DRAG_SENSITIVITY * 0.7, -MAX_PITCH, MAX_PITCH),
+    );
   };
   const release = (event) => {
     if (!drag.current) return;
@@ -125,6 +128,11 @@ export function PackViewer({ images, productName, className }) {
             priority
             draggable={false}
             className="object-contain p-8"
+            unoptimized={
+              typeof current.url === "string"
+                ? current.url.startsWith("/uploads/")
+                : undefined
+            }
           />
 
           {/* Specular sweep. Sits above the photograph, pinned to the same 3D
@@ -148,7 +156,9 @@ export function PackViewer({ images, productName, className }) {
           style={{
             transform: `scaleX(${1 - turned * 0.28}) translateX(${yaw * 0.55}px)`,
             opacity: 0.35 - turned * 0.14,
-            transition: dragging ? "none" : "transform 700ms ease, opacity 700ms ease",
+            transition: dragging
+              ? "none"
+              : "transform 700ms ease, opacity 700ms ease",
           }}
         />
 

@@ -19,7 +19,11 @@ export default async function AdminJournalPage() {
   await requireAdmin();
   const [articles, published, drafts] = await Promise.all([
     prisma.article.findMany({
-      orderBy: [{ status: "asc" }, { publishedAt: "desc" }, { createdAt: "desc" }],
+      orderBy: [
+        { status: "asc" },
+        { publishedAt: "desc" },
+        { createdAt: "desc" },
+      ],
       select: {
         id: true,
         title: true,
@@ -76,7 +80,10 @@ export default async function AdminJournalPage() {
           {articles.length === 0 ? (
             <EmptyRow colSpan={6}>
               No articles yet.{" "}
-              <Link href="/admin/journal/new" className="underline underline-offset-4">
+              <Link
+                href="/admin/journal/new"
+                className="underline underline-offset-4"
+              >
                 Write the first one
               </Link>
               .
@@ -94,6 +101,11 @@ export default async function AdminJournalPage() {
                           fill
                           sizes="64px"
                           className="object-cover"
+                          unoptimized={
+                            typeof article.heroImageUrl === "string"
+                              ? article.heroImageUrl.startsWith("/uploads/")
+                              : undefined
+                          }
                         />
                       ) : null}
                     </div>
@@ -111,10 +123,16 @@ export default async function AdminJournalPage() {
                   </div>
                 </Td>
 
-                <Td className="text-cream-400">{article.category?.name ?? "—"}</Td>
+                <Td className="text-cream-400">
+                  {article.category?.name ?? "—"}
+                </Td>
 
                 <Td align="center">
-                  <Pill tone={article.status === "published" ? "success" : "warning"}>
+                  <Pill
+                    tone={
+                      article.status === "published" ? "success" : "warning"
+                    }
+                  >
                     {article.status}
                   </Pill>
                 </Td>

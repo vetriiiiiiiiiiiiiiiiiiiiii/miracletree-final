@@ -59,9 +59,9 @@ export default async function AdminAnnouncementsPage() {
 
       <Card className="mb-6">
         <p className="text-sm leading-relaxed text-cream-300">
-          Keep it to one short sentence. The bar is the first thing a visitor reads and
-          the easiest thing to make noisy — a shipping threshold or a live offer earns
-          its place; a greeting does not.
+          Keep it to one short sentence. The bar is the first thing a visitor
+          reads and the easiest thing to make noisy — a shipping threshold or a
+          live offer earns its place; a greeting does not.
         </p>
       </Card>
 
@@ -90,7 +90,9 @@ export default async function AdminAnnouncementsPage() {
             message: item.message,
             href: item.href ?? "",
             position: item.position,
-            startsAt: item.startsAt ? item.startsAt.toISOString().slice(0, 10) : "",
+            startsAt: item.startsAt
+              ? item.startsAt.toISOString().slice(0, 10)
+              : "",
             endsAt: item.endsAt ? item.endsAt.toISOString().slice(0, 10) : "",
             isActive: item.isActive,
           },

@@ -81,6 +81,11 @@ export function ProductGallery({ images, productName, activeImageUrl }) {
                 fill
                 sizes="72px"
                 className="object-contain p-1.5"
+                unoptimized={
+                  typeof image.url === "string"
+                    ? image.url.startsWith("/uploads/")
+                    : undefined
+                }
               />
             </button>
           ))}
@@ -108,7 +113,14 @@ export function ProductGallery({ images, productName, activeImageUrl }) {
               zooming ? "scale-[1.9]" : "scale-100",
             )}
             style={
-              zooming ? { transformOrigin: `${origin.x}% ${origin.y}%` } : undefined
+              zooming
+                ? { transformOrigin: `${origin.x}% ${origin.y}%` }
+                : undefined
+            }
+            unoptimized={
+              typeof current.url === "string"
+                ? current.url.startsWith("/uploads/")
+                : undefined
             }
           />
         ) : null}
@@ -138,6 +150,11 @@ export function ProductGallery({ images, productName, activeImageUrl }) {
                 priority={i === 0}
                 sizes="100vw"
                 className="object-contain p-8"
+                unoptimized={
+                  typeof image.url === "string"
+                    ? image.url.startsWith("/uploads/")
+                    : undefined
+                }
               />
             </div>
           ))}

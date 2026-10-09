@@ -4,7 +4,15 @@ import { prisma, insensitive } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth";
 import { formatPrice } from "@/lib/money";
 import { formatDate } from "@/lib/utils";
-import { PageHeader, Card, Table, Td, Tr, Pill, EmptyRow } from "@/components/admin/ui";
+import {
+  PageHeader,
+  Card,
+  Table,
+  Td,
+  Tr,
+  Pill,
+  EmptyRow,
+} from "@/components/admin/ui";
 import { ProductRowActions } from "@/components/admin/ProductRowActions";
 import { ProductFilters } from "@/components/admin/ProductFilters";
 export const dynamic = "force-dynamic";
@@ -14,7 +22,9 @@ export default async function AdminProductsPage({ searchParams }) {
   const params = await searchParams;
   const page = Math.max(1, Number(params.page ?? 1) || 1);
   const where = {
-    ...(params.status && params.status !== "all" ? { status: params.status } : {}),
+    ...(params.status && params.status !== "all"
+      ? { status: params.status }
+      : {}),
     ...(params.category ? { category: { slug: params.category } } : {}),
     ...(params.q
       ? {
@@ -43,7 +53,11 @@ export default async function AdminProductsPage({ searchParams }) {
         isBestSeller: true,
         updatedAt: true,
         category: { select: { name: true } },
-        images: { take: 1, orderBy: { position: "asc" }, select: { url: true } },
+        images: {
+          take: 1,
+          orderBy: { position: "asc" },
+          select: { url: true },
+        },
         variants: {
           select: {
             id: true,
@@ -84,7 +98,10 @@ export default async function AdminProductsPage({ searchParams }) {
       <ProductFilters
         categories={categories}
         counts={{
-          all: (counts.published ?? 0) + (counts.draft ?? 0) + (counts.archived ?? 0),
+          all:
+            (counts.published ?? 0) +
+            (counts.draft ?? 0) +
+            (counts.archived ?? 0),
           published: counts.published ?? 0,
           draft: counts.draft ?? 0,
           archived: counts.archived ?? 0,
@@ -116,7 +133,9 @@ export default async function AdminProductsPage({ searchParams }) {
                 if (!inv || !inv.trackInventory) return sum;
                 return sum + Math.max(0, inv.onHand - inv.reserved);
               }, 0);
-              const tracked = product.variants.some((v) => v.inventory?.trackInventory);
+              const tracked = product.variants.some(
+                (v) => v.inventory?.trackInventory,
+              );
               return (
                 <Tr key={product.id}>
                   <Td>
@@ -129,6 +148,11 @@ export default async function AdminProductsPage({ searchParams }) {
                             fill
                             sizes="40px"
                             className="object-contain p-1"
+                            unoptimized={
+                              typeof product.images[0].url === "string"
+                                ? product.images[0].url.startsWith("/uploads/")
+                                : undefined
+                            }
                           />
                         ) : null}
                       </div>
@@ -155,7 +179,9 @@ export default async function AdminProductsPage({ searchParams }) {
                     </div>
                   </Td>
 
-                  <Td className="text-cream-400">{product.category?.name ?? "—"}</Td>
+                  <Td className="text-cream-400">
+                    {product.category?.name ?? "—"}
+                  </Td>
 
                   <Td align="center">
                     <Pill
@@ -218,7 +244,10 @@ export default async function AdminProductsPage({ searchParams }) {
       </Card>
 
       {pages > 1 ? (
-        <nav aria-label="Pagination" className="mt-6 flex items-center justify-between">
+        <nav
+          aria-label="Pagination"
+          className="mt-6 flex items-center justify-between"
+        >
           <p className="text-xs tabular-nums text-cream-400">
             Page {page} of {pages}
           </p>

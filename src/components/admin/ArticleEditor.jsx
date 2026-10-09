@@ -29,7 +29,9 @@ export function ArticleEditor({ draft, categories }) {
       <input type="hidden" name="content" value={content} />
 
       <div className="grid gap-6">
-        {state.status === "error" ? <FormMessage>{state.message}</FormMessage> : null}
+        {state.status === "error" ? (
+          <FormMessage>{state.message}</FormMessage>
+        ) : null}
         {state.status === "success" ? (
           <FormMessage tone="success">{state.message}</FormMessage>
         ) : null}
@@ -147,7 +149,11 @@ export function ArticleEditor({ draft, categories }) {
                 ...categories.map((c) => ({ value: c.id, label: c.name })),
               ]}
             />
-            <Input label="Author" name="authorName" defaultValue={draft.authorName} />
+            <Input
+              label="Author"
+              name="authorName"
+              defaultValue={draft.authorName}
+            />
             <Input
               label="Tags"
               name="tags"

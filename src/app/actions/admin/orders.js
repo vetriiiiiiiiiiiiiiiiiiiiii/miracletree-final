@@ -38,7 +38,8 @@ export async function updateOrderStatusAction(_prev, formData) {
         errors: fieldErrors(parsed.error),
       };
     }
-    const { orderId, status, message, trackingNumber, trackingUrl } = parsed.data;
+    const { orderId, status, message, trackingNumber, trackingUrl } =
+      parsed.data;
     const order = await prisma.order.findUnique({
       where: { id: orderId },
       select: {
@@ -48,10 +49,14 @@ export async function updateOrderStatusAction(_prev, formData) {
         items: { select: { variantId: true, quantity: true } },
       },
     });
-    if (!order) return { status: "error", message: "That order no longer exists." };
+    if (!order)
+      return { status: "error", message: "That order no longer exists." };
     const previous = order.status;
     if (previous === status) {
-      return { status: "error", message: "The order is already at that status." };
+      return {
+        status: "error",
+        message: "The order is already at that status.",
+      };
     }
     const lines = order.items
       .filter((item) => item.variantId)
@@ -108,9 +113,13 @@ export async function updateOrderStatusAction(_prev, formData) {
     if (statusDeservesEmail(status)) {
       await sendOrderStatusEmail(order.orderNumber, status, message || null);
     }
-    return { status: "success", message: `Order marked ${status.replace(/_/g, " ")}.` };
+    return {
+      status: "success",
+      message: `Order marked ${status.replace(/_/g, " ")}.`,
+    };
   } catch (error) {
-    if (error instanceof AuthError) return { status: "error", message: error.message };
+    if (error instanceof AuthError)
+      return { status: "error", message: error.message };
     console.error("[admin/orders]", error);
     return { status: "error", message: "Could not update that order." };
   }
@@ -122,7 +131,8 @@ export async function updatePaymentStatusAction(_prev, formData) {
       orderId: formData.get("orderId"),
       paymentStatus: formData.get("paymentStatus"),
     });
-    if (!parsed.success) return { status: "error", message: "Invalid payment status." };
+    if (!parsed.success)
+      return { status: "error", message: "Invalid payment status." };
     await prisma.order.update({
       where: { id: parsed.data.orderId },
       data: {
@@ -146,7 +156,8 @@ export async function updatePaymentStatusAction(_prev, formData) {
     revalidatePath(`/admin/orders/${parsed.data.orderId}`);
     return { status: "success", message: "Payment status updated." };
   } catch (error) {
-    if (error instanceof AuthError) return { status: "error", message: error.message };
+    if (error instanceof AuthError)
+      return { status: "error", message: error.message };
     return { status: "error", message: "Could not update the payment status." };
   }
 }
@@ -219,7 +230,8 @@ export async function adjustInventoryAction(_prev, formData) {
       message: `Stock updated — ${result.onHand} on hand.`,
     };
   } catch (error) {
-    if (error instanceof AuthError) return { status: "error", message: error.message };
+    if (error instanceof AuthError)
+      return { status: "error", message: error.message };
     console.error("[admin/inventory]", error);
     return { status: "error", message: "Could not adjust that stock level." };
   }

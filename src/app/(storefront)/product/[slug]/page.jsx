@@ -1,6 +1,10 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { Container, Section, SectionHeading } from "@/components/layout/Section";
+import {
+  Container,
+  Section,
+  SectionHeading,
+} from "@/components/layout/Section";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { ProductHero } from "@/components/product/ProductHero";
 import { ProductReviews } from "@/components/product/ProductReviews";
@@ -13,7 +17,12 @@ import { RecentlyViewed } from "@/components/product/RecentlyViewed";
 import { brandStoryFor } from "@/lib/brand-stories";
 import { prisma } from "@/lib/prisma";
 import { getProductBySlug, getRelatedProducts } from "@/lib/queries";
-import { breadcrumbSchema, buildMetadata, faqSchema, productSchema } from "@/lib/seo";
+import {
+  breadcrumbSchema,
+  buildMetadata,
+  faqSchema,
+  productSchema,
+} from "@/lib/seo";
 import { stripHtml, truncate } from "@/lib/utils";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { getCurrentUser } from "@/lib/auth";
@@ -53,7 +62,7 @@ export default async function ProductPage({ params }) {
   const { slug } = await params;
   const product = await getProductBySlug(slug);
   if (!product) notFound();
-  
+
   const user = await getCurrentUser();
   let canReview = false;
   if (user) {
@@ -73,7 +82,12 @@ export default async function ProductPage({ params }) {
     { name: "Home", path: "/" },
     { name: "Shop", path: "/shop" },
     ...(product.category
-      ? [{ name: product.category.name, path: `/shop/${product.category.slug}` }]
+      ? [
+          {
+            name: product.category.name,
+            path: `/shop/${product.category.slug}`,
+          },
+        ]
       : []),
     { name: product.name, path: `/product/${product.slug}` },
   ];
@@ -260,7 +274,9 @@ export default async function ProductPage({ params }) {
                       0{step.step}
                     </span>
                     <div>
-                      <h3 className="text-[1.25rem] text-cream-50">{step.title}</h3>
+                      <h3 className="text-[1.25rem] text-cream-50">
+                        {step.title}
+                      </h3>
                       {step.body ? (
                         <p className="mt-2 max-w-[48ch] leading-relaxed text-cream-400">
                           {step.body}
@@ -282,15 +298,15 @@ export default async function ProductPage({ params }) {
             <SectionHeading title="Where this came from" />
             <div className="max-w-[58ch]">
               <p className="leading-relaxed text-cream-300">
-                Grown on smallholdings around Madurai in Tamil Nadu, picked by hand at
-                first light, and into shade within the hour. Drying then happens in a
-                controlled low-temperature closed chamber rather than in open sun —
-                slower and more expensive, and the reason the leaf still looks like a
-                leaf when it reaches the mill.
+                Grown on smallholdings around Madurai in Tamil Nadu, picked by
+                hand at first light, and into shade within the hour. Drying then
+                happens in a controlled low-temperature closed chamber rather
+                than in open sun — slower and more expensive, and the reason the
+                leaf still looks like a leaf when it reaches the mill.
               </p>
               <p className="mt-5 leading-relaxed text-cream-400">
-                Everything is milled and packed in small batches, so what arrives is
-                rarely more than a few weeks old.
+                Everything is milled and packed in small batches, so what
+                arrives is rarely more than a few weeks old.
               </p>
               <Link
                 href="/moringa"

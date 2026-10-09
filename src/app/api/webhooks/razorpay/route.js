@@ -28,7 +28,7 @@ export async function POST(req) {
       // Find our internal order ID by Razorpay's order ID
       const order = await prisma.order.findFirst({
         where: { paymentOrderId: rzpOrderId },
-        select: { id: true }
+        select: { id: true },
       });
 
       if (order) {
@@ -38,19 +38,20 @@ export async function POST(req) {
         await recordAudit({
           action: "webhook.unmatched_order",
           entity: "System",
-          meta: { rzpOrderId, rzpPaymentId }
+          meta: { rzpOrderId, rzpPaymentId },
         });
       }
     }
   } else if (event.event === "payment.failed") {
     const rzpOrderId = event.payload?.payment?.entity?.order_id;
     const rzpPaymentId = event.payload?.payment?.entity?.id;
-    const reason = event.payload?.payment?.entity?.error_description || "Unknown error";
+    const reason =
+      event.payload?.payment?.entity?.error_description || "Unknown error";
 
     if (rzpOrderId) {
       const order = await prisma.order.findFirst({
         where: { paymentOrderId: rzpOrderId },
-        select: { orderNumber: true }
+        select: { orderNumber: true },
       });
 
       const { sendInBackground, opsRecipient } = require("@/lib/mail");
@@ -65,7 +66,7 @@ export async function POST(req) {
             reason,
             razorpayOrderId: rzpOrderId,
             razorpayPaymentId: rzpPaymentId,
-          })
+          }),
         );
       }
     }

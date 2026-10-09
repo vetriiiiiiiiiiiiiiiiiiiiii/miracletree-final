@@ -1,7 +1,11 @@
 import Link from "next/link";
 import { breadcrumbSchema, buildMetadata } from "@/lib/seo";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { Container, Section, SectionHeading } from "@/components/layout/Section";
+import {
+  Container,
+  Section,
+  SectionHeading,
+} from "@/components/layout/Section";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { LinkButton } from "@/components/ui/Button";
 import { Reveal } from "@/components/motion/Reveal";
@@ -36,11 +40,14 @@ export default function InnovationPage() {
 
           <Reveal className="mt-10 max-w-[60ch]">
             <p className="eyebrow text-gold-400">Innovation</p>
-            <h1 className="mt-5 text-display text-cream-50">What we developed</h1>
+            <h1 className="mt-5 text-display text-cream-50">
+              What we developed
+            </h1>
             <p className="mt-8 text-[1.15rem] leading-relaxed text-cream-300">
-              Miracletree has worked on moringa since 2009. In that time the company has
-              developed two drying technologies, produced the first moringa-leaf energy
-              bar, and built products from the leaf, flower, seed and seed oil.
+              Miracletree has worked on moringa since 2009. In that time the
+              company has developed two drying technologies, produced the first
+              moringa-leaf energy bar, and built products from the leaf, flower,
+              seed and seed oil.
             </p>
           </Reveal>
 
@@ -51,7 +58,9 @@ export default function InnovationPage() {
                   <dd className="font-display text-[2.6rem] leading-none text-cream-50">
                     {figure.value}
                   </dd>
-                  <dt className="mt-3 text-[0.95rem] text-cream-200">{figure.label}</dt>
+                  <dt className="mt-3 text-[0.95rem] text-cream-200">
+                    {figure.label}
+                  </dt>
                   <p className="mt-1.5 text-[0.85rem] leading-relaxed text-cream-400">
                     {figure.note}
                   </p>
@@ -109,7 +118,9 @@ export default function InnovationPage() {
                     </p>
 
                     <p className="eyebrow mt-8 text-cream-400">What they did</p>
-                    <p className="mt-3 leading-relaxed text-cream-300">{item.body}</p>
+                    <p className="mt-3 leading-relaxed text-cream-300">
+                      {item.body}
+                    </p>
 
                     <p className="mt-8 border-t border-border-subtle pt-6 text-[0.95rem] leading-relaxed text-leaf-300">
                       {item.outcome}
@@ -143,7 +154,9 @@ export default function InnovationPage() {
                   <span className="font-display text-[1.4rem] text-gold-400">
                     {stage.stage}
                   </span>
-                  <h3 className="mt-4 text-[1.15rem] text-cream-50">{stage.title}</h3>
+                  <h3 className="mt-4 text-[1.15rem] text-cream-50">
+                    {stage.title}
+                  </h3>
                   <p className="mt-3 text-[0.9rem] leading-relaxed text-cream-300">
                     {stage.body}
                   </p>
@@ -167,7 +180,11 @@ export default function InnovationPage() {
           <Reveal className="mt-14" stagger={0.05}>
             <ul className="grid gap-px border border-border-subtle bg-border-subtle sm:grid-cols-2 lg:grid-cols-3">
               {CERTIFICATIONS.map((cert) => (
-                <li key={cert.mark} data-animate="fade-up" className="bg-ink p-7">
+                <li
+                  key={cert.mark}
+                  data-animate="fade-up"
+                  className="bg-ink p-7"
+                >
                   <p className="font-display text-[1.25rem] text-cream-50">
                     {cert.mark}
                   </p>
@@ -181,7 +198,8 @@ export default function InnovationPage() {
 
           <Reveal className="mt-10">
             <p className="max-w-[58ch] text-[0.9rem] leading-relaxed text-cream-400">
-              The full certification list, with issuers and validity dates, is on{" "}
+              The full certification list, with issuers and validity dates, is
+              on{" "}
               <Link
                 href="/about#accolades"
                 className="text-cream-200 underline decoration-gold-500 underline-offset-4 hover:text-cream-50"
@@ -199,8 +217,8 @@ export default function InnovationPage() {
           <div>
             <h2 className="text-title text-cream-50">Who built it</h2>
             <p className="mt-4 max-w-[48ch] text-cream-300">
-              R. Saravanakumaran developed both drying technologies and leads the
-              company&rsquo;s projects in Saudi Arabia and Oman.
+              R. Saravanakumaran developed both drying technologies and leads
+              the company&rsquo;s projects in Saudi Arabia and Oman.
             </p>
           </div>
           <div className="flex flex-wrap gap-4">

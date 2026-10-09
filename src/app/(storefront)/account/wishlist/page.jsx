@@ -25,7 +25,11 @@ export default async function WishlistPage() {
           price: true,
           compareAtPrice: true,
           status: true,
-          images: { take: 1, orderBy: { position: "asc" }, select: { url: true } },
+          images: {
+            take: 1,
+            orderBy: { position: "asc" },
+            select: { url: true },
+          },
           category: { select: { name: true } },
           variants: {
             where: { isActive: true },
@@ -76,7 +80,9 @@ export default async function WishlistPage() {
           inStock: item.product.variants.some(
             (v) =>
               !v.inventory?.trackInventory ||
-              (v.inventory ? v.inventory.onHand - v.inventory.reserved > 0 : false),
+              (v.inventory
+                ? v.inventory.onHand - v.inventory.reserved > 0
+                : false),
           ),
         }))}
       />

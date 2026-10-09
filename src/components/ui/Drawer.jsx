@@ -150,7 +150,9 @@ export function DrawerHeader({ title, subtitle, onClose, id }) {
         <h2 id={id} className="text-lg text-cream-50">
           {title}
         </h2>
-        {subtitle ? <p className="mt-1 text-xs text-cream-400">{subtitle}</p> : null}
+        {subtitle ? (
+          <p className="mt-1 text-xs text-cream-400">{subtitle}</p>
+        ) : null}
       </div>
       <button
         type="button"
@@ -159,7 +161,11 @@ export function DrawerHeader({ title, subtitle, onClose, id }) {
         aria-label={`Close ${title.toLowerCase()}`}
       >
         <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden>
-          <path d="M3 3l12 12M15 3L3 15" stroke="currentColor" strokeWidth="1.4" />
+          <path
+            d="M3 3l12 12M15 3L3 15"
+            stroke="currentColor"
+            strokeWidth="1.4"
+          />
         </svg>
       </button>
     </header>

@@ -27,7 +27,10 @@ export function BrandStory({ title, subtitle, ctaLabel, ctaHref, image }) {
               <span className="text-cream-400">Our story</span>
             </p>
 
-            <RevealText as="h2" className="max-w-[15ch] text-display text-cream-50">
+            <RevealText
+              as="h2"
+              className="max-w-[15ch] text-display text-cream-50"
+            >
               {title}
             </RevealText>
 
@@ -38,13 +41,19 @@ export function BrandStory({ title, subtitle, ctaLabel, ctaHref, image }) {
             ) : null}
 
             <p className="mt-6 max-w-[48ch] leading-relaxed text-cream-400">
-              The work has not changed much in that time: find growers who treat the
-              tree properly, get the leaf into shade quickly, and dry it slowly enough
-              that it still looks like a leaf when it reaches the mill.
+              The work has not changed much in that time: find growers who treat
+              the tree properly, get the leaf into shade quickly, and dry it
+              slowly enough that it still looks like a leaf when it reaches the
+              mill.
             </p>
 
             {ctaLabel && ctaHref ? (
-              <LinkButton href={ctaHref} variant="secondary" className="mt-10" magnetic>
+              <LinkButton
+                href={ctaHref}
+                variant="secondary"
+                className="mt-10"
+                magnetic
+              >
                 {ctaLabel}
               </LinkButton>
             ) : null}
@@ -63,10 +72,17 @@ export function BrandStory({ title, subtitle, ctaLabel, ctaHref, image }) {
                   fill
                   sizes="(max-width: 1024px) 90vw, 45vw"
                   className="object-contain p-10"
+                  unoptimized={
+                    typeof image.url === "string"
+                      ? image.url.startsWith("/uploads/")
+                      : undefined
+                  }
                 />
               ) : (
                 <div className="grid h-full place-items-center text-cream-400">
-                  <span className="eyebrow">Miracletree Life Science · Madurai</span>
+                  <span className="eyebrow">
+                    Miracletree Life Science · Madurai
+                  </span>
                 </div>
               )}
             </div>

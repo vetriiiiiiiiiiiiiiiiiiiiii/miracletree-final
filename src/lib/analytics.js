@@ -50,16 +50,29 @@ export const analytics = {
     push("add_shipping_info", { currency: "INR", value, items });
   },
   addPaymentInfo(value, method, items) {
-    push("add_payment_info", { currency: "INR", value, payment_type: method, items });
+    push("add_payment_info", {
+      currency: "INR",
+      value,
+      payment_type: method,
+      items,
+    });
   },
   purchase(order) {
-    push("purchase", { currency: "INR", ...order, coupon: order.coupon ?? undefined });
+    push("purchase", {
+      currency: "INR",
+      ...order,
+      coupon: order.coupon ?? undefined,
+    });
   },
   search(term, resultCount) {
     push("search", { search_term: term, result_count: resultCount });
   },
   addToWishlist(item) {
-    push("add_to_wishlist", { currency: "INR", value: item.price, items: [item] });
+    push("add_to_wishlist", {
+      currency: "INR",
+      value: item.price,
+      items: [item],
+    });
   },
   signUp(method = "email") {
     push("sign_up", { method });

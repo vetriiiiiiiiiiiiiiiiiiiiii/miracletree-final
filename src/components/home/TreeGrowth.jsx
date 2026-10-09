@@ -16,7 +16,11 @@ import { initMotion, prefersReducedMotion, treeGrowth } from "@/lib/motion";
  * scroll hijack.
  */
 const STAGES = [
-  { id: "seed", label: "Seed", note: "A winged seed, sown at the start of the rains." },
+  {
+    id: "seed",
+    label: "Seed",
+    note: "A winged seed, sown at the start of the rains.",
+  },
   {
     id: "stem",
     label: "Stem",
@@ -37,7 +41,11 @@ const STAGES = [
     label: "Flowers",
     note: "Cream blossoms in a short window after the rains.",
   },
-  { id: "pod", label: "Pods", note: "The drumstick itself, up to half a metre long." },
+  {
+    id: "pod",
+    label: "Pods",
+    note: "The drumstick itself, up to half a metre long.",
+  },
   {
     id: "harvest",
     label: "Harvest",
@@ -127,7 +135,9 @@ export function TreeGrowth({ title, subtitle }) {
                       0{index + 1}
                     </span>
                     <div>
-                      <p className="text-[1.05rem] leading-tight">{stage.label}</p>
+                      <p className="text-[1.05rem] leading-tight">
+                        {stage.label}
+                      </p>
                       <p
                         className={cn(
                           "overflow-hidden text-sm leading-relaxed text-cream-400 transition-all duration-500 ease-[var(--ease-organic)]",
@@ -224,7 +234,12 @@ function MoringaTree({ stageProgress, overall }) {
   });
 
   return (
-    <svg viewBox="0 0 400 520" fill="none" className="h-full w-full" aria-hidden>
+    <svg
+      viewBox="0 0 400 520"
+      fill="none"
+      className="h-full w-full"
+      aria-hidden
+    >
       <defs>
         <radialGradient id="tree-glow" cx="50%" cy="88%" r="55%">
           <stop offset="0%" stopColor="#2f9a5f" stopOpacity="0.28" />
@@ -270,8 +285,21 @@ function MoringaTree({ stageProgress, overall }) {
             strokeOpacity="0.55"
           />
         ))}
-        <circle cx="200" cy="470" r="4.6" fill="#17211a" stroke="#b3a992" strokeWidth="1" strokeOpacity="0.85" />
-        <path d="M200 470v16" stroke="#d9bc6a" strokeWidth="1" strokeOpacity={seed} />
+        <circle
+          cx="200"
+          cy="470"
+          r="4.6"
+          fill="#17211a"
+          stroke="#b3a992"
+          strokeWidth="1"
+          strokeOpacity="0.85"
+        />
+        <path
+          d="M200 470v16"
+          stroke="#d9bc6a"
+          strokeWidth="1"
+          strokeOpacity={seed}
+        />
       </g>
 
       {/* 02 Trunk — soft-wooded and never quite straight */}
@@ -307,7 +335,11 @@ function MoringaTree({ stageProgress, overall }) {
       {/* 05 Flowers — panicles hanging below the branch they grow from */}
       <g opacity={flower}>
         {PANICLES.map((n, i) => (
-          <Panicle key={i} {...n} p={stagger(flower, i, PANICLES.length, 0.4)} />
+          <Panicle
+            key={i}
+            {...n}
+            p={stagger(flower, i, PANICLES.length, 0.4)}
+          />
         ))}
       </g>
 
@@ -372,11 +404,18 @@ function Frond({ x, y, angle, length, p }) {
     if (local <= 0) continue;
     // Follow the rachis curve rather than a straight line along x.
     const ax = t * length;
-    const ay = length * (0.05 * 3 * t * (1 - t) * (1 - t) + 0.12 * 3 * t * t * (1 - t) + 0.24 * t * t * t);
+    const ay =
+      length *
+      (0.05 * 3 * t * (1 - t) * (1 - t) +
+        0.12 * 3 * t * t * (1 - t) +
+        0.24 * t * t * t);
     const span = 15 - t * 3.5;
     for (const side of [1, -1]) {
       limbs.push(
-        <g key={`${i}${side}`} transform={`translate(${ax} ${ay}) rotate(${side * (54 - t * 10)}) scale(${local})`}>
+        <g
+          key={`${i}${side}`}
+          transform={`translate(${ax} ${ay}) rotate(${side * (54 - t * 10)}) scale(${local})`}
+        >
           <Pinna length={span} p={local} />
         </g>,
       );
@@ -392,7 +431,10 @@ function Frond({ x, y, angle, length, p }) {
         strokeWidth="0.85"
         strokeLinecap="round"
         strokeOpacity="0.75"
-        style={{ strokeDasharray: length * 1.06, strokeDashoffset: length * 1.06 * (1 - clamp(p * 1.5)) }}
+        style={{
+          strokeDasharray: length * 1.06,
+          strokeDashoffset: length * 1.06 * (1 - clamp(p * 1.5)),
+        }}
       />
       {limbs}
       {tip > 0 ? (
@@ -413,17 +455,44 @@ function Pinna({ length, p }) {
     const size = 2.5 * (1 - t * 0.3);
     out.push(
       <g key={i} transform={`translate(${t * length} 0)`}>
-        <path d={leafletPath(size)} transform="rotate(64)" fill="#2f9a5f" fillOpacity="0.52" stroke="#5fae76" strokeWidth="0.4" />
-        <path d={leafletPath(size)} transform="rotate(-64)" fill="#2f9a5f" fillOpacity="0.52" stroke="#5fae76" strokeWidth="0.4" />
+        <path
+          d={leafletPath(size)}
+          transform="rotate(64)"
+          fill="#2f9a5f"
+          fillOpacity="0.52"
+          stroke="#5fae76"
+          strokeWidth="0.4"
+        />
+        <path
+          d={leafletPath(size)}
+          transform="rotate(-64)"
+          fill="#2f9a5f"
+          fillOpacity="0.52"
+          stroke="#5fae76"
+          strokeWidth="0.4"
+        />
       </g>,
     );
   }
   return (
     <g>
-      <path d={`M0 0 H${length}`} stroke="#5fae76" strokeWidth="0.5" strokeOpacity="0.6" strokeLinecap="round" />
+      <path
+        d={`M0 0 H${length}`}
+        stroke="#5fae76"
+        strokeWidth="0.5"
+        strokeOpacity="0.6"
+        strokeLinecap="round"
+      />
       {out}
       <g transform={`translate(${length} 0)`}>
-        <path d={leafletPath(2.2)} transform="rotate(90)" fill="#2f9a5f" fillOpacity="0.52" stroke="#5fae76" strokeWidth="0.4" />
+        <path
+          d={leafletPath(2.2)}
+          transform="rotate(90)"
+          fill="#2f9a5f"
+          fillOpacity="0.52"
+          stroke="#5fae76"
+          strokeWidth="0.4"
+        />
       </g>
     </g>
   );
@@ -439,7 +508,10 @@ function Panicle({ x, y, angle, p }) {
         strokeWidth="0.8"
         strokeOpacity="0.7"
         strokeLinecap="round"
-        style={{ strokeDasharray: 24, strokeDashoffset: 24 * (1 - clamp(p * 1.6)) }}
+        style={{
+          strokeDasharray: 24,
+          strokeDashoffset: 24 * (1 - clamp(p * 1.6)),
+        }}
       />
       {[
         [1.6, 5, 0],
@@ -484,10 +556,27 @@ function Pod({ x, y, angle, length, p }) {
   return (
     <g transform={`translate(${x} ${y}) rotate(${angle}) scale(1 ${clamp(p)})`}>
       {/* The stalk it hangs by — without it the pod reads as a floating leaf */}
-      <path d="M0 -5 V 2" stroke="#5fae76" strokeWidth="0.8" strokeOpacity="0.8" strokeLinecap="round" />
-      <path d={body} fill="url(#pod-body)" stroke="#5fae76" strokeWidth="0.75" strokeOpacity="0.9" />
+      <path
+        d="M0 -5 V 2"
+        stroke="#5fae76"
+        strokeWidth="0.8"
+        strokeOpacity="0.8"
+        strokeLinecap="round"
+      />
+      <path
+        d={body}
+        fill="url(#pod-body)"
+        stroke="#5fae76"
+        strokeWidth="0.75"
+        strokeOpacity="0.9"
+      />
       {/* The three ridges that give the drumstick its section */}
-      <path d={`M0 ${length * 0.06} V ${length * 0.94}`} stroke="#2f6d47" strokeWidth="0.6" strokeOpacity="0.5" />
+      <path
+        d={`M0 ${length * 0.06} V ${length * 0.94}`}
+        stroke="#2f6d47"
+        strokeWidth="0.6"
+        strokeOpacity="0.5"
+      />
       <path
         d={`M${-w * 0.5} ${length * 0.12} C ${-w * 0.66} ${length * 0.5}, ${-w * 0.5} ${length * 0.7}, ${-w * 0.28} ${length * 0.9}`}
         stroke="#2f6d47"
@@ -506,14 +595,46 @@ function Pod({ x, y, angle, length, p }) {
 
 /** Limbs: fork low, reach out, then droop at the tip. */
 const BRANCHES = [
-  { d: "M200 344 C 170 334, 138 322, 110 308 C 96 301, 88 302, 82 312", len: 132, w: 2.2 },
-  { d: "M200 330 C 232 320, 264 306, 292 292 C 306 285, 314 286, 320 296", len: 132, w: 2.2 },
-  { d: "M200 300 C 176 284, 154 268, 134 254 C 124 247, 117 247, 112 255", len: 112, w: 1.8 },
-  { d: "M200 290 C 224 274, 248 258, 268 244 C 278 237, 285 237, 290 245", len: 112, w: 1.8 },
-  { d: "M200 268 C 184 250, 170 234, 158 220 C 151 212, 145 211, 141 217", len: 88, w: 1.6 },
-  { d: "M200 262 C 218 244, 234 228, 246 216 C 253 209, 259 208, 263 214", len: 88, w: 1.6 },
-  { d: "M200 252 C 190 232, 180 216, 170 202 C 164 194, 158 192, 153 197", len: 78, w: 1.4 },
-  { d: "M200 252 C 212 232, 222 216, 232 204 C 238 196, 244 194, 249 199", len: 76, w: 1.4 },
+  {
+    d: "M200 344 C 170 334, 138 322, 110 308 C 96 301, 88 302, 82 312",
+    len: 132,
+    w: 2.2,
+  },
+  {
+    d: "M200 330 C 232 320, 264 306, 292 292 C 306 285, 314 286, 320 296",
+    len: 132,
+    w: 2.2,
+  },
+  {
+    d: "M200 300 C 176 284, 154 268, 134 254 C 124 247, 117 247, 112 255",
+    len: 112,
+    w: 1.8,
+  },
+  {
+    d: "M200 290 C 224 274, 248 258, 268 244 C 278 237, 285 237, 290 245",
+    len: 112,
+    w: 1.8,
+  },
+  {
+    d: "M200 268 C 184 250, 170 234, 158 220 C 151 212, 145 211, 141 217",
+    len: 88,
+    w: 1.6,
+  },
+  {
+    d: "M200 262 C 218 244, 234 228, 246 216 C 253 209, 259 208, 263 214",
+    len: 88,
+    w: 1.6,
+  },
+  {
+    d: "M200 252 C 190 232, 180 216, 170 202 C 164 194, 158 192, 153 197",
+    len: 78,
+    w: 1.4,
+  },
+  {
+    d: "M200 252 C 212 232, 222 216, 232 204 C 238 196, 244 194, 249 199",
+    len: 76,
+    w: 1.4,
+  },
 ];
 
 /** A frond at the end of each limb, angled the way the limb is falling. */

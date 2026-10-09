@@ -90,7 +90,9 @@ export function SettingsForm({ values, policyDefaults, activity }) {
         </Card>
       ) : (
         <form action={action} className="grid gap-6">
-          {state.status === "error" ? <FormMessage>{state.message}</FormMessage> : null}
+          {state.status === "error" ? (
+            <FormMessage>{state.message}</FormMessage>
+          ) : null}
           {state.status === "success" ? (
             <FormMessage tone="success">{state.message}</FormMessage>
           ) : null}
@@ -125,7 +127,8 @@ export function SettingsForm({ values, policyDefaults, activity }) {
                     label="Shipping message"
                     name="shipping.copy"
                     defaultValue={
-                      values["shipping.copy"] ?? "Free shipping on orders above ₹699"
+                      values["shipping.copy"] ??
+                      "Free shipping on orders above ₹699"
                     }
                     hint="Used on product pages and in the footer."
                   />

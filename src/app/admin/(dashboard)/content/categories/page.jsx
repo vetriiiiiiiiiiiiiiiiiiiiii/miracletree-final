@@ -2,7 +2,10 @@ import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth";
 import { PageHeader } from "@/components/admin/ui";
 import { RecordManager } from "@/components/admin/RecordManager";
-import { deleteCategoryAction, saveCategoryAction } from "@/app/actions/admin/content";
+import {
+  deleteCategoryAction,
+  saveCategoryAction,
+} from "@/app/actions/admin/content";
 export const dynamic = "force-dynamic";
 const FIELDS = [
   { name: "name", label: "Name", type: "text", required: true, half: true },
@@ -24,7 +27,12 @@ const FIELDS = [
   },
   { name: "imageUrl", label: "Image URL", type: "text" },
   { name: "position", label: "Order", type: "number", half: true },
-  { name: "isActive", label: "Visible in the shop", type: "checkbox", half: true },
+  {
+    name: "isActive",
+    label: "Visible in the shop",
+    type: "checkbox",
+    half: true,
+  },
   {
     name: "seoTitle",
     label: "SEO title",
@@ -74,7 +82,9 @@ export default async function AdminCategoriesPage() {
               label: `${category._count.products} product${category._count.products === 1 ? "" : "s"}`,
               tone: "info",
             },
-            ...(category.isActive ? [] : [{ label: "Hidden", tone: "neutral" }]),
+            ...(category.isActive
+              ? []
+              : [{ label: "Hidden", tone: "neutral" }]),
           ],
           values: {
             name: category.name,

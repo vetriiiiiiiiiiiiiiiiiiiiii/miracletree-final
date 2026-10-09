@@ -42,7 +42,8 @@ export function RichTextEditor({ label, value, onChange, rows = 14 }) {
     const [open, close] = command.wrap;
     const before = value.slice(0, start);
     const after = value.slice(end);
-    const prefix = command.block && before && !before.endsWith("\n") ? "\n" : "";
+    const prefix =
+      command.block && before && !before.endsWith("\n") ? "\n" : "";
     const next = `${before}${prefix}${open}${selected}${close}${after}`;
     onChange(next);
     // Put the caret inside the new tags so typing continues naturally.
@@ -101,8 +102,8 @@ export function RichTextEditor({ label, value, onChange, rows = 14 }) {
           />
 
           <p className="text-xs text-cream-400">
-            Allowed: headings, paragraphs, lists, links, emphasis, quotes, tables and
-            images. Anything else is stripped when saved.
+            Allowed: headings, paragraphs, lists, links, emphasis, quotes,
+            tables and images. Anything else is stripped when saved.
           </p>
         </>
       ) : (

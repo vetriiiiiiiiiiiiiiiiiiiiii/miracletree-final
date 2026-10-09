@@ -32,8 +32,9 @@ export default function GlobalError({ error, reset }) {
             That didn&rsquo;t take.
           </h1>
           <p className="mx-auto mt-7 max-w-[42ch] leading-relaxed text-cream-300">
-            An unexpected error stopped this page loading. Trying again usually works —
-            if it doesn&rsquo;t, let us know and we&rsquo;ll look into it.
+            An unexpected error stopped this page loading. Trying again usually
+            works — if it doesn&rsquo;t, let us know and we&rsquo;ll look into
+            it.
           </p>
 
           <div className="mt-11 flex flex-wrap justify-center gap-3">
@@ -48,7 +49,9 @@ export default function GlobalError({ error, reset }) {
           {error.digest ? (
             <p className="mt-10 text-xs text-cream-400">
               Reference{" "}
-              <code className="tabular-nums text-cream-300">{error.digest}</code>
+              <code className="tabular-nums text-cream-300">
+                {error.digest}
+              </code>
               {" · "}
               <Link href="/contact" className="underline underline-offset-4">
                 Report this

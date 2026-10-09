@@ -13,7 +13,9 @@ export function ProfileForm({ defaults }) {
         {state.status === "success" ? (
           <FormMessage tone="success">{state.message}</FormMessage>
         ) : null}
-        {state.status === "error" ? <FormMessage>{state.message}</FormMessage> : null}
+        {state.status === "error" ? (
+          <FormMessage>{state.message}</FormMessage>
+        ) : null}
 
         <div className="grid gap-5 sm:grid-cols-2">
           <Input
@@ -22,7 +24,9 @@ export function ProfileForm({ defaults }) {
             autoComplete="given-name"
             required
             defaultValue={defaults.firstName}
-            error={state.status === "error" ? state.errors?.firstName : undefined}
+            error={
+              state.status === "error" ? state.errors?.firstName : undefined
+            }
           />
           <Input
             label="Last name"
@@ -62,7 +66,9 @@ export function ProfileForm({ defaults }) {
       </form>
 
       <div className="mt-14 border-t border-border-subtle pt-8">
-        <h3 className="text-[1.05rem] text-cream-100">Signed in on this device</h3>
+        <h3 className="text-[1.05rem] text-cream-100">
+          Signed in on this device
+        </h3>
         <p className="mt-2 text-sm text-cream-400">
           Signing out clears your session. Your bag is kept.
         </p>
@@ -78,7 +84,12 @@ export function ProfileForm({ defaults }) {
 function Save() {
   const { pending } = useFormStatus();
   return (
-    <Button type="submit" size="lg" className="justify-self-start" loading={pending}>
+    <Button
+      type="submit"
+      size="lg"
+      className="justify-self-start"
+      loading={pending}
+    >
       Save changes
     </Button>
   );

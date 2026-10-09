@@ -45,7 +45,10 @@ export function CartProvider({ cart, children }) {
         quantity,
       });
       startTransition(() => router.refresh());
-      toasts.push({ tone: "success", message: result.message ?? "Added to your bag." });
+      toasts.push({
+        tone: "success",
+        message: result.message ?? "Added to your bag.",
+      });
       setIsOpen(true);
       return true;
     },
@@ -72,13 +75,19 @@ export function CartProvider({ cart, children }) {
     },
     [cart.lines, router, toasts],
   );
-  const remove = useCallback(async (itemId) => setQuantity(itemId, 0), [setQuantity]);
+  const remove = useCallback(
+    async (itemId) => setQuantity(itemId, 0),
+    [setQuantity],
+  );
   const applyCoupon = useCallback(
     async (code) => {
       const result = await applyCouponAction(code);
       if (!result.ok) return result.error;
       startTransition(() => router.refresh());
-      toasts.push({ tone: "success", message: result.message ?? "Discount applied." });
+      toasts.push({
+        tone: "success",
+        message: result.message ?? "Discount applied.",
+      });
       return null;
     },
     [router, toasts],

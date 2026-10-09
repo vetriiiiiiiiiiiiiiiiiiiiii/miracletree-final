@@ -35,7 +35,10 @@ export function ConfirmDialog({
   if (!open || !mounted) return null;
   return createPortal(
     <div className="fixed inset-0 z-[500] grid place-items-center px-5">
-      <div className="absolute inset-0 bg-ink/80 backdrop-blur-sm" onClick={onCancel} />
+      <div
+        className="absolute inset-0 bg-ink/80 backdrop-blur-sm"
+        onClick={onCancel}
+      />
 
       <div
         role="alertdialog"
@@ -47,7 +50,10 @@ export function ConfirmDialog({
         <h2 id="confirm-title" className="text-[1.15rem] text-cream-50">
           {title}
         </h2>
-        <p id="confirm-body" className="mt-3 text-sm leading-relaxed text-cream-400">
+        <p
+          id="confirm-body"
+          className="mt-3 text-sm leading-relaxed text-cream-400"
+        >
           {body}
         </p>
 

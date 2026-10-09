@@ -22,7 +22,9 @@ export function ProductHero({
   ratingCount,
   badges,
 }) {
-  const [activeImageUrl, setActiveImageUrl] = useState(variants[0]?.imageUrl ?? null);
+  const [activeImageUrl, setActiveImageUrl] = useState(
+    variants[0]?.imageUrl ?? null,
+  );
   // Photographs are the default: they are what a shopper came to look at, and
   // they are what a variant selection needs to move. Turning the pack is the
   // second thing you do, not the first.

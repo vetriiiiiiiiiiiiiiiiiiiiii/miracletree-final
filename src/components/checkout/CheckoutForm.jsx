@@ -29,7 +29,9 @@ export function CheckoutForm({
   const router = useRouter();
   const { cart } = useCart();
   const [method, setMethod] = useState(razorpayAvailable ? "razorpay" : "cod");
-  const [selectedAddress, setSelectedAddress] = useState(addresses[0]?.id ?? null);
+  const [selectedAddress, setSelectedAddress] = useState(
+    addresses[0]?.id ?? null,
+  );
   const [pending, setPending] = useState(false);
   const [error, setError] = useState(null);
   const [errors, setErrors] = useState({});
@@ -334,7 +336,6 @@ export function CheckoutForm({
                 </div>
 
                 <input type="hidden" name="country" value="India" />
-
               </div>
             ) : null}
           </section>
@@ -391,6 +392,11 @@ export function CheckoutForm({
                         fill
                         sizes="56px"
                         className="object-contain p-1.5"
+                        unoptimized={
+                          typeof line.imageUrl === "string"
+                            ? line.imageUrl.startsWith("/uploads/")
+                            : undefined
+                        }
                       />
                     ) : null}
                     <span className="absolute -right-1 -top-1 grid h-5 w-5 place-items-center rounded-full bg-ink-600 text-[0.65rem] tabular-nums text-cream-100">
@@ -411,7 +417,10 @@ export function CheckoutForm({
             </ul>
 
             <dl className="mt-6 grid gap-2.5 text-sm">
-              <SummaryRow label="Subtotal" value={formatPrice(cart.totals.subtotal)} />
+              <SummaryRow
+                label="Subtotal"
+                value={formatPrice(cart.totals.subtotal)}
+              />
               {cart.totals.discountTotal > 0 ? (
                 <SummaryRow
                   label={`Discount${cart.coupon ? ` (${cart.coupon.code})` : ""}`}

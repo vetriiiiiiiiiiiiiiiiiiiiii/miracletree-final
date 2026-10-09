@@ -20,13 +20,7 @@ export function buildFilterGroups(categories, ingredients) {
   };
 }
 export function countActiveFilters(params) {
-  const keys = [
-    "category",
-    "type",
-    "ingredient",
-    "availability",
-    "offers",
-  ];
+  const keys = ["category", "type", "ingredient", "availability", "offers"];
   let count = keys.filter((key) => Boolean(params[key])).length;
   if (params.min || params.max) count += 1;
   return count;

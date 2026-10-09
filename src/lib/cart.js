@@ -133,7 +133,8 @@ export const getCart = cache(async () => {
       compareAtPrice: item.variant.compareAtPrice,
       quantity: item.quantity,
       lineTotal: unitPrice * item.quantity,
-      available: available === Number.MAX_SAFE_INTEGER ? item.quantity : available,
+      available:
+        available === Number.MAX_SAFE_INTEGER ? item.quantity : available,
       overStock: item.quantity > available,
       categoryId: item.product.category?.id ?? null,
       categorySlug: item.product.category?.slug ?? null,
@@ -200,7 +201,10 @@ export const getCart = cache(async () => {
   // Product prices are GST-inclusive, matching Indian retail convention, so tax
   // is reported as zero here rather than added on top.
   const taxTotal = 0;
-  const grandTotal = Math.max(0, subtotal - discountTotal + shippingTotal + taxTotal);
+  const grandTotal = Math.max(
+    0,
+    subtotal - discountTotal + shippingTotal + taxTotal,
+  );
   return {
     id: cart.id,
     token: cart.token,
@@ -221,7 +225,11 @@ export const getCart = cache(async () => {
         : Math.max(0, threshold - (subtotal - discountTotal)),
     },
     coupon: coupon
-      ? { code: coupon.code, description: coupon.description, kind: coupon.kind }
+      ? {
+          code: coupon.code,
+          description: coupon.description,
+          kind: coupon.kind,
+        }
       : null,
     couponWarning,
   };
@@ -272,7 +280,8 @@ export async function couponContextFor(coupon, cart) {
 export function evaluateCoupon(coupon, context) {
   const now = new Date();
   const { subtotal } = context;
-  if (!coupon.isActive) return { ok: false, reason: "That code is no longer active." };
+  if (!coupon.isActive)
+    return { ok: false, reason: "That code is no longer active." };
   if (coupon.startsAt && coupon.startsAt > now)
     return { ok: false, reason: "That code isn't active yet." };
   if (coupon.endsAt && coupon.endsAt < now)
@@ -282,14 +291,21 @@ export function evaluateCoupon(coupon, context) {
   // Per-shopper rules need somebody to attach to, and a guest has nobody. Left
   // open, either restriction is bypassed simply by checking out signed out — so
   // a code carrying one asks for an account instead.
-  const perShopper = coupon.appliesTo === "first_order" || coupon.perUserLimit !== null;
+  const perShopper =
+    coupon.appliesTo === "first_order" || coupon.perUserLimit !== null;
   if (perShopper && !context.userId) {
-    return { ok: false, reason: `Sign in to your account to use ${coupon.code}.` };
+    return {
+      ok: false,
+      reason: `Sign in to your account to use ${coupon.code}.`,
+    };
   }
   if (coupon.appliesTo === "first_order" && context.priorOrders > 0) {
     return { ok: false, reason: `${coupon.code} is for a first order only.` };
   }
-  if (coupon.perUserLimit !== null && context.redemptions >= coupon.perUserLimit) {
+  if (
+    coupon.perUserLimit !== null &&
+    context.redemptions >= coupon.perUserLimit
+  ) {
     return {
       ok: false,
       reason:
@@ -336,7 +352,8 @@ export function evaluateCoupon(coupon, context) {
     coupon.kind === "percentage"
       ? Math.floor((eligible * coupon.value) / 100)
       : coupon.value;
-  if (coupon.maxDiscount !== null) discount = Math.min(discount, coupon.maxDiscount);
+  if (coupon.maxDiscount !== null)
+    discount = Math.min(discount, coupon.maxDiscount);
   discount = Math.min(discount, eligible);
   return { ok: true, discount, freeShipping: false };
 }

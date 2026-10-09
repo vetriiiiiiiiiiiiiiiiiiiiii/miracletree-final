@@ -14,7 +14,10 @@ export function PageHeader({ title, description, breadcrumb, actions }) {
         <nav aria-label="Breadcrumb" className="mb-4">
           <ol className="flex flex-wrap items-center gap-2 text-[0.66rem] uppercase tracking-[0.14em] text-cream-400">
             {breadcrumb.map((crumb, index) => (
-              <li key={`${crumb.label}-${index}`} className="flex items-center gap-2">
+              <li
+                key={`${crumb.label}-${index}`}
+                className="flex items-center gap-2"
+              >
                 {crumb.href ? (
                   <Link href={crumb.href} className="hover:text-cream-100">
                     {crumb.label}
@@ -63,23 +66,36 @@ export function Card({
   padded = true,
 }) {
   return (
-    <section className={cn("border border-border-subtle bg-ink-800/60", className)}>
+    <section
+      className={cn("border border-border-subtle bg-ink-800/60", className)}
+    >
       {title || actions ? (
         <header className="flex flex-wrap items-start justify-between gap-3 border-b border-border-subtle px-5 py-4">
           <div>
-            {title ? <h2 className="text-[0.95rem] text-cream-50">{title}</h2> : null}
+            {title ? (
+              <h2 className="text-[0.95rem] text-cream-50">{title}</h2>
+            ) : null}
             {description ? (
               <p className="mt-1 text-xs text-cream-400">{description}</p>
             ) : null}
           </div>
-          {actions ? <div className="flex items-center gap-2">{actions}</div> : null}
+          {actions ? (
+            <div className="flex items-center gap-2">{actions}</div>
+          ) : null}
         </header>
       ) : null}
       <div className={cn(padded && "p-5")}>{children}</div>
     </section>
   );
 }
-export function StatCard({ label, value, delta, hint, href, tone = "default" }) {
+export function StatCard({
+  label,
+  value,
+  delta,
+  hint,
+  href,
+  tone = "default",
+}) {
   const tones = {
     default: "border-border-subtle",
     warning: "border-gold-400/35",
@@ -103,7 +119,9 @@ export function StatCard({ label, value, delta, hint, href, tone = "default" }) 
                 : "text-cream-400",
           )}
         >
-          <span aria-hidden>{delta.value > 0 ? "▲" : delta.value < 0 ? "▼" : "—"}</span>
+          <span aria-hidden>
+            {delta.value > 0 ? "▲" : delta.value < 0 ? "▼" : "—"}
+          </span>
           {Math.abs(delta.value)}% {delta.label}
         </p>
       ) : null}
@@ -136,7 +154,8 @@ export function Table({ head, children, empty, className }) {
         <thead>
           <tr className="border-b border-border-subtle">
             {head.map((column, index) => {
-              const config = typeof column === "string" ? { label: column } : column;
+              const config =
+                typeof column === "string" ? { label: column } : column;
               return (
                 <th
                   key={`${config.label}-${index}`}
@@ -207,7 +226,10 @@ export function Pill({ children, tone = "neutral", className }) {
 export function EmptyRow({ colSpan, children }) {
   return (
     <tr>
-      <td colSpan={colSpan} className="px-4 py-14 text-center text-sm text-cream-400">
+      <td
+        colSpan={colSpan}
+        className="px-4 py-14 text-center text-sm text-cream-400"
+      >
         {children}
       </td>
     </tr>

@@ -24,7 +24,10 @@ export function MediaLibrary({ items }) {
       body.set("file", file);
       body.set("folder", "library");
       try {
-        const response = await fetch("/api/admin/upload", { method: "POST", body });
+        const response = await fetch("/api/admin/upload", {
+          method: "POST",
+          body,
+        });
         if (!response.ok) {
           const data = await response.json();
           setError(data.error ?? "That upload failed.");
@@ -92,7 +95,8 @@ export function MediaLibrary({ items }) {
       >
         {items.length === 0 ? (
           <p className="py-14 text-center text-sm text-cream-400">
-            Nothing uploaded yet. Images added from a product page appear here too.
+            Nothing uploaded yet. Images added from a product page appear here
+            too.
           </p>
         ) : (
           <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
@@ -105,16 +109,26 @@ export function MediaLibrary({ items }) {
                     fill
                     sizes="200px"
                     className="object-contain p-2"
+                    unoptimized={
+                      typeof item.url === "string"
+                        ? item.url.startsWith("/uploads/")
+                        : undefined
+                    }
                   />
                 </div>
 
                 <div className="border-t border-border-subtle p-3">
-                  <p className="truncate text-[0.7rem] text-cream-400" title={item.url}>
+                  <p
+                    className="truncate text-[0.7rem] text-cream-400"
+                    title={item.url}
+                  >
                     {item.url.split("/").pop()}
                   </p>
                   <p className="mt-1 text-[0.62rem] tabular-nums text-cream-400">
                     {item.width}×{item.height}
-                    {item.sizeBytes ? ` · ${Math.round(item.sizeBytes / 1024)}KB` : ""}
+                    {item.sizeBytes
+                      ? ` · ${Math.round(item.sizeBytes / 1024)}KB`
+                      : ""}
                   </p>
                   <p className="mt-0.5 text-[0.62rem] text-cream-400">
                     {formatDate(item.createdAt)}

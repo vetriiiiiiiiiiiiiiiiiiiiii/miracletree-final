@@ -3,7 +3,12 @@ import { auth, signIn, signOut } from "@/auth";
 import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
 import { prisma } from "./prisma";
-import { signSessionToken, readSessionToken, SESSION_COOKIE_NAME, SESSION_TTL_SECONDS } from "./session";
+import {
+  signSessionToken,
+  readSessionToken,
+  SESSION_COOKIE_NAME,
+  SESSION_TTL_SECONDS,
+} from "./session";
 
 export const getSession = async () => {
   try {
@@ -68,7 +73,7 @@ export const createSession = async (payload) => {
 
 export const destroySession = async () => {
   const cookieStore = await cookies();
-  const opts = { 
+  const opts = {
     path: "/",
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",

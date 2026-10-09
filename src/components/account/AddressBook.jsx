@@ -4,7 +4,10 @@ import { useRouter } from "next/navigation";
 import { useFormStatus } from "react-dom";
 import { Input, Checkbox, FormMessage } from "@/components/ui/Field";
 import { Button } from "@/components/ui/Button";
-import { deleteAddressAction, saveAddressAction } from "@/app/actions/addresses";
+import {
+  deleteAddressAction,
+  saveAddressAction,
+} from "@/app/actions/addresses";
 import { cn } from "@/lib/utils";
 const INITIAL = { status: "idle" };
 export function AddressBook({ addresses }) {
@@ -33,7 +36,9 @@ export function AddressBook({ addresses }) {
               <p className="text-cream-50">
                 {address.firstName} {address.lastName}
                 {address.label ? (
-                  <span className="ml-3 text-xs text-cream-400">{address.label}</span>
+                  <span className="ml-3 text-xs text-cream-400">
+                    {address.label}
+                  </span>
                 ) : null}
               </p>
               <address className="mt-2 not-italic text-sm leading-relaxed text-cream-400">
@@ -102,14 +107,19 @@ function AddressForm({ address, onDone, onCancel }) {
   }, [state, onDone]);
   const errors = state.status === "error" ? (state.errors ?? {}) : {};
   return (
-    <form action={action} className="grid gap-5 border border-border-subtle p-6 md:p-8">
+    <form
+      action={action}
+      className="grid gap-5 border border-border-subtle p-6 md:p-8"
+    >
       {address ? <input type="hidden" name="id" value={address.id} /> : null}
 
       <h3 className="text-[1.15rem] text-cream-50">
         {address ? "Edit address" : "New address"}
       </h3>
 
-      {state.status === "error" ? <FormMessage>{state.message}</FormMessage> : null}
+      {state.status === "error" ? (
+        <FormMessage>{state.message}</FormMessage>
+      ) : null}
 
       <div className="grid gap-5 sm:grid-cols-2">
         <Input

@@ -3,7 +3,13 @@ import Link from "next/link";
 import { useActionState, useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { cn, slugify } from "@/lib/utils";
-import { Input, Textarea, Select, Checkbox, FormMessage } from "@/components/ui/Field";
+import {
+  Input,
+  Textarea,
+  Select,
+  Checkbox,
+  FormMessage,
+} from "@/components/ui/Field";
 import { Card, FieldGroup, Pill } from "@/components/admin/ui";
 import { ImageManager } from "@/components/admin/ImageManager";
 import { VariantEditor } from "@/components/admin/VariantEditor";
@@ -100,7 +106,13 @@ export function ProductEditor({
           className="flex flex-wrap gap-1 border-b border-border-subtle"
         >
           {TABS.map((item) => {
-            const disabled = isNew && (item === "Media" || item === "Variants" || item === "Benefits" || item === "Usage" || item === "Ingredients");
+            const disabled =
+              isNew &&
+              (item === "Media" ||
+                item === "Variants" ||
+                item === "Benefits" ||
+                item === "Usage" ||
+                item === "Ingredients");
             return (
               <button
                 key={item}
@@ -115,7 +127,8 @@ export function ProductEditor({
                   tab === item
                     ? "border-gold-400 text-cream-50"
                     : "border-transparent text-cream-400 hover:text-cream-100",
-                  disabled && "cursor-not-allowed opacity-35 hover:text-cream-400",
+                  disabled &&
+                    "cursor-not-allowed opacity-35 hover:text-cream-400",
                 )}
               >
                 {item}
@@ -173,17 +186,30 @@ export function ProductEditor({
                   displayKey="name"
                   placeholder="Select a category..."
                   fetchFn={async (search) => {
-                    const filtered = categories.filter(c => c.name.toLowerCase().includes(search.toLowerCase()));
-                    return { success: true, data: filtered, pagination: { hasMore: false } };
+                    const filtered = categories.filter((c) =>
+                      c.name.toLowerCase().includes(search.toLowerCase()),
+                    );
+                    return {
+                      success: true,
+                      data: filtered,
+                      pagination: { hasMore: false },
+                    };
                   }}
                 />
-                <input type="hidden" name="categoryId" value={categoryId || ""} />
-                
+                <input
+                  type="hidden"
+                  name="categoryId"
+                  value={categoryId || ""}
+                />
+
                 <Select
                   label="Product type"
                   name="productType"
                   defaultValue={draft.productType}
-                  options={[{ value: "", label: "Unspecified" }, ...productTypes]}
+                  options={[
+                    { value: "", label: "Unspecified" },
+                    ...productTypes,
+                  ]}
                   hint="Drives the storefront type filter."
                 />
               </div>
@@ -203,6 +229,18 @@ export function ProductEditor({
               title="Merchandising"
               description="Where this product surfaces around the storefront."
             >
+              <div className="mb-5 max-w-40">
+                <Input
+                  label="Display order"
+                  name="position"
+                  type="number"
+                  min={0}
+                  defaultValue={draft.position ?? 9999}
+                  hint="Lower numbers appear first."
+                  error={errors.position}
+                />
+              </div>
+
               <div className="grid gap-4 sm:grid-cols-2">
                 <Checkbox
                   name="isFeatured"
@@ -293,7 +331,10 @@ export function ProductEditor({
               </div>
             </FieldGroup>
 
-            <FieldGroup title="Shipping" description="Used for courier weight bands.">
+            <FieldGroup
+              title="Shipping"
+              description="Used for courier weight bands."
+            >
               <div className="grid gap-5 sm:grid-cols-2">
                 <Input
                   label="Weight (grams)"
@@ -318,8 +359,9 @@ export function ProductEditor({
               <VariantEditor productId={draft.id} variants={variants} />
             ) : (
               <p className="text-sm text-cream-400">
-                Save the product first. A &ldquo;Standard&rdquo; variant is created
-                automatically, which you can then rename or add sizes alongside.
+                Save the product first. A &ldquo;Standard&rdquo; variant is
+                created automatically, which you can then rename or add sizes
+                alongside.
               </p>
             )}
           </Panel>
@@ -366,7 +408,11 @@ export function ProductEditor({
           {/* INGREDIENTS */}
           <Panel active={tab === "Ingredients"}>
             {draft.id ? (
-              <ProductIngredientEditor productId={draft.id} productIngredients={ingredients} allIngredients={allIngredients} />
+              <ProductIngredientEditor
+                productId={draft.id}
+                productIngredients={ingredients}
+                allIngredients={allIngredients}
+              />
             ) : (
               <p className="text-sm text-cream-400">Save the product first.</p>
             )}
@@ -501,7 +547,10 @@ export function ProductEditor({
               options={[
                 { value: "draft", label: "Draft — hidden from the store" },
                 { value: "published", label: "Published — live" },
-                { value: "archived", label: "Archived — hidden, kept for records" },
+                {
+                  value: "archived",
+                  label: "Archived — hidden, kept for records",
+                },
               ]}
             />
 
@@ -525,7 +574,9 @@ export function ProductEditor({
             <dl className="grid gap-3 text-sm">
               <div className="flex items-baseline justify-between gap-3">
                 <dt className="text-cream-400">Variants</dt>
-                <dd className="tabular-nums text-cream-100">{variants.length}</dd>
+                <dd className="tabular-nums text-cream-100">
+                  {variants.length}
+                </dd>
               </div>
               <div className="flex items-baseline justify-between gap-3">
                 <dt className="text-cream-400">Images</dt>

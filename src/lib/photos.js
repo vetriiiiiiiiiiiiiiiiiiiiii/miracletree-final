@@ -79,9 +79,18 @@ export const PHOTO_GROUPS = [
       photo("award-02", "An award presentation at an industry event"),
       photo("award-04", "An award presentation at an industry event"),
       photo("award-05", "An award received at an industry event"),
-      photo("gallery-01", "The stage at a Tamil Nadu farming and income conference"),
-      photo("gallery-27", "Speaking at an agricultural and rural income conference"),
-      photo("gallery-26", "Receiving recognition at a Young Indians innovation event"),
+      photo(
+        "gallery-01",
+        "The stage at a Tamil Nadu farming and income conference",
+      ),
+      photo(
+        "gallery-27",
+        "Speaking at an agricultural and rural income conference",
+      ),
+      photo(
+        "gallery-26",
+        "Receiving recognition at a Young Indians innovation event",
+      ),
     ],
   },
   {
@@ -159,9 +168,15 @@ export const PHOTO_GROUPS = [
         "gallery-15",
         "A group photographed outside the Miracle Tree Life Science premises",
       ),
-      photo("gallery-13", "MiracleTree products displayed on the showroom shelves"),
+      photo(
+        "gallery-13",
+        "MiracleTree products displayed on the showroom shelves",
+      ),
       photo("gallery-20", "Product shelves inside the MiracleTree showroom"),
-      photo("gallery-24", "MiracleTree products shown to visitors at an exhibition"),
+      photo(
+        "gallery-24",
+        "MiracleTree products shown to visitors at an exhibition",
+      ),
       photo("gallery-12", "A visitor examining products in the showroom"),
       photo("gallery-10", "Products being shown to a visitor in the showroom"),
       photo("gallery-25", "A MiracleTree product being presented to a visitor"),
@@ -172,19 +187,43 @@ export const PHOTO_GROUPS = [
     title: "Exhibitions and partners",
     lede: "Trade fairs, delegations and the MOGO® launch material.",
     photos: [
-      photo("gallery-16", "Two people beside a MOGO Moringa Energy Bites banner"),
-      photo("gallery-18", "Visitors at a Moringa Energy Bites exhibition stand"),
-      photo("gallery-17", "A MOGO product pack being presented outside the premises"),
+      photo(
+        "gallery-16",
+        "Two people beside a MOGO Moringa Energy Bites banner",
+      ),
+      photo(
+        "gallery-18",
+        "Visitors at a Moringa Energy Bites exhibition stand",
+      ),
+      photo(
+        "gallery-17",
+        "A MOGO product pack being presented outside the premises",
+      ),
       photo(
         "gallery-21",
         "A welcome board for visitors Mr Keiichiro Yamada and Mr Tohru Kubota from Japan",
       ),
-      photo("gallery-07", "The MiracleTree stand at a food and agriculture trade fair"),
-      photo("gallery-06", "A Chaitree product being presented at an exhibition stand"),
-      photo("gallery-19", "Products being presented to officials at an exhibition"),
+      photo(
+        "gallery-07",
+        "The MiracleTree stand at a food and agriculture trade fair",
+      ),
+      photo(
+        "gallery-06",
+        "A Chaitree product being presented at an exhibition stand",
+      ),
+      photo(
+        "gallery-19",
+        "Products being presented to officials at an exhibition",
+      ),
       photo("gallery-08", "A group at an agricultural exhibition"),
-      photo("gallery-11", "A gathering outside the Miracle Tree Life Science premises"),
-      photo("gallery-23", "A cheque or certificate presentation at an official event"),
+      photo(
+        "gallery-11",
+        "A gathering outside the Miracle Tree Life Science premises",
+      ),
+      photo(
+        "gallery-23",
+        "A cheque or certificate presentation at an official event",
+      ),
       photo("gallery-05", "A meeting at the MiracleTree office"),
       photo("gallery-22", "A product being presented in an office"),
     ],

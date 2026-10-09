@@ -1,4 +1,8 @@
-import { Container, Section, SectionHeading } from "@/components/layout/Section";
+import {
+  Container,
+  Section,
+  SectionHeading,
+} from "@/components/layout/Section";
 import { Reveal } from "@/components/motion/Reveal";
 import { UnderlineLink } from "@/components/ui/Button";
 /**
@@ -30,7 +34,12 @@ const FACTS = [
 ];
 export function WhyMoringa({ title, subtitle }) {
   return (
-    <Section id="why-moringa" tone="default" spacing="default" className="grain">
+    <Section
+      id="why-moringa"
+      tone="default"
+      spacing="default"
+      className="grain"
+    >
       <Container>
         <SectionHeading title={title} lede={subtitle ?? undefined} />
 
@@ -70,10 +79,10 @@ export function WhyMoringa({ title, subtitle }) {
         </Reveal>
 
         <p className="mt-14 max-w-[58ch] text-sm leading-relaxed text-cream-400">
-          We describe how the plant is grown and handled, not what it will do for you.
-          Moringa is a food, and our products are foods — if you are pregnant, nursing,
-          on prescribed medication or managing a condition, talk to your doctor before
-          adding any supplement.{" "}
+          We describe how the plant is grown and handled, not what it will do
+          for you. Moringa is a food, and our products are foods — if you are
+          pregnant, nursing, on prescribed medication or managing a condition,
+          talk to your doctor before adding any supplement.{" "}
           <UnderlineLink href="/moringa" className="text-cream-200">
             More about the plant
           </UnderlineLink>

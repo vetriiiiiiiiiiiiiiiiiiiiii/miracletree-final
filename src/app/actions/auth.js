@@ -73,8 +73,12 @@ export async function registerAction(_prev, formData) {
     };
   }
 
-  const adminEmails = (process.env.ADMIN_EMAILS || "").split(",").map(e => e.trim().toLowerCase());
-  const role = adminEmails.includes(parsed.data.email.toLowerCase()) ? "admin" : "customer";
+  const adminEmails = (process.env.ADMIN_EMAILS || "")
+    .split(",")
+    .map((e) => e.trim().toLowerCase());
+  const role = adminEmails.includes(parsed.data.email.toLowerCase())
+    ? "admin"
+    : "customer";
 
   const user = await prisma.user.create({
     data: {
@@ -88,12 +92,18 @@ export async function registerAction(_prev, formData) {
     select: { id: true, email: true, role: true, firstName: true },
   });
 
-  sendInBackground(welcomeEmail({ email: user.email, firstName: user.firstName }));
+  sendInBackground(
+    welcomeEmail({ email: user.email, firstName: user.firstName }),
+  );
 
   if (parsed.data.marketingOptIn) {
     await prisma.newsletterSubscriber.upsert({
       where: { email: parsed.data.email },
-      create: { email: parsed.data.email, source: "registration", isActive: true },
+      create: {
+        email: parsed.data.email,
+        source: "registration",
+        isActive: true,
+      },
       update: { isActive: true },
     });
   }
@@ -119,7 +129,11 @@ export async function loginAction(_prev, formData) {
   const ip = await clientIp();
   const [byIp, byAccount] = await Promise.all([
     rateLimit({ key: `login-ip:${ip}`, limit: 15, windowSeconds: 900 }),
-    rateLimit({ key: `login-acct:${parsed.data.email}`, limit: 8, windowSeconds: 900 }),
+    rateLimit({
+      key: `login-acct:${parsed.data.email}`,
+      limit: 8,
+      windowSeconds: 900,
+    }),
   ]);
   if (!byIp.ok || !byAccount.ok) {
     return {
@@ -164,7 +178,8 @@ export async function loginAction(_prev, formData) {
   redirect(safeNext(formData.get("next"), fallback));
 }
 /** A real bcrypt hash of an unusable password, used only for timing parity. */
-const DUMMY_HASH = "$2b$12$C6UzMDM.H6dfI/f/IKcEeO3G6zGvUgKO6ZQyE3dOoqvxG8VmOZ0.C";
+const DUMMY_HASH =
+  "$2b$12$C6UzMDM.H6dfI/f/IKcEeO3G6zGvUgKO6ZQyE3dOoqvxG8VmOZ0.C";
 
 export async function adminLoginAction(_prev, formData) {
   const parsed = loginSchema.safeParse({
@@ -177,7 +192,11 @@ export async function adminLoginAction(_prev, formData) {
   const ip = await clientIp();
   const [byIp, byAccount] = await Promise.all([
     rateLimit({ key: `login-ip:${ip}`, limit: 15, windowSeconds: 900 }),
-    rateLimit({ key: `login-acct:${parsed.data.email}`, limit: 8, windowSeconds: 900 }),
+    rateLimit({
+      key: `login-acct:${parsed.data.email}`,
+      limit: 8,
+      windowSeconds: 900,
+    }),
   ]);
   if (!byIp.ok || !byAccount.ok) {
     return {
@@ -205,7 +224,7 @@ export async function adminLoginAction(_prev, formData) {
     });
     return invalid;
   }
-  
+
   if (user.role !== "admin" && user.role !== "staff") {
     return {
       status: "error",
@@ -241,7 +260,9 @@ export async function logoutAction() {
   await signOut({ redirectTo: "/" });
 }
 export async function forgotPasswordAction(_prev, formData) {
-  const parsed = forgotPasswordSchema.safeParse({ email: formData.get("email") });
+  const parsed = forgotPasswordSchema.safeParse({
+    email: formData.get("email"),
+  });
   // The confirmation is identical whether or not the account exists.
   const generic = {
     status: "success",
@@ -301,7 +322,9 @@ export async function resetPasswordAction(_prev, formData) {
       errors: fieldErrors(parsed.error),
     };
   }
-  const tokenHash = createHash("sha256").update(parsed.data.token).digest("hex");
+  const tokenHash = createHash("sha256")
+    .update(parsed.data.token)
+    .digest("hex");
   const record = await prisma.passwordResetToken.findUnique({
     where: { tokenHash },
     select: { id: true, userId: true, expiresAt: true, usedAt: true },

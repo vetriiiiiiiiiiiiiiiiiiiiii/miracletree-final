@@ -3,7 +3,11 @@ import { prisma } from "@/lib/prisma";
 import { SITE } from "@/lib/constants";
 import { breadcrumbSchema, buildMetadata, siteUrl } from "@/lib/seo";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { Container, Section, SectionHeading } from "@/components/layout/Section";
+import {
+  Container,
+  Section,
+  SectionHeading,
+} from "@/components/layout/Section";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { LinkButton } from "@/components/ui/Button";
 import { Reveal } from "@/components/motion/Reveal";
@@ -105,8 +109,8 @@ export default async function LeadershipPage() {
         <Container>
           <h1 className="text-display text-cream-50">Leadership</h1>
           <p className="mt-6 max-w-[52ch] text-cream-300">
-            We are still writing these. The company history is on the story page in the
-            meantime.
+            We are still writing these. The company history is on the story page
+            in the meantime.
           </p>
           <LinkButton href="/about" className="mt-10">
             Our story
@@ -129,7 +133,11 @@ export default async function LeadershipPage() {
           jobTitle: founder.role,
           description: founder.bio ?? undefined,
           url: siteUrl("/leadership"),
-          worksFor: { "@type": "Organization", name: SITE.name, url: siteUrl("/") },
+          worksFor: {
+            "@type": "Organization",
+            name: SITE.name,
+            url: siteUrl("/"),
+          },
           award: founder.highlights
             .filter((h) => h.kind === "award")
             .map((h) => h.title),
@@ -150,13 +158,18 @@ export default async function LeadershipPage() {
         <Container>
           <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
             <Reveal className="lg:sticky lg:top-28 lg:self-start">
-              <FounderPortrait name={founder.name} imageUrl={founder.imageUrl} />
+              <FounderPortrait
+                name={founder.name}
+                imageUrl={founder.imageUrl}
+              />
             </Reveal>
 
             <div>
               <Reveal>
                 <p className="eyebrow text-gold-400">{founder.role}</p>
-                <h1 className="mt-5 text-display text-cream-50">{founder.name}</h1>
+                <h1 className="mt-5 text-display text-cream-50">
+                  {founder.name}
+                </h1>
                 {founder.credential ? (
                   <p className="mt-4 text-[1.1rem] text-cream-400">
                     {founder.credential}
@@ -218,12 +231,18 @@ export default async function LeadershipPage() {
               {founder.highlights.length ? (
                 <div className="mt-20">
                   <Reveal>
-                    <h2 className="eyebrow text-gold-400">Qualifications and awards</h2>
+                    <h2 className="eyebrow text-gold-400">
+                      Qualifications and awards
+                    </h2>
                   </Reveal>
                   <Reveal className="mt-8" stagger={0.06}>
                     <ul className="grid gap-px border border-border-subtle bg-border-subtle sm:grid-cols-2">
                       {founder.highlights.map((h) => (
-                        <li key={h.id} data-animate="fade-up" className="bg-ink p-6">
+                        <li
+                          key={h.id}
+                          data-animate="fade-up"
+                          className="bg-ink p-6"
+                        >
                           <div className="flex items-center gap-3">
                             <HighlightIcon kind={h.kind} />
                             {h.year ? (
@@ -274,7 +293,9 @@ export default async function LeadershipPage() {
                     {project.place}
                   </h3>
                   <p className="mt-2 text-cream-400">{project.partner}</p>
-                  <p className="mt-6 leading-relaxed text-cream-300">{project.body}</p>
+                  <p className="mt-6 leading-relaxed text-cream-300">
+                    {project.body}
+                  </p>
 
                   <dl className="mt-8 grid grid-cols-2 gap-6 border-t border-border-subtle pt-8">
                     {project.figures.map((figure) => (
@@ -331,14 +352,13 @@ export default async function LeadershipPage() {
         </Container>
       </Section>
 
-
       <Section tone="raised" spacing="tight">
         <Container className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
           <div>
             <h2 className="text-title text-cream-50">Company history</h2>
             <p className="mt-4 max-w-[46ch] text-cream-300">
-              The full timeline, our certifications and the field notes are on the story
-              page.
+              The full timeline, our certifications and the field notes are on
+              the story page.
             </p>
           </div>
           <LinkButton href="/about" variant="secondary">
@@ -371,6 +391,11 @@ function FounderPortrait({ name, imageUrl }) {
           fill
           sizes="(min-width: 1024px) 34vw, 100vw"
           className="object-cover"
+          unoptimized={
+            typeof imageUrl === "string"
+              ? imageUrl.startsWith("/uploads/")
+              : undefined
+          }
         />
       </div>
     );
@@ -381,7 +406,9 @@ function FounderPortrait({ name, imageUrl }) {
       role="img"
       aria-label={`${name} — portrait not yet supplied`}
     >
-      <span className="font-display text-[4rem] text-emerald-400">{initials}</span>
+      <span className="font-display text-[4rem] text-emerald-400">
+        {initials}
+      </span>
       <span className="absolute bottom-5 left-0 right-0 text-center text-[0.65rem] uppercase tracking-[0.18em] text-cream-400">
         Photo to follow
       </span>

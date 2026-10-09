@@ -55,7 +55,13 @@ export function ProductRowActions({ productId, slug, status }) {
         disabled={busy}
         className="grid h-8 w-8 place-items-center text-cream-400 transition-colors hover:text-cream-50 disabled:opacity-40"
       >
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden>
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          fill="currentColor"
+          aria-hidden
+        >
           <circle cx="8" cy="3" r="1.3" />
           <circle cx="8" cy="8" r="1.3" />
           <circle cx="8" cy="13" r="1.3" />
@@ -84,7 +90,9 @@ export function ProductRowActions({ productId, slug, status }) {
             </MenuButton>
           ) : (
             <MenuButton
-              onClick={() => run(() => setProductStatusAction([productId], "draft"))}
+              onClick={() =>
+                run(() => setProductStatusAction([productId], "draft"))
+              }
             >
               Unpublish
             </MenuButton>
@@ -94,7 +102,8 @@ export function ProductRowActions({ productId, slug, status }) {
             onClick={() =>
               run(async () => {
                 const result = await duplicateProductAction(productId);
-                if (result.ok && result.id) router.push(`/admin/products/${result.id}`);
+                if (result.ok && result.id)
+                  router.push(`/admin/products/${result.id}`);
                 return result;
               })
             }
@@ -104,7 +113,9 @@ export function ProductRowActions({ productId, slug, status }) {
 
           {status !== "archived" ? (
             <MenuButton
-              onClick={() => run(() => setProductStatusAction([productId], "archived"))}
+              onClick={() =>
+                run(() => setProductStatusAction([productId], "archived"))
+              }
             >
               Archive
             </MenuButton>

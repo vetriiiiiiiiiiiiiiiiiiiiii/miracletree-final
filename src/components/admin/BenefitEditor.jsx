@@ -4,7 +4,10 @@ import { useRouter } from "next/navigation";
 import { Input, Textarea, FormMessage } from "@/components/ui/Field";
 import { Card, Table, Td, Tr, EmptyRow } from "@/components/admin/ui";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
-import { deleteProductBenefitAction, saveProductBenefitAction } from "@/app/actions/admin/products";
+import {
+  deleteProductBenefitAction,
+  saveProductBenefitAction,
+} from "@/app/actions/admin/products";
 
 const INITIAL = { status: "idle" };
 
@@ -44,11 +47,7 @@ export function BenefitEditor({ productId, benefits }) {
         padded={false}
       >
         <Table
-          head={[
-            "Title",
-            "Body",
-            { label: "", align: "right", width: "8rem" },
-          ]}
+          head={["Title", "Body", { label: "", align: "right", width: "8rem" }]}
         >
           {benefits.length === 0 ? (
             <EmptyRow colSpan={3}>No benefits yet.</EmptyRow>
@@ -106,7 +105,10 @@ export function BenefitEditor({ productId, benefits }) {
 }
 
 function BenefitModal({ productId, benefit, onClose }) {
-  const [state, action, pending] = useActionState(saveProductBenefitAction, INITIAL);
+  const [state, action, pending] = useActionState(
+    saveProductBenefitAction,
+    INITIAL,
+  );
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">

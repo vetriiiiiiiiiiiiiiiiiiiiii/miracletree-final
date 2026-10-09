@@ -51,7 +51,8 @@ export async function trackOrderAction(_prev, formData) {
   if (!limit.ok) {
     return {
       status: "error",
-      message: "Too many attempts from this network. Try again in a few minutes.",
+      message:
+        "Too many attempts from this network. Try again in a few minutes.",
     };
   }
   const order = await prisma.order.findUnique({
@@ -64,7 +65,9 @@ export async function trackOrderAction(_prev, formData) {
       placedAt: true,
       trackingNumber: true,
       trackingUrl: true,
-      items: { select: { productName: true, variantName: true, quantity: true } },
+      items: {
+        select: { productName: true, variantName: true, quantity: true },
+      },
       events: {
         orderBy: { createdAt: "asc" },
         select: { status: true, message: true, createdAt: true },

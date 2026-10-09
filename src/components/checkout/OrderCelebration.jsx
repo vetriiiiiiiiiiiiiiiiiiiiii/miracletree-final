@@ -39,7 +39,11 @@ export function OrderCelebration() {
         0,
       );
       // Fade out before landing, so nothing piles up at the bottom edge.
-      timeline.to(leaf, { opacity: 0, duration: 0.8 }, duration * 0.72 + index * 0.16);
+      timeline.to(
+        leaf,
+        { opacity: 0, duration: 0.8 },
+        duration * 0.72 + index * 0.16,
+      );
     });
     return () => {
       timeline.kill();
@@ -70,7 +74,12 @@ export function OrderCelebration() {
             fill={index % 3 === 0 ? "#d9bc6a" : "#5fae76"}
             fillOpacity={index % 2 === 0 ? 0.7 : 0.45}
           />
-          <path d="M0 6h18" stroke="#0b1a11" strokeOpacity="0.25" strokeWidth="0.6" />
+          <path
+            d="M0 6h18"
+            stroke="#0b1a11"
+            strokeOpacity="0.25"
+            strokeWidth="0.6"
+          />
         </svg>
       ))}
     </div>

@@ -2,7 +2,11 @@
 import Link from "next/link";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { Container, Section, SectionHeading } from "@/components/layout/Section";
+import {
+  Container,
+  Section,
+  SectionHeading,
+} from "@/components/layout/Section";
 /**
  * The five usable parts of the tree, explored by selection rather than by
  * scroll. Descriptions are botanical — what the part is and how it is handled.
@@ -58,7 +62,9 @@ export function IngredientExplorer({ title, subtitle, ingredients }) {
                   <span
                     className={cn(
                       "h-px w-8 shrink-0 self-center transition-all duration-500 ease-[var(--ease-organic)]",
-                      index === active ? "w-14 bg-gold-400" : "bg-border-subtle",
+                      index === active
+                        ? "w-14 bg-gold-400"
+                        : "bg-border-subtle",
                     )}
                     aria-hidden
                   />
@@ -76,7 +82,9 @@ export function IngredientExplorer({ title, subtitle, ingredients }) {
               // Keying on the slug restarts the fade whenever the selection changes.
               key={current.slug}
               className="flex flex-col justify-center border border-border-subtle bg-ink/40 p-8 md:p-12"
-              style={{ animation: "ingredientIn 600ms var(--ease-organic) both" }}
+              style={{
+                animation: "ingredientIn 600ms var(--ease-organic) both",
+              }}
             >
               <h3
                 className="text-title text-cream-50"
@@ -100,8 +108,8 @@ export function IngredientExplorer({ title, subtitle, ingredients }) {
                 className="group mt-10 inline-flex items-center gap-3 py-1.5 text-[0.72rem] uppercase tracking-[0.16em] text-cream-200 transition-colors hover:text-gold-300"
               >
                 <span>
-                  {current.productCount} product{current.productCount === 1 ? "" : "s"}{" "}
-                  use it
+                  {current.productCount} product
+                  {current.productCount === 1 ? "" : "s"} use it
                 </span>
                 <span
                   className="h-px w-8 bg-current transition-all duration-500 group-hover:w-12"

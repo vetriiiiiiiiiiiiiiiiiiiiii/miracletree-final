@@ -47,7 +47,9 @@ export async function GET(_request, { params }) {
           price: true,
           compareAtPrice: true,
           imageUrl: true,
-          inventory: { select: { onHand: true, reserved: true, trackInventory: true } },
+          inventory: {
+            select: { onHand: true, reserved: true, trackInventory: true },
+          },
         },
       },
       reviews: { where: { status: "approved" }, select: { rating: true } },
@@ -59,7 +61,8 @@ export async function GET(_request, { params }) {
   const ratingCount = product.reviews.length;
   const ratingAverage = ratingCount
     ? Math.round(
-        (product.reviews.reduce((sum, r) => sum + r.rating, 0) / ratingCount) * 10,
+        (product.reviews.reduce((sum, r) => sum + r.rating, 0) / ratingCount) *
+          10,
       ) / 10
     : null;
   return NextResponse.json(
@@ -88,7 +91,9 @@ export async function GET(_request, { params }) {
     {
       // Safe to cache briefly at the edge: this is public catalogue data, and
       // stock is re-validated server-side on add-to-cart anyway.
-      headers: { "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300" },
+      headers: {
+        "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
+      },
     },
   );
 }

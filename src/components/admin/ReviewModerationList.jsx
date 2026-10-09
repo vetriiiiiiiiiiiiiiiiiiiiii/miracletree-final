@@ -6,7 +6,10 @@ import { useRouter } from "next/navigation";
 import { Rating } from "@/components/ui/Rating";
 import { Card, Pill } from "@/components/admin/ui";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
-import { deleteReviewAction, moderateReviewAction } from "@/app/actions/admin/content";
+import {
+  deleteReviewAction,
+  moderateReviewAction,
+} from "@/app/actions/admin/content";
 import { cn } from "@/lib/utils";
 export function ReviewModerationList({ reviews }) {
   const router = useRouter();
@@ -41,7 +44,12 @@ export function ReviewModerationList({ reviews }) {
           <div className="grid gap-5 lg:grid-cols-[1fr_15rem] lg:gap-8">
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-3">
-                <Rating value={review.rating} count={1} showCount={false} size="sm" />
+                <Rating
+                  value={review.rating}
+                  count={1}
+                  showCount={false}
+                  size="sm"
+                />
                 <Pill
                   tone={
                     review.status === "approved"
@@ -61,7 +69,9 @@ export function ReviewModerationList({ reviews }) {
               </div>
 
               {review.title ? (
-                <h3 className="mt-4 text-[1.05rem] text-cream-50">{review.title}</h3>
+                <h3 className="mt-4 text-[1.05rem] text-cream-50">
+                  {review.title}
+                </h3>
               ) : null}
 
               <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-cream-300">
@@ -76,6 +86,11 @@ export function ReviewModerationList({ reviews }) {
                     width={100}
                     height={100}
                     className="rounded-sm object-cover"
+                    unoptimized={
+                      typeof review.imageUrl === "string"
+                        ? review.imageUrl.startsWith("/uploads/")
+                        : undefined
+                    }
                   />
                 </div>
               ) : null}
@@ -101,7 +116,10 @@ export function ReviewModerationList({ reviews }) {
                   tone="primary"
                   onClick={() =>
                     run(review.id, () =>
-                      moderateReviewAction({ reviewId: review.id, status: "approved" }),
+                      moderateReviewAction({
+                        reviewId: review.id,
+                        status: "approved",
+                      }),
                     )
                   }
                 >
@@ -112,7 +130,10 @@ export function ReviewModerationList({ reviews }) {
                   busy={busy === review.id}
                   onClick={() =>
                     run(review.id, () =>
-                      moderateReviewAction({ reviewId: review.id, status: "pending" }),
+                      moderateReviewAction({
+                        reviewId: review.id,
+                        status: "pending",
+                      }),
                     )
                   }
                 >
@@ -125,7 +146,10 @@ export function ReviewModerationList({ reviews }) {
                   busy={busy === review.id}
                   onClick={() =>
                     run(review.id, () =>
-                      moderateReviewAction({ reviewId: review.id, status: "rejected" }),
+                      moderateReviewAction({
+                        reviewId: review.id,
+                        status: "rejected",
+                      }),
                     )
                   }
                 >
@@ -152,7 +176,10 @@ export function ReviewModerationList({ reviews }) {
                   busy={busy === review.id}
                   onClick={() =>
                     run(review.id, () =>
-                      moderateReviewAction({ reviewId: review.id, isVerified: true }),
+                      moderateReviewAction({
+                        reviewId: review.id,
+                        isVerified: true,
+                      }),
                     )
                   }
                 >

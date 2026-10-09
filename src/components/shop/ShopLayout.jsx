@@ -5,7 +5,9 @@ import { ShopFilters, ShopToolbar } from "@/components/shop/ShopControls";
  * itself stays a Server Component and only the interactive controls ship JS.
  */
 export function ShopControls({ groups, total, activeCount }) {
-  return <ShopToolbar total={total} groups={groups} activeCount={activeCount} />;
+  return (
+    <ShopToolbar total={total} groups={groups} activeCount={activeCount} />
+  );
 }
 export function ShopSidebar({ groups }) {
   return (

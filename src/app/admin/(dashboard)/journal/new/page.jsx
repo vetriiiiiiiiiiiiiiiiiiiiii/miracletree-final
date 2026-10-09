@@ -28,7 +28,10 @@ export default async function NewArticlePage() {
       <PageHeader
         title="New article"
         description="Write it as a draft, read it back in the preview, then publish."
-        breadcrumb={[{ label: "Journal", href: "/admin/journal" }, { label: "New" }]}
+        breadcrumb={[
+          { label: "Journal", href: "/admin/journal" },
+          { label: "New" },
+        ]}
       />
       <ArticleEditor draft={EMPTY} categories={categories} />
     </>

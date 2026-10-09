@@ -30,16 +30,34 @@ export function Pagination({ page, pages, total, pageSize }) {
 
       <ul className="flex items-center gap-1">
         <li>
-          <PageLink href={href(page - 1)} disabled={page === 1} label="Previous page">
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
-              <path d="M7.5 2L3.5 6l4 4" stroke="currentColor" strokeWidth="1.4" />
+          <PageLink
+            href={href(page - 1)}
+            disabled={page === 1}
+            label="Previous page"
+          >
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 12 12"
+              fill="none"
+              aria-hidden
+            >
+              <path
+                d="M7.5 2L3.5 6l4 4"
+                stroke="currentColor"
+                strokeWidth="1.4"
+              />
             </svg>
           </PageLink>
         </li>
 
         {pageRange(page, pages).map((entry, index) =>
           entry === "…" ? (
-            <li key={`gap-${index}`} className="px-2 text-cream-400" aria-hidden>
+            <li
+              key={`gap-${index}`}
+              className="px-2 text-cream-400"
+              aria-hidden
+            >
               …
             </li>
           ) : (
@@ -56,9 +74,23 @@ export function Pagination({ page, pages, total, pageSize }) {
         )}
 
         <li>
-          <PageLink href={href(page + 1)} disabled={page === pages} label="Next page">
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
-              <path d="M4.5 2l4 4-4 4" stroke="currentColor" strokeWidth="1.4" />
+          <PageLink
+            href={href(page + 1)}
+            disabled={page === pages}
+            label="Next page"
+          >
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 12 12"
+              fill="none"
+              aria-hidden
+            >
+              <path
+                d="M4.5 2l4 4-4 4"
+                stroke="currentColor"
+                strokeWidth="1.4"
+              />
             </svg>
           </PageLink>
         </li>

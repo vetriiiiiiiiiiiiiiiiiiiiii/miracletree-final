@@ -32,10 +32,12 @@ export default function TrackPage() {
 
           <header className="mt-10 max-w-[52ch]">
             <p className="eyebrow text-gold-400">Orders</p>
-            <h1 className="mt-5 text-display text-cream-50">Track your order</h1>
+            <h1 className="mt-5 text-display text-cream-50">
+              Track your order
+            </h1>
             <p className="mt-6 text-[1.05rem] leading-relaxed text-cream-300">
-              Enter the order number from your confirmation email along with the email
-              address you used, and we will show you where it is.
+              Enter the order number from your confirmation email along with the
+              email address you used, and we will show you where it is.
             </p>
           </header>
 

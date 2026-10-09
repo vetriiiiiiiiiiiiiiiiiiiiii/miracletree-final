@@ -46,12 +46,30 @@ export function BotanicalSeed({ className }) {
       { opacity: 1, scale: 1, duration: 1.2, ease: "power3.out" },
     )
       // Light gathers inside the seed before anything visibly happens to it.
-      .to(halo, { opacity: 1, scale: 1, duration: 1.4, ease: "power2.out" }, "-=0.6")
-      .to(crack, { opacity: 1, scaleY: 1, duration: 0.5, ease: "power2.in" }, "-=0.5")
-      .to(stem, { strokeDashoffset: 0, duration: 1.5, ease: "power2.inOut" }, "-=0.15")
+      .to(
+        halo,
+        { opacity: 1, scale: 1, duration: 1.4, ease: "power2.out" },
+        "-=0.6",
+      )
+      .to(
+        crack,
+        { opacity: 1, scaleY: 1, duration: 0.5, ease: "power2.in" },
+        "-=0.5",
+      )
+      .to(
+        stem,
+        { strokeDashoffset: 0, duration: 1.5, ease: "power2.inOut" },
+        "-=0.15",
+      )
       .to(
         leaves,
-        { opacity: 1, scale: 1, duration: 0.9, stagger: 0.14, ease: "back.out(1.6)" },
+        {
+          opacity: 1,
+          scale: 1,
+          duration: 0.9,
+          stagger: 0.14,
+          ease: "back.out(1.6)",
+        },
         "-=0.75",
       )
       .to(halo, {

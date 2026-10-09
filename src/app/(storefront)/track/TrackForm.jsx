@@ -19,7 +19,9 @@ export function TrackForm() {
           autoComplete="off"
           spellCheck={false}
           hint="On your confirmation email, at the top."
-          error={state.status === "error" ? state.errors?.orderNumber : undefined}
+          error={
+            state.status === "error" ? state.errors?.orderNumber : undefined
+          }
         />
         <Input
           name="email"
@@ -36,7 +38,9 @@ export function TrackForm() {
           {pending ? "Looking…" : "Find my order"}
         </Button>
 
-        {state.status === "error" ? <FormMessage>{state.message}</FormMessage> : null}
+        {state.status === "error" ? (
+          <FormMessage>{state.message}</FormMessage>
+        ) : null}
       </form>
 
       <div>
@@ -45,12 +49,12 @@ export function TrackForm() {
         ) : (
           <div className="border border-border-subtle p-8 text-sm leading-relaxed text-cream-400">
             <p>
-              Enter both details and the current status of the order will appear here,
-              along with everything that has happened to it so far.
+              Enter both details and the current status of the order will appear
+              here, along with everything that has happened to it so far.
             </p>
             <p className="mt-4">
-              If you have an account, your full order history including invoices and
-              addresses is under{" "}
+              If you have an account, your full order history including invoices
+              and addresses is under{" "}
               <a
                 href="/account/orders"
                 className="text-cream-200 underline decoration-gold-500 underline-offset-4 hover:text-cream-50"
@@ -85,11 +89,15 @@ function OrderResult({ order }) {
         </div>
         <div className="bg-ink p-6">
           <dt className="eyebrow text-cream-400">Items</dt>
-          <dd className="mt-2 tabular-nums text-cream-100">{order.itemCount}</dd>
+          <dd className="mt-2 tabular-nums text-cream-100">
+            {order.itemCount}
+          </dd>
         </div>
         <div className="bg-ink p-6">
           <dt className="eyebrow text-cream-400">Payment</dt>
-          <dd className="mt-2 capitalize text-cream-100">{order.paymentStatus}</dd>
+          <dd className="mt-2 capitalize text-cream-100">
+            {order.paymentStatus}
+          </dd>
         </div>
       </dl>
 
@@ -97,9 +105,14 @@ function OrderResult({ order }) {
         <h2 className="eyebrow mb-4 text-cream-400">What you ordered</h2>
         <ul className="grid gap-2">
           {order.items.map((item, i) => (
-            <li key={i} className="flex justify-between gap-6 text-sm text-cream-200">
+            <li
+              key={i}
+              className="flex justify-between gap-6 text-sm text-cream-200"
+            >
               <span>{item.name}</span>
-              <span className="tabular-nums text-cream-400">×{item.quantity}</span>
+              <span className="tabular-nums text-cream-400">
+                ×{item.quantity}
+              </span>
             </li>
           ))}
         </ul>
@@ -135,9 +148,13 @@ function OrderResult({ order }) {
                 <div>
                   <p className="text-sm text-cream-100">{event.label}</p>
                   {event.message ? (
-                    <p className="mt-1 text-sm text-cream-400">{event.message}</p>
+                    <p className="mt-1 text-sm text-cream-400">
+                      {event.message}
+                    </p>
                   ) : null}
-                  <p className="mt-1 text-xs text-cream-400">{formatDate(event.at)}</p>
+                  <p className="mt-1 text-xs text-cream-400">
+                    {formatDate(event.at)}
+                  </p>
                 </div>
               </li>
             ))}

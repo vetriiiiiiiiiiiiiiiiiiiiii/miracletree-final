@@ -19,7 +19,7 @@ async function checkThreshold(inventory, newAvailable) {
             name: `${variant.product.name} — ${variant.name}`,
             stock: newAvailable,
             ops,
-          })
+          }),
         );
       }
     }
@@ -36,7 +36,7 @@ export async function reserveStock(tx, lines, reference, actorId) {
     if (available < line.quantity) {
       throw new InsufficientStockError(line.variantId, Math.max(0, available));
     }
-    
+
     // Check threshold *before* we actually deduct it, then alert for the new value
     await checkThreshold(inventory, available - line.quantity);
 
@@ -113,7 +113,7 @@ export async function adjustStock(input) {
     where: { id: inventory.id },
     data: { onHand: next },
   });
-  
+
   // Check if we crossed the threshold (passing newAvailable)
   // We use updated.onHand - inventory.reserved for available
   await checkThreshold(inventory, updated.onHand - inventory.reserved);

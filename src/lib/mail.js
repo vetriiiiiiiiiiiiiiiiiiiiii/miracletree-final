@@ -64,7 +64,6 @@ export async function send(message) {
   }
 }
 
-
 /**
  * Fire an email by enqueueing it to the database for the worker to process.
  *

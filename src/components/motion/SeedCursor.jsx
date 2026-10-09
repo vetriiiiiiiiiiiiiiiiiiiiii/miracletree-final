@@ -79,8 +79,14 @@ export function SprigMark({ className }) {
       />
 
       <g opacity="0.95">
-        <path d="M50 42 C56 40 61 42 63 47 C57 50 51 48 50 42 Z" fill="url(#mt-leaf)" />
-        <path d="M55 34 C58 28 63 25 64 26 C63 33 59 37 55 34 Z" fill="url(#mt-leaf)" />
+        <path
+          d="M50 42 C56 40 61 42 63 47 C57 50 51 48 50 42 Z"
+          fill="url(#mt-leaf)"
+        />
+        <path
+          d="M55 34 C58 28 63 25 64 26 C63 33 59 37 55 34 Z"
+          fill="url(#mt-leaf)"
+        />
       </g>
     </svg>
   );

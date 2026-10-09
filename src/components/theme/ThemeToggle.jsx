@@ -20,7 +20,9 @@ export function ThemeToggle({ className }) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   if (!mounted) {
-    return <span className={cn("inline-block h-10 w-10", className)} aria-hidden />;
+    return (
+      <span className={cn("inline-block h-10 w-10", className)} aria-hidden />
+    );
   }
   const isDark = theme === "dark";
   return (
@@ -54,7 +56,8 @@ export function ThemeToggle({ className }) {
               r="8"
               fill="black"
               style={{
-                transition: "cx 0.5s var(--ease-organic), cy 0.5s var(--ease-organic)",
+                transition:
+                  "cx 0.5s var(--ease-organic), cy 0.5s var(--ease-organic)",
               }}
             />
           </mask>
@@ -75,7 +78,9 @@ export function ThemeToggle({ className }) {
           strokeLinecap="round"
           style={{
             transformOrigin: "center",
-            transform: isDark ? "scale(0.4) rotate(-45deg)" : "scale(1) rotate(0deg)",
+            transform: isDark
+              ? "scale(0.4) rotate(-45deg)"
+              : "scale(1) rotate(0deg)",
             opacity: isDark ? 0 : 1,
             transition:
               "transform 0.5s var(--ease-organic), opacity 0.35s var(--ease-swift)",

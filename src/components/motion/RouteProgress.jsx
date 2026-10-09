@@ -54,7 +54,10 @@ function RouteProgressInner() {
     clearTimers();
     setProgress(0);
     // Hold the bar back so quick, prefetched routes never flash one.
-    appearTimer.current = window.setTimeout(() => setVisible(true), APPEAR_DELAY_MS);
+    appearTimer.current = window.setTimeout(
+      () => setVisible(true),
+      APPEAR_DELAY_MS,
+    );
     const began = performance.now();
     const tick = () => {
       const elapsed = performance.now() - began;
@@ -81,7 +84,8 @@ function RouteProgressInner() {
     if (prefersReducedMotion()) return;
     const onClick = (event) => {
       if (event.defaultPrevented || event.button !== 0) return;
-      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
+        return;
       const anchor = event.target?.closest?.("a");
       if (!anchor) return;
       const href = anchor.getAttribute("href");

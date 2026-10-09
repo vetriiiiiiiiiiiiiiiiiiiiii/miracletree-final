@@ -23,14 +23,20 @@ export async function rateLimit(options) {
     return {
       ok: false,
       remaining: 0,
-      retryAfter: Math.ceil((existing.expiresAt.getTime() - now.getTime()) / 1000),
+      retryAfter: Math.ceil(
+        (existing.expiresAt.getTime() - now.getTime()) / 1000,
+      ),
     };
   }
   const updated = await prisma.rateLimit.update({
     where: { id: key },
     data: { count: { increment: 1 } },
   });
-  return { ok: true, remaining: Math.max(0, limit - updated.count), retryAfter: 0 };
+  return {
+    ok: true,
+    remaining: Math.max(0, limit - updated.count),
+    retryAfter: 0,
+  };
 }
 export async function clientIp() {
   const h = await headers();
@@ -41,7 +47,9 @@ export async function clientIp() {
 /** Opportunistically clears expired rows so the table does not grow unbounded. */
 export async function pruneRateLimits() {
   if (Math.random() > 0.02) return;
-  await prisma.rateLimit.deleteMany({ where: { expiresAt: { lt: new Date() } } });
+  await prisma.rateLimit.deleteMany({
+    where: { expiresAt: { lt: new Date() } },
+  });
 }
 /**
  * Rate-limits a route handler by client IP.

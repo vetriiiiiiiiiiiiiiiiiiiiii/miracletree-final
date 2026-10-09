@@ -123,7 +123,9 @@ export function ProductPurchase({
             ) : null}
           </>
         ) : null}
-        <span className="w-full text-xs text-cream-400">Inclusive of all taxes</span>
+        <span className="w-full text-xs text-cream-400">
+          Inclusive of all taxes
+        </span>
       </div>
 
       {/* Variants */}
@@ -163,7 +165,9 @@ export function ProductPurchase({
                       className="absolute left-2 right-2 top-1/2 h-px -rotate-6 bg-cream-400/40"
                     />
                   ) : null}
-                  {soldOut ? <span className="sr-only"> — out of stock</span> : null}
+                  {soldOut ? (
+                    <span className="sr-only"> — out of stock</span>
+                  ) : null}
                 </button>
               );
             })}
@@ -183,12 +187,16 @@ export function ProductPurchase({
           aria-hidden
         />
         <span
-          className={cn(stock.level === "out" ? "text-[#e0a19c]" : "text-cream-300")}
+          className={cn(
+            stock.level === "out" ? "text-[#e0a19c]" : "text-cream-300",
+          )}
         >
           {stock.text}
         </span>
         {selected.sku ? (
-          <span className="ml-auto text-xs text-cream-400">SKU {selected.sku}</span>
+          <span className="ml-auto text-xs text-cream-400">
+            SKU {selected.sku}
+          </span>
         ) : null}
       </p>
 
@@ -243,8 +251,8 @@ export function ProductPurchase({
       ) : (
         <div className="border border-border-subtle bg-white/[0.02] p-5">
           <p className="text-sm text-cream-200">
-            This size is sold out. Pick another size above, or check back — we restock
-            after each harvest.
+            This size is sold out. Pick another size above, or check back — we
+            restock after each harvest.
           </p>
           <WishlistButton
             productId={productId}
@@ -257,14 +265,19 @@ export function ProductPurchase({
 
       {/* Trust */}
       <ul className="grid gap-3 border-t border-border-subtle pt-6 text-sm text-cream-400">
-        <TrustRow icon="ship">Free shipping over ₹699 · flat ₹60 below that</TrustRow>
+        <TrustRow icon="ship">
+          Free shipping over ₹699 · flat ₹60 below that
+        </TrustRow>
         <TrustRow icon="pack">
           Packed within 1–2 working days, shipped across India
         </TrustRow>
         <TrustRow icon="leaf">
-          Closed-chamber dried at low temperature · no colouring, no preservatives
+          Closed-chamber dried at low temperature · no colouring, no
+          preservatives
         </TrustRow>
-        <TrustRow icon="lock">Secure payment by card, UPI, net banking or COD</TrustRow>
+        <TrustRow icon="lock">
+          Secure payment by card, UPI, net banking or COD
+        </TrustRow>
       </ul>
 
       {/* Rendered into the body because a fixed element inside a transformed
@@ -327,6 +340,11 @@ function StickyBuyBar({
               fill
               sizes="48px"
               className="object-contain p-1"
+              unoptimized={
+                typeof image === "string"
+                  ? image.startsWith("/uploads/")
+                  : undefined
+              }
             />
           </div>
         ) : null}
@@ -336,7 +354,9 @@ function StickyBuyBar({
           <p className="truncate text-xs text-cream-400">
             {variantName ? `${variantName} · ` : ""}
             {quantity > 1 ? `${quantity} × · ` : ""}
-            <span className="tabular-nums text-cream-200">{formatPrice(total)}</span>
+            <span className="tabular-nums text-cream-200">
+              {formatPrice(total)}
+            </span>
           </p>
         </div>
 

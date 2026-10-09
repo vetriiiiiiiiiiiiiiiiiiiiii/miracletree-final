@@ -35,7 +35,9 @@ const PRODUCT_CARD_SELECT = {
       price: true,
       compareAtPrice: true,
       imageUrl: true,
-      inventory: { select: { onHand: true, reserved: true, trackInventory: true } },
+      inventory: {
+        select: { onHand: true, reserved: true, trackInventory: true },
+      },
     },
   },
   reviews: { where: { status: "approved" }, select: { rating: true } },
@@ -129,7 +131,9 @@ export async function searchProducts(query) {
         { category: { name: { contains: query.q, ...insensitive } } },
         {
           ingredients: {
-            some: { ingredient: { name: { contains: query.q, ...insensitive } } },
+            some: {
+              ingredient: { name: { contains: query.q, ...insensitive } },
+            },
           },
         },
       ],
@@ -138,7 +142,9 @@ export async function searchProducts(query) {
   if (query.category) and.push({ category: { slug: query.category } });
   if (query.type) and.push({ productType: query.type });
   if (query.ingredient)
-    and.push({ ingredients: { some: { ingredient: { slug: query.ingredient } } } });
+    and.push({
+      ingredients: { some: { ingredient: { slug: query.ingredient } } },
+    });
   if (query.min !== undefined)
     and.push({ price: { gte: Math.round(query.min * 100) } });
   if (query.max !== undefined)
@@ -156,7 +162,11 @@ export async function searchProducts(query) {
       case "name":
         return [{ name: "asc" }];
       default:
-        return [{ isFeatured: "desc" }, { isBestSeller: "desc" }, { position: "asc" }];
+        return [
+          { position: "asc" },
+          { isFeatured: "desc" },
+          { isBestSeller: "desc" },
+        ];
     }
   })();
   const rows = await prisma.product.findMany({
@@ -167,7 +177,8 @@ export async function searchProducts(query) {
   let products = rows
     .map(withRating)
     .map((p) => ({ ...p, inStock: isInStock(p.variants) }));
-  if (query.availability === "in-stock") products = products.filter((p) => p.inStock);
+  if (query.availability === "in-stock")
+    products = products.filter((p) => p.inStock);
   if (query.sort === "rating") {
     products.sort((a, b) => (b.ratingAverage ?? 0) - (a.ratingAverage ?? 0));
   }
@@ -195,7 +206,10 @@ export const getProductBySlug = cache(async (slug) => {
       },
       benefits: { orderBy: { position: "asc" } },
       usageSteps: { orderBy: { step: "asc" } },
-      ingredients: { orderBy: { position: "asc" }, include: { ingredient: true } },
+      ingredients: {
+        orderBy: { position: "asc" },
+        include: { ingredient: true },
+      },
       faqs: { where: { isActive: true }, orderBy: { position: "asc" } },
 
       reviews: {
@@ -216,7 +230,9 @@ export const getProductBySlug = cache(async (slug) => {
   if (!product) return null;
   const count = product.reviews.length;
   const average = count
-    ? Math.round((product.reviews.reduce((s, r) => s + r.rating, 0) / count) * 10) / 10
+    ? Math.round(
+        (product.reviews.reduce((s, r) => s + r.rating, 0) / count) * 10,
+      ) / 10
     : null;
   const breakdown = [5, 4, 3, 2, 1].map((star) => ({
     star,
@@ -238,30 +254,32 @@ export const getProductBySlug = cache(async (slug) => {
  * Recommendations. Explicit admin-set relations come first; the remainder is
  * filled from the same category so a product page never shows an empty rail.
  */
-export const getRelatedProducts = cache(async (productId, categoryId, take = 4) => {
-  const explicit = await prisma.productRelation.findMany({
-    where: { sourceId: productId, kind: "related" },
-    orderBy: { position: "asc" },
-    take,
-    select: { target: { select: PRODUCT_CARD_SELECT } },
-  });
-  const picked = explicit.map((r) => r.target);
-  const have = new Set([productId, ...picked.map((p) => p.id)]);
-  if (picked.length < take && categoryId) {
-    const filler = await prisma.product.findMany({
-      where: {
-        status: "published",
-        categoryId,
-        id: { notIn: [...have] },
-      },
+export const getRelatedProducts = cache(
+  async (productId, categoryId, take = 4) => {
+    const explicit = await prisma.productRelation.findMany({
+      where: { sourceId: productId, kind: "related" },
       orderBy: { position: "asc" },
-      take: take - picked.length,
-      select: PRODUCT_CARD_SELECT,
+      take,
+      select: { target: { select: PRODUCT_CARD_SELECT } },
     });
-    picked.push(...filler);
-  }
-  return picked.map(withRating);
-});
+    const picked = explicit.map((r) => r.target);
+    const have = new Set([productId, ...picked.map((p) => p.id)]);
+    if (picked.length < take && categoryId) {
+      const filler = await prisma.product.findMany({
+        where: {
+          status: "published",
+          categoryId,
+          id: { notIn: [...have] },
+        },
+        orderBy: { position: "asc" },
+        take: take - picked.length,
+        select: PRODUCT_CARD_SELECT,
+      });
+      picked.push(...filler);
+    }
+    return picked.map(withRating);
+  },
+);
 export const getProductsByIds = cache(async (ids) => {
   if (!ids.length) return [];
   const rows = await prisma.product.findMany({
@@ -310,7 +328,11 @@ export const getAnnouncements = cache(async () => {
 });
 export const getFaqs = cache(async (category) =>
   prisma.faq.findMany({
-    where: { isActive: true, productId: null, ...(category ? { category } : {}) },
+    where: {
+      isActive: true,
+      productId: null,
+      ...(category ? { category } : {}),
+    },
     orderBy: [{ category: "asc" }, { position: "asc" }],
   }),
 );

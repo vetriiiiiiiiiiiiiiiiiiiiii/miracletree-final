@@ -35,6 +35,9 @@ export function Logo({ className, priority = false }) {
         height={259}
         priority={priority}
         className="h-full w-auto"
+        unoptimized={
+          "/brand/miracletree-mark.webp".startsWith("/uploads/") || undefined
+        }
       />
       {/* Optically smaller than the mark: matched to the same height the word
           would swamp the tree beside it. */}
@@ -46,6 +49,10 @@ export function Logo({ className, priority = false }) {
         height={92}
         priority={priority}
         className="h-[58%] w-auto"
+        unoptimized={
+          "/brand/miracletree-wordmark.webp".startsWith("/uploads/") ||
+          undefined
+        }
       />
     </span>
   );
@@ -63,6 +70,9 @@ export function LogoStacked({ className }) {
       width={512}
       height={645}
       className={cn("w-auto", className)}
+      unoptimized={
+        "/brand/miracletree-full.webp".startsWith("/uploads/") || undefined
+      }
     />
   );
 }

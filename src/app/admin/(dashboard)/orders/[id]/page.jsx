@@ -84,6 +84,11 @@ export default async function AdminOrderPage({ params }) {
                             fill
                             sizes="40px"
                             className="object-contain p-1"
+                            unoptimized={
+                              typeof item.imageUrl === "string"
+                                ? item.imageUrl.startsWith("/uploads/")
+                                : undefined
+                            }
                           />
                         ) : null}
                       </div>
@@ -131,7 +136,9 @@ export default async function AdminOrderPage({ params }) {
               <Row
                 label="Shipping"
                 value={
-                  order.shippingTotal === 0 ? "Free" : formatPrice(order.shippingTotal)
+                  order.shippingTotal === 0
+                    ? "Free"
+                    : formatPrice(order.shippingTotal)
                 }
               />
               <div className="mt-2 flex items-baseline justify-between border-t border-border-subtle pt-3">
@@ -156,7 +163,10 @@ export default async function AdminOrderPage({ params }) {
           <Card title="Timeline">
             <ol className="grid gap-4">
               {order.events.map((event) => (
-                <li key={event.id} className="grid grid-cols-[9rem_1fr] gap-4 text-sm">
+                <li
+                  key={event.id}
+                  className="grid grid-cols-[9rem_1fr] gap-4 text-sm"
+                >
                   <time
                     dateTime={event.createdAt.toISOString()}
                     className="text-xs tabular-nums text-cream-400"
@@ -240,7 +250,8 @@ export default async function AdminOrderPage({ params }) {
                 </>
               ) : null}
               <br />
-              {order.shippingCity}, {order.shippingState} {order.shippingPostalCode}
+              {order.shippingCity}, {order.shippingState}{" "}
+              {order.shippingPostalCode}
               <br />
               {order.shippingCountry}
               <br />
@@ -272,7 +283,9 @@ export default async function AdminOrderPage({ params }) {
               <Row
                 label="Method"
                 value={
-                  order.paymentProvider === "cod" ? "Cash on delivery" : "Razorpay"
+                  order.paymentProvider === "cod"
+                    ? "Cash on delivery"
+                    : "Razorpay"
                 }
               />
               <Row label="Status" value={order.paymentStatus} />
@@ -297,7 +310,9 @@ export default async function AdminOrderPage({ params }) {
 
           {order.notes ? (
             <Card title="Customer note">
-              <p className="text-sm leading-relaxed text-cream-300">{order.notes}</p>
+              <p className="text-sm leading-relaxed text-cream-300">
+                {order.notes}
+              </p>
             </Card>
           ) : null}
         </div>

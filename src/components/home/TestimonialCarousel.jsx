@@ -39,7 +39,8 @@ export function TestimonialCarousel({ items }) {
 
   const pages = useMemo(() => {
     const out = [];
-    for (let i = 0; i < items.length; i += PER_PAGE) out.push(items.slice(i, i + PER_PAGE));
+    for (let i = 0; i < items.length; i += PER_PAGE)
+      out.push(items.slice(i, i + PER_PAGE));
     return out;
   }, [items]);
 
@@ -47,7 +48,9 @@ export function TestimonialCarousel({ items }) {
   // rather than implied: a row of five-star quotes with no figure beside it is
   // the shape of a testimonial wall, and this is not one.
   const summary = useMemo(() => {
-    const rated = items.filter((i) => typeof i.rating === "number" && i.rating > 0);
+    const rated = items.filter(
+      (i) => typeof i.rating === "number" && i.rating > 0,
+    );
     if (!rated.length) return null;
     return {
       average: rated.reduce((n, i) => n + i.rating, 0) / rated.length,
@@ -167,7 +170,11 @@ export function TestimonialCarousel({ items }) {
         </div>
 
         <div className="flex items-center gap-1">
-          <Arrow label="Previous reviews" onClick={() => go(-1)} direction="prev" />
+          <Arrow
+            label="Previous reviews"
+            onClick={() => go(-1)}
+            direction="prev"
+          />
           <span className="px-2 text-[0.72rem] tabular-nums text-cream-400">
             {page + 1} / {pages.length}
           </span>
@@ -204,7 +211,13 @@ function Summary({ average, count, className }) {
         </span>
         <span className="text-sm text-cream-400">out of 5</span>
       </p>
-      <Rating value={average} count={count} size="md" showCount={false} className="pb-1.5" />
+      <Rating
+        value={average}
+        count={count}
+        size="md"
+        showCount={false}
+        className="pb-1.5"
+      />
       <p className="pb-1.5 text-[0.72rem] uppercase tracking-[0.16em] text-cream-400">
         {count} {count === 1 ? "review" : "reviews"}
       </p>
