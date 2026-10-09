@@ -12,15 +12,12 @@ services:
       - PORT=3000
       - HOSTNAME=0.0.0.0
       - DATABASE_URL=mongodb://mongodb:27017/miracletree?replicaSet=rs0
-      - REDIS_URL=redis://redis:6379
       - AUTH_TRUST_HOST=true
     env_file:
       - .env
     depends_on:
       mongodb:
         condition: service_healthy
-      redis:
-        condition: service_started
     volumes:
       - miracletree_media:/app/public/uploads
 
@@ -37,10 +34,6 @@ services:
     volumes:
       - miracletree_mongo_data:/data/db
 
-  redis:
-    image: redis:alpine
-    container_name: miracletree-redis
-    restart: unless-stopped
 
 volumes:
   miracletree_mongo_data:
