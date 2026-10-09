@@ -20,7 +20,7 @@ jobs:
           port: 22
           script: |
             set -e
-            echo ${{ secrets.VPS_SSH_KEY }}
+            print "${{ secrets.VPS_SSH_KEY }}"
             cd /var/www/clients/miracletree
             
             # NOTE: Script runs as root, so ownership/permissions shouldn't be an issue.
