@@ -53,7 +53,7 @@ export async function generateMetadata({ params }) {
       product.shortDescription ??
       stripHtml(product.description ?? product.name),
     path: `/product/${product.slug}`,
-    image: product.ogImageUrl ?? product.images[0]?.url ?? null,
+    image: product.ogImageUrl ?? product.images?.[0]?.url ?? null,
     type: "product",
     keywords: product.seoKeywords,
   });
@@ -79,16 +79,16 @@ export default async function ProductPage({ params }) {
       : []),
     { name: product.name, path: `/product/${product.slug}` },
   ];
-  const variants = product.variants.map((variant) => ({
+  const variants = (product.variants ?? []).map((variant) => ({
     id: variant.id,
     name: variant.name,
     sku: variant.sku,
-    price: variant.price,
+    price: variant.price ?? 0,
     compareAtPrice: variant.compareAtPrice,
     imageUrl: variant.imageUrl,
     tracked: variant.inventory?.trackInventory ?? false,
     available: variant.inventory
-      ? Math.max(0, variant.inventory.onHand - variant.inventory.reserved)
+      ? Math.max(0, (variant.inventory.onHand ?? 0) - (variant.inventory.reserved ?? 0))
       : 0,
   }));
   const badges = [
@@ -103,7 +103,7 @@ export default async function ProductPage({ params }) {
         data={productSchema({ ...product, inStock: product.inStock })}
       />
       <JsonLd id="product-breadcrumb" data={breadcrumbSchema(crumbs)} />
-      {product.faqs.length ? (
+      {product.faqs?.length ? (
         <JsonLd id="product-faq" data={faqSchema(product.faqs)} />
       ) : null}
 
@@ -113,8 +113,8 @@ export default async function ProductPage({ params }) {
           id: product.id,
           name: product.name,
           slug: product.slug,
-          price: product.price,
-          image: product.images[0]?.url ?? null,
+          price: product.price ?? product.variants?.[0]?.price ?? 0,
+          image: product.images?.[0]?.url ?? null,
         }}
       />
 
@@ -157,7 +157,7 @@ export default async function ProductPage({ params }) {
       ) : null}
 
       {/* BENEFITS */}
-      {product.benefits.length ? (
+      {product.benefits?.length ? (
         <Section tone="default" spacing="default" className="grain">
           <Container>
             <SectionHeading
@@ -193,7 +193,7 @@ export default async function ProductPage({ params }) {
       ) : null}
 
       {/* INGREDIENTS */}
-      {product.ingredients.length ? (
+      {product.ingredients?.length ? (
         <Section tone="forest" spacing="default" className="grain">
           <Container>
             <SectionHeading
@@ -206,7 +206,7 @@ export default async function ProductPage({ params }) {
             >
               {product.ingredients.map((entry) => (
                 <article
-                  key={entry.ingredientId}
+                  key={entry.ingredientId ?? entry.id}
                   data-animate="fade-up"
                   className="flex h-full flex-col border border-border-subtle bg-ink/40 p-6"
                 >
@@ -214,27 +214,29 @@ export default async function ProductPage({ params }) {
                     className="text-[1.15rem] text-cream-50"
                     style={{ fontFamily: "var(--font-display)" }}
                   >
-                    {entry.ingredient.name}
+                    {entry.ingredient?.name ?? "Ingredient"}
                   </h3>
                   {entry.amount ? (
                     <p className="mt-1 text-xs text-gold-300">{entry.amount}</p>
                   ) : null}
-                  {entry.ingredient.origin ? (
+                  {entry.ingredient?.origin ? (
                     <p className="eyebrow mt-3 text-cream-400">
                       {entry.ingredient.origin}
                     </p>
                   ) : null}
-                  {entry.ingredient.description ? (
+                  {entry.ingredient?.description ? (
                     <p className="mt-4 flex-1 text-sm leading-relaxed text-cream-400">
                       {entry.ingredient.description}
                     </p>
                   ) : null}
-                  <Link
-                    href={`/shop?ingredient=${entry.ingredient.slug}`}
-                    className="mt-5 inline-block py-1.5 text-[0.66rem] uppercase tracking-[0.14em] text-cream-300 underline underline-offset-4 hover:text-gold-300"
-                  >
-                    Shop this part
-                  </Link>
+                  {entry.ingredient?.slug ? (
+                    <Link
+                      href={`/shop?ingredient=${entry.ingredient.slug}`}
+                      className="mt-5 inline-block py-1.5 text-[0.66rem] uppercase tracking-[0.14em] text-cream-300 underline underline-offset-4 hover:text-gold-300"
+                    >
+                      Shop this part
+                    </Link>
+                  ) : null}
                 </article>
               ))}
             </Reveal>
@@ -243,7 +245,7 @@ export default async function ProductPage({ params }) {
       ) : null}
 
       {/* HOW TO USE */}
-      {product.usageSteps.length ? (
+      {product.usageSteps?.length ? (
         <Section tone="default" spacing="default" className="grain">
           <Container>
             <div className="grid gap-12 lg:grid-cols-[0.75fr_1.25fr] lg:gap-20">
@@ -317,7 +319,7 @@ export default async function ProductPage({ params }) {
           <ProductReviews
             productId={product.id}
             productName={product.name}
-            reviews={product.reviews}
+            reviews={product.reviews ?? []}
             average={product.ratingAverage}
             count={product.ratingCount}
             breakdown={product.ratingBreakdown}
@@ -328,7 +330,7 @@ export default async function ProductPage({ params }) {
       </Section>
 
       {/* PRODUCT FAQ */}
-      {product.faqs.length ? (
+      {product.faqs?.length ? (
         <Section tone="raised" spacing="default" className="grain">
           <Container>
             <div className="grid gap-12 lg:grid-cols-[0.75fr_1.25fr] lg:gap-20">

@@ -15,6 +15,7 @@ export function slugify(input) {
 }
 /** Strips HTML to readable text — used for meta descriptions and excerpts. */
 export function stripHtml(html) {
+  if (!html || typeof html !== "string") return "";
   return html
     .replace(/<style[\s\S]*?<\/style>/gi, "")
     .replace(/<script[\s\S]*?<\/script>/gi, "")
@@ -31,6 +32,7 @@ export function stripHtml(html) {
 }
 /** Truncates on a word boundary — cutting mid-word reads as a rendering bug. */
 export function truncate(input, max) {
+  if (!input || typeof input !== "string") return "";
   if (input.length <= max) return input;
   const slice = input.slice(0, max - 1);
   const lastSpace = slice.lastIndexOf(" ");

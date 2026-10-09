@@ -101,7 +101,12 @@ export function breadcrumbSchema(crumbs) {
   };
 }
 export function productSchema(product) {
-  const prices = product.variants.map((v) => v.price / 100);
+  if (!product) return null;
+  const variants = product.variants ?? [];
+  const prices = variants
+    .map((v) => (typeof v.price === "number" ? v.price / 100 : null))
+    .filter((p) => p !== null && !isNaN(p));
+  const images = (product.images ?? []).slice(0, 5).map((i) => i?.url).filter(Boolean);
   const schema = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -112,16 +117,16 @@ export function productSchema(product) {
       ),
       300,
     ),
-    sku: product.sku ?? product.variants[0]?.sku ?? undefined,
-    image: product.images.slice(0, 5).map((i) => i.url),
+    sku: product.sku ?? variants[0]?.sku ?? undefined,
+    image: images,
     brand: { "@type": "Brand", name: SITE.name },
     url: siteUrl(`/product/${product.slug}`),
-    offers: product.variants.length > 0 ? {
+    offers: prices.length > 0 ? {
       "@type": "AggregateOffer",
       priceCurrency: "INR",
       lowPrice: Math.min(...prices).toFixed(2),
       highPrice: Math.max(...prices).toFixed(2),
-      offerCount: product.variants.length,
+      offerCount: variants.length,
       availability: product.inStock
         ? "https://schema.org/InStock"
         : "https://schema.org/OutOfStock",
@@ -130,7 +135,7 @@ export function productSchema(product) {
     } : undefined,
   };
   // Only emit ratings that actually exist — never a placeholder aggregate.
-  if (product.ratingAverage !== null && product.ratingCount > 0) {
+  if (product.ratingAverage != null && product.ratingCount > 0) {
     schema.aggregateRating = {
       "@type": "AggregateRating",
       ratingValue: product.ratingAverage,
