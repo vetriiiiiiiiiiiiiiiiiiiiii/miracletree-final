@@ -21,8 +21,22 @@ import {
  * written to the audit log.
  */
 function guard(error) {
-  if (error instanceof AuthError)
+  if (error instanceof AuthError) {
     return { status: "error", message: error.message };
+  }
+  
+  if (error?.code === "P2002") {
+    const target = error.meta?.target || "";
+    const fields = Array.isArray(target) ? target.join(", ") : String(target);
+    if (fields.toLowerCase().includes("slug")) {
+      return { status: "error", message: "That URL slug is already in use by another product." };
+    }
+    if (fields.toLowerCase().includes("sku")) {
+      return { status: "error", message: "That SKU is already in use by another product." };
+    }
+    return { status: "error", message: "A unique constraint failed. Please check for duplicate values." };
+  }
+
   console.error("[admin/products]", error);
   return {
     status: "error",
