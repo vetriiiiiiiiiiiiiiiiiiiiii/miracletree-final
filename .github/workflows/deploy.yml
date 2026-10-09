@@ -40,4 +40,4 @@ jobs:
             docker builder prune -f
             
             # Output logs for verification
-            docker compose logs --tail 100 web
+            docker compose logs --tail 300 web
