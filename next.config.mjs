@@ -51,10 +51,6 @@ const nextConfig = {
     optimizePackageImports: ["lucide-react", "recharts"],
   },
 
-  serverActions: {
-    allowedOrigins: ["miracletree.in", "www.miracletree.in", "localhost:3000"],
-  },
-
   async headers() {
     return [
       {
