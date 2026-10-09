@@ -40,4 +40,5 @@ jobs:
             docker builder prune -f
             
             # Output logs for verification
+            sleep 10
             docker compose logs --tail 300 web
