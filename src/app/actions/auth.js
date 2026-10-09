@@ -22,7 +22,7 @@ import {
 } from "@/lib/validation";
 import { clientIp, pruneRateLimits, rateLimit } from "@/lib/rate-limit";
 import { recordAudit } from "@/lib/audit";
-import { signIn } from "@/auth";
+import { signIn, signOut } from "@/auth";
 
 export async function googleAuthAction() {
   await signIn("google", { redirectTo: "/account" });
@@ -243,7 +243,7 @@ export async function logoutAction() {
     });
   }
   await destroySession();
-  redirect("/");
+  await signOut({ redirectTo: "/" });
 }
 export async function forgotPasswordAction(_prev, formData) {
   const parsed = forgotPasswordSchema.safeParse({ email: formData.get("email") });

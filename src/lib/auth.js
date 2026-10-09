@@ -57,11 +57,16 @@ export const createSession = async (payload) => {
 
 export const destroySession = async () => {
   const cookieStore = await cookies();
-  cookieStore.delete(SESSION_COOKIE_NAME);
-  cookieStore.delete("authjs.session-token");
-  cookieStore.delete("__Secure-authjs.session-token");
-  cookieStore.delete("next-auth.session-token");
-  cookieStore.delete("__Secure-next-auth.session-token");
+  const opts = { path: "/" };
+  cookieStore.delete({ name: SESSION_COOKIE_NAME, ...opts });
+  cookieStore.delete({ name: "authjs.session-token", ...opts });
+  cookieStore.delete({ name: "__Secure-authjs.session-token", ...opts });
+  cookieStore.delete({ name: "next-auth.session-token", ...opts });
+  cookieStore.delete({ name: "__Secure-next-auth.session-token", ...opts });
+  cookieStore.delete({ name: "authjs.callback-url", ...opts });
+  cookieStore.delete({ name: "__Secure-authjs.callback-url", ...opts });
+  cookieStore.delete({ name: "authjs.csrf-token", ...opts });
+  cookieStore.delete({ name: "__Host-authjs.csrf-token", ...opts });
 };
 
 export class AuthError extends Error {
