@@ -10,7 +10,6 @@ import { LinkButton } from "@/components/ui/Button";
 import { Reveal } from "@/components/motion/Reveal";
 import { PHOTO_GROUPS } from "@/lib/photos";
 import { PhotoGrid, GroupNav } from "./PhotoGrid";
-export const revalidate = 3600;
 export const metadata = buildMetadata({
   title: "Gallery",
   description:

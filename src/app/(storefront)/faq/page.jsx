@@ -6,7 +6,6 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { getFaqs } from "@/lib/queries";
 import { breadcrumbSchema, buildMetadata, faqSchema } from "@/lib/seo";
 import { FAQ_CATEGORIES } from "@/lib/constants";
-export const revalidate = 600;
 export const metadata = buildMetadata({
   title: "Questions, answered",
   description:

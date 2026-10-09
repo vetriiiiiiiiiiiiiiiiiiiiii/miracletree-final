@@ -56,7 +56,6 @@ const FALLBACK_HERO_SLUGS = [
   "moringa-gum-gond-powder-100-grams",
   "moringa-seed-capsule-90-capsules",
 ];
-export const revalidate = 300;
 export async function generateMetadata() {
   const settings = await getSettings();
   const base = buildMetadata({

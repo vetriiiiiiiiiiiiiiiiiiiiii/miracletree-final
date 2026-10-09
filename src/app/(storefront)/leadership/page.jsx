@@ -65,7 +65,6 @@ const FOUNDER_FIGURES = [
   { value: "60+", label: "Products formulated" },
   { value: "2", label: "Countries advised" },
 ];
-export const revalidate = 3600;
 export const metadata = buildMetadata({
   title: "Leadership",
   description:

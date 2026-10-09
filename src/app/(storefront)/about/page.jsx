@@ -14,7 +14,6 @@ import {
   FieldNotes,
   Timeline,
 } from "@/components/story/StorySections";
-export const revalidate = 3600;
 export const metadata = buildMetadata({
   title: "Our story",
   description:

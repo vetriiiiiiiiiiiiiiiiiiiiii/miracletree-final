@@ -27,7 +27,6 @@ const MORINGA_PARTS = [
   "drumstick-pod",
 ];
 
-export const revalidate = 3600;
 export const metadata = buildMetadata({
   title: "Discover moringa",
   description:

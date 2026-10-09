@@ -13,17 +13,14 @@ import { Footer } from "@/components/layout/Footer";
 import { CustomCursor } from "@/components/motion/CustomCursor";
 import { SmoothScroll } from "@/components/motion/SmoothScroll";
 import { RouteProgress } from "@/components/motion/RouteProgress";
+export const dynamic = "force-dynamic";
+
 export default async function StorefrontLayout({ children }) {
   // Fire-and-forget, roughly one page load in fifty. A deployment with no cron
   // still cannot leak stock to abandoned checkouts; see scripts/sweep-reservations.mjs
   // for the scheduled version, which is the one to prefer.
   sweepOpportunistically();
   const safeCatch = (fallback) => (e) => {
-    // We swallow DYNAMIC_SERVER_USAGE here because during `not-found` generation
-    // Next.js requires static rendering. If we rethrow it, the 404 page crashes into a 500.
-    if (e?.digest === "DYNAMIC_SERVER_USAGE" || e?.digest?.startsWith("NEXT_")) {
-      return fallback;
-    }
     console.error("[StorefrontLayout] Data fetch error:", e);
     return fallback;
   };

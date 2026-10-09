@@ -12,16 +12,8 @@ import { getCategories, getIngredients, searchProducts } from "@/lib/queries";
 import { shopQuerySchema } from "@/lib/validation";
 import { buildFilterGroups, countActiveFilters } from "@/lib/shop";
 import { breadcrumbSchema, buildMetadata, itemListSchema } from "@/lib/seo";
-export const revalidate = 300;
-export const dynamicParams = true;
 /** Every category is pre-rendered; new ones fall back to on-demand rendering. */
-export async function generateStaticParams() {
-  const categories = await prisma.category.findMany({
-    where: { isActive: true },
-    select: { slug: true },
-  });
-  return categories.map((c) => ({ category: c.slug }));
-}
+
 async function loadCategory(slug) {
   return prisma.category.findFirst({
     where: { slug, isActive: true },

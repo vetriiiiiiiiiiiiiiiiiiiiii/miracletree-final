@@ -11,7 +11,6 @@ import { getCategories, getIngredients, searchProducts } from "@/lib/queries";
 import { shopQuerySchema } from "@/lib/validation";
 import { buildFilterGroups, countActiveFilters } from "@/lib/shop";
 import { breadcrumbSchema, buildMetadata, itemListSchema } from "@/lib/seo";
-export const revalidate = 300;
 export async function generateMetadata({ searchParams }) {
   const params = await searchParams;
   const term = typeof params.q === "string" ? params.q : null;

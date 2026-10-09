@@ -25,15 +25,7 @@ import {
 } from "@/lib/seo";
 import { stripHtml, truncate } from "@/lib/utils";
 import { sanitizeHtml } from "@/lib/sanitize";
-export const revalidate = 300;
-export const dynamicParams = true;
-export async function generateStaticParams() {
-  const products = await prisma.product.findMany({
-    where: { status: "published" },
-    select: { slug: true },
-  });
-  return products.map((p) => ({ slug: p.slug }));
-}
+
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   let product = null;

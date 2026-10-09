@@ -10,7 +10,6 @@ import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { LinkButton } from "@/components/ui/Button";
 import { Reveal } from "@/components/motion/Reveal";
 import { INNOVATIONS, STAGES, FIGURES, CERTIFICATIONS } from "@/lib/innovation";
-export const revalidate = 3600;
 export const metadata = buildMetadata({
   title: "Innovation",
   description:

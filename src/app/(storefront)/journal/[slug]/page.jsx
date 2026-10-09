@@ -11,15 +11,7 @@ import { getArticleBySlug, getArticles, getBestSellers } from "@/lib/queries";
 import { articleSchema, breadcrumbSchema, buildMetadata } from "@/lib/seo";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { formatDate, stripHtml } from "@/lib/utils";
-export const revalidate = 600;
-export const dynamicParams = true;
-export async function generateStaticParams() {
-  const articles = await prisma.article.findMany({
-    where: { status: "published" },
-    select: { slug: true },
-  });
-  return articles.map((a) => ({ slug: a.slug }));
-}
+
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   const article = await getArticleBySlug(slug);
