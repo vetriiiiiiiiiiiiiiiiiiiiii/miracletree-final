@@ -38,3 +38,6 @@ jobs:
             docker compose build --no-cache
             docker compose up -d --force-recreate --remove-orphans
             docker builder prune -f
+            
+            # Output logs for verification
+            docker compose logs --tail 100 web

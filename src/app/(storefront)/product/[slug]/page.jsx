@@ -65,13 +65,14 @@ export async function generateMetadata({ params }) {
 export default async function ProductPage({ params }) {
   const { slug } = await params;
   let product = null;
+  let dbError = false;
   try {
     product = await getProductBySlug(slug);
   } catch (err) {
     console.error("[ProductPage] DB error for slug:", slug, err);
-    notFound();
+    dbError = true;
   }
-  if (!product) notFound();
+  if (dbError || !product) notFound();
 
   const user = null;
   let canReview = false;
