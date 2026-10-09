@@ -46,6 +46,7 @@ export async function createCategoryInlineAction(name) {
     });
     return { success: true, data: { id: category.id, name: category.name } };
   } catch (error) {
+    console.error("[admin/products] createCategoryInlineAction error:", error);
     return { success: false, error: "Failed to create category" };
   }
 }
