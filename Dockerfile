@@ -41,8 +41,9 @@ COPY --from=builder /app/scripts/inject-admin.mjs ./scripts/inject-admin.mjs
 COPY start.sh ./start.sh
 RUN chmod +x ./start.sh
 
-# Provide the bcryptjs package for the standalone scripts without mutating the package tree
+# Provide the packages needed for standalone scripts without mutating the package tree
 COPY --from=builder /app/node_modules/bcryptjs ./node_modules/bcryptjs
+COPY --from=builder /app/node_modules/dotenv ./node_modules/dotenv
 
 # Expose port 3009
 EXPOSE 3009

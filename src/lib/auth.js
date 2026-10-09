@@ -14,9 +14,6 @@ export const getSession = async () => {
   try {
     return await auth();
   } catch (error) {
-    if (error?.digest === "DYNAMIC_SERVER_USAGE" || error?.digest?.startsWith("NEXT_")) {
-      throw error;
-    }
     return null;
   }
 };

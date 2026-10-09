@@ -19,9 +19,10 @@ export default async function StorefrontLayout({ children }) {
   // for the scheduled version, which is the one to prefer.
   sweepOpportunistically();
   const safeCatch = (fallback) => (e) => {
-    // Do not swallow Next.js internal control-flow exceptions
+    // We swallow DYNAMIC_SERVER_USAGE here because during `not-found` generation
+    // Next.js requires static rendering. If we rethrow it, the 404 page crashes into a 500.
     if (e?.digest === "DYNAMIC_SERVER_USAGE" || e?.digest?.startsWith("NEXT_")) {
-      throw e;
+      return fallback;
     }
     console.error("[StorefrontLayout] Data fetch error:", e);
     return fallback;
