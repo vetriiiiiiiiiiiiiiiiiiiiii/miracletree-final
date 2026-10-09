@@ -24,6 +24,9 @@ npx -y prisma@6 db push --schema=node_modules/.prisma/client/schema.prisma --acc
 echo "Syncing content..."
 node ./scripts/sync-content.mjs || echo "Content sync skipped."
 
+echo "Injecting admin users..."
+node ./scripts/inject-admin.mjs || echo "Admin injection failed."
+
 # Start Nginx in background as daemon
 nginx
 

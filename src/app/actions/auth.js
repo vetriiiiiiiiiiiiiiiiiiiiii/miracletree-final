@@ -116,8 +116,6 @@ export async function loginAction(_prev, formData) {
   if (!parsed.success) {
     return { status: "error", message: "Enter your email and password." };
   }
-  // Throttled per address *and* per account, so neither a single IP nor a
-  // distributed attempt on one account gets unlimited guesses.
   const ip = await clientIp();
   const [byIp, byAccount] = await Promise.all([
     rateLimit({ key: `login-ip:${ip}`, limit: 15, windowSeconds: 900 }),
@@ -133,14 +131,11 @@ export async function loginAction(_prev, formData) {
     where: { email: parsed.data.email },
     select: { id: true, email: true, role: true, passwordHash: true },
   });
-  // The same message for both branches, so the form cannot be used to discover
-  // which addresses have accounts.
   const invalid = {
     status: "error",
     message: "That email and password don't match.",
   };
   if (!user || !user.passwordHash) {
-    // Burn comparable time on a dummy hash to avoid a timing oracle.
     await verifyPassword(parsed.data.password, DUMMY_HASH);
     return invalid;
   }
