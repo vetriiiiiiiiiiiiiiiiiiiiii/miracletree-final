@@ -16,11 +16,11 @@ export function ProductHero({
   shortDescription,
   categoryName,
   categorySlug,
-  images,
-  variants,
+  images = [],
+  variants = [],
   ratingAverage,
   ratingCount,
-  badges,
+  badges = [],
 }) {
   const [activeImageUrl, setActiveImageUrl] = useState(
     variants[0]?.imageUrl ?? null,

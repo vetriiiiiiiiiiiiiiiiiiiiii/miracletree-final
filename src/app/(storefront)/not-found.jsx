@@ -3,10 +3,7 @@ import { LostSeed } from "@/components/error/LostSeed";
 import { LinkButton } from "@/components/ui/Button";
 import { Container } from "@/components/layout/Section";
 
-export const metadata = {
-  title: "Page not found — Miracle Tree",
-  robots: { index: false, follow: true },
-};
+
 
 export default function StorefrontNotFound() {
   return (

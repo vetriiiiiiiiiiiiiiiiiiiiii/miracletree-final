@@ -10,7 +10,7 @@ import { isTouchDevice } from "@/lib/motion";
  * Touch: a snap-scrolling strip with dot indicators, driven by the browser's own
  * scrolling rather than a JS carousel — smoother, and it keeps momentum.
  */
-export function ProductGallery({ images, productName, activeImageUrl }) {
+export function ProductGallery({ images = [], productName, activeImageUrl }) {
   const [index, setIndex] = useState(0);
   const [zooming, setZooming] = useState(false);
   const [origin, setOrigin] = useState({ x: 50, y: 50 });

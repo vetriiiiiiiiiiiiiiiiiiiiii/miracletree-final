@@ -19,7 +19,7 @@ export function ProductPurchase({
   productId,
   productName,
   categoryName,
-  variants,
+  variants = [],
   onVariantChange,
 }) {
   const router = useRouter();

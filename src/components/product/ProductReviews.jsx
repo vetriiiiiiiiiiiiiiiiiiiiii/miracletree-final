@@ -11,16 +11,16 @@ const INITIAL = { status: "idle" };
 export function ProductReviews({
   productId,
   productName,
-  reviews,
+  reviews = [],
   average,
   count,
-  breakdown,
+  breakdown = [],
   user,
   canReview,
 }) {
   const [writing, setWriting] = useState(false);
   const [visible, setVisible] = useState(4);
-  const verifiedCount = reviews.filter((r) => r.isVerified).length;
+  const verifiedCount = (reviews ?? []).filter((r) => r.isVerified).length;
   return (
     <div className="grid gap-12 lg:grid-cols-[20rem_1fr] lg:gap-16">
       {/* Summary */}

@@ -2,10 +2,7 @@ import Link from "next/link";
 import { LostSeed } from "@/components/error/LostSeed";
 import { LinkButton } from "@/components/ui/Button";
 import { Logo } from "@/components/layout/Logo";
-export const metadata = {
-  title: "This path didn't grow",
-  robots: { index: false, follow: true },
-};
+
 /**
  * 404. A seed that landed somewhere nothing grows — the page states plainly that
  * the URL is wrong and offers the four routes people actually want.
