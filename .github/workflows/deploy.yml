@@ -15,20 +15,17 @@ jobs:
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.VPS_HOST }}
-          username: velotriz
+          username: root
           key: ${{ secrets.VPS_SSH_KEY }}
-          port: 2222
+          port: 22
           script: |
             set -e
-            cd /opt/apps/miracletree-final
+            cd /var/www/clients/miracletree
             
-            # NOTE: Ensure the 'velotriz' user owns /opt/apps/miracletree-final on the VPS:
-            # sudo chown -R velotriz:velotriz /opt/apps/miracletree-final
-            # Also ensure 'velotriz' is in the 'docker' group:
-            # sudo usermod -aG docker velotriz
+            # NOTE: Script runs as root, so ownership/permissions shouldn't be an issue.
             
             # Resolve potential git ownership issues
-            git config --global --add safe.directory /opt/apps/miracletree-final
+            git config --global --add safe.directory /var/www/clients/miracletree
             
             # Fetch and reset without sudo (assuming ownership is fixed)
             git fetch origin main

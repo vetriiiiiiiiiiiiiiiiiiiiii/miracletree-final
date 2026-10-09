@@ -1105,7 +1105,9 @@ async function main() {
   await prisma.faq.createMany({
     data: FAQS.map((f, i) => ({ ...f, position: i, isActive: true })),
   });
-  await prisma.testimonial.createMany({ data: TESTIMONIALS });
+  if (TESTIMONIALS.length > 0) {
+    await prisma.testimonial.createMany({ data: TESTIMONIALS });
+  }
 
   for (const a of ARTICLES) {
     const category = await prisma.articleCategory.upsert({
@@ -1204,7 +1206,7 @@ async function main() {
       firstName: "Miracle",
       lastName: "Tree",
       role: "admin",
-      emailVerified: true,
+      emailVerified: new Date(),
     },
     update: { role: "admin" },
   });
