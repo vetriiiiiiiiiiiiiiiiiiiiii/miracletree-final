@@ -17,3 +17,6 @@ test-results/
 
 # Built by scripts/export-content.mjs during the image build.
 content-snapshot.json
+
+# Bundled by the Dockerfile from scripts/import-catalogue.ts.
+prisma/import-catalogue.mjs

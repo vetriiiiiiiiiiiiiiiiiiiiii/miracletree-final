@@ -24,6 +24,11 @@ npx -y prisma@6 db push --schema=node_modules/.prisma/client/schema.prisma --acc
 echo "Syncing content..."
 node ./scripts/sync-content.mjs || echo "Content sync skipped."
 
+# A database that was never seeded has no products. Adds the catalogue once,
+# skipping anything already there; see scripts/import-catalogue.ts.
+echo "Importing catalogue..."
+node ./prisma/import-catalogue.mjs || echo "Catalogue import failed."
+
 echo "Injecting admin users..."
 node ./scripts/inject-admin.mjs || echo "Admin injection failed."
 

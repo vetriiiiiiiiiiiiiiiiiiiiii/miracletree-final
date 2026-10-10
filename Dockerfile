@@ -18,6 +18,10 @@ RUN npm run build
 # database. Without this snapshot sync-content.mjs has nothing to apply on
 # start, and the VPS shows a site with no menu and missing sections.
 RUN npx tsx scripts/build-content-snapshot.ts
+# The catalogue importer reuses the seed's TypeScript, so it is bundled into
+# one plain module beside the seed data it reads (prisma/data).
+RUN npx esbuild scripts/import-catalogue.ts --bundle --platform=node --format=esm \
+    --target=node20 --packages=external --outfile=prisma/import-catalogue.mjs
 
 # Stage 2: Serve the application with Nginx and Node.js
 FROM node:20-alpine AS runner
@@ -40,6 +44,8 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/scripts/repair-duplicate-skus.mjs ./scripts/repair-duplicate-skus.mjs
 COPY --from=builder /app/scripts/sync-content.mjs ./scripts/sync-content.mjs
 COPY --from=builder /app/content-snapshot.json ./content-snapshot.json
+COPY --from=builder /app/prisma/import-catalogue.mjs ./prisma/import-catalogue.mjs
+COPY --from=builder /app/prisma/data/shopify-products.json ./prisma/data/shopify-products.json
 COPY --from=builder /app/scripts/inject-admin.mjs ./scripts/inject-admin.mjs
 
 # Copy start script

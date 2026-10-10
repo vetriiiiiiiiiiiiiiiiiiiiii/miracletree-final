@@ -11,7 +11,7 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { dirname, join, resolve } from "node:path";
+import { dirname, join } from "node:path";
 import { ACCOLADES, CREDITS, MILESTONES } from "./story";
 import { LEADERS } from "./leadership";
 
@@ -873,60 +873,34 @@ type ShopifyProduct = {
   images: { src: string; width: number; height: number; position: number; alt: string | null }[];
 };
 
-async function main() {
-  console.log("→ clearing existing seed data");
-  // Order matters: children before parents.
-  await prisma.$transaction([
-    prisma.orderEvent.deleteMany(),
-    prisma.orderItem.deleteMany(),
-    prisma.order.deleteMany(),
-    prisma.cartItem.deleteMany(),
-    prisma.cart.deleteMany(),
-    prisma.wishlistItem.deleteMany(),
-    prisma.inventoryMovement.deleteMany(),
-    prisma.inventory.deleteMany(),
-    prisma.productRelation.deleteMany(),
-    prisma.productIngredient.deleteMany(),
-    prisma.productBenefit.deleteMany(),
-    prisma.usageStep.deleteMany(),
-    prisma.productImage.deleteMany(),
-    prisma.productVariant.deleteMany(),
-    prisma.review.deleteMany(),
-    prisma.faq.deleteMany(),
-    prisma.product.deleteMany(),
-    prisma.ingredient.deleteMany(),
-    prisma.category.deleteMany(),
-    prisma.article.deleteMany(),
-    prisma.articleCategory.deleteMany(),
-    prisma.testimonial.deleteMany(),
-    prisma.homepageSection.deleteMany(),
-    prisma.navigationItem.deleteMany(),
-    prisma.announcement.deleteMany(),
-    prisma.coupon.deleteMany(),
-    prisma.siteSetting.deleteMany(),
-    prisma.milestone.deleteMany(),
-    prisma.accolade.deleteMany(),
-    prisma.credit.deleteMany(),
-    // Highlights first: the cascade would handle it, but the delete order in
-    // this block is explicit everywhere else and staying consistent is worth
-    // more than the one saved line.
-    prisma.leaderHighlight.deleteMany(),
-    prisma.leader.deleteMany(),
-  ]);
-
+/**
+ * Imports the catalogue: categories, ingredients, products with their images,
+ * benefits, usage, variants, opening stock, reviews and related products.
+ *
+ * `onlyMissing` adds what a database lacks and touches nothing it already
+ * has — products are matched by slug, categories and ingredients by slug. It
+ * is what a deployed database gets on start (scripts/import-catalogue.ts), so
+ * a shop that was never seeded gets its products without anyone's orders,
+ * customers or admin edits being wiped.
+ */
+export async function importCatalogue(
+  prisma: PrismaClient,
+  { onlyMissing = false }: { onlyMissing?: boolean } = {},
+) {
   // ---- categories, collections, ingredients
   const categoryIds = new Map<string, string>();
   for (const c of CATEGORIES) {
-    const row = await prisma.category.create({
-      data: {
+    const data = {
         name: c.name,
         slug: c.slug,
         description: c.description,
         position: c.position,
         seoTitle: c.name,
         seoDescription: c.description,
-      },
-    });
+    };
+    const row = onlyMissing
+      ? await prisma.category.upsert({ where: { slug: c.slug }, create: data, update: {} })
+      : await prisma.category.create({ data });
     categoryIds.set(c.slug, row.id);
   }
 
@@ -934,7 +908,9 @@ async function main() {
 
   const ingredientIds = new Map<string, string>();
   for (const i of INGREDIENTS) {
-    const row = await prisma.ingredient.create({ data: i });
+    const row = onlyMissing
+      ? await prisma.ingredient.upsert({ where: { slug: i.slug }, create: i, update: {} })
+      : await prisma.ingredient.create({ data: i });
     ingredientIds.set(i.slug, row.id);
   }
 
@@ -948,6 +924,7 @@ async function main() {
   const productIdsByCategory = new Map<string, string[]>();
   let imported = 0;
   let reviewsImported = 0;
+  let skipped = 0;
 
   for (const [index, p] of raw.products.entries()) {
     const categorySlug = CATEGORY_BY_HANDLE[p.handle] ?? "super-foods";
@@ -973,10 +950,15 @@ async function main() {
     const compareAt =
       DROP_COMPARE_AT.has(p.handle) || cheapestCompare <= cheapest ? 0 : cheapestCompare;
 
+    const slug = p.handle.replace(/[^a-z0-9-]/gi, "").toLowerCase() || slugify(name);
+    if (onlyMissing && (await prisma.product.findUnique({ where: { slug }, select: { id: true } }))) {
+      skipped++;
+      continue;
+    }
     const product = await prisma.product.create({
       data: {
         name: NAME_OVERRIDES[p.handle] ?? name,
-        slug: p.handle.replace(/[^a-z0-9-]/gi, "").toLowerCase() || slugify(name),
+        slug,
         productType: PRODUCT_TYPE_BY_CATEGORY[categorySlug] ?? "mix",
         categoryId: categoryIds.get(categorySlug)!,
         shortDescription: subtitle ?? truncate(plain, 160),
@@ -1027,11 +1009,17 @@ async function main() {
     // Variants + inventory. Stock is opening stock for a fresh install; the
     // live store does not expose real quantities, only availability.
     for (const v of p.variants) {
+      let sku: string | null = variantSku(v.sku, categorySlug, index, v.position);
+      // A product added in the admin may already hold this code; the variant
+      // is still worth importing, just without a SKU to clash on.
+      if (onlyMissing && (await prisma.productVariant.findUnique({ where: { sku }, select: { id: true } }))) {
+        sku = null;
+      }
       const variant = await prisma.productVariant.create({
         data: {
           productId: product.id,
           name: v.title === "Default Title" ? "Standard" : v.title,
-          sku: variantSku(v.sku, categorySlug, index, v.position),
+          sku,
           price: rupeesToPaise(variantPrice(p.handle, v.title, v.price)),
           compareAtPrice: v.compare_at_price
             ? rupeesToPaise(v.compare_at_price) > rupeesToPaise(v.price)
@@ -1099,7 +1087,55 @@ async function main() {
     }
   }
 
-  console.log(`✓ ${imported} products imported, ${reviewsImported} customer reviews`);
+  console.log(
+    `✓ ${imported} products imported, ${reviewsImported} customer reviews` +
+      (skipped ? `, ${skipped} already present` : ""),
+  );
+  return imported;
+}
+
+async function main() {
+  console.log("→ clearing existing seed data");
+  // Order matters: children before parents.
+  await prisma.$transaction([
+    prisma.orderEvent.deleteMany(),
+    prisma.orderItem.deleteMany(),
+    prisma.order.deleteMany(),
+    prisma.cartItem.deleteMany(),
+    prisma.cart.deleteMany(),
+    prisma.wishlistItem.deleteMany(),
+    prisma.inventoryMovement.deleteMany(),
+    prisma.inventory.deleteMany(),
+    prisma.productRelation.deleteMany(),
+    prisma.productIngredient.deleteMany(),
+    prisma.productBenefit.deleteMany(),
+    prisma.usageStep.deleteMany(),
+    prisma.productImage.deleteMany(),
+    prisma.productVariant.deleteMany(),
+    prisma.review.deleteMany(),
+    prisma.faq.deleteMany(),
+    prisma.product.deleteMany(),
+    prisma.ingredient.deleteMany(),
+    prisma.category.deleteMany(),
+    prisma.article.deleteMany(),
+    prisma.articleCategory.deleteMany(),
+    prisma.testimonial.deleteMany(),
+    prisma.homepageSection.deleteMany(),
+    prisma.navigationItem.deleteMany(),
+    prisma.announcement.deleteMany(),
+    prisma.coupon.deleteMany(),
+    prisma.siteSetting.deleteMany(),
+    prisma.milestone.deleteMany(),
+    prisma.accolade.deleteMany(),
+    prisma.credit.deleteMany(),
+    // Highlights first: the cascade would handle it, but the delete order in
+    // this block is explicit everywhere else and staying consistent is worth
+    // more than the one saved line.
+    prisma.leaderHighlight.deleteMany(),
+    prisma.leader.deleteMany(),
+  ]);
+
+  await importCatalogue(prisma);
 
   // ---- content
   await prisma.faq.createMany({
@@ -1249,9 +1285,11 @@ async function main() {
   console.log("✓ seed complete");
 }
 
-// Only seed when run directly. scripts/build-content-snapshot.ts imports the
-// content above to build the image's snapshot, and must not wipe anything.
-if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
+// Only seed when this file itself is the entry point. The snapshot builder and
+// the catalogue importer import it and must never wipe anything. The check is
+// on the entry's file name, not import.meta.url: once the importer is bundled,
+// import.meta.url is the bundle and would equal the entry — and seed.
+if (/[\\/]seed\.ts$/.test(process.argv[1] ?? "")) {
   main()
     .catch((e) => {
       console.error(e);
