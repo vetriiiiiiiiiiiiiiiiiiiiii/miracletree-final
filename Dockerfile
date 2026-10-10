@@ -14,6 +14,10 @@ COPY . .
 ENV DOCKER_BUILD="1"
 RUN npx prisma generate
 RUN npm run build
+# Navigation, homepage sections, FAQs, story and leadership live in the
+# database. Without this snapshot sync-content.mjs has nothing to apply on
+# start, and the VPS shows a site with no menu and missing sections.
+RUN npx tsx scripts/build-content-snapshot.ts
 
 # Stage 2: Serve the application with Nginx and Node.js
 FROM node:20-alpine AS runner
@@ -35,6 +39,7 @@ COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/scripts/repair-duplicate-skus.mjs ./scripts/repair-duplicate-skus.mjs
 COPY --from=builder /app/scripts/sync-content.mjs ./scripts/sync-content.mjs
+COPY --from=builder /app/content-snapshot.json ./content-snapshot.json
 COPY --from=builder /app/scripts/inject-admin.mjs ./scripts/inject-admin.mjs
 
 # Copy start script

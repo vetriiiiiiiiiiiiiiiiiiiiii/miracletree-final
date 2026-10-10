@@ -11,7 +11,7 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { dirname, join } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { ACCOLADES, CREDITS, MILESTONES } from "./story";
 import { LEADERS } from "./leadership";
 
@@ -31,7 +31,7 @@ function truncate(input: string, max: number): string {
   return `${cut.replace(/[\s,;:.—-]+$/, "")}…`;
 }
 
-function stripHtml(html: string): string {
+export function stripHtml(html: string): string {
   return html
     .replace(/<style[\s\S]*?<\/style>/gi, "")
     .replace(/<script[\s\S]*?<\/script>/gi, "")
@@ -151,7 +151,7 @@ function subtitleFrom(raw: string): string | null {
   return parts.length ? parts.join(" · ") : null;
 }
 
-function slugify(input: string): string {
+export function slugify(input: string): string {
   return input
     .toLowerCase()
     .replace(/™/g, "")
@@ -450,7 +450,7 @@ const USAGE_BY_CATEGORY: Record<string, { title: string; body: string }[]> = {
 
 // -------------------------------------------------------- editorial content
 
-const FAQS = [
+export const FAQS = [
   {
     category: "moringa",
     question: "What exactly is moringa?",
@@ -667,14 +667,14 @@ const REVIEWS_BY_HANDLE: Record<
  * now, in full and against the product they were written about, so leaving the
  * excerpts here as well printed each of them twice on the homepage.
  */
-const TESTIMONIALS: Array<{
+export const TESTIMONIALS: Array<{
   authorName: string;
   body: string;
   rating: number;
   position: number;
 }> = [];
 
-const ARTICLES = [
+export const ARTICLES = [
   {
     title: "Four ways we already eat moringa at home",
     slug: "four-ways-we-already-eat-moringa-at-home",
@@ -705,7 +705,7 @@ const ARTICLES = [
   },
 ];
 
-const HOMEPAGE_SECTIONS = [
+export const HOMEPAGE_SECTIONS = [
   {
     key: "hero",
     kind: "hero",
@@ -799,7 +799,7 @@ const HOMEPAGE_SECTIONS = [
   },
 ];
 
-const NAVIGATION = [
+export const NAVIGATION = [
   { group: "header", label: "Shop", href: "/shop", position: 1 },
   { group: "header", label: "Ritual", href: "/ritual", position: 2 },
   { group: "header", label: "Moringa", href: "/moringa", position: 3 },
@@ -840,7 +840,7 @@ const NAVIGATION = [
   { group: "footer-support", label: "Terms of service", href: "/terms", position: 7 },
 ];
 
-const SETTINGS: Record<string, string> = {
+export const SETTINGS: Record<string, string> = {
   "shipping.freeThreshold": "69900",
   "shipping.flatFee": "6000",
   "shipping.copy": "Free shipping on orders above ₹699",
@@ -1249,9 +1249,13 @@ async function main() {
   console.log("✓ seed complete");
 }
 
-main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(() => prisma.$disconnect());
+// Only seed when run directly. scripts/build-content-snapshot.ts imports the
+// content above to build the image's snapshot, and must not wipe anything.
+if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
+  main()
+    .catch((e) => {
+      console.error(e);
+      process.exit(1);
+    })
+    .finally(() => prisma.$disconnect());
+}

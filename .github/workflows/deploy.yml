@@ -11,15 +11,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Method 2: Safely print the key text by spacing out characters (bypasses GitHub log masking)
-      - name: View Raw Key Text Safely
-        env:
-          SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
-        run: |
-          echo "=== START OF SSH KEY (SPACED OUT FOR DEBUG) ==="
-          echo "$SSH_KEY" | sed 's/./& /g'
-          echo "=== END OF SSH KEY ==="
-
       - name: Deploy miracletree-final app
         uses: appleboy/ssh-action@v1
         with:

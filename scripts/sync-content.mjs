@@ -106,6 +106,23 @@ for (const { highlights, ...leader } of content.leaders) {
 }
 console.log(`  leaders: ${content.leaders.length}`);
 
+// --- announcements and settings belong to the shop once it is running, so
+// they are only filled in where missing — a database that was never seeded
+// would otherwise have no announcement bar and no shipping thresholds.
+if (content.announcements?.length && (await prisma.announcement.count()) === 0) {
+  await prisma.announcement.createMany({ data: content.announcements });
+  console.log(`  announcements: ${content.announcements.length} (were empty)`);
+}
+let settingsAdded = 0;
+for (const [key, value] of Object.entries(content.settings ?? {})) {
+  const exists = await prisma.siteSetting.findUnique({ where: { key } });
+  if (!exists) {
+    await prisma.siteSetting.create({ data: { key, value } });
+    settingsAdded++;
+  }
+}
+if (settingsAdded) console.log(`  settings: ${settingsAdded} missing keys added`);
+
 await prisma.siteSetting.upsert({
   where: { key: VERSION_KEY },
   create: { key: VERSION_KEY, value: content.version },
