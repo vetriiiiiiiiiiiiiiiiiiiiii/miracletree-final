@@ -8,7 +8,7 @@ import {
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { LinkButton } from "@/components/ui/Button";
 import { Reveal } from "@/components/motion/Reveal";
-import { PHOTO_GROUPS } from "@/lib/photos";
+import { getGalleryGroups } from "@/lib/queries";
 import { PhotoGrid, GroupNav } from "./PhotoGrid";
 export const metadata = buildMetadata({
   title: "Gallery",
@@ -24,7 +24,12 @@ export const metadata = buildMetadata({
  * distributor checking the company out is usually after one of them
  * specifically.
  */
-export default function GalleryPage() {
+export default async function GalleryPage() {
+  // Managed in Admin → Gallery.
+  const groups = await getGalleryGroups().catch((error) => {
+    console.error("[gallery]", error);
+    return [];
+  });
   const crumbs = [
     { name: "Home", path: "/" },
     { name: "Gallery", path: "/gallery" },
@@ -51,7 +56,7 @@ export default function GalleryPage() {
 
           <Reveal className="mt-10">
             <GroupNav
-              groups={PHOTO_GROUPS.map((g) => ({
+              groups={groups.map((g) => ({
                 slug: g.slug,
                 title: g.title,
                 count: g.photos.length,
@@ -61,7 +66,7 @@ export default function GalleryPage() {
         </Container>
       </Section>
 
-      {PHOTO_GROUPS.map((group, index) => (
+      {groups.map((group, index) => (
         <Section
           key={group.slug}
           id={group.slug}

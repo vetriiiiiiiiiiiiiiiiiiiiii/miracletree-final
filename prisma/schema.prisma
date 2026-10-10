@@ -813,3 +813,43 @@ model EmailJob {
   createdAt   DateTime @default(now())
   nextRetryAt DateTime @default(now())
 }
+
+/**
+ * The /gallery page: named groups of photographs, both managed from
+ * Admin → Gallery. Seeded from the company's own photo set in public/photos;
+ * anything uploaded since lives under /uploads/gallery.
+ */
+model GalleryGroup {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  slug     String  @unique
+  title    String
+  lede     String?
+  position Int     @default(0)
+  isActive Boolean @default(true)
+
+  photos GalleryPhoto[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model GalleryPhoto {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  groupId  String  @db.ObjectId
+  url      String
+  /// Describes the picture for screen readers. Required on the page.
+  alt      String
+  /// Shown under the photo and in the lightbox. Names people, so check it.
+  caption  String?
+  width    Int     @default(1600)
+  height   Int     @default(1200)
+  position Int     @default(0)
+  isActive Boolean @default(true)
+
+  group GalleryGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([groupId, position])
+}

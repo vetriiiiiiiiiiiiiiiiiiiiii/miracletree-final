@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/Field";
 import { Card, Pill } from "@/components/admin/ui";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
+import { ImageField } from "@/components/admin/ImageField";
 import { cn } from "@/lib/utils";
 const INITIAL = { status: "idle" };
 /**
@@ -223,6 +224,20 @@ function RecordForm({ fields, record, saveAction, onDone, onCancel }) {
                   defaultValue={
                     value === null || value === undefined ? "" : String(value)
                   }
+                />
+              );
+            }
+            if (field.type === "image") {
+              return (
+                <ImageField
+                  key={field.name}
+                  name={field.name}
+                  label={field.label}
+                  hint={field.hint}
+                  error={errors[field.name]}
+                  folder={field.folder}
+                  aspect={field.aspect}
+                  defaultValue={value ?? ""}
                 />
               );
             }

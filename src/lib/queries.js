@@ -423,3 +423,29 @@ export async function settingNumber(key, fallback) {
   const parsed = raw === undefined ? NaN : Number(raw);
   return Number.isFinite(parsed) ? parsed : fallback;
 }
+/** The /gallery page: visible groups, each with its visible photos in order. */
+export const getGalleryGroups = cache(async () => {
+  const groups = await prisma.galleryGroup.findMany({
+    where: { isActive: true },
+    orderBy: { position: "asc" },
+    include: {
+      photos: { where: { isActive: true }, orderBy: { position: "asc" } },
+    },
+  });
+  // An empty group would render as a heading over nothing.
+  return groups
+    .filter((g) => g.photos.length)
+    .map((g) => ({
+      slug: g.slug,
+      title: g.title,
+      lede: g.lede,
+      photos: g.photos.map((p) => ({
+        id: p.id,
+        src: p.url,
+        width: p.width,
+        height: p.height,
+        alt: p.alt,
+        caption: p.caption,
+      })),
+    }));
+});

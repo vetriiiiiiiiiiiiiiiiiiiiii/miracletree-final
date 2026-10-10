@@ -1,35 +1,25 @@
 /**
- * Brings a deployed database's editorial content up to date with the image.
+ * Gives a deployed database the editorial content it is missing.
  *
- * The container copies the seeded database into its volume only when the
- * volume is empty. That is right for orders, customers and stock — nobody
- * wants a deploy to wipe those — but it also meant that after the very first
- * deploy, no copy change ever reached the site again. Corrections made weeks
- * earlier and confirmed locally kept showing the old wording in production,
- * because the schema was being pushed on every start and the content never
- * was.
+ * The image carries a snapshot of the repo's content (built by
+ * build-content-snapshot.ts). On start, each content table that is *empty* is
+ * filled from it — a fresh or never-seeded database gets the whole site.
  *
- * So: content is versioned. The image carries a snapshot and a version
- * string; the database records the version it last applied. They match on
- * almost every start and this does nothing. When they differ, the editorial
- * tables are brought in line and the new version recorded.
- *
- * What it touches: articles, homepage sections, FAQs, the timeline, the
- * awards shelf, credits, leadership, navigation and testimonials — the things
- * written in the repo.
+ * A table that already has rows is left exactly as it is. The admin is where
+ * this content is managed — navigation, homepage sections, FAQs, the story,
+ * leadership portraits, gallery photos — and an earlier version of this script
+ * replaced those tables wholesale whenever the content version changed, which
+ * would have wiped every photo and edit made in the admin on the next deploy.
+ * To push the repo's copy over a table on purpose, empty it in the admin (or
+ * the database) and restart.
  *
  * What it never touches: products, variants, inventory, orders, customers,
- * reviews, carts, coupons, settings and media. Those belong to the shop.
- *
- * Because the version only changes when someone changes it in the repo, edits
- * made in the admin between two deploys survive. A version bump is a
- * deliberate statement that the repo's copy should win.
+ * reviews, carts, coupons and media. Those belong to the shop.
  */
 import { PrismaClient } from "@prisma/client";
 import { readFileSync, existsSync } from "node:fs";
 
 const SNAPSHOT = process.env.CONTENT_SNAPSHOT ?? "./content-snapshot.json";
-const VERSION_KEY = "content.version";
 
 if (!existsSync(SNAPSHOT)) {
   console.log(`[content] no snapshot at ${SNAPSHOT}; nothing to sync.`);
@@ -38,81 +28,63 @@ if (!existsSync(SNAPSHOT)) {
 
 const prisma = new PrismaClient();
 const content = JSON.parse(readFileSync(SNAPSHOT, "utf8"));
+let filled = 0;
 
-const applied = await prisma.siteSetting
-  .findUnique({ where: { key: VERSION_KEY }, select: { value: true } })
-  .catch(() => null);
-
-if (applied?.value === content.version) {
-  console.log(`[content] already at ${content.version}.`);
-  await prisma.$disconnect();
-  process.exit(0);
+/** Fill a table from the snapshot only when it holds nothing at all. */
+async function fillIfEmpty(name, model, rows, write) {
+  if (!rows?.length) return;
+  if ((await model.count()) > 0) return;
+  await write(rows);
+  filled++;
+  console.log(`  ${name}: ${rows.length} (was empty)`);
 }
 
-console.log(`[content] ${applied?.value ?? "none"} → ${content.version}`);
+await fillIfEmpty("articles", prisma.article, content.articles, async (rows) => {
+  for (const { category, ...data } of rows) {
+    const cat = category
+      ? await prisma.articleCategory.upsert({
+          where: { slug: category.slug },
+          create: { name: category.name, slug: category.slug },
+          update: {},
+        })
+      : null;
+    await prisma.article.create({ data: { ...data, categoryId: cat?.id ?? null } });
+  }
+});
 
-/** Replace a table wholesale. Used only for rows with no stable natural key. */
-async function replace(name, model, rows, shape) {
-  await model.deleteMany();
-  if (rows.length) await model.createMany({ data: rows.map(shape) });
-  console.log(`  ${name}: ${rows.length}`);
+await fillIfEmpty("sections", prisma.homepageSection, content.sections, (rows) =>
+  prisma.homepageSection.createMany({ data: rows }),
+);
+
+for (const [name, model, rows] of [
+  ["faqs", prisma.faq, content.faqs],
+  ["milestones", prisma.milestone, content.milestones],
+  ["accolades", prisma.accolade, content.accolades],
+  ["credits", prisma.credit, content.credits],
+  ["navigation", prisma.navigationItem, content.navigation],
+  ["testimonials", prisma.testimonial, content.testimonials],
+  ["announcements", prisma.announcement, content.announcements],
+]) {
+  await fillIfEmpty(name, model, rows, (data) => model.createMany({ data }));
 }
 
-// --- articles: keyed by slug, so a shop's own posts are left alone
-let articles = 0;
-for (const a of content.articles) {
-  const category = a.category
-    ? await prisma.articleCategory.upsert({
-        where: { slug: a.category.slug },
-        create: { name: a.category.name, slug: a.category.slug },
-        update: {},
-      })
-    : null;
-  const { category: _drop, ...data } = a;
-  await prisma.article.upsert({
-    where: { slug: a.slug },
-    create: { ...data, categoryId: category?.id ?? null },
-    update: { ...data, categoryId: category?.id ?? null },
-  });
-  articles++;
-}
-// Field notes the repo no longer carries should go, or the page keeps showing
-// the ones that were replaced — which is the whole reason this script exists.
-const keep = content.articles.map((a) => a.slug);
-const removed = await prisma.article.deleteMany({ where: { slug: { notIn: keep } } });
-console.log(`  articles: ${articles} synced, ${removed.count} withdrawn`);
+await fillIfEmpty("leaders", prisma.leader, content.leaders, async (rows) => {
+  for (const { highlights, ...leader } of rows) {
+    await prisma.leader.create({
+      data: { ...leader, highlights: { create: highlights } },
+    });
+  }
+});
 
-// --- homepage sections: keyed by key
-for (const s of content.sections) {
-  await prisma.homepageSection.upsert({ where: { key: s.key }, create: s, update: s });
-}
-console.log(`  sections: ${content.sections.length}`);
+await fillIfEmpty("gallery", prisma.galleryGroup, content.gallery, async (rows) => {
+  for (const { photos, ...group } of rows) {
+    await prisma.galleryGroup.create({
+      data: { ...group, photos: { create: photos } },
+    });
+  }
+});
 
-// --- the rest have no stable natural key, so they are replaced as a set
-await replace("faqs", prisma.faq, content.faqs, (f) => f);
-await replace("milestones", prisma.milestone, content.milestones, (m) => m);
-await replace("accolades", prisma.accolade, content.accolades, (a) => a);
-await replace("credits", prisma.credit, content.credits, (c) => c);
-await replace("navigation", prisma.navigationItem, content.navigation, (n) => n);
-await replace("testimonials", prisma.testimonial, content.testimonials, (t) => t);
-
-// --- leadership, with each profile's record as child rows
-await prisma.leaderHighlight.deleteMany();
-await prisma.leader.deleteMany();
-for (const { highlights, ...leader } of content.leaders) {
-  await prisma.leader.create({
-    data: { ...leader, highlights: { create: highlights } },
-  });
-}
-console.log(`  leaders: ${content.leaders.length}`);
-
-// --- announcements and settings belong to the shop once it is running, so
-// they are only filled in where missing — a database that was never seeded
-// would otherwise have no announcement bar and no shipping thresholds.
-if (content.announcements?.length && (await prisma.announcement.count()) === 0) {
-  await prisma.announcement.createMany({ data: content.announcements });
-  console.log(`  announcements: ${content.announcements.length} (were empty)`);
-}
+// Settings are keyed, so each missing key is added on its own.
 let settingsAdded = 0;
 for (const [key, value] of Object.entries(content.settings ?? {})) {
   const exists = await prisma.siteSetting.findUnique({ where: { key } });
@@ -123,10 +95,9 @@ for (const [key, value] of Object.entries(content.settings ?? {})) {
 }
 if (settingsAdded) console.log(`  settings: ${settingsAdded} missing keys added`);
 
-await prisma.siteSetting.upsert({
-  where: { key: VERSION_KEY },
-  create: { key: VERSION_KEY, value: content.version },
-  update: { value: content.version },
-});
-console.log(`[content] now at ${content.version}.`);
+console.log(
+  filled || settingsAdded
+    ? `[content] filled from snapshot ${content.version}.`
+    : "[content] nothing missing.",
+);
 await prisma.$disconnect();

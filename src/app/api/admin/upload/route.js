@@ -132,6 +132,21 @@ async function persist(folder, name, data) {
   await writeFile(join(directory, name), data);
   return `/uploads/${folder}/${name}`;
 }
+/** The library, newest first — feeds the "Choose from library" picker. */
+export async function GET() {
+  try {
+    await requireAdmin();
+  } catch {
+    return NextResponse.json({ error: "Not authorised." }, { status: 401 });
+  }
+  const items = await prisma.media.findMany({
+    where: { kind: "image" },
+    orderBy: { createdAt: "desc" },
+    take: 200,
+    select: { id: true, url: true, alt: true, width: true, height: true },
+  });
+  return NextResponse.json({ items });
+}
 export async function DELETE(request) {
   try {
     await requireAdmin();

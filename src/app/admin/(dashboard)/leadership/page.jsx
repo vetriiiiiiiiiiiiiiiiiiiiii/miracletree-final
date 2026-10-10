@@ -71,10 +71,9 @@ const LEADER_FIELDS = [
   {
     name: "imageUrl",
     label: "Portrait",
-    type: "text",
-    maxLength: 500,
-    placeholder: "/uploads/portrait.webp",
-    hint: "Upload in Media, then paste the path here. Without one, a monogram plate is shown.",
+    type: "image",
+    folder: "leadership",
+    hint: "Portrait, ideally 4:5. Without one, a monogram plate is shown.",
   },
   { name: "source", label: "Source", type: "text", half: true, maxLength: 160 },
   {

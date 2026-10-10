@@ -44,8 +44,10 @@ export default async function AdminIngredientsPage() {
     },
     {
       name: "imageUrl",
-      label: "Image URL",
-      type: "text",
+      label: "Image",
+      type: "image",
+      folder: "ingredients",
+      aspect: "aspect-square",
       hint: "Optional image for this ingredient.",
     },
   ];

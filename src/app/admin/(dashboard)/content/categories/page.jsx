@@ -25,7 +25,13 @@ const FIELDS = [
     maxLength: 600,
     hint: "Shown at the top of the category page.",
   },
-  { name: "imageUrl", label: "Image URL", type: "text" },
+  {
+    name: "imageUrl",
+    label: "Image",
+    type: "image",
+    folder: "categories",
+    aspect: "aspect-square",
+  },
   { name: "position", label: "Order", type: "number", half: true },
   {
     name: "isActive",

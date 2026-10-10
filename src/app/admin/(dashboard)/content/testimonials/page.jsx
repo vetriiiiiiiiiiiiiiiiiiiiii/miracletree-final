@@ -35,7 +35,14 @@ const FIELDS = [
   },
   { name: "rating", label: "Rating (1–5)", type: "number", half: true },
   { name: "position", label: "Order", type: "number", half: true },
-  { name: "imageUrl", label: "Photo URL", type: "text", hint: "Optional." },
+  {
+    name: "imageUrl",
+    label: "Photo",
+    type: "image",
+    folder: "testimonials",
+    aspect: "aspect-square",
+    hint: "Optional.",
+  },
   { name: "isActive", label: "Show on the site", type: "checkbox" },
 ];
 export default async function AdminTestimonialsPage() {

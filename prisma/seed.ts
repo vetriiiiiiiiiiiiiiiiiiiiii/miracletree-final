@@ -14,6 +14,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { ACCOLADES, CREDITS, MILESTONES } from "./story";
 import { LEADERS } from "./leadership";
+import { PHOTO_GROUPS } from "../src/lib/photos.js";
 
 const prisma = new PrismaClient();
 const here = dirname(fileURLToPath(import.meta.url));
@@ -840,6 +841,24 @@ export const NAVIGATION = [
   { group: "footer-support", label: "Terms of service", href: "/terms", position: 7 },
 ];
 
+/** The gallery's starting content: the company's own photo set in public/photos. */
+export const GALLERY_SEED = PHOTO_GROUPS.map((g, i) => ({
+  slug: g.slug,
+  title: g.title,
+  lede: g.lede ?? null,
+  position: i,
+  isActive: true,
+  photos: g.photos.map((p, j) => ({
+    url: p.src,
+    alt: p.alt,
+    caption: p.caption ?? null,
+    width: p.width,
+    height: p.height,
+    position: j,
+    isActive: true,
+  })),
+}));
+
 export const SETTINGS: Record<string, string> = {
   "shipping.freeThreshold": "69900",
   "shipping.flatFee": "6000",
@@ -1131,6 +1150,8 @@ async function main() {
     // Highlights first: the cascade would handle it, but the delete order in
     // this block is explicit everywhere else and staying consistent is worth
     // more than the one saved line.
+    prisma.galleryPhoto.deleteMany(),
+    prisma.galleryGroup.deleteMany(),
     prisma.leaderHighlight.deleteMany(),
     prisma.leader.deleteMany(),
   ]);
@@ -1280,6 +1301,11 @@ async function main() {
   console.log(
     `✓ leadership: ${LEADERS.length} profiles, ${LEADERS.reduce((n, l) => n + l.highlights.length, 0)} highlights`,
   );
+
+  for (const { photos, ...group } of GALLERY_SEED) {
+    await prisma.galleryGroup.create({ data: { ...group, photos: { create: photos } } });
+  }
+  console.log(`✓ gallery: ${GALLERY_SEED.reduce((n, g) => n + g.photos.length, 0)} photos`);
 
   console.log(`✓ admin ready: ${email}`);
   console.log("✓ seed complete");

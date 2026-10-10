@@ -17,6 +17,7 @@ import { writeFileSync } from "node:fs";
 import {
   ARTICLES,
   FAQS,
+  GALLERY_SEED,
   HOMEPAGE_SECTIONS,
   NAVIGATION,
   SETTINGS,
@@ -28,9 +29,9 @@ import { ACCOLADES, CREDITS, MILESTONES } from "../prisma/story";
 import { LEADERS } from "../prisma/leadership";
 
 const content = {
-  // Bump when the repo's copy should be pushed over whatever a deployed
-  // database is holding. See sync-content.mjs.
-  version: process.env.CONTENT_VERSION ?? "2026-10-10.1",
+  // For the logs only. sync-content.mjs fills empty tables and never
+  // overwrites what the admin has changed.
+  version: process.env.CONTENT_VERSION ?? "2026-10-10.2",
   articles: ARTICLES.map(({ category, since, ...a }) => ({
     ...a,
     status: "published",
@@ -53,11 +54,11 @@ const content = {
     isActive: true,
     highlights: highlights.map((h, j) => ({ ...h, position: j })),
   })),
-  // Filled only where missing, never overwritten — see sync-content.mjs.
   announcements: [
     { message: "Free shipping on orders above ₹699", position: 1, isActive: true },
   ],
   settings: SETTINGS,
+  gallery: GALLERY_SEED,
 };
 
 writeFileSync("./content-snapshot.json", JSON.stringify(content));
