@@ -118,6 +118,31 @@ export async function requireAdmin() {
   return user;
 }
 
+/**
+ * The super admin is the account whose credentials live in the server's .env
+ * (SEED_ADMIN_EMAIL, which inject-admin.mjs keeps an admin on every start).
+ * SUPER_ADMIN_EMAIL overrides it if the two ever need to differ. Only this
+ * account can grant or remove admin access, and nobody can change its role
+ * from the panel — so the people running the server always keep the keys.
+ */
+export function superAdminEmail() {
+  return (
+    process.env.SUPER_ADMIN_EMAIL ||
+    process.env.SEED_ADMIN_EMAIL ||
+    "admin@miracletree.in"
+  )
+    .trim()
+    .toLowerCase();
+}
+
+export function isSuperAdmin(user) {
+  return (
+    user?.role === "admin" &&
+    typeof user.email === "string" &&
+    user.email.toLowerCase() === superAdminEmail()
+  );
+}
+
 export async function requireFullAdmin() {
   const user = await requireAdmin();
   if (user.role !== "admin") {

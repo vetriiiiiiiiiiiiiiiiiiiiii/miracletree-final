@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { prisma, insensitive } from "@/lib/prisma";
-import { requireAdmin } from "@/lib/auth";
+import { requireAdmin, isSuperAdmin } from "@/lib/auth";
 import { formatPrice } from "@/lib/money";
 import { formatDate } from "@/lib/utils";
 import {
@@ -150,7 +150,7 @@ export default async function AdminCustomersPage({ searchParams }) {
                             : "neutral"
                       }
                     >
-                      {user.role}
+                      {isSuperAdmin(user) ? "super admin" : user.role}
                     </Pill>
                   </Td>
 

@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { requireAdmin } from "@/lib/auth";
+import { requireAdmin, isSuperAdmin } from "@/lib/auth";
 import { formatPrice } from "@/lib/money";
 import { formatDate } from "@/lib/utils";
 import {
@@ -204,7 +204,14 @@ export default async function AdminCustomerPage({ params }) {
           <CustomerControls
             userId={user.id}
             role={user.role}
-            canChangeRole={admin.role === "admin" && admin.id !== user.id}
+            canChangeRole={
+              admin.role === "admin" &&
+              admin.id !== user.id &&
+              !isSuperAdmin(user) &&
+              (isSuperAdmin(admin) || user.role !== "admin")
+            }
+            canGrantAdmin={isSuperAdmin(admin)}
+            isSuperAdminAccount={isSuperAdmin(user)}
             notes={user.notes.map((note) => ({
               id: note.id,
               body: note.body,

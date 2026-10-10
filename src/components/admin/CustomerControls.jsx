@@ -13,7 +13,14 @@ import {
  * Role editing is only offered to full admins, and never for their own account —
  * both rules are enforced again on the server, since the UI is only a hint.
  */
-export function CustomerControls({ userId, role, canChangeRole, notes }) {
+export function CustomerControls({
+  userId,
+  role,
+  canChangeRole,
+  canGrantAdmin = false,
+  isSuperAdminAccount = false,
+  notes,
+}) {
   const router = useRouter();
   const [, startTransition] = useTransition();
   const [note, setNote] = useState("");
@@ -61,16 +68,29 @@ export function CustomerControls({ userId, role, canChangeRole, notes }) {
                   value: "staff",
                   label: "Staff — admin, no destructive actions",
                 },
-                { value: "admin", label: "Admin — full access" },
+                // Only the super admin can make someone an admin.
+                ...(canGrantAdmin
+                  ? [{ value: "admin", label: "Admin — full access" }]
+                  : []),
               ]}
-              hint="Staff can manage orders, stock and content but cannot delete products or change roles."
+              hint={
+                canGrantAdmin
+                  ? "Staff can manage orders, stock and content but cannot delete products or change roles. As super admin, you can grant and remove admin access."
+                  : "Staff can manage orders, stock and content but cannot delete products or change roles. Only the super admin can make someone an admin."
+              }
             />
           ) : (
             <div>
               <p className="eyebrow text-cream-400">Role</p>
-              <p className="mt-2 text-sm capitalize text-cream-100">{role}</p>
+              <p className="mt-2 text-sm capitalize text-cream-100">
+                {isSuperAdminAccount ? "Super admin" : role}
+              </p>
               <p className="mt-2 text-xs text-cream-400">
-                Only a full administrator can change roles, and never their own.
+                {isSuperAdminAccount
+                  ? "This account's credentials are set on the server, so its role cannot be changed here."
+                  : role === "admin"
+                    ? "Only the super admin can change an admin's role, and never their own."
+                    : "Only a full administrator can change roles, and never their own."}
               </p>
             </div>
           )}

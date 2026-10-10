@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { AdminShell } from "@/components/admin/AdminShell";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser, isSuperAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 export const metadata = {
   title: { default: "Admin", template: "%s — Miracle Tree admin" },
@@ -29,7 +29,7 @@ export default async function AdminLayout({ children }) {
           [user.firstName, user.lastName].filter(Boolean).join(" ") ||
           user.email,
         email: user.email,
-        role: user.role,
+        role: isSuperAdmin(user) ? "super admin" : user.role,
       }}
       pendingCounts={{
         orders: pendingOrders,

@@ -1,7 +1,12 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import { requireAdmin, requireFullAdmin, AuthError } from "@/lib/auth";
+import {
+  requireAdmin,
+  requireFullAdmin,
+  isSuperAdmin,
+  AuthError,
+} from "@/lib/auth";
 import { recordAudit } from "@/lib/audit";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { readingMinutes, slugify } from "@/lib/utils";
@@ -693,19 +698,31 @@ export async function setUserRoleAction(input) {
     if (!parsed.success) return { ok: false, error: "Invalid role." };
     // Nobody may remove their own admin access — that is how a store ends up
     // with no administrators at all.
-    if (parsed.data.userId === admin.id && parsed.data.role !== "admin") {
+    if (parsed.data.userId === admin.id) {
       return { ok: false, error: "You cannot change your own role." };
     }
-    if (parsed.data.role !== "admin") {
-      const admins = await prisma.user.count({ where: { role: "admin" } });
-      const target = await prisma.user.findUnique({
-        where: { id: parsed.data.userId },
-        select: { role: true },
-      });
-      if (target?.role === "admin" && admins <= 1) {
-        return { ok: false, error: "This is the only administrator account." };
-      }
+    const target = await prisma.user.findUnique({
+      where: { id: parsed.data.userId },
+      select: { role: true, email: true },
+    });
+    if (!target) return { ok: false, error: "That account no longer exists." };
+    // The super admin is defined by the server's credentials, not the panel.
+    if (isSuperAdmin(target)) {
+      return {
+        ok: false,
+        error: "The super admin's role is set by the server and cannot be changed here.",
+      };
     }
+    // Admin access is the super admin's to give and take away. Other admins
+    // can still move people between customer and staff.
+    const touchesAdmin = target.role === "admin" || parsed.data.role === "admin";
+    if (touchesAdmin && !isSuperAdmin(admin)) {
+      return {
+        ok: false,
+        error: "Only the super admin can grant or remove admin access.",
+      };
+    }
+    if (target.role === parsed.data.role) return { ok: true };
     await prisma.user.update({
       where: { id: parsed.data.userId },
       data: { role: parsed.data.role },
@@ -715,9 +732,10 @@ export async function setUserRoleAction(input) {
       action: "user.role_changed",
       entity: "User",
       entityId: parsed.data.userId,
-      meta: { role: parsed.data.role },
+      meta: { from: target.role, role: parsed.data.role },
     });
     revalidatePath("/admin/customers");
+    revalidatePath(`/admin/customers/${parsed.data.userId}`);
     return { ok: true };
   } catch (error) {
     if (error instanceof AuthError) return { ok: false, error: error.message };
