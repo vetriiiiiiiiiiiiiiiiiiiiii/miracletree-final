@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth";
 import { PageHeader } from "@/components/admin/ui";
 import { ProductEditor } from "@/components/admin/ProductEditor";
-import { PRODUCT_TYPE_OPTIONS } from "@/lib/shop";
+import { PRODUCT_TYPE_OPTIONS, getProductTypes } from "@/lib/shop";
 export const dynamic = "force-dynamic";
 const EMPTY = {
   id: null,
@@ -35,11 +35,12 @@ const EMPTY = {
 };
 export default async function NewProductPage() {
   await requireAdmin();
-  const [categories] = await Promise.all([
+  const [categories, productTypes] = await Promise.all([
     prisma.category.findMany({
       orderBy: { position: "asc" },
       select: { id: true, name: true },
     }),
+    getProductTypes(prisma),
   ]);
   return (
     <>
@@ -55,7 +56,7 @@ export default async function NewProductPage() {
       <ProductEditor
         draft={EMPTY}
         categories={categories}
-        productTypes={PRODUCT_TYPE_OPTIONS}
+        productTypes={productTypes}
         images={[]}
         variants={[]}
         reviewCount={0}

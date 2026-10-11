@@ -7,12 +7,17 @@ import { cn } from "@/lib/utils";
  * destructive button — an accidental Enter should never delete anything.
  */
 export function ConfirmDialog({
-  open,
+  open = true,
   title,
   body,
+  message,
   confirmLabel = "Confirm",
+  actionLabel,
   cancelLabel = "Cancel",
   tone = "default",
+  destructive,
+  loading = false,
+  error = null,
   onConfirm,
   onCancel,
 }) {
@@ -24,20 +29,20 @@ export function ConfirmDialog({
     if (!open) return;
     const id = window.setTimeout(() => cancelRef.current?.focus(), 40);
     const onKey = (event) => {
-      if (event.key === "Escape") onCancel();
+      if (event.key === "Escape" && !loading) onCancel();
     };
     document.addEventListener("keydown", onKey);
     return () => {
       window.clearTimeout(id);
       document.removeEventListener("keydown", onKey);
     };
-  }, [open, onCancel]);
+  }, [open, onCancel, loading]);
   if (!open || !mounted) return null;
   return createPortal(
     <div className="fixed inset-0 z-[500] grid place-items-center px-5">
       <div
         className="absolute inset-0 bg-ink/80 backdrop-blur-sm"
-        onClick={onCancel}
+        onClick={() => !loading && onCancel()}
       />
 
       <div
@@ -50,33 +55,50 @@ export function ConfirmDialog({
         <h2 id="confirm-title" className="text-[1.15rem] text-cream-50">
           {title}
         </h2>
-        <p
-          id="confirm-body"
-          className="mt-3 text-sm leading-relaxed text-cream-400"
-        >
-          {body}
-        </p>
+        {(body || message) ? (
+          <p
+            id="confirm-body"
+            className="mt-3 text-sm leading-relaxed text-cream-400"
+          >
+            {body || message}
+          </p>
+        ) : null}
+
+        {error ? (
+          <div className="mt-4 border border-danger/40 bg-[#2a1212] px-3.5 py-2 text-xs text-[#f0b3b0]">
+            {error}
+          </div>
+        ) : null}
 
         <div className="mt-7 flex flex-wrap justify-end gap-2">
           <button
             ref={cancelRef}
             type="button"
+            disabled={loading}
             onClick={onCancel}
-            className="border border-border-strong px-5 py-2.5 text-[0.68rem] uppercase tracking-[0.14em] text-cream-200 transition-colors hover:border-cream-100"
+            className="border border-border-strong px-5 py-2.5 text-[0.68rem] uppercase tracking-[0.14em] text-cream-200 transition-colors hover:border-cream-100 disabled:opacity-50"
           >
             {cancelLabel}
           </button>
           <button
             type="button"
+            disabled={loading}
             onClick={() => void onConfirm()}
             className={cn(
-              "px-5 py-2.5 text-[0.68rem] uppercase tracking-[0.14em] text-cream-50 transition-colors",
-              tone === "danger"
+              "px-5 py-2.5 text-[0.68rem] uppercase tracking-[0.14em] text-cream-50 transition-colors disabled:opacity-60 flex items-center justify-center gap-2 min-w-[5rem]",
+              tone === "danger" || destructive
                 ? "bg-danger hover:brightness-110"
                 : "bg-emerald-500 hover:bg-emerald-400",
             )}
           >
-            {confirmLabel}
+            {loading ? (
+              <>
+                <span className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin inline-block" />
+                <span>Working...</span>
+              </>
+            ) : (
+              actionLabel || confirmLabel
+            )}
           </button>
         </div>
       </div>

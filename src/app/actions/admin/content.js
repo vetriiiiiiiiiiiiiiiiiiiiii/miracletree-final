@@ -453,17 +453,19 @@ export async function saveCategoryAction(_prev, formData) {
 export async function deleteCategoryAction(id) {
   try {
     await requireFullAdmin();
-    // Products would be orphaned rather than deleted, so require the category
-    // to be emptied first — it is the safer of the two surprises.
-    const count = await prisma.product.count({ where: { categoryId: id } });
-    if (count > 0) {
-      return {
-        ok: false,
-        error: `${count} product${count === 1 ? " is" : "s are"} still in this category. Move them first, or hide the category instead of deleting it.`,
-      };
-    }
+    // Unlink any products currently in this category (set to unspecified/null)
+    await prisma.product.updateMany({
+      where: { categoryId: id },
+      data: { categoryId: null },
+    });
+    // Unlink any subcategories
+    await prisma.category.updateMany({
+      where: { parentId: id },
+      data: { parentId: null },
+    });
     await prisma.category.delete({ where: { id } });
     revalidatePath("/shop");
+    revalidatePath("/admin/products");
     revalidatePath("/admin/content/categories");
     return { ok: true };
   } catch (error) {
@@ -862,21 +864,71 @@ export async function deleteIngredientAction(id) {
   try {
     await requireAdmin();
 
-    const count = await prisma.productIngredient.count({
+    // Unlink any product mapping referencing this ingredient
+    await prisma.productIngredient.deleteMany({
       where: { ingredientId: id },
     });
-    if (count > 0) {
-      return {
-        ok: false,
-        error: "Cannot delete an ingredient that is linked to products.",
-      };
-    }
 
     await prisma.ingredient.delete({ where: { id } });
+    revalidatePath("/admin/products");
     revalidatePath("/admin/content/ingredients");
+    revalidatePath("/shop");
     return { ok: true };
   } catch (error) {
     if (error instanceof AuthError) return { ok: false, error: error.message };
     return { ok: false, error: "Could not delete that ingredient." };
+  }
+}
+
+export async function createArticleCategoryInlineAction(name) {
+  try {
+    await requireAdmin();
+    if (!name?.trim()) return { success: false, error: "Name is required" };
+    const trimmed = name.trim();
+    const slug = slugify(trimmed);
+    let category = await prisma.articleCategory.findUnique({ where: { slug } });
+    if (!category) {
+      category = await prisma.articleCategory.create({
+        data: { name: trimmed, slug },
+      });
+    }
+    revalidatePath("/admin/journal");
+    return { success: true, data: { id: category.id, name: category.name } };
+  } catch (error) {
+    console.error("[admin/content] createArticleCategoryInlineAction error:", error);
+    return { success: false, error: error.message || "Failed to create article category" };
+  }
+}
+
+export async function deleteArticleCategoryInlineAction(id) {
+  try {
+    const admin = await requireAdmin();
+    if (!id) return { success: false, error: "Category ID is required" };
+
+    const category = await prisma.articleCategory.findUnique({ where: { id } });
+    if (!category) return { success: false, error: "Category not found" };
+
+    // Set all articles using this category to null (Uncategorised / unspecified)
+    await prisma.article.updateMany({
+      where: { categoryId: id },
+      data: { categoryId: null },
+    });
+
+    await prisma.articleCategory.delete({ where: { id } });
+
+    await recordAudit({
+      actor: admin,
+      action: "delete",
+      entity: "articleCategory",
+      entityId: id,
+      summary: `Deleted article category "${category.name}" inline and set articles to uncategorised`,
+    }).catch(() => {});
+
+    revalidatePath("/admin/journal");
+    revalidatePath("/journal");
+    return { success: true };
+  } catch (error) {
+    console.error("[admin/content] deleteArticleCategoryInlineAction error:", error);
+    return { success: false, error: error.message || "Failed to delete article category" };
   }
 }

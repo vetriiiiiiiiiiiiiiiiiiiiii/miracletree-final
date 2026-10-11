@@ -68,6 +68,246 @@ export async function createCategoryInlineAction(name) {
   }
 }
 
+export async function deleteCategoryInlineAction(id) {
+  try {
+    const admin = await requireAdmin();
+    if (!id) return { success: false, error: "Category ID is required" };
+
+    const category = await prisma.category.findUnique({
+      where: { id },
+    });
+    if (!category) {
+      return { success: false, error: "Category not found" };
+    }
+
+    // Unlink any products currently in this category to prevent orphaned foreign keys
+    await prisma.product.updateMany({
+      where: { categoryId: id },
+      data: { categoryId: null },
+    });
+
+    // Unlink any subcategories
+    await prisma.category.updateMany({
+      where: { parentId: id },
+      data: { parentId: null },
+    });
+
+    await prisma.category.delete({
+      where: { id },
+    });
+
+    await recordAudit({
+      actor: admin,
+      action: "delete",
+      entity: "category",
+      entityId: id,
+      summary: `Deleted category "${category.name}" inline`,
+    }).catch(() => {});
+
+    revalidatePath("/admin/products");
+    revalidatePath("/shop");
+    revalidatePath("/admin/content/categories");
+
+    return { success: true };
+  } catch (error) {
+    console.error("[admin/products] deleteCategoryInlineAction error:", error);
+    return {
+      success: false,
+      error: error.message || "Failed to delete category",
+    };
+  }
+}
+
+export async function deleteProductTypeInlineAction(typeValue) {
+  try {
+    const admin = await requireAdmin();
+    if (!typeValue) return { success: false, error: "Product type is required" };
+
+    // Set all products using this product type to null (Unspecified)
+    await prisma.product.updateMany({
+      where: { productType: typeValue },
+      data: { productType: null },
+    });
+
+    // Mark as deleted in SiteSetting
+    const existing = await prisma.siteSetting.findUnique({
+      where: { key: "deleted_product_types" },
+    });
+    let deletedTypes = [];
+    if (existing?.value) {
+      try {
+        deletedTypes = JSON.parse(existing.value);
+      } catch {}
+    }
+    if (!deletedTypes.includes(typeValue)) {
+      deletedTypes.push(typeValue);
+      await prisma.siteSetting.upsert({
+        where: { key: "deleted_product_types" },
+        update: { value: JSON.stringify(deletedTypes) },
+        create: { key: "deleted_product_types", value: JSON.stringify(deletedTypes) },
+      });
+    }
+
+    // Remove from custom_product_types if present
+    const customSetting = await prisma.siteSetting.findUnique({
+      where: { key: "custom_product_types" },
+    });
+    if (customSetting?.value) {
+      try {
+        let customTypes = JSON.parse(customSetting.value);
+        customTypes = customTypes.filter((t) => t.value !== typeValue);
+        await prisma.siteSetting.update({
+          where: { key: "custom_product_types" },
+          data: { value: JSON.stringify(customTypes) },
+        });
+      } catch {}
+    }
+
+    await recordAudit({
+      actor: admin,
+      actorId: admin.id,
+      action: "delete",
+      entity: "productType",
+      meta: { type: typeValue },
+      summary: `Deleted product type "${typeValue}" and replaced with unspecified in products`,
+    }).catch(() => {});
+
+    revalidatePath("/admin/products");
+    revalidatePath("/shop");
+    return { success: true };
+  } catch (error) {
+    console.error("[admin/products] deleteProductTypeInlineAction error:", error);
+    return {
+      success: false,
+      error: error.message || "Failed to delete product type",
+    };
+  }
+}
+
+export async function createProductTypeInlineAction(name) {
+  try {
+    await requireAdmin();
+    if (!name?.trim()) return { success: false, error: "Name is required" };
+    const value = slugify(name.trim());
+    const label = name.trim();
+
+    // Remove from deleted_product_types if was deleted
+    const existingDeleted = await prisma.siteSetting.findUnique({
+      where: { key: "deleted_product_types" },
+    });
+    if (existingDeleted?.value) {
+      try {
+        let deleted = JSON.parse(existingDeleted.value);
+        deleted = deleted.filter((v) => v !== value);
+        await prisma.siteSetting.update({
+          where: { key: "deleted_product_types" },
+          data: { value: JSON.stringify(deleted) },
+        });
+      } catch {}
+    }
+
+    // Add to custom_product_types
+    const existingCustom = await prisma.siteSetting.findUnique({
+      where: { key: "custom_product_types" },
+    });
+    let customTypes = [];
+    if (existingCustom?.value) {
+      try {
+        customTypes = JSON.parse(existingCustom.value);
+      } catch {}
+    }
+    if (!customTypes.some((t) => t.value === value)) {
+      customTypes.push({ value, label });
+      await prisma.siteSetting.upsert({
+        where: { key: "custom_product_types" },
+        update: { value: JSON.stringify(customTypes) },
+        create: { key: "custom_product_types", value: JSON.stringify(customTypes) },
+      });
+    }
+
+    revalidatePath("/admin/products");
+    return { success: true, data: { value, label } };
+  } catch (error) {
+    console.error("[admin/products] createProductTypeInlineAction error:", error);
+    return {
+      success: false,
+      error: error.message || "Failed to create product type",
+    };
+  }
+}
+
+export async function deleteIngredientInlineAction(id) {
+  try {
+    const admin = await requireAdmin();
+    if (!id) return { success: false, error: "Ingredient ID is required" };
+
+    const ingredient = await prisma.ingredient.findUnique({
+      where: { id },
+    });
+    if (!ingredient) {
+      return { success: false, error: "Ingredient not found" };
+    }
+
+    // Unlink any product mapping referencing this ingredient
+    await prisma.productIngredient.deleteMany({
+      where: { ingredientId: id },
+    });
+
+    // Delete ingredient record
+    await prisma.ingredient.delete({
+      where: { id },
+    });
+
+    await recordAudit({
+      actor: admin,
+      action: "delete",
+      entity: "ingredient",
+      entityId: id,
+      summary: `Deleted ingredient "${ingredient.name}" inline and unlinked from products`,
+    }).catch(() => {});
+
+    revalidatePath("/admin/products");
+    revalidatePath("/admin/content/ingredients");
+    revalidatePath("/shop");
+
+    return { success: true };
+  } catch (error) {
+    console.error("[admin/products] deleteIngredientInlineAction error:", error);
+    return {
+      success: false,
+      error: error.message || "Failed to delete ingredient",
+    };
+  }
+}
+
+export async function createIngredientInlineAction(name) {
+  try {
+    await requireAdmin();
+    if (!name?.trim()) return { success: false, error: "Name is required" };
+    const trimmed = name.trim();
+    const slug = slugify(trimmed);
+
+    let ingredient = await prisma.ingredient.findUnique({
+      where: { slug },
+    });
+    if (!ingredient) {
+      ingredient = await prisma.ingredient.create({
+        data: { name: trimmed, slug },
+      });
+    }
+
+    revalidatePath("/admin/products");
+    revalidatePath("/admin/content/ingredients");
+    return { success: true, data: { id: ingredient.id, name: ingredient.name } };
+  } catch (error) {
+    console.error("[admin/products] createIngredientInlineAction error:", error);
+    return {
+      success: false,
+      error: error.message || "Failed to create ingredient",
+    };
+  }
+}
+
 export async function saveProductAction(_prev, formData) {
   try {
     const admin = await requireAdmin();

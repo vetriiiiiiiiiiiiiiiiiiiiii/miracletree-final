@@ -18,7 +18,13 @@ import { UsageStepEditor } from "@/components/admin/UsageStepEditor";
 import { ProductIngredientEditor } from "@/components/admin/ProductIngredientEditor";
 import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import SearchableSelect from "@/components/ui/SearchableSelect";
-import { saveProductAction, createCategoryInlineAction } from "@/app/actions/admin/products";
+import {
+  saveProductAction,
+  createCategoryInlineAction,
+  deleteCategoryInlineAction,
+  createProductTypeInlineAction,
+  deleteProductTypeInlineAction,
+} from "@/app/actions/admin/products";
 const INITIAL = { status: "idle" };
 const TABS = [
   "General",
@@ -54,6 +60,63 @@ export function ProductEditor({
   const [slug, setSlug] = useState(draft.slug);
   const [slugTouched, setSlugTouched] = useState(Boolean(draft.slug));
   const [categoryId, setCategoryId] = useState(draft.categoryId);
+  const [categoryList, setCategoryList] = useState(categories || []);
+  const [productType, setProductType] = useState(draft.productType ?? "");
+  const [productTypeList, setProductTypeList] = useState(productTypes || []);
+
+  useEffect(() => {
+    setCategoryList(categories || []);
+  }, [categories]);
+
+  useEffect(() => {
+    setProductTypeList(productTypes || []);
+  }, [productTypes]);
+
+  const handleAddNewCategory = async (name) => {
+    const res = await createCategoryInlineAction(name);
+    if (res?.success && res.data) {
+      setCategoryList((prev) => {
+        if (prev.some((c) => c.id === res.data.id)) return prev;
+        return [...prev, res.data];
+      });
+    }
+    return res;
+  };
+
+  const handleDeleteCategory = async (cat) => {
+    const res = await deleteCategoryInlineAction(cat.id);
+    if (res?.success) {
+      setCategoryList((prev) => prev.filter((c) => c.id !== cat.id));
+      if (categoryId === cat.id) {
+        setCategoryId("");
+      }
+      return { success: true };
+    }
+    return { success: false, error: res?.error || "Failed to delete category" };
+  };
+
+  const handleAddNewProductType = async (name) => {
+    const res = await createProductTypeInlineAction(name);
+    if (res?.success && res.data) {
+      setProductTypeList((prev) => {
+        if (prev.some((t) => t.value === res.data.value)) return prev;
+        return [...prev, res.data];
+      });
+    }
+    return res;
+  };
+
+  const handleDeleteProductType = async (item) => {
+    const res = await deleteProductTypeInlineAction(item.value);
+    if (res?.success) {
+      setProductTypeList((prev) => prev.filter((t) => t.value !== item.value));
+      if (productType === item.value) {
+        setProductType("");
+      }
+      return { success: true };
+    }
+    return { success: false, error: res?.error || "Failed to delete product type" };
+  };
   const [description, setDescription] = useState(draft.description);
   const [story, setStory] = useState(draft.story);
   const [price, setPrice] = useState(draft.price ?? "");
@@ -188,8 +251,16 @@ export function ProductEditor({
                   valueKey="id"
                   displayKey="name"
                   placeholder="Select a category..."
+                  options={[
+                    { id: "", name: "Unspecified", canDelete: false },
+                    ...categoryList,
+                  ]}
                   fetchFn={async (search) => {
-                    const filtered = categories.filter((c) =>
+                    const list = [
+                      { id: "", name: "Unspecified", canDelete: false },
+                      ...categoryList,
+                    ];
+                    const filtered = list.filter((c) =>
                       c.name.toLowerCase().includes(search.toLowerCase()),
                     );
                     return {
@@ -198,7 +269,13 @@ export function ProductEditor({
                       pagination: { hasMore: false },
                     };
                   }}
-                  onAddNew={createCategoryInlineAction}
+                  onAddNew={handleAddNewCategory}
+                  onDelete={handleDeleteCategory}
+                  deleteConfirmTitle={(item) => `Delete “${item.name}”?`}
+                  deleteConfirmBody={(item) =>
+                    `Are you sure you want to delete category “${item.name}”? Any products using this metadata will be replaced with Unspecified.`
+                  }
+                  error={errors.categoryId}
                 />
                 <input
                   type="hidden"
@@ -206,15 +283,44 @@ export function ProductEditor({
                   value={categoryId || ""}
                 />
 
-                <Select
+                <SearchableSelect
                   label="Product type"
-                  name="productType"
-                  defaultValue={draft.productType}
+                  value={productType}
+                  onChange={(val) => setProductType(val)}
+                  valueKey="value"
+                  displayKey="label"
+                  placeholder="Select product type..."
                   options={[
-                    { value: "", label: "Unspecified" },
-                    ...productTypes,
+                    { value: "", label: "Unspecified", canDelete: false },
+                    ...productTypeList,
                   ]}
+                  fetchFn={async (search) => {
+                    const list = [
+                      { value: "", label: "Unspecified", canDelete: false },
+                      ...productTypeList,
+                    ];
+                    const filtered = list.filter((t) =>
+                      t.label.toLowerCase().includes(search.toLowerCase()),
+                    );
+                    return {
+                      success: true,
+                      data: filtered,
+                      pagination: { hasMore: false },
+                    };
+                  }}
+                  onAddNew={handleAddNewProductType}
+                  onDelete={handleDeleteProductType}
+                  deleteConfirmTitle={(item) => `Delete “${item.label}”?`}
+                  deleteConfirmBody={(item) =>
+                    `Are you sure you want to delete product type “${item.label}”? Any products using this metadata will be replaced with Unspecified.`
+                  }
                   hint="Drives the storefront type filter."
+                  error={errors.productType}
+                />
+                <input
+                  type="hidden"
+                  name="productType"
+                  value={productType || ""}
                 />
               </div>
 

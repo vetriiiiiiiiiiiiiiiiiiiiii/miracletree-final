@@ -1,5 +1,6 @@
 "use client";
-import { useActionState, useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { Input, Textarea, FormMessage } from "@/components/ui/Field";
 import { Card, Table, Td, Tr, EmptyRow } from "@/components/admin/ui";
@@ -105,34 +106,71 @@ export function BenefitEditor({ productId, benefits }) {
 }
 
 function BenefitModal({ productId, benefit, onClose }) {
-  const [state, action, pending] = useActionState(
-    saveProductBenefitAction,
-    INITIAL,
-  );
+  const router = useRouter();
+  const [mounted, setMounted] = useState(false);
+  const [title, setTitle] = useState(benefit?.title ?? "");
+  const [body, setBody] = useState(benefit?.body ?? "");
+  const [error, setError] = useState(null);
+  const [pending, setPending] = useState(false);
 
-  return (
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const handleSave = async (e) => {
+    if (e?.preventDefault) e.preventDefault();
+    if (!title.trim()) {
+      setError("Title is required.");
+      return;
+    }
+    setPending(true);
+    setError(null);
+    try {
+      const formData = new FormData();
+      formData.set("productId", productId);
+      if (benefit) formData.set("id", benefit.id);
+      formData.set("title", title);
+      formData.set("body", body);
+
+      const res = await saveProductBenefitAction(null, formData);
+      if (res?.status === "error") {
+        setError(res.message);
+        setPending(false);
+      } else {
+        onClose();
+        router.refresh();
+      }
+    } catch (err) {
+      setError(err.message || "Failed to save benefit");
+      setPending(false);
+    }
+  };
+
+  if (!mounted) return null;
+
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div
         className="absolute inset-0 bg-ink-950/80 backdrop-blur-sm"
         onClick={onClose}
       />
-      <div className="relative w-full max-w-lg bg-ink shadow-2xl">
-        <form
-          action={async (formData) => {
-            formData.set("productId", productId);
-            if (benefit) formData.set("id", benefit.id);
-            await action(formData);
-            if (state.status !== "error") onClose();
-          }}
-          className="grid gap-6 p-6"
-        >
+      <div
+        className="relative w-full max-w-lg bg-ink shadow-2xl"
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && !e.shiftKey && e.target.tagName !== "TEXTAREA") {
+            e.preventDefault();
+            handleSave(e);
+          }
+        }}
+      >
+        <div className="grid gap-6 p-6">
           <div>
             <h2 className="text-xl text-cream-50">
               {benefit ? "Edit benefit" : "New benefit"}
             </h2>
-            {state.status === "error" ? (
+            {error ? (
               <div className="mt-4">
-                <FormMessage>{state.message}</FormMessage>
+                <FormMessage>{error}</FormMessage>
               </div>
             ) : null}
           </div>
@@ -141,13 +179,18 @@ function BenefitModal({ productId, benefit, onClose }) {
             label="Title"
             name="title"
             required
-            defaultValue={benefit?.title ?? ""}
+            value={title}
+            onChange={(e) => {
+              setTitle(e.target.value);
+              if (error) setError(null);
+            }}
           />
           <Textarea
             label="Description"
             name="body"
             rows={3}
-            defaultValue={benefit?.body ?? ""}
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
             hint="Optional. Keep it brief."
           />
 
@@ -161,15 +204,17 @@ function BenefitModal({ productId, benefit, onClose }) {
               Cancel
             </button>
             <button
-              type="submit"
+              type="button"
+              onClick={handleSave}
               disabled={pending}
               className="bg-emerald-500 px-5 py-2.5 text-[0.7rem] uppercase tracking-[0.14em] text-on-accent transition-colors hover:bg-emerald-400 disabled:opacity-60"
             >
               {pending ? "Saving…" : "Save benefit"}
             </button>
           </div>
-        </form>
+        </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

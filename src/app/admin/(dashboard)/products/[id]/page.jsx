@@ -3,14 +3,14 @@ import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth";
 import { PageHeader } from "@/components/admin/ui";
 import { ProductEditor } from "@/components/admin/ProductEditor";
-import { PRODUCT_TYPE_OPTIONS } from "@/lib/shop";
+import { PRODUCT_TYPE_OPTIONS, getProductTypes } from "@/lib/shop";
 import { FormMessage } from "@/components/ui/Field";
 export const dynamic = "force-dynamic";
 export default async function EditProductPage({ params, searchParams }) {
   await requireAdmin();
   const { id } = await params;
   const { created } = await searchParams;
-  const [product, categories, allIngredients] = await Promise.all([
+  const [product, categories, allIngredients, productTypes] = await Promise.all([
     prisma.product.findUnique({
       where: { id },
       include: {
@@ -36,6 +36,7 @@ export default async function EditProductPage({ params, searchParams }) {
       orderBy: { name: "asc" },
       select: { id: true, name: true },
     }),
+    getProductTypes(prisma),
   ]);
   if (!product) notFound();
   const draft = {
@@ -92,7 +93,7 @@ export default async function EditProductPage({ params, searchParams }) {
       <ProductEditor
         draft={draft}
         categories={categories}
-        productTypes={PRODUCT_TYPE_OPTIONS}
+        productTypes={productTypes}
         images={product.images.map((image) => ({
           id: image.id,
           url: image.url,

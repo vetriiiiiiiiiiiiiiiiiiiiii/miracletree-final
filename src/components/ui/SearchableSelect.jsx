@@ -7,6 +7,8 @@ import React, {
   useContext,
 } from "react";
 import { ChevronDown, Search, Loader2, X, Plus } from "lucide-react";
+import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
+
 // We don't have ThemeContext in this project, so we'll mock it or just omit it safely
 const ThemeContext = React.createContext({ theme: { name: "dark" } });
 
@@ -15,10 +17,14 @@ export default function SearchableSelect({
   value,
   onChange,
   fetchFn,
+  options = null,
   placeholder = "Search...",
   disabled = false,
   theme = {},
   onAddNew,
+  onDelete,
+  deleteConfirmTitle,
+  deleteConfirmBody,
   displayKey = "name",
   selectedDisplayKey,
   extraInfo,
@@ -27,6 +33,8 @@ export default function SearchableSelect({
   isMulti = false,
   listMaxHeight = "240px",
   hideSelectedPills = false,
+  hint,
+  error,
 }) {
   const contextTheme = useContext(ThemeContext)?.theme;
   const activeTheme =
@@ -41,12 +49,38 @@ export default function SearchableSelect({
   const [addingNew, setAddingNew] = useState(false);
   const [selectedItem, setSelectedItem] = useState(isMulti ? [] : null);
 
+  const [pendingDeleteItem, setPendingDeleteItem] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState(null);
+
   const containerRef = useRef(null);
   const listRef = useRef(null);
   const searchRef = useRef(null);
   const debounceRef = useRef(null);
   const currentSearch = useRef("");
   const currentPage = useRef(1);
+
+  const getItemKey = useCallback(
+    (item) => {
+      if (!item) return "";
+      return item[valueKey] ?? item.id ?? item._id ?? item.value ?? "";
+    },
+    [valueKey],
+  );
+
+  const getItemDisplay = useCallback(
+    (item) => {
+      if (!item) return "";
+      return (
+        item[selectedDisplayKey || displayKey] ??
+        item.name ??
+        item.label ??
+        item.title ??
+        ""
+      );
+    },
+    [displayKey, selectedDisplayKey],
+  );
 
   useEffect(() => {
     const handleOutside = (e) => {
@@ -66,32 +100,41 @@ export default function SearchableSelect({
 
   const loadItems = useCallback(
     async (searchVal, pageNum, append = false) => {
-      if (!fetchFn || disabled) return;
-      setLoading(true);
-      try {
-        const res = await fetchFn(searchVal, pageNum);
-        if (res?.success) {
-          const newData = res.data || [];
-          setItems((prev) => {
-            if (!append) return newData;
-            const existingIds = new Set(
-              prev.map((i) => i._id || i.id || i[valueKey]),
-            );
-            const uniqueNewData = newData.filter(
-              (i) => !existingIds.has(i._id || i.id || i[valueKey]),
-            );
-            return [...prev, ...uniqueNewData];
-          });
-          setHasMore(res.pagination?.hasMore ?? false);
-          currentPage.current = pageNum;
+      if (disabled) return;
+      if (fetchFn) {
+        setLoading(true);
+        try {
+          const res = await fetchFn(searchVal, pageNum);
+          if (res?.success) {
+            const newData = res.data || [];
+            setItems((prev) => {
+              if (!append) return newData;
+              const existingIds = new Set(prev.map(getItemKey));
+              const uniqueNewData = newData.filter(
+                (i) => !existingIds.has(getItemKey(i)),
+              );
+              return [...prev, ...uniqueNewData];
+            });
+            setHasMore(res.pagination?.hasMore ?? false);
+            currentPage.current = pageNum;
+          }
+        } catch (err) {
+          console.error("[SearchableSelect] fetchFn error:", err);
+        } finally {
+          setLoading(false);
         }
-      } catch (err) {
-        console.error("[SearchableSelect] fetchFn error:", err);
-      } finally {
-        setLoading(false);
+      } else if (options) {
+        const query = (searchVal || "").toLowerCase().trim();
+        const filtered = query
+          ? options.filter((item) =>
+              getItemDisplay(item).toLowerCase().includes(query),
+            )
+          : options;
+        setItems(filtered);
+        setHasMore(false);
       }
     },
-    [fetchFn, disabled],
+    [fetchFn, options, disabled, getItemKey, getItemDisplay],
   );
 
   useEffect(() => {
@@ -133,23 +176,23 @@ export default function SearchableSelect({
   const handleSelect = (item) => {
     if (isMulti) {
       const currentValues = Array.isArray(value) ? value : [];
-      const itemKey = item[valueKey] || item.id;
+      const itemKey = getItemKey(item);
       if (currentValues.includes(itemKey)) {
         const newValues = currentValues.filter((v) => v !== itemKey);
-        const newSelected = selectedItem.filter(
-          (i) => (i[valueKey] || i.id) !== itemKey,
+        const newSelected = (selectedItem || []).filter(
+          (i) => getItemKey(i) !== itemKey,
         );
         setSelectedItem(newSelected);
-        onChange(newValues, newSelected);
+        onChange?.(newValues, newSelected);
       } else {
         const newValues = [...currentValues, itemKey];
         const newSelected = [...(selectedItem || []), item];
         setSelectedItem(newSelected);
-        onChange(newValues, newSelected);
+        onChange?.(newValues, newSelected);
       }
     } else {
       setSelectedItem(item);
-      onChange(item[valueKey] || item.id, item);
+      onChange?.(getItemKey(item), item);
       setIsOpen(false);
     }
   };
@@ -157,20 +200,20 @@ export default function SearchableSelect({
   const handleClear = (e) => {
     e.stopPropagation();
     setSelectedItem(isMulti ? [] : null);
-    onChange(isMulti ? [] : "", isMulti ? [] : null);
+    onChange?.(isMulti ? [] : "", isMulti ? [] : null);
   };
 
   const handleRemovePill = (e, itemToRemove) => {
     e.stopPropagation();
     if (!isMulti) return;
-    const itemKey = itemToRemove[valueKey] || itemToRemove.id;
+    const itemKey = getItemKey(itemToRemove);
     const currentValues = Array.isArray(value) ? value : [];
     const newValues = currentValues.filter((v) => v !== itemKey);
-    const newSelected = selectedItem.filter(
-      (i) => (i[valueKey] || i.id) !== itemKey,
+    const newSelected = (selectedItem || []).filter(
+      (i) => getItemKey(i) !== itemKey,
     );
     setSelectedItem(newSelected);
-    onChange(newValues, newSelected);
+    onChange?.(newValues, newSelected);
   };
 
   useEffect(() => {
@@ -179,12 +222,11 @@ export default function SearchableSelect({
         setSelectedItem([]);
         return;
       }
+      const sourcePool = [...items, ...(options || [])];
       const newSelected = value.map((val) => {
-        const existing = selectedItem?.find(
-          (i) => (i[valueKey] || i.id) === val,
-        );
+        const existing = selectedItem?.find((i) => getItemKey(i) === val);
         if (existing) return existing;
-        const found = items.find((i) => (i[valueKey] || i.id) === val);
+        const found = sourcePool.find((i) => getItemKey(i) === val);
         if (found) return found;
         return { [valueKey]: val, [displayKey]: val };
       });
@@ -192,21 +234,22 @@ export default function SearchableSelect({
         setSelectedItem(newSelected);
       }
     } else {
-      if (!value) {
+      if (value === null || value === undefined || value === "") {
         setSelectedItem(null);
         return;
       }
-      const currentId = selectedItem?.[valueKey] || selectedItem?.id;
-      if (currentId === value) return;
-      const found = items.find((i) => (i[valueKey] || i.id) === value);
-      if (found) setSelectedItem(found);
-      else if (
-        initialItem &&
-        (initialItem[valueKey] || initialItem.id) === value
-      )
+      const currentId = getItemKey(selectedItem);
+      if (currentId === value && selectedItem) return;
+
+      const sourcePool = [...items, ...(options || [])];
+      const found = sourcePool.find((i) => getItemKey(i) === value);
+      if (found) {
+        setSelectedItem(found);
+      } else if (initialItem && getItemKey(initialItem) === value) {
         setSelectedItem(initialItem);
+      }
     }
-  }, [value, items, initialItem]);
+  }, [value, items, options, initialItem, isMulti, getItemKey, displayKey, valueKey, selectedItem]);
 
   const handleAddNew = async () => {
     if (!onAddNew || !search.trim() || addingNew) return;
@@ -220,18 +263,18 @@ export default function SearchableSelect({
       }
       if (item) {
         if (isMulti) {
-          const itemKey = item[valueKey] || item.id;
+          const itemKey = getItemKey(item);
           const currentValues = Array.isArray(value) ? value : [];
           if (!currentValues.includes(itemKey)) {
             const newValues = [...currentValues, itemKey];
             const newSelected = [...(selectedItem || []), item];
             setSelectedItem(newSelected);
-            onChange(newValues, newSelected);
+            onChange?.(newValues, newSelected);
           }
           setSearch("");
         } else {
           setSelectedItem(item);
-          onChange(item[valueKey] || item.id, item);
+          onChange?.(getItemKey(item), item);
           setIsOpen(false);
         }
       }
@@ -247,23 +290,20 @@ export default function SearchableSelect({
     activeTheme?.text === "#0F172A" ||
     activeTheme?.text === "#0f172a" ||
     activeTheme?.text === "#000000";
-  const borderColor =
-    activeTheme?.card?.border ||
-    activeTheme?.navbar?.border ||
-    (isLight ? "#E2E8F0" : "rgba(255,255,255,0.12)");
-  const cardBg =
-    activeTheme?.card?.bg ||
-    activeTheme?.cardBg ||
-    (isLight ? "#FFFFFF" : "#131b2e");
   const text = activeTheme?.text || (isLight ? "#0F172A" : "#ffffff");
 
   const hasExactMatch = items.some(
-    (i) => i[displayKey]?.toLowerCase() === search.trim().toLowerCase(),
+    (i) => getItemDisplay(i).toLowerCase() === search.trim().toLowerCase(),
   );
+
+  const displaySelectedItem =
+    selectedItem ||
+    (options ? options.find((i) => getItemKey(i) === value) : null) ||
+    (initialItem && getItemKey(initialItem) === value ? initialItem : null);
 
   return (
     <div
-      className="space-y-2"
+      className="space-y-1.5"
       ref={containerRef}
       style={{ position: "relative", zIndex: isOpen ? 50 : "auto" }}
     >
@@ -283,16 +323,16 @@ export default function SearchableSelect({
           ${disabled ? "opacity-40 cursor-not-allowed" : "hover:border-cream-400"}
         `}
       >
-        <div className="flex-1 flex flex-wrap gap-2 items-center">
+        <div className="flex-1 flex flex-wrap gap-2 items-center min-w-0">
           {isMulti ? (
             selectedItem && selectedItem.length > 0 && !hideSelectedPills ? (
               selectedItem.map((item, idx) => (
                 <span
-                  key={item[valueKey] || item.id || idx}
-                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-xs font-medium border bg-white/10 border-white/10`}
+                  key={getItemKey(item) || idx}
+                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-xs font-medium border bg-white/10 border-white/10"
                 >
                   {item.flag && <span className="text-sm">{item.flag}</span>}
-                  {item[displayKey]}
+                  {getItemDisplay(item)}
                   <button
                     type="button"
                     onClick={(e) => handleRemovePill(e, item)}
@@ -309,17 +349,17 @@ export default function SearchableSelect({
                   : placeholder}
               </span>
             )
-          ) : selectedItem ? (
+          ) : displaySelectedItem ? (
             <span className="text-sm font-medium truncate flex items-center gap-2">
-              {selectedItem?.flag && (
+              {displaySelectedItem?.flag && (
                 <span className="text-base leading-none">
-                  {selectedItem.flag}
+                  {displaySelectedItem.flag}
                 </span>
               )}
               <span className="truncate">
-                {selectedItem[selectedDisplayKey || displayKey]}
+                {getItemDisplay(displaySelectedItem)}
               </span>
-              {selectedItem.isVerified === false && (
+              {displaySelectedItem.isVerified === false && (
                 <span
                   className="ml-1 text-yellow-400 text-xs font-bold"
                   title="Unverified peer-added metadata"
@@ -335,7 +375,7 @@ export default function SearchableSelect({
 
         <div className="flex items-center gap-1 shrink-0">
           {((isMulti && selectedItem?.length > 0) ||
-            (!isMulti && selectedItem)) &&
+            (!isMulti && (selectedItem || value))) &&
             !disabled && (
               <button
                 type="button"
@@ -351,6 +391,13 @@ export default function SearchableSelect({
           />
         </div>
       </div>
+
+      {hint && !error && (
+        <p className="text-xs text-cream-400 mt-1">{hint}</p>
+      )}
+      {error && (
+        <p className="text-xs text-danger mt-1" role="alert">{error}</p>
+      )}
 
       {isOpen && (
         <div
@@ -414,7 +461,7 @@ export default function SearchableSelect({
               </div>
             )}
             {items.map((item, index) => {
-              const itemValue = item[valueKey] || item._id || item.id;
+              const itemValue = getItemKey(item);
               const reactKey = item._id || item.id || itemValue || index;
               const isSelected = isMulti
                 ? Array.isArray(value) && value.includes(itemValue)
@@ -424,18 +471,39 @@ export default function SearchableSelect({
                   key={reactKey}
                   onClick={() => handleSelect(item)}
                   className={`
-                    flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors
+                    group flex items-center justify-between gap-3 px-4 py-3 cursor-pointer transition-colors
                     ${isSelected ? "bg-white/15 text-cream-50" : "hover:bg-white/5 text-cream-100"}
                   `}
                 >
-                  {isSelected && (
-                    <div className="w-1.5 h-1.5 rounded-full shrink-0 bg-blue-400" />
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm truncate leading-snug flex items-center gap-2">
-                      <span className="truncate">{item[displayKey]}</span>
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    {isSelected && (
+                      <div className="w-1.5 h-1.5 rounded-full shrink-0 bg-blue-400" />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm truncate leading-snug flex items-center gap-2">
+                        <span className="truncate">{getItemDisplay(item)}</span>
+                      </div>
                     </div>
                   </div>
+
+                  {onDelete &&
+                    itemValue !== "" &&
+                    itemValue !== null &&
+                    itemValue !== undefined &&
+                    item.canDelete !== false && (
+                    <button
+                      type="button"
+                      title={`Delete ${getItemDisplay(item)}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setDeleteError(null);
+                        setPendingDeleteItem(item);
+                      }}
+                      className="opacity-60 hover:opacity-100 group-hover:opacity-100 p-1.5 rounded text-cream-400 hover:text-red-400 hover:bg-white/10 transition-colors shrink-0"
+                    >
+                      <X size={14} />
+                    </button>
+                  )}
                 </div>
               );
             })}
@@ -447,6 +515,77 @@ export default function SearchableSelect({
           </div>
         </div>
       )}
+
+      {pendingDeleteItem && (
+        <ConfirmDialog
+          open={Boolean(pendingDeleteItem)}
+          title={
+            typeof deleteConfirmTitle === "function"
+              ? deleteConfirmTitle(pendingDeleteItem)
+              : deleteConfirmTitle ||
+                `Delete “${getItemDisplay(pendingDeleteItem)}”?`
+          }
+          body={
+            typeof deleteConfirmBody === "function"
+              ? deleteConfirmBody(pendingDeleteItem)
+              : deleteConfirmBody ||
+                `Are you sure you want to delete this category? This action cannot be undone.`
+          }
+          confirmLabel="Delete"
+          tone="danger"
+          loading={isDeleting}
+          error={deleteError}
+          onCancel={() => {
+            if (isDeleting) return;
+            setPendingDeleteItem(null);
+            setDeleteError(null);
+          }}
+          onConfirm={async () => {
+            setIsDeleting(true);
+            setDeleteError(null);
+            try {
+              const res = await onDelete(pendingDeleteItem);
+              if (res && res.success === false) {
+                setDeleteError(res.error || "Failed to delete");
+                setIsDeleting(false);
+                return;
+              }
+              if (res && res.ok === false) {
+                setDeleteError(res.error || "Failed to delete");
+                setIsDeleting(false);
+                return;
+              }
+              // Successfully deleted
+              const deletedKey = getItemKey(pendingDeleteItem);
+              setItems((prev) =>
+                prev.filter((i) => getItemKey(i) !== deletedKey),
+              );
+              if (!isMulti && getItemKey(selectedItem) === deletedKey) {
+                setSelectedItem(null);
+                onChange?.("", null);
+              } else if (
+                isMulti &&
+                Array.isArray(value) &&
+                value.includes(deletedKey)
+              ) {
+                const nextVal = value.filter((v) => v !== deletedKey);
+                const nextItems = (selectedItem || []).filter(
+                  (i) => getItemKey(i) !== deletedKey,
+                );
+                setSelectedItem(nextItems);
+                onChange?.(nextVal, nextItems);
+              }
+              setPendingDeleteItem(null);
+              setDeleteError(null);
+            } catch (err) {
+              setDeleteError(err.message || "Failed to delete");
+            } finally {
+              setIsDeleting(false);
+            }
+          }}
+        />
+      )}
     </div>
   );
 }
+

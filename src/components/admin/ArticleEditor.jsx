@@ -2,10 +2,15 @@
 import Link from "next/link";
 import { useActionState, useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
-import { Input, Textarea, Select, FormMessage } from "@/components/ui/Field";
+import { Input, Textarea, FormMessage } from "@/components/ui/Field";
 import { Card, FieldGroup } from "@/components/admin/ui";
 import { RichTextEditor } from "@/components/admin/RichTextEditor";
-import { saveArticleAction } from "@/app/actions/admin/content";
+import SearchableSelect from "@/components/ui/SearchableSelect";
+import {
+  saveArticleAction,
+  createArticleCategoryInlineAction,
+  deleteArticleCategoryInlineAction,
+} from "@/app/actions/admin/content";
 import { readingMinutes, slugify } from "@/lib/utils";
 const INITIAL = { status: "idle" };
 export function ArticleEditor({ draft, categories }) {
@@ -15,6 +20,36 @@ export function ArticleEditor({ draft, categories }) {
   const [slugTouched, setSlugTouched] = useState(Boolean(draft.slug));
   const [content, setContent] = useState(draft.content);
   const [excerpt, setExcerpt] = useState(draft.excerpt);
+  const [categoryId, setCategoryId] = useState(draft.categoryId ?? "");
+  const [categoryList, setCategoryList] = useState(categories || []);
+
+  useEffect(() => {
+    setCategoryList(categories || []);
+  }, [categories]);
+
+  const handleAddNewCategory = async (name) => {
+    const res = await createArticleCategoryInlineAction(name);
+    if (res?.success && res.data) {
+      setCategoryList((prev) => {
+        if (prev.some((c) => c.id === res.data.id)) return prev;
+        return [...prev, res.data];
+      });
+    }
+    return res;
+  };
+
+  const handleDeleteCategory = async (cat) => {
+    const res = await deleteArticleCategoryInlineAction(cat.id);
+    if (res?.success) {
+      setCategoryList((prev) => prev.filter((c) => c.id !== cat.id));
+      if (categoryId === cat.id) {
+        setCategoryId("");
+      }
+      return { success: true };
+    }
+    return { success: false, error: res?.error || "Failed to delete category" };
+  };
+
   useEffect(() => {
     if (!slugTouched) setSlug(slugify(title));
   }, [title, slugTouched]);
@@ -140,14 +175,43 @@ export function ArticleEditor({ draft, categories }) {
 
         <Card title="Details">
           <div className="grid gap-4">
-            <Select
+            <SearchableSelect
               label="Category"
-              name="categoryId"
-              defaultValue={draft.categoryId}
+              value={categoryId}
+              onChange={(val) => setCategoryId(val)}
+              valueKey="id"
+              displayKey="name"
+              placeholder="Select a category..."
               options={[
-                { value: "", label: "Uncategorised" },
-                ...categories.map((c) => ({ value: c.id, label: c.name })),
+                { id: "", name: "Uncategorised", canDelete: false },
+                ...categoryList,
               ]}
+              fetchFn={async (search) => {
+                const list = [
+                  { id: "", name: "Uncategorised", canDelete: false },
+                  ...categoryList,
+                ];
+                const filtered = list.filter((c) =>
+                  c.name.toLowerCase().includes(search.toLowerCase()),
+                );
+                return {
+                  success: true,
+                  data: filtered,
+                  pagination: { hasMore: false },
+                };
+              }}
+              onAddNew={handleAddNewCategory}
+              onDelete={handleDeleteCategory}
+              deleteConfirmTitle={(item) => `Delete “${item.name}”?`}
+              deleteConfirmBody={(item) =>
+                `Are you sure you want to delete category “${item.name}”? Any articles using this metadata will be replaced with Uncategorised.`
+              }
+              error={errors.categoryId}
+            />
+            <input
+              type="hidden"
+              name="categoryId"
+              value={categoryId || ""}
             />
             <Input
               label="Author"
