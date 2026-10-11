@@ -60,17 +60,30 @@ function GroupPhotos({ group, groupOptions }) {
     if (!files?.length) return;
     setError(null);
     const uploaded = [];
-    for (const [index, file] of [...files].entries()) {
-      setProgress(`Uploading ${index + 1} of ${files.length}…`);
+    const fileList = [...files];
+
+    for (const [index, file] of fileList.entries()) {
       try {
-        uploaded.push(await uploadImage(file, "gallery"));
+        const photo = await uploadImage(file, "gallery", {
+          onProgress: (p) => {
+            setProgress({
+              percent: p.percent,
+              message: p.message,
+              retrying: p.retrying,
+              current: index + 1,
+              total: fileList.length,
+              name: file.name,
+            });
+          },
+        });
+        uploaded.push(photo);
       } catch (e) {
         setError(`${file.name}: ${e.message}`);
         break;
       }
     }
     if (uploaded.length) {
-      setProgress("Saving…");
+      setProgress({ percent: 100, message: "Saving photos to gallery…", retrying: false });
       const result = await addGalleryPhotosAction({
         groupId: group.id,
         photos: uploaded,
@@ -129,11 +142,41 @@ function GroupPhotos({ group, groupOptions }) {
               progress && "pointer-events-none opacity-60",
             )}
           >
-            {progress ?? "Upload photos"}
+            {progress
+              ? typeof progress === "string"
+                ? progress
+                : `Uploading (${progress.percent}%)`
+              : "Upload photos"}
           </label>
         </>
       }
     >
+      {progress && typeof progress === "object" ? (
+        <div className="mb-4 space-y-1.5 rounded border border-border-subtle bg-ink-800 p-3">
+          <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
+            <span
+              className={cn(
+                "font-medium tracking-wide",
+                progress.retrying ? "text-amber-400 animate-pulse" : "text-emerald-400",
+              )}
+            >
+              {progress.total > 1 ? `[${progress.current}/${progress.total}] ` : ""}
+              {progress.message || `Uploading ${progress.percent}%…`}
+            </span>
+            <span className="font-mono text-xs text-cream-300">{progress.percent}%</span>
+          </div>
+          <div className="h-1.5 w-full overflow-hidden rounded bg-ink-950">
+            <div
+              className={cn(
+                "h-full transition-all duration-300",
+                progress.retrying ? "bg-amber-400" : "bg-emerald-400",
+              )}
+              style={{ width: `${progress.percent}%` }}
+            />
+          </div>
+        </div>
+      ) : null}
+
       {error ? <FormMessage>{error}</FormMessage> : null}
 
       {photos.length ? (

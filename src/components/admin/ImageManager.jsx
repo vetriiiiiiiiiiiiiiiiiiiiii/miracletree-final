@@ -15,6 +15,8 @@ import {
  * fallback, so position is meaningful and is stated in the UI rather than left
  * for the user to discover.
  */
+import { uploadFileInChunks } from "@/lib/chunked-upload-client";
+
 export function ImageManager({ productId, images }) {
   const router = useRouter();
   const inputRef = useRef(null);
@@ -27,25 +29,31 @@ export function ImageManager({ productId, images }) {
   const ordered = order
     ? order.map((id) => images.find((i) => i.id === id)).filter(Boolean)
     : images;
+
   const upload = async (files) => {
     if (!files?.length) return;
     setUploading(true);
     setError(null);
-    for (const [index, file] of [...files].entries()) {
-      setProgress(`Uploading ${index + 1} of ${files.length}…`);
-      const body = new FormData();
-      body.set("file", file);
-      body.set("folder", "products");
+    const fileList = [...files];
+
+    for (const [index, file] of fileList.entries()) {
       try {
-        const response = await fetch("/api/admin/upload", {
-          method: "POST",
-          body,
+        const data = await uploadFileInChunks({
+          file,
+          endpoint: "/api/admin/upload",
+          folder: "products",
+          onProgress: (p) => {
+            setProgress({
+              percent: p.percent,
+              message: p.message,
+              retrying: p.retrying,
+              currentFile: index + 1,
+              totalFiles: fileList.length,
+              fileName: file.name,
+            });
+          },
         });
-        const data = await response.json();
-        if (!response.ok) {
-          setError(data.error ?? "That upload failed.");
-          break;
-        }
+
         const result = await addProductImageAction({
           productId,
           url: data.url,
@@ -54,8 +62,8 @@ export function ImageManager({ productId, images }) {
           setError(result.error ?? "Could not attach that image.");
           break;
         }
-      } catch {
-        setError("The upload failed. Check your connection and try again.");
+      } catch (err) {
+        setError(err.message || "The upload failed. Check your connection.");
         break;
       }
     }
@@ -167,6 +175,34 @@ export function ImageManager({ productId, images }) {
         </p>
       )}
 
+      {uploading && progress ? (
+        <div className="space-y-1.5 rounded border border-border-subtle bg-ink-800 p-3">
+          <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
+            <span
+              className={cn(
+                "font-medium tracking-wide",
+                progress.retrying ? "text-amber-400 animate-pulse" : "text-emerald-400",
+              )}
+            >
+              {progress.totalFiles > 1
+                ? `[${progress.currentFile}/${progress.totalFiles}] ${progress.fileName}: `
+                : ""}
+              {progress.message || `Uploading ${progress.percent}%…`}
+            </span>
+            <span className="font-mono text-xs text-cream-300">{progress.percent}%</span>
+          </div>
+          <div className="h-1.5 w-full overflow-hidden rounded bg-ink-950">
+            <div
+              className={cn(
+                "h-full transition-all duration-300",
+                progress.retrying ? "bg-amber-400" : "bg-emerald-400",
+              )}
+              style={{ width: `${progress.percent}%` }}
+            />
+          </div>
+        </div>
+      ) : null}
+
       <div className="flex flex-wrap items-center gap-4">
         <input
           ref={inputRef}
@@ -184,7 +220,7 @@ export function ImageManager({ productId, images }) {
             uploading && "pointer-events-none opacity-60",
           )}
         >
-          {uploading ? (progress ?? "Uploading…") : "Upload images"}
+          {uploading ? "Uploading…" : "Upload images"}
         </label>
 
         <p className="text-xs text-cream-400">

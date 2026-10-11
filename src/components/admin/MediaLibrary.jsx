@@ -7,38 +7,50 @@ import { FormMessage } from "@/components/ui/Field";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { formatDate } from "@/lib/utils";
 import { cn } from "@/lib/utils";
+import { uploadFileInChunks } from "@/lib/chunked-upload-client";
+
 export function MediaLibrary({ items }) {
   const router = useRouter();
   const inputRef = useRef(null);
   const [, startTransition] = useTransition();
   const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState(null);
   const [error, setError] = useState(null);
   const [copied, setCopied] = useState(null);
   const [deleting, setDeleting] = useState(null);
+
   const upload = async (files) => {
     if (!files?.length) return;
     setUploading(true);
     setError(null);
-    for (const file of [...files]) {
-      const body = new FormData();
-      body.set("file", file);
-      body.set("folder", "library");
+    const fileList = [...files];
+
+    for (let i = 0; i < fileList.length; i++) {
+      const file = fileList[i];
       try {
-        const response = await fetch("/api/admin/upload", {
-          method: "POST",
-          body,
+        await uploadFileInChunks({
+          file,
+          endpoint: "/api/admin/upload",
+          folder: "library",
+          onProgress: (p) => {
+            setProgress({
+              percent: p.percent,
+              message: p.message,
+              retrying: p.retrying,
+              currentFile: i + 1,
+              totalFiles: fileList.length,
+              fileName: file.name,
+            });
+          },
         });
-        if (!response.ok) {
-          const data = await response.json();
-          setError(data.error ?? "That upload failed.");
-          break;
-        }
-      } catch {
-        setError("The upload failed. Check your connection and try again.");
+      } catch (err) {
+        setError(`${file.name}: ${err.message || "Upload failed."}`);
         break;
       }
     }
+
     setUploading(false);
+    setProgress(null);
     if (inputRef.current) inputRef.current.value = "";
     startTransition(() => router.refresh());
   };
@@ -93,6 +105,34 @@ export function MediaLibrary({ items }) {
           </>
         }
       >
+        {uploading && progress ? (
+          <div className="mb-6 space-y-2 rounded border border-border-subtle bg-ink-800 p-3">
+            <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
+              <span
+                className={cn(
+                  "font-medium tracking-wide",
+                  progress.retrying ? "text-amber-400 animate-pulse" : "text-emerald-400",
+                )}
+              >
+                {progress.totalFiles > 1
+                  ? `[${progress.currentFile}/${progress.totalFiles}] ${progress.fileName}: `
+                  : ""}
+                {progress.message || `Uploading ${progress.percent}%…`}
+              </span>
+              <span className="font-mono text-xs text-cream-300">{progress.percent}%</span>
+            </div>
+            <div className="h-1.5 w-full overflow-hidden rounded bg-ink-950">
+              <div
+                className={cn(
+                  "h-full transition-all duration-300",
+                  progress.retrying ? "bg-amber-400" : "bg-emerald-400",
+                )}
+                style={{ width: `${progress.percent}%` }}
+              />
+            </div>
+          </div>
+        ) : null}
+
         {items.length === 0 ? (
           <p className="py-14 text-center text-sm text-cream-400">
             Nothing uploaded yet. Images added from a product page appear here

@@ -6,7 +6,8 @@ import { Rating, RatingInput } from "@/components/ui/Rating";
 import { Input, Textarea, FormMessage } from "@/components/ui/Field";
 import { Button } from "@/components/ui/Button";
 import { submitReviewAction } from "@/app/actions/reviews";
-import { formatDate } from "@/lib/utils";
+import { formatDate, cn } from "@/lib/utils";
+import { uploadFileInChunks } from "@/lib/chunked-upload-client";
 const INITIAL = { status: "idle" };
 export function ProductReviews({
   productId,
@@ -188,6 +189,7 @@ function ReviewForm({ productId, productName, user, onDone }) {
   const [rating, setRating] = useState(0);
   const [imageUrl, setImageUrl] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(null);
   const [uploadError, setUploadError] = useState(null);
 
   const handleUpload = async (event) => {
@@ -196,23 +198,29 @@ function ReviewForm({ productId, productName, user, onDone }) {
 
     setUploading(true);
     setUploadError(null);
-
-    const body = new FormData();
-    body.set("file", file);
+    setUploadProgress({ percent: 0, message: "Preparing upload…", retrying: false });
 
     try {
-      const response = await fetch("/api/upload", { method: "POST", body });
-      const data = await response.json();
+      const data = await uploadFileInChunks({
+        file,
+        endpoint: "/api/upload",
+        folder: "reviews",
+        onProgress: (p) => {
+          setUploadProgress({
+            percent: p.percent,
+            message: p.message,
+            retrying: p.retrying,
+          });
+        },
+      });
 
-      if (!response.ok) {
-        setUploadError(data.error ?? "Upload failed.");
-      } else {
-        setImageUrl(data.url);
-      }
-    } catch {
-      setUploadError("Could not upload image. Check your connection.");
+      setImageUrl(data.url);
+    } catch (err) {
+      setUploadError(err.message || "Could not upload image. Check your connection.");
     } finally {
       setUploading(false);
+      setUploadProgress(null);
+      if (event.target) event.target.value = "";
     }
   };
 
@@ -301,19 +309,46 @@ function ReviewForm({ productId, productName, user, onDone }) {
             </button>
           </div>
         ) : (
-          <div className="flex items-center gap-4">
-            <label className="cursor-pointer border border-border-subtle px-4 py-2 text-sm text-cream-100 hover:bg-ink-700/60 transition-colors">
-              {uploading ? "Uploading..." : "Add photo"}
-              <input
-                type="file"
-                accept="image/jpeg,image/png,image/webp,image/avif"
-                className="hidden"
-                onChange={handleUpload}
-                disabled={uploading}
-              />
-            </label>
-            {uploadError ? (
-              <p className="text-xs text-danger">{uploadError}</p>
+          <div className="grid gap-2">
+            <div className="flex items-center gap-4">
+              <label className="cursor-pointer border border-border-subtle px-4 py-2 text-sm text-cream-100 hover:bg-ink-700/60 transition-colors">
+                {uploading ? "Uploading..." : "Add photo"}
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/avif"
+                  className="hidden"
+                  onChange={handleUpload}
+                  disabled={uploading}
+                />
+              </label>
+              {uploadError ? (
+                <p className="text-xs text-danger">{uploadError}</p>
+              ) : null}
+            </div>
+
+            {uploading && uploadProgress ? (
+              <div className="max-w-md space-y-1.5 rounded border border-border-subtle bg-ink-800 p-2.5">
+                <div className="flex items-center justify-between text-[0.68rem]">
+                  <span
+                    className={cn(
+                      "font-medium",
+                      uploadProgress.retrying ? "text-amber-400 animate-pulse" : "text-emerald-400",
+                    )}
+                  >
+                    {uploadProgress.message || `Uploading ${uploadProgress.percent}%…`}
+                  </span>
+                  <span className="font-mono text-cream-300">{uploadProgress.percent}%</span>
+                </div>
+                <div className="h-1.5 w-full overflow-hidden rounded bg-ink-950">
+                  <div
+                    className={cn(
+                      "h-full transition-all duration-300",
+                      uploadProgress.retrying ? "bg-amber-400" : "bg-emerald-400",
+                    )}
+                    style={{ width: `${uploadProgress.percent}%` }}
+                  />
+                </div>
+              </div>
             ) : null}
           </div>
         )}

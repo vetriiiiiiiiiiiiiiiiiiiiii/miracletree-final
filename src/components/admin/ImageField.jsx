@@ -11,16 +11,28 @@ import { cn } from "@/lib/utils";
  * Uploads go through /api/admin/upload, which re-encodes to WebP, strips EXIF
  * and records the file in the media library.
  */
-export async function uploadImage(file, folder) {
-  const body = new FormData();
-  body.set("file", file);
-  body.set("folder", folder);
-  const response = await fetch("/api/admin/upload", { method: "POST", body });
-  const data = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(data.error ?? "That upload failed.");
-  return data; // { id, url, width, height }
+import { uploadFileInChunks } from "@/lib/chunked-upload-client";
+
+/**
+ * An image form field: upload a file, pick one already in the media library,
+ * or paste a path — with a preview of whatever is chosen.
+ *
+ * Uploads use chunk-based slicing and automatic retries to guarantee smooth
+ * uploads even on slow, high-latency, or dropping connections.
+ */
+export async function uploadImage(file, folder = "library", options = {}) {
+  return await uploadFileInChunks({
+    file,
+    endpoint: "/api/admin/upload",
+    folder,
+    alt: options.alt || "",
+    signal: options.signal,
+    onProgress: options.onProgress,
+  });
 }
+
 const isUpload = (url) => typeof url === "string" && url.startsWith("/uploads/");
+
 export function ImageField({
   name,
   label,
@@ -32,22 +44,50 @@ export function ImageField({
 }) {
   const id = useId();
   const inputRef = useRef(null);
+  const abortRef = useRef(null);
   const [url, setUrl] = useState(defaultValue ?? "");
   const [busy, setBusy] = useState(false);
+  const [progress, setProgress] = useState(null);
   const [problem, setProblem] = useState(null);
   const [library, setLibrary] = useState(null);
+
   const upload = async (file) => {
     if (!file) return;
     setBusy(true);
     setProblem(null);
+    setProgress({ percent: 0, message: "Starting upload…", retrying: false });
+
+    const abortController = new AbortController();
+    abortRef.current = abortController;
+
     try {
-      const data = await uploadImage(file, folder);
+      const data = await uploadImage(file, folder, {
+        signal: abortController.signal,
+        onProgress: (p) => {
+          setProgress({
+            percent: p.percent,
+            message: p.message,
+            retrying: !!p.retrying,
+            retryCount: p.retryCount,
+          });
+        },
+      });
       setUrl(data.url);
     } catch (e) {
-      setProblem(e.message);
+      if (e.name !== "AbortError") {
+        setProblem(e.message);
+      }
     } finally {
       setBusy(false);
+      setProgress(null);
+      abortRef.current = null;
       if (inputRef.current) inputRef.current.value = "";
+    }
+  };
+
+  const cancelUpload = () => {
+    if (abortRef.current) {
+      abortRef.current.abort();
     }
   };
   const openLibrary = async () => {
@@ -130,6 +170,40 @@ export function ImageField({
               </button>
             ) : null}
           </div>
+
+          {busy && progress ? (
+            <div className="w-full space-y-1.5 rounded border border-border-subtle bg-ink-900/90 p-2.5">
+              <div className="flex items-center justify-between text-[0.66rem]">
+                <span
+                  className={cn(
+                    "font-medium tracking-wide",
+                    progress.retrying ? "text-amber-400 animate-pulse" : "text-emerald-400",
+                  )}
+                >
+                  {progress.message || `Uploading ${progress.percent}%…`}
+                </span>
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-cream-300">{progress.percent}%</span>
+                  <button
+                    type="button"
+                    onClick={cancelUpload}
+                    className="text-cream-400 hover:text-danger underline"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+              <div className="h-1.5 w-full overflow-hidden rounded bg-ink-950">
+                <div
+                  className={cn(
+                    "h-full transition-all duration-300",
+                    progress.retrying ? "bg-amber-400" : "bg-emerald-400",
+                  )}
+                  style={{ width: `${progress.percent}%` }}
+                />
+              </div>
+            </div>
+          ) : null}
 
           <input
             aria-label={`${label} path`}

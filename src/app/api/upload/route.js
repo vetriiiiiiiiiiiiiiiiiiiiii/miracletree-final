@@ -23,10 +23,89 @@ const ACCEPTED = new Set([
 ]);
 const MAX_DIMENSION = 1200;
 
+import {
+  saveChunk,
+  isUploadComplete,
+  assembleChunks,
+  getReceivedChunks,
+} from "@/lib/chunked-upload-server";
+
 export async function POST(request) {
   const ip = await clientIp();
+  const formData = await request.formData();
+  const chunkIndexRaw = formData.get("chunkIndex");
+  const isChunked = chunkIndexRaw !== null && chunkIndexRaw !== undefined;
+  const folder = "reviews";
 
-  // Very strict rate limit for public uploads: 10 uploads per hour per IP.
+  if (isChunked) {
+    // High-capacity rate limit for individual incoming chunks (per IP) to avoid quota exhaustion on chunks
+    const chunkLimited = await limitRoute({
+      name: "public_chunk_upload",
+      limit: 250,
+      windowSeconds: 3600,
+      subject: ip,
+    });
+    if (chunkLimited) return chunkLimited;
+
+    const uploadId = String(formData.get("uploadId") ?? "");
+    const chunkIndex = parseInt(chunkIndexRaw, 10);
+    const totalChunks = parseInt(formData.get("totalChunks") ?? "1", 10);
+    const fileSize = parseInt(formData.get("fileSize") ?? "0", 10);
+    const fileType = String(formData.get("fileType") ?? "");
+    const chunkFile = formData.get("chunk");
+
+    if (!chunkFile || !(chunkFile instanceof Blob)) {
+      return NextResponse.json({ error: "No chunk received." }, { status: 400 });
+    }
+    if (fileSize > MAX_BYTES) {
+      return NextResponse.json(
+        {
+          error: `That file is ${(fileSize / 1048576).toFixed(1)}MB. The limit is 5MB.`,
+        },
+        { status: 413 },
+      );
+    }
+    if (fileType && !ACCEPTED.has(fileType)) {
+      return NextResponse.json(
+        { error: "Upload a JPEG, PNG, WebP, AVIF or GIF image." },
+        { status: 415 },
+      );
+    }
+
+    try {
+      const chunkBuffer = Buffer.from(await chunkFile.arrayBuffer());
+      await saveChunk({ uploadId, chunkIndex, totalChunks, chunkBuffer });
+
+      const complete = await isUploadComplete(uploadId, totalChunks);
+      if (!complete) {
+        return NextResponse.json({
+          status: "chunk_received",
+          chunkIndex,
+          totalChunks,
+        });
+      }
+
+      // Check the strict public upload quota only once upon entire file completion
+      const limited = await limitRoute({
+        name: "public_upload",
+        limit: 10,
+        windowSeconds: 3600,
+        subject: ip,
+      });
+      if (limited) return limited;
+
+      const input = await assembleChunks(uploadId, totalChunks);
+      return await processAndSavePublicImage(input, folder);
+    } catch (error) {
+      console.error("[public/upload-chunk]", error);
+      return NextResponse.json(
+        { error: error.message || "Failed to process image chunk." },
+        { status: 400 },
+      );
+    }
+  }
+
+  // Very strict rate limit for public direct uploads: 10 uploads per hour per IP.
   const limited = await limitRoute({
     name: "public_upload",
     limit: 10,
@@ -35,9 +114,7 @@ export async function POST(request) {
   });
   if (limited) return limited;
 
-  const formData = await request.formData();
   const file = formData.get("file");
-  const folder = "reviews";
 
   if (!(file instanceof File)) {
     return NextResponse.json({ error: "No file received." }, { status: 400 });
@@ -59,50 +136,7 @@ export async function POST(request) {
 
   try {
     const input = Buffer.from(await file.arrayBuffer());
-    const image = sharp(input, { failOn: "error" });
-    const metadata = await image.metadata();
-
-    if (!metadata.width || !metadata.height) {
-      return NextResponse.json(
-        { error: "That file is not a readable image." },
-        { status: 415 },
-      );
-    }
-
-    const output = await image
-      .rotate()
-      .resize({
-        width: Math.min(metadata.width, MAX_DIMENSION),
-        height: Math.min(metadata.height, MAX_DIMENSION),
-        fit: "inside",
-        withoutEnlargement: true,
-      })
-      .webp({ quality: 80, effort: 4 })
-      .toBuffer({ resolveWithObject: true });
-
-    const name = `${Date.now().toString(36)}-${randomBytes(6).toString("hex")}.webp`;
-    const url = await persist(folder, name, output.data);
-
-    // We also save a media record so it can be tracked, though it's public.
-    const media = await prisma.media.create({
-      data: {
-        url,
-        kind: "image",
-        alt: "Customer review image",
-        width: output.info.width,
-        height: output.info.height,
-        sizeBytes: output.info.size,
-        mimeType: "image/webp",
-        folder,
-      },
-    });
-
-    return NextResponse.json({
-      id: media.id,
-      url,
-      width: output.info.width,
-      height: output.info.height,
-    });
+    return await processAndSavePublicImage(input, folder);
   } catch (error) {
     console.error("[public/upload]", error);
     return NextResponse.json(
@@ -110,6 +144,66 @@ export async function POST(request) {
       { status: 400 },
     );
   }
+}
+
+async function processAndSavePublicImage(input, folder) {
+  const image = sharp(input, { failOn: "error" });
+  const metadata = await image.metadata();
+
+  if (!metadata.width || !metadata.height) {
+    return NextResponse.json(
+      { error: "That file is not a readable image." },
+      { status: 415 },
+    );
+  }
+
+  const output = await image
+    .rotate()
+    .resize({
+      width: Math.min(metadata.width, MAX_DIMENSION),
+      height: Math.min(metadata.height, MAX_DIMENSION),
+      fit: "inside",
+      withoutEnlargement: true,
+    })
+    .webp({ quality: 80, effort: 4 })
+    .toBuffer({ resolveWithObject: true });
+
+  const name = `${Date.now().toString(36)}-${randomBytes(6).toString("hex")}.webp`;
+  const url = await persist(folder, name, output.data);
+
+  // We also save a media record so it can be tracked, though it's public.
+  const media = await prisma.media.create({
+    data: {
+      url,
+      kind: "image",
+      alt: "Customer review image",
+      width: output.info.width,
+      height: output.info.height,
+      sizeBytes: output.info.size,
+      mimeType: "image/webp",
+      folder,
+    },
+  });
+
+  return NextResponse.json({
+    id: media.id,
+    url,
+    width: output.info.width,
+    height: output.info.height,
+  });
+}
+
+export async function GET(request) {
+  const uploadId = request.nextUrl.searchParams.get("uploadId");
+  if (uploadId) {
+    try {
+      const receivedChunks = await getReceivedChunks(uploadId);
+      return NextResponse.json({ uploadId, receivedChunks });
+    } catch {
+      return NextResponse.json({ uploadId, receivedChunks: [] });
+    }
+  }
+  return NextResponse.json({ error: "Missing uploadId parameter." }, { status: 400 });
 }
 
 async function persist(folder, name, data) {
