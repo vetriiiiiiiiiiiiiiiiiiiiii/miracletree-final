@@ -105,10 +105,10 @@ export function ProductPurchase({
   };
   if (!selected) return null;
   return (
-    <div className="grid gap-7">
+    <div className="grid gap-6">
       {/* Price */}
       <div className="flex flex-wrap items-baseline gap-3">
-        <span className="text-[1.9rem] tabular-nums text-cream-50">
+        <span className="text-[2rem] font-extrabold tabular-nums tracking-tight text-cream-50">
           {formatPrice(selected.price)}
         </span>
         {selected.compareAtPrice && selected.compareAtPrice > selected.price ? (
@@ -117,8 +117,8 @@ export function ProductPurchase({
               {formatPrice(selected.compareAtPrice)}
             </span>
             {discount ? (
-              <span className="border border-gold-400/40 px-2 py-0.5 text-[0.65rem] uppercase tracking-[0.12em] text-gold-300">
-                Save {discount}%
+              <span className="rounded-full bg-berry-500 px-2.5 py-0.5 text-[0.75rem] font-bold text-white">
+                {discount}% off
               </span>
             ) : null}
           </>
@@ -131,9 +131,9 @@ export function ProductPurchase({
       {/* Variants */}
       {variants.length > 1 ? (
         <fieldset>
-          <legend className="eyebrow mb-3 text-cream-400">
-            Size
-            <span className="ml-2 normal-case tracking-normal text-cream-200">
+          <legend className="mb-3 text-sm font-bold text-cream-50">
+            Size:
+            <span className="ml-1.5 font-medium text-cream-300">
               {selected.name}
             </span>
           </legend>
@@ -151,10 +151,10 @@ export function ProductPurchase({
                   aria-pressed={i === index}
                   disabled={soldOut}
                   className={cn(
-                    "relative border px-4 py-2.5 text-sm transition-colors duration-300",
+                    "relative rounded-xl border-2 px-4 py-2.5 text-sm font-semibold transition-colors duration-200",
                     i === index
-                      ? "border-gold-400 text-cream-50"
-                      : "border-border-subtle text-cream-300 hover:border-border-strong",
+                      ? "border-emerald-500 bg-forest-900 text-emerald-600"
+                      : "border-border-subtle text-cream-200 hover:border-border-strong",
                     soldOut && "cursor-not-allowed text-cream-400",
                   )}
                 >
@@ -227,7 +227,7 @@ export function ProductPurchase({
               disabled={busy !== null}
               onClick={() => handleAdd("stay")}
             >
-              Add to bag
+              Add to cart
             </Button>
             <Button
               size="lg"
@@ -264,7 +264,7 @@ export function ProductPurchase({
       )}
 
       {/* Trust */}
-      <ul className="grid gap-3 border-t border-border-subtle pt-6 text-sm text-cream-400">
+      <ul className="grid gap-2.5 rounded-2xl bg-forest-900 p-4 text-sm text-cream-200 sm:grid-cols-2">
         <TrustRow icon="ship">
           Free shipping over ₹699 · flat ₹60 below that
         </TrustRow>
@@ -333,7 +333,7 @@ function StickyBuyBar({
     >
       <div className="mx-auto flex max-w-[100rem] items-center gap-4 gutter py-3">
         {image ? (
-          <div className="relative hidden h-12 w-12 shrink-0 overflow-hidden border border-border-subtle bg-photo-to sm:block">
+          <div className="relative hidden h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-border-subtle bg-photo-from sm:block">
             <Image
               src={image}
               alt=""
@@ -378,7 +378,7 @@ function StickyBuyBar({
             disabled={busy !== null}
             onClick={onAdd}
           >
-            Add to bag
+            Add to cart
           </Button>
         </div>
       </div>
@@ -400,8 +400,8 @@ function TrustRow({ icon, children }) {
         viewBox="0 0 20 20"
         fill="none"
         stroke="currentColor"
-        strokeWidth="1.2"
-        className="mt-0.5 shrink-0 text-emerald-400"
+        strokeWidth="1.5"
+        className="mt-0.5 shrink-0 text-emerald-500"
         aria-hidden
       >
         <path d={paths[icon]} strokeLinejoin="round" />

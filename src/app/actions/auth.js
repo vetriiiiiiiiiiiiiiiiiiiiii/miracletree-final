@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { randomBytes, createHash } from "node:crypto";
 import { send, sendInBackground, mailConfigured } from "@/lib/mail";
 import { passwordReset, welcomeEmail } from "@/lib/mail-templates";
-import { prisma } from "@/lib/prisma";
+import { prisma, isUnset } from "@/lib/prisma";
 import {
   createSession,
   destroySession,
@@ -346,7 +346,7 @@ export async function resetPasswordAction(_prev, formData) {
     }),
     // Every other outstanding link for this account is invalidated too.
     prisma.passwordResetToken.deleteMany({
-      where: { userId: record.userId, usedAt: null },
+      where: { userId: record.userId, ...isUnset("usedAt") },
     }),
   ]);
   await recordAudit({

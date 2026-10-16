@@ -1,28 +1,15 @@
 import Link from "next/link";
-import {
-  Container,
-  Section,
-  SectionHeading,
-} from "@/components/layout/Section";
 import { Accordion } from "@/components/ui/Accordion";
 export function FaqSection({ title, subtitle, faqs, showAllLink = true }) {
   if (!faqs.length) return null;
   return (
-    <Section id="faq" tone="raised" spacing="default" className="grain">
-      <Container>
-        <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
-          <div>
-            <SectionHeading title={title} lede={subtitle ?? undefined} />
-            {showAllLink ? (
-              <Link
-                href="/faq"
-                className="mt-8 inline-block py-1.5 text-[0.72rem] uppercase tracking-[0.16em] text-gold-300 underline underline-offset-4 hover:text-gold-300"
-              >
-                All questions
-              </Link>
-            ) : null}
-          </div>
-
+    <section id="faq" className="bg-ink-900 py-12 md:py-16">
+      <div className="mx-auto max-w-3xl gutter">
+        <div className="text-center">
+          <h2 className="text-2xl text-cream-50 md:text-3xl">{title}</h2>
+          {subtitle ? <p className="mt-2 text-cream-400">{subtitle}</p> : null}
+        </div>
+        <div className="mt-8 rounded-3xl border border-border-subtle bg-ink px-5 py-2 md:px-8">
           <Accordion
             items={faqs.map((faq) => ({
               id: faq.id,
@@ -32,7 +19,17 @@ export function FaqSection({ title, subtitle, faqs, showAllLink = true }) {
             defaultOpen={faqs[0] ? [faqs[0].id] : []}
           />
         </div>
-      </Container>
-    </Section>
+        {showAllLink ? (
+          <p className="mt-6 text-center">
+            <Link
+              href="/faq"
+              className="inline-flex h-11 items-center rounded-full border-2 border-emerald-500 px-6 text-sm font-bold text-emerald-500 transition-colors hover:bg-emerald-500 hover:text-on-accent"
+            >
+              See all questions
+            </Link>
+          </p>
+        ) : null}
+      </div>
+    </section>
   );
 }

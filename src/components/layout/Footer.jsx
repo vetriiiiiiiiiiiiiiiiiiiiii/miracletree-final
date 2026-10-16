@@ -5,7 +5,10 @@ import { ThemeSegmented } from "@/components/theme/ThemeToggle";
 import { SITE } from "@/lib/constants";
 export function Footer({ shop, company, support }) {
   return (
-    <footer className="border-t border-border-subtle bg-ink-900">
+    // A deep green footer in both themes, as on the reference shops: the
+    // dark palette is scoped to it with data-theme, so every token inside
+    // resolves to its dark value without a single class changing.
+    <footer data-theme="dark" className="bg-forest-900 text-cream-100">
       <div className="mx-auto max-w-[100rem] gutter">
         {/* Newsletter */}
         <div className="grid gap-10 border-b border-border-subtle py-16 lg:grid-cols-[1.1fr_1fr] lg:gap-20 lg:py-20">

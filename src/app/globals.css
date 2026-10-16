@@ -1,10 +1,13 @@
 @import "tailwindcss";
 
+/* `dark:` follows the site's own theme switch, not the OS setting. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 /* ==========================================================================
    Miracle Tree — design tokens
    ==========================================================================
    The palette is defined twice, as `--mt-*` runtime variables: once for the
-   dark ground (the brand default) and once for paper. `@theme inline` below
+   light ground (the default) and once for the dark toggle. `@theme inline` below
    points every Tailwind colour utility at those variables rather than at a
    fixed value, so `bg-ink` / `text-cream-100` resolve per theme and the whole
    site flips without a single class changing.
@@ -18,11 +21,11 @@
    `data-theme` is always written explicitly by the inline script in
    `src/app/layout.tsx`, which resolves the "system" setting before first
    paint. CSS therefore needs no `prefers-color-scheme` branch, and no-JS
-   visitors get the dark brand default.
+   visitors get the light default.
    ========================================================================== */
 
-:root,
-:root[data-theme="dark"] {
+:root[data-theme="dark"],
+[data-theme="dark"] {
   color-scheme: dark;
 
   /* --- Surfaces: near-black through forest -------------------------------- */
@@ -50,6 +53,11 @@
   --mt-gold-500: #c2a038;
   --mt-gold-400: #d9bc6a;
   --mt-gold-300: #e8d49a;
+
+  /* --- Berry: the magenta of the logotype, for offers and tags ----------- */
+  --mt-berry-500: #e0457f;
+  --mt-berry-400: #f06292;
+  --mt-berry-100: #3a1424;
 
   /* --- Foreground --------------------------------------------------------- */
   --mt-cream-50: #faf8f2;
@@ -96,61 +104,63 @@
    ground (leaf-200/gold-300 are the brightest accents on ink, so on paper they
    become the DEEPEST — the scales keep their role, not their lightness).
    -------------------------------------------------------------------------- */
+:root,
 :root[data-theme="light"] {
   color-scheme: light;
 
-  --mt-ink-950: #fbfaf600;
-  --mt-ink: #fbfaf6;
-  --mt-ink-900: #f5f2e9;
-  --mt-ink-800: #efebdf;
-  --mt-ink-700: #e6e1d1;
-  --mt-ink-600: #d8d2be;
-  --mt-ink-500: #c3bca4;
+  /* The storefront's default: a bright, white D2C ground with warm off-white
+     section bands, the logo's green as the primary and its magenta for offers. */
+  --mt-ink-950: #ffffff00;
+  --mt-ink: #ffffff;
+  --mt-ink-900: #faf8f3;
+  --mt-ink-800: #f4f1ea;
+  --mt-ink-700: #ebe6db;
+  --mt-ink-600: #ddd6c6;
+  --mt-ink-500: #c9c0ab;
 
-  --mt-forest-900: #eaf1e7;
-  --mt-forest-800: #e2ebde;
-  --mt-forest-700: #d5e3d0;
+  --mt-forest-900: #eef6ef;
+  --mt-forest-800: #e3f0e5;
+  --mt-forest-700: #d2e7d6;
 
-  --mt-emerald-600: #14512f;
-  --mt-emerald-500: #1a6a3f;
-  --mt-emerald-400: #1f7a49;
-  --mt-leaf-400: #2c7d4b;
-  --mt-leaf-300: #256d41;
-  --mt-leaf-200: #1f6039;
+  --mt-emerald-600: #0f5a32;
+  --mt-emerald-500: #157a42;
+  --mt-emerald-400: #1b8a4c;
+  --mt-leaf-400: #1f7a49;
+  --mt-leaf-300: #1a6a3f;
+  --mt-leaf-200: #155a35;
 
-  /* Gold is the eyebrow/index colour, and on the homepage those numerals sit
-     over the world scene's pale mist rather than the page ground — a darker
-     background than paper, so the scale is tuned against the mist and clears
-     AA on both. */
   --mt-gold-600: #8a6a18;
   --mt-gold-500: #7a5c14;
   --mt-gold-400: #6d5411;
   --mt-gold-300: #5e470e;
 
-  --mt-cream-50: #0b1410;
-  --mt-cream-100: #17231c;
-  --mt-cream-200: #2b362e;
-  --mt-cream-300: #4e5b51;
-  --mt-cream-400: #5b6760;
+  --mt-berry-500: #c2185b;
+  --mt-berry-400: #d81b60;
+  --mt-berry-100: #fde8f0;
 
-  --mt-border-subtle: #0b141021;
-  --mt-border-strong: #0b141038;
-  --mt-success: #1f7a49;
+  --mt-cream-50: #111a14;
+  --mt-cream-100: #1b241e;
+  --mt-cream-200: #2f3a32;
+  --mt-cream-300: #4d5950;
+  --mt-cream-400: #636e67;
+
+  --mt-border-subtle: #1120161a;
+  --mt-border-strong: #11201633;
+  --mt-success: #157a42;
   --mt-warning: #8a6210;
   --mt-danger: #b0322c;
 
-  --mt-on-accent: #faf8f2;
+  --mt-on-accent: #ffffff;
 
   --mt-photo-from: #ffffff;
-  --mt-photo-to: #f0ece1;
+  --mt-photo-to: #f6f3ec;
   --mt-on-photo: #1f2c23;
 
   --mt-world-void: #dee7e2;
 
-  --mt-grain-opacity: 0.018;
-  --mt-glass: #fbfaf6d9;
-  --mt-shadow-card: 0 1px 2px #0b141014, 0 8px 24px -12px #0b14101f;
-  /* A 60%-black glow is a night-time effect. On paper it reads as grime. */
+  --mt-grain-opacity: 0;
+  --mt-glass: #ffffffeb;
+  --mt-shadow-card: 0 1px 2px #1120160d, 0 10px 30px -14px #11201629;
   --mt-shadow-drawer: 0 0 60px #0b14102e;
 }
 
@@ -180,6 +190,10 @@
   --color-gold-400: var(--mt-gold-400);
   --color-gold-300: var(--mt-gold-300);
 
+  --color-berry-500: var(--mt-berry-500);
+  --color-berry-400: var(--mt-berry-400);
+  --color-berry-100: var(--mt-berry-100);
+
   --color-cream-50: var(--mt-cream-50);
   --color-cream-100: var(--mt-cream-100);
   --color-cream-200: var(--mt-cream-200);
@@ -202,27 +216,18 @@
 
 @theme {
   /* --- Type --------------------------------------------------------------- */
-  /* Times New Roman throughout.
-   *
-   * The three roles are kept as separate tokens even though they now resolve
-   * to the same stack: the components ask for a display, body or margin face
-   * by name, and collapsing the tokens would mean editing every one of them to
-   * ever tell the voices apart again.
-   *
-   * Times is a system font, so nothing is downloaded and there is no swap.
-   * Liberation Serif and Nimbus Roman are the metric-compatible substitutes
-   * Linux ships — without them a container with no Microsoft fonts falls back
-   * to whatever generic serif it has, which is not the same shape at all.
-   */
-  --font-display: "Times New Roman", Times, "Liberation Serif", "Nimbus Roman", serif;
-  --font-sans: "Times New Roman", Times, "Liberation Serif", "Nimbus Roman", serif;
-  --font-hand: "Times New Roman", Times, "Liberation Serif", "Nimbus Roman", serif;
+  /* Plus Jakarta Sans throughout, self-hosted by next/font (see layout.jsx),
+   * which sets --font-jakarta on <html>. The three roles stay separate tokens
+   * so a display face can be reintroduced without touching components. */
+  --font-display: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-hand: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
 
-  --text-hero: clamp(2.75rem, 9vw, 8.5rem);
+  --text-hero: clamp(2.5rem, 7vw, 5.5rem);
   --text-hero--line-height: 0.92;
   --text-hero--letter-spacing: -0.03em;
 
-  --text-display: clamp(2rem, 5.5vw, 4.5rem);
+  --text-display: clamp(1.9rem, 4.2vw, 3.4rem);
   --text-display--line-height: 1.02;
   --text-display--letter-spacing: -0.025em;
 
@@ -230,9 +235,9 @@
   --text-title--line-height: 1.1;
   --text-title--letter-spacing: -0.02em;
 
-  --text-eyebrow: 0.6875rem;
+  --text-eyebrow: 0.72rem;
   --text-eyebrow--line-height: 1;
-  --text-eyebrow--letter-spacing: 0.22em;
+  --text-eyebrow--letter-spacing: 0.12em;
 
   /* --- Motion ------------------------------------------------------------- */
   --ease-organic: cubic-bezier(0.22, 1, 0.36, 1);
@@ -242,13 +247,13 @@
   /* 1rem at 320px, easing up to 5rem on wide screens. The previous floor of
      1.25rem left the header 4px wider than the narrowest phones. */
   --spacing-gutter: clamp(1rem, 5vw, 5rem);
-  --radius-card: 2px;
+  --radius-card: 16px;
 
   /* The announcement bar plus the header. The homepage hero pulls itself up by
      this much so a 100svh stage actually fills the viewport rather than ending
      that far below the fold — the header is transparent over the hero there,
      so it is meant to sit on top of it. */
-  --header-offset: 6.125rem;
+  --header-offset: 6.25rem;
 }
 
 /* ==========================================================================
@@ -258,7 +263,7 @@
 @layer base {
   @media (min-width: 768px) {
     :root {
-      --header-offset: 7.125rem;
+      --header-offset: 6.75rem;
     }
   }
 
@@ -306,7 +311,8 @@
   h3,
   h4 {
     font-family: var(--font-display);
-    font-weight: 400;
+    font-weight: 700;
+    letter-spacing: -0.02em;
     text-wrap: balance;
   }
 
@@ -359,7 +365,7 @@
   font-size: var(--text-eyebrow);
   letter-spacing: var(--text-eyebrow--letter-spacing);
   text-transform: uppercase;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 /* A surface rather than a box.
@@ -794,4 +800,16 @@
   backdrop-filter: blur(8px);
   /* Use !important to override inline styles set by razorpay iframe */
   background: rgba(0, 0, 0, 0.6) !important;
+}
+
+/* The offer bar's message change. */
+@keyframes offer-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }

@@ -55,3 +55,19 @@ export const insensitive =
   (process.env.DATABASE_URL ?? "").startsWith("mongodb")
     ? { mode: "insensitive" }
     : {};
+/**
+ * "This optional field has no value", portable across providers.
+ *
+ * On MongoDB a field that was never written is *absent* rather than null, and
+ * Prisma's `{ field: null }` matches only an explicit null — so rows created
+ * without the field silently fell out of filters like "FAQs not tied to a
+ * product" or "announcements with no start date". `isSet: false` covers the
+ * absent case but is Mongo-only syntax, hence the switch. Spread the result
+ * into a `where`: `{ isActive: true, ...isUnset("productId") }`.
+ */
+const isMongo = (process.env.DATABASE_URL ?? "").startsWith("mongodb");
+export const isUnset = (field) => ({
+  OR: isMongo
+    ? [{ [field]: null }, { [field]: { isSet: false } }]
+    : [{ [field]: null }],
+});

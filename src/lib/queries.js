@@ -1,6 +1,6 @@
 import "server-only";
 import { cache } from "react";
-import { prisma, insensitive } from "./prisma";
+import { prisma, insensitive, isUnset } from "./prisma";
 // Removed redis per user request
 /**
  * Storefront reads. Everything here is wrapped in React `cache` so a page that
@@ -72,6 +72,15 @@ export const getFeaturedProducts = cache(async (take = 6) => {
   });
   const products = rows.map(withRating).filter(Boolean);
   return products;
+});
+/** Every published product in card shape — feeds the homepage tabs and rails. */
+export const getCatalogue = cache(async () => {
+  const rows = await prisma.product.findMany({
+    where: { status: "published" },
+    orderBy: { position: "asc" },
+    select: PRODUCT_CARD_SELECT,
+  });
+  return rows.map(withRating).filter(Boolean);
 });
 export const getBestSellers = cache(async (take = 4) => {
   const rows = await prisma.product.findMany({
@@ -333,8 +342,8 @@ export const getAnnouncements = cache(async () => {
     where: {
       isActive: true,
       AND: [
-        { OR: [{ startsAt: null }, { startsAt: { lte: now } }] },
-        { OR: [{ endsAt: null }, { endsAt: { gte: now } }] },
+        { OR: [isUnset("startsAt"), { startsAt: { lte: now } }] },
+        { OR: [isUnset("endsAt"), { endsAt: { gte: now } }] },
       ],
     },
     orderBy: { position: "asc" },
@@ -344,7 +353,7 @@ export const getFaqs = cache(async (category) =>
   prisma.faq.findMany({
     where: {
       isActive: true,
-      productId: null,
+      ...isUnset("productId"),
       ...(category ? { category } : {}),
     },
     orderBy: [{ category: "asc" }, { position: "asc" }],

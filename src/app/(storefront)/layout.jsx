@@ -75,7 +75,7 @@ export default async function StorefrontLayout({ children }) {
             count: c._count.products,
           }))}
           isAuthenticated={Boolean(user)}
-          announcement={announcements[0]?.message ?? null}
+          announcements={announcements.map((a) => a.message)}
         />
 
         <main id="main">{children}</main>

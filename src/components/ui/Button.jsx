@@ -3,22 +3,25 @@ import Link from "next/link";
 import { forwardRef, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { magneticButton } from "@/lib/motion";
+// Rounded, bold, sentence-case buttons in the D2C style. "gold" is kept as a
+// name because pages ask for it, but it now paints the berry offer colour —
+// the second call to action next to the green primary (e.g. "Buy now").
 const VARIANTS = {
   primary:
-    "bg-emerald-500 text-on-accent hover:bg-emerald-400 disabled:hover:bg-emerald-500",
+    "bg-emerald-500 text-on-accent shadow-sm hover:bg-emerald-600 disabled:hover:bg-emerald-500",
   secondary:
-    "border border-border-strong text-cream-100 hover:border-cream-100 hover:bg-white/[0.04]",
-  ghost: "text-cream-200 hover:text-cream-50 hover:bg-white/[0.04]",
-  gold: "bg-gold-400 text-ink hover:bg-gold-300 disabled:hover:bg-gold-400",
-  danger: "bg-danger text-cream-50 hover:brightness-110",
+    "border-2 border-emerald-500 text-emerald-500 hover:bg-emerald-500 hover:text-on-accent",
+  ghost: "text-cream-200 hover:text-cream-50 hover:bg-ink-800",
+  gold: "bg-berry-500 text-white shadow-sm hover:bg-berry-400 disabled:hover:bg-berry-500",
+  danger: "bg-danger text-white hover:brightness-110",
 };
 const SIZES = {
-  sm: "h-9 px-4 text-[0.7rem] tracking-[0.14em]",
-  md: "h-11 px-6 text-[0.72rem] tracking-[0.16em]",
-  lg: "h-14 px-9 text-[0.75rem] tracking-[0.18em]",
+  sm: "h-9 px-4 text-[0.8rem]",
+  md: "h-11 px-6 text-[0.88rem]",
+  lg: "h-13 px-8 text-[0.95rem]",
 };
 const BASE =
-  "relative inline-flex items-center justify-center gap-2 rounded-none font-medium uppercase " +
+  "relative inline-flex items-center justify-center gap-2 rounded-full font-bold " +
   "transition-colors duration-300 ease-[var(--ease-swift)] " +
   "disabled:cursor-not-allowed disabled:opacity-50 " +
   "focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-gold-400";

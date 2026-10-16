@@ -6,6 +6,7 @@ import { ShopSidebar, ShopControls } from "@/components/shop/ShopLayout";
 import { Pagination } from "@/components/shop/Pagination";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
+import { ShopHero } from "@/components/shop/ShopHero";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getCategories, getIngredients, searchProducts } from "@/lib/queries";
 import { shopQuerySchema } from "@/lib/validation";
@@ -45,22 +46,22 @@ export default async function ShopPage({ searchParams }) {
         <JsonLd id="shop-items" data={itemListSchema(result.products)} />
       ) : null}
 
-      <div className="grain bg-ink pb-24 pt-12 md:pt-16">
+      <div className="bg-ink pb-20 pt-6 md:pt-8">
         <Container>
           <Breadcrumbs items={crumbs} />
 
-          <header className="mt-8 max-w-3xl">
-            <h1 className="text-display text-cream-50">
-              {query.q ? `Results for “${query.q}”` : "The collection"}
-            </h1>
-            <p className="mt-5 max-w-[52ch] leading-relaxed text-cream-300">
-              {query.q
-                ? `${result.total} ${result.total === 1 ? "product" : "products"} matched your search.`
-                : "Twenty-seven products, all from the same tree. Leaf, pod, flower, seed and gum, handled five different ways."}
-            </p>
-          </header>
+          <ShopHero
+            title={query.q ? `Results for “${query.q}”` : "Shop all"}
+            description={
+              query.q
+                ? null
+                : "Leaf, pod, flower, seed and gum — every product from the same tree."
+            }
+            total={result.total}
+            categories={query.q ? null : categories.filter((c) => c._count.products)}
+          />
 
-          <div className="mt-14 grid gap-x-12 gap-y-8 lg:grid-cols-[15rem_1fr]">
+          <div className="mt-8 grid gap-x-10 gap-y-6 lg:grid-cols-[15rem_1fr]">
             <Suspense fallback={<div />}>
               <ShopSidebar groups={groups} />
             </Suspense>

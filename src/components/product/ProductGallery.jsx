@@ -38,7 +38,7 @@ export function ProductGallery({ images = [], productName, activeImageUrl }) {
   };
   if (!images.length) {
     return (
-      <div className="grid aspect-square place-items-center bg-ink-800 text-cream-400">
+      <div className="grid aspect-square place-items-center rounded-3xl bg-ink-800 text-cream-400">
         <span className="eyebrow">No image yet</span>
       </div>
     );
@@ -69,7 +69,7 @@ export function ProductGallery({ images = [], productName, activeImageUrl }) {
               aria-label={`View image ${i + 1} of ${images.length}`}
               onClick={() => setIndex(i)}
               className={cn(
-                "relative aspect-square shrink-0 overflow-hidden border bg-photo-to transition-colors duration-300",
+                "relative aspect-square shrink-0 overflow-hidden rounded-xl border bg-photo-from transition-colors duration-300",
                 i === index
                   ? "border-gold-400"
                   : "border-border-subtle hover:border-border-strong",
@@ -94,7 +94,7 @@ export function ProductGallery({ images = [], productName, activeImageUrl }) {
 
       {/* Main image — desktop */}
       <div
-        className="relative hidden aspect-square overflow-hidden bg-gradient-to-b from-photo-from to-photo-to md:block"
+        className="relative hidden aspect-square overflow-hidden rounded-3xl border border-border-subtle bg-photo-from md:block"
         onPointerEnter={() => setZooming(true)}
         onPointerLeave={() => setZooming(false)}
         onPointerMove={onPointerMove}

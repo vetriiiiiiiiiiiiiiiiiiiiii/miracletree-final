@@ -7,7 +7,16 @@ import {
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Analytics } from "@/components/analytics/Analytics";
 import { Preloader } from "@/components/motion/Preloader";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+// Self-hosted at build time by next/font, so no request goes to Google at
+// runtime and the CSP needs no font host.
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-jakarta",
+  display: "swap",
+});
 export const metadata = {
   metadataBase: new URL(siteUrl("/")),
   title: {
@@ -41,8 +50,8 @@ export const metadata = {
     : undefined,
 };
 export const viewport = {
-  themeColor: "#060907",
-  colorScheme: "dark",
+  themeColor: "#ffffff",
+  colorScheme: "light",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -53,7 +62,8 @@ export default function RootLayout({ children }) {
       lang="en-IN"
       // Server-rendered as the brand default; the theme script in <head>
       // corrects it before paint from the visitor's stored choice.
-      data-theme="dark"
+      data-theme="light"
+      className={jakarta.variable}
       // The inline script below adds a `js` class before React hydrates, and
       // Lenis adds its own afterwards. Both are deliberate mutations of an
       // element React also renders, so the class mismatch is expected here.

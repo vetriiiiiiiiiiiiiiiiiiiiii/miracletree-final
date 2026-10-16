@@ -1,31 +1,29 @@
 import {
   getArticles,
+  getCatalogue,
   getCategories,
   getFaqs,
   getFeaturedProducts,
   getFeaturedReviews,
   getHomepageSections,
-  getIngredients,
   getSettings,
   getTestimonials,
 } from "@/lib/queries";
 import { prisma } from "@/lib/prisma";
 import { buildMetadata } from "@/lib/seo";
 import { SITE } from "@/lib/constants";
+import { formatPrice } from "@/lib/money";
 import { WhyMoringa } from "@/components/home/WhyMoringa";
-import { ProcessSection } from "@/components/home/ProcessSection";
-import { CollectionRail } from "@/components/home/CollectionRail";
-import { IngredientExplorer } from "@/components/home/IngredientExplorer";
 import { SocialProof } from "@/components/home/SocialProof";
-import { BrandStory } from "@/components/home/BrandStory";
 import { JournalRail } from "@/components/home/JournalRail";
 import { FaqSection } from "@/components/home/FaqSection";
-import { FinalCta } from "@/components/home/FinalCta";
-import { HomeHero } from "@/components/home/HomeHero";
-import { InnovationStrip } from "@/components/home/InnovationStrip";
 import { FounderBlock } from "@/components/home/FounderBlock";
 import { TrustSignals } from "@/components/home/TrustSignals";
-import { ExportReach } from "@/components/home/ExportReach";
+import { HeroBanner } from "@/components/home/HeroBanner";
+import { CategoryCircles } from "@/components/home/CategoryCircles";
+import { UspStrip } from "@/components/home/UspStrip";
+import { ProductTabs } from "@/components/home/ProductTabs";
+import { PromoTiles } from "@/components/home/PromoTiles";
 // The homepage is fully CMS-driven, so it revalidates rather than being static.
 /**
  * The packs in the hero.
@@ -78,7 +76,7 @@ export default async function HomePage() {
   const [
     sections,
     products,
-    ingredients,
+    catalogue,
     reviews,
     testimonials,
     articles,
@@ -90,7 +88,7 @@ export default async function HomePage() {
   ] = await Promise.all([
     getHomepageSections(),
     getFeaturedProducts(10),
-    getIngredients(),
+    getCatalogue(),
     getFeaturedReviews(9),
     getTestimonials(6),
     getArticles({ take: 3 }),
@@ -107,7 +105,9 @@ export default async function HomePage() {
       select: {
         name: true,
         slug: true,
+        shortDescription: true,
         isHeroPack: true,
+        category: { select: { name: true } },
         images: { select: { url: true }, take: 1 },
         variants: {
           select: { price: true },
@@ -194,23 +194,133 @@ export default async function HomePage() {
       createdAt: t.createdAt,
     })),
   ].slice(0, 9);
-  const storySection = sections.get("story");
+  const settings = await getSettings();
+  const freeShippingAt = Number(settings.get("shipping.freeThreshold") ?? 0);
+  const codEnabled = settings.get("checkout.codEnabled") !== "false";
+
+  // Slide one is the CMS hero; each hero pack after the first gets its own.
+  const slides = [
+    {
+      key: "hero",
+      eyebrow: "MiracleTree Life Science · Madurai",
+      title: hero.title,
+      subtitle: hero.subtitle,
+      ctaLabel: hero.ctaLabel,
+      ctaHref: hero.ctaHref,
+      secondaryLabel: hero.secondaryLabel,
+      secondaryHref: hero.secondaryHref,
+      image: heroPackList[0]?.images[0]?.url ?? hero.image?.url ?? null,
+      imageAlt: heroPackList[0]?.name ?? "",
+    },
+    ...heroPackList.slice(1, 4).map((p) => ({
+      key: p.slug,
+      eyebrow: p.category?.name ?? "Featured",
+      title: p.name,
+      subtitle: p.shortDescription,
+      price: p.variants[0]?.price ?? null,
+      ctaLabel: "Shop now",
+      ctaHref: `/product/${p.slug}`,
+      image: p.images[0]?.url ?? null,
+      imageAlt: p.name,
+    })),
+  ];
+
+  const firstImageIn = (slug) =>
+    catalogue.find((p) => p.category?.slug === slug && p.images[0])?.images[0]
+      ?.url ?? null;
+  const categoryTiles = categories
+    .filter((c) => c._count.products > 0)
+    .map((c) => ({
+      name: c.name,
+      slug: c.slug,
+      count: c._count.products,
+      image: c.imageUrl || firstImageIn(c.slug),
+    }));
+
+  const usps = [
+    { icon: "leaf", title: "Pure moringa", body: "Grown & milled in Madurai" },
+    { icon: "sun", title: "Low-temp dried", body: "Colour and nutrients kept" },
+    { icon: "shield", title: "Certified quality", body: "FSSAI · GMP · ISO 9001" },
+    ...(freeShippingAt > 0
+      ? [
+          {
+            icon: "truck",
+            title: "Free shipping",
+            body: `On orders above ${formatPrice(freeShippingAt)}`,
+          },
+        ]
+      : []),
+    ...(codEnabled
+      ? [{ icon: "cash", title: "Cash on delivery", body: "Pay when it arrives" }]
+      : []),
+  ];
+
+  const tabs = [
+    {
+      key: "bestsellers",
+      label: "Bestsellers",
+      products: catalogue.filter((p) => p.isBestSeller),
+    },
+    {
+      key: "featured",
+      label: "Trending",
+      products: catalogue.filter((p) => p.isFeatured),
+    },
+    {
+      key: "new",
+      label: "New launches",
+      products: catalogue.filter((p) => p.isNew),
+    },
+    ...categoryTiles.map((c) => ({
+      key: c.slug,
+      label: c.name,
+      href: `/shop/${c.slug}`,
+      products: catalogue.filter((p) => p.category?.slug === c.slug),
+    })),
+  ];
+
+  const promoImage = (i) =>
+    catalogue.filter((p) => p.images[0])[i]?.images[0]?.url ?? null;
+  const tiles = [
+    {
+      href: "/ritual",
+      tone: "green",
+      eyebrow: "Ritual builder",
+      title: "Build your daily moringa ritual",
+      body: "Pick what fits your morning and evening — we'll put it together.",
+      cta: "Build mine",
+      image: heroPackList[1]?.images[0]?.url ?? promoImage(0),
+    },
+    {
+      href: "/moringa",
+      tone: "berry",
+      eyebrow: "The miracle tree",
+      title: "Why moringa, and why ours",
+      body: "Leaf, pod, flower, seed and gum — what each one does.",
+      cta: "Discover",
+      image: heroPackList[2]?.images[0]?.url ?? promoImage(1),
+    },
+  ];
+
   return (
     <>
-      {/* One screen, laid out as a grid of panels: the statement, the flagship,
-            the world-first, the record, three more products, the certifications. */}
-      <HomeHero
-        title={hero.title}
-        subtitle={hero.subtitle}
-        products={heroPackList.map((p) => ({
-          name: p.name,
-          slug: p.slug,
-          image: p.images[0].url,
-          price: p.variants[0]?.price ?? null,
-        }))}
-      />
+      <HeroBanner slides={slides} />
 
-      {/* 03 — Why moringa */}
+      <CategoryCircles categories={categoryTiles} />
+
+      <UspStrip items={usps} />
+
+      {isActive(sections, "collection") ? (
+        <ProductTabs
+          title={sections.get("collection")?.title ?? "Our bestsellers"}
+          subtitle={sections.get("collection")?.subtitle ?? null}
+          viewAllHref={sections.get("collection")?.ctaHref ?? "/shop"}
+          tabs={tabs}
+        />
+      ) : null}
+
+      <PromoTiles tiles={tiles} />
+
       {isActive(sections, "why-moringa") ? (
         <WhyMoringa
           title={sections.get("why-moringa")?.title ?? "Why moringa"}
@@ -218,32 +328,16 @@ export default async function HomePage() {
         />
       ) : null}
 
-      {/* 04 — Farm to pack */}
-      {isActive(sections, "farm-to-product") ? (
-        <ProcessSection
-          title={sections.get("farm-to-product")?.title ?? "Farm to pack"}
-          subtitle={sections.get("farm-to-product")?.subtitle ?? null}
+      {isActive(sections, "reviews") ? (
+        <SocialProof
+          title={sections.get("reviews")?.title ?? "Loved by our customers"}
+          subtitle={sections.get("reviews")?.subtitle ?? null}
+          items={proof}
         />
       ) : null}
 
-      {/* Innovation — placed immediately after "farm to pack", because the
-            process section ends on the drying step and that is the moment ULTCD
-            and CLHPD actually land. */}
-      <InnovationStrip />
+      <TrustSignals accolades={accolades} />
 
-      {/* 05/06 — The collection */}
-      {isActive(sections, "collection") ? (
-        <CollectionRail
-          title={sections.get("collection")?.title ?? "The collection"}
-          subtitle={sections.get("collection")?.subtitle ?? null}
-          ctaLabel={sections.get("collection")?.ctaLabel ?? "View all products"}
-          ctaHref={sections.get("collection")?.ctaHref ?? "/shop"}
-          products={products}
-        />
-      ) : null}
-
-      {/* The founder, after the range: the products raise the question of who
-            is behind them, and this answers it. */}
       {founder ? (
         <FounderBlock
           name={founder.name}
@@ -253,69 +347,6 @@ export default async function HomePage() {
         />
       ) : null}
 
-      {/* 07 — Ingredients */}
-      {isActive(sections, "ingredients") ? (
-        <IngredientExplorer
-          title={sections.get("ingredients")?.title ?? "What's inside"}
-          subtitle={sections.get("ingredients")?.subtitle ?? null}
-          ingredients={ingredients.map((i) => ({
-            id: i.id,
-            name: i.name,
-            slug: i.slug,
-            description: i.description,
-            origin: i.origin,
-            productCount: i._count.products,
-          }))}
-        />
-      ) : null}
-
-      {/* 08 — Where the moringa goes */}
-      <ExportReach />
-
-      {/* 09 — What the company can prove: certificates, recognition, visitors */}
-      <TrustSignals accolades={accolades} />
-
-      {/* 08 — Social proof */}
-      {isActive(sections, "reviews") ? (
-        <SocialProof
-          title={sections.get("reviews")?.title ?? "In their words"}
-          subtitle={sections.get("reviews")?.subtitle ?? null}
-          items={proof}
-        />
-      ) : null}
-
-      {/* 09 — Brand story */}
-      {isActive(sections, "story") ? (
-        <BrandStory
-          title={storySection?.title ?? "Twenty years under the same tree"}
-          subtitle={storySection?.subtitle ?? null}
-          ctaLabel={storySection?.ctaLabel ?? "Our story"}
-          ctaHref={storySection?.ctaHref ?? "/about"}
-          image={
-            storySection?.mediaUrl
-              ? { url: storySection.mediaUrl, alt: "" }
-              : products[1]?.images[0]
-                ? {
-                    url: products[1].images[0].url,
-                    alt: products[1].images[0].alt ?? products[1].name,
-                  }
-                : null
-          }
-        />
-      ) : null}
-
-      {/* 10 — Journal */}
-      {isActive(sections, "journal") ? (
-        <JournalRail
-          title={sections.get("journal")?.title ?? "The Journal"}
-          subtitle={sections.get("journal")?.subtitle ?? null}
-          ctaLabel={sections.get("journal")?.ctaLabel ?? "Read the journal"}
-          ctaHref={sections.get("journal")?.ctaHref ?? "/about#field-notes"}
-          articles={articles}
-        />
-      ) : null}
-
-      {/* 11 — FAQ */}
       {isActive(sections, "faq") ? (
         <FaqSection
           title={sections.get("faq")?.title ?? "Questions, answered"}
@@ -324,13 +355,13 @@ export default async function HomePage() {
         />
       ) : null}
 
-      {/* 12 — Return to the seed */}
-      {isActive(sections, "final-cta") ? (
-        <FinalCta
-          title={sections.get("final-cta")?.title ?? "Discover the miracle"}
-          subtitle={sections.get("final-cta")?.subtitle ?? null}
-          ctaLabel={sections.get("final-cta")?.ctaLabel ?? "Shop now"}
-          ctaHref={sections.get("final-cta")?.ctaHref ?? "/shop"}
+      {isActive(sections, "journal") ? (
+        <JournalRail
+          title={sections.get("journal")?.title ?? "From the journal"}
+          subtitle={sections.get("journal")?.subtitle ?? null}
+          ctaLabel={sections.get("journal")?.ctaLabel ?? "Read more"}
+          ctaHref={sections.get("journal")?.ctaHref ?? "/about#field-notes"}
+          articles={articles}
         />
       ) : null}
     </>

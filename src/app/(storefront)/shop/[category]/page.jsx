@@ -6,6 +6,7 @@ import { ShopControls, ShopSidebar } from "@/components/shop/ShopLayout";
 import { Pagination } from "@/components/shop/Pagination";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
+import { ShopHero } from "@/components/shop/ShopHero";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { prisma } from "@/lib/prisma";
 import { getCategories, getIngredients, searchProducts } from "@/lib/queries";
@@ -74,21 +75,19 @@ export default async function CategoryPage({ params, searchParams }) {
         <JsonLd id="category-items" data={itemListSchema(result.products)} />
       ) : null}
 
-      <div className="grain bg-ink pb-24 pt-12 md:pt-16">
+      <div className="bg-ink pb-20 pt-6 md:pt-8">
         <Container>
           <Breadcrumbs items={crumbs} />
 
-          <header className="mt-8 max-w-3xl">
-            <p className="eyebrow mb-5 text-gold-400">Category</p>
-            <h1 className="text-display text-cream-50">{category.name}</h1>
-            {category.description ? (
-              <p className="mt-5 max-w-[54ch] leading-relaxed text-cream-300">
-                {category.description}
-              </p>
-            ) : null}
-          </header>
+          <ShopHero
+            title={category.name}
+            description={category.description}
+            total={result.total}
+            categories={categories.filter((c) => c._count.products)}
+            activeSlug={category.slug}
+          />
 
-          <div className="mt-14 grid gap-x-12 gap-y-8 lg:grid-cols-[15rem_1fr]">
+          <div className="mt-8 grid gap-x-10 gap-y-6 lg:grid-cols-[15rem_1fr]">
             <Suspense fallback={<div />}>
               <ShopSidebar groups={scopedGroups} />
             </Suspense>

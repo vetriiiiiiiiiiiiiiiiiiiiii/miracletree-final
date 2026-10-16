@@ -1,10 +1,4 @@
-import {
-  Container,
-  Section,
-  SectionHeading,
-} from "@/components/layout/Section";
-import { Reveal } from "@/components/motion/Reveal";
-import { UnderlineLink } from "@/components/ui/Button";
+import Link from "next/link";
 /**
  * What makes the tree unusual, stated as horticulture and process rather than
  * as health claims. Everything here is verifiable about how the plant grows and
@@ -34,60 +28,51 @@ const FACTS = [
 ];
 export function WhyMoringa({ title, subtitle }) {
   return (
-    <Section
-      id="why-moringa"
-      tone="default"
-      spacing="default"
-      className="grain"
-    >
-      <Container>
-        <SectionHeading title={title} lede={subtitle ?? undefined} />
-
-        <Reveal
-          className="mt-16 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3"
-          stagger={0.1}
-        >
+    <section id="why-moringa" className="bg-ink-900 py-12 md:py-16">
+      <div className="mx-auto max-w-[90rem] gutter">
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="text-2xl text-cream-50 md:text-3xl">{title}</h2>
+          {subtitle ? (
+            <p className="mt-3 leading-relaxed text-cream-300">{subtitle}</p>
+          ) : null}
+        </div>
+        <ul className="mt-9 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 md:gap-6">
           {FACTS.map((fact) => (
-            <article
+            <li
               key={fact.figure}
-              data-animate="fade-up"
-              className="border-t border-border-subtle pt-6"
+              className="rounded-3xl border border-border-subtle bg-ink p-6 md:p-8"
             >
               <p className="flex items-baseline gap-2">
-                <span
-                  className="text-[2.75rem] leading-none text-cream-50"
-                  style={{ fontFamily: "var(--font-display)" }}
-                >
+                <span className="text-[2.6rem] font-extrabold leading-none tracking-tight text-emerald-500">
                   {fact.figure}
                 </span>
-                <span className="text-[0.7rem] uppercase tracking-[0.14em] text-gold-400">
+                <span className="text-[0.75rem] font-bold uppercase tracking-wider text-berry-500">
                   {fact.unit}
                 </span>
               </p>
               {fact.title ? (
-                <h3 className="mt-5 text-[1.05rem] leading-snug text-cream-100">
+                <h3 className="mt-4 text-[1.05rem] font-bold leading-snug text-cream-50">
                   {fact.title}
                 </h3>
               ) : null}
               <p
-                className={`text-sm leading-relaxed text-cream-400 ${fact.title ? "mt-3" : "mt-5"}`}
+                className={`text-sm leading-relaxed text-cream-300 ${fact.title ? "mt-2" : "mt-4"}`}
               >
                 {fact.body}
               </p>
-            </article>
+            </li>
           ))}
-        </Reveal>
-
-        <p className="mt-14 max-w-[58ch] text-sm leading-relaxed text-cream-400">
+        </ul>
+        <p className="mx-auto mt-8 max-w-3xl text-center text-xs leading-relaxed text-cream-400">
           We describe how the plant is grown and handled, not what it will do
           for you. Moringa is a food, and our products are foods — if you are
           pregnant, nursing, on prescribed medication or managing a condition,
           talk to your doctor before adding any supplement.{" "}
-          <UnderlineLink href="/moringa" className="text-cream-200">
+          <Link href="/moringa" className="font-semibold text-emerald-500 underline underline-offset-2">
             More about the plant
-          </UnderlineLink>
+          </Link>
         </p>
-      </Container>
-    </Section>
+      </div>
+    </section>
   );
 }
