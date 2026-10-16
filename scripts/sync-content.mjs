@@ -95,6 +95,29 @@ for (const [key, value] of Object.entries(content.settings ?? {})) {
 }
 if (settingsAdded) console.log(`  settings: ${settingsAdded} missing keys added`);
 
+// One-off content changes for databases that already hold the old rows.
+// Each runs once, recorded by its marker, so if the business puts something
+// back from the admin afterwards it stays put.
+const ONE_OFFS = [
+  {
+    // "Innovation" came off the top-level navbar; the page is still in the
+    // Company menu and the footer.
+    marker: "oneoff.nav-remove-innovation",
+    run: () =>
+      prisma.navigationItem.deleteMany({
+        where: { group: "header", href: "/innovation" },
+      }),
+  },
+];
+for (const { marker, run } of ONE_OFFS) {
+  if (await prisma.siteSetting.findUnique({ where: { key: marker } })) continue;
+  const result = await run();
+  await prisma.siteSetting.create({
+    data: { key: marker, value: new Date().toISOString() },
+  });
+  console.log(`  ${marker}: ${result?.count ?? 0} changed`);
+}
+
 console.log(
   filled || settingsAdded
     ? `[content] filled from snapshot ${content.version}.`

@@ -804,8 +804,7 @@ export const NAVIGATION = [
   { group: "header", label: "Shop", href: "/shop", position: 1 },
   { group: "header", label: "Ritual", href: "/ritual", position: 2 },
   { group: "header", label: "Moringa", href: "/moringa", position: 3 },
-  { group: "header", label: "Innovation", href: "/innovation", position: 4 },
-  { group: "header", label: "Contact", href: "/contact", position: 5 },
+  { group: "header", label: "Contact", href: "/contact", position: 4 },
 
   // The company pages sit behind one "Company" menu in the header rather than
   // as four more top-level links. Leadership and the gallery were previously
