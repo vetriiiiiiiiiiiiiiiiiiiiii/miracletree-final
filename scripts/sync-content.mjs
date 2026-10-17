@@ -115,6 +115,22 @@ const ONE_OFFS = [
     run: () =>
       prisma.navigationItem.deleteMany({ where: { href: "/ritual" } }),
   },
+  {
+    // The business's Mogo photograph, for the Mogo slide — only where no
+    // background has been uploaded in the admin yet.
+    marker: "oneoff.hero-mogo-photo",
+    run: async () => {
+      const slides = await prisma.heroSlide.findMany({
+        where: { title: "Mogo" },
+        select: { id: true, imageUrl: true },
+      });
+      const bare = slides.filter((s) => !s.imageUrl).map((s) => s.id);
+      return prisma.heroSlide.updateMany({
+        where: { id: { in: bare } },
+        data: { imageUrl: "/hero/mogo-energy-bar.webp" },
+      });
+    },
+  },
 ];
 for (const { marker, run } of ONE_OFFS) {
   if (await prisma.siteSetting.findUnique({ where: { key: marker } })) continue;

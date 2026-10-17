@@ -154,7 +154,11 @@ function Slide({ slide, active, first, position }) {
           fill
           priority={first}
           sizes="100vw"
-          className="-z-10 object-cover"
+          // Anchored a little right of centre: the subject sits right of
+          // middle (the copy covers the left), and at this anchor it stays in
+          // the right half from a tablet up to a wide desktop. Anchoring
+          // fully right slid it under the copy on mid-width screens.
+          className="-z-10 object-cover object-[60%_center] xl:object-[50%_center]"
           unoptimized={slide.image.startsWith("/uploads/")}
         />
       ) : (
@@ -181,7 +185,7 @@ function Slide({ slide, active, first, position }) {
       )}
       {/* The shade that keeps the copy legible over any photograph. */}
       <div
-        className="absolute inset-0 -z-10 bg-gradient-to-t from-black/75 via-black/45 to-black/20 md:bg-gradient-to-r md:from-black/70 md:via-black/35 md:to-transparent"
+        className="absolute inset-0 -z-10 bg-gradient-to-t from-black/85 via-black/65 to-black/50 md:bg-gradient-to-r md:from-black/70 md:via-black/35 md:to-transparent"
         aria-hidden
       />
 

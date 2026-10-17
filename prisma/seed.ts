@@ -874,7 +874,7 @@ export const HERO_SLIDES = [
     ctaHref: "/product/mogo-moringa-energy-bar",
     secondaryLabel: "Know more",
     secondaryHref: "/innovation",
-    imageUrl: null,
+    imageUrl: "/hero/mogo-energy-bar.webp",
     productSlug: "mogo-moringa-energy-bar",
     videoUrl: "https://www.youtube.com/@miracletreelifescience",
     videoLabel: "Watch our story",
