@@ -108,6 +108,12 @@ const ONE_OFFS = [
         where: { group: "header", href: "/innovation" },
       }),
   },
+  {
+    // The ritual builder is hidden: off every menu, still reachable by URL.
+    marker: "oneoff.nav-remove-ritual",
+    run: () =>
+      prisma.navigationItem.deleteMany({ where: { href: "/ritual" } }),
+  },
 ];
 for (const { marker, run } of ONE_OFFS) {
   if (await prisma.siteSetting.findUnique({ where: { key: marker } })) continue;

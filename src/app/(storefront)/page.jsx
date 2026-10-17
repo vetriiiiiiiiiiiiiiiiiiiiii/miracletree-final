@@ -283,13 +283,16 @@ export default async function HomePage() {
     catalogue.filter((p) => p.images[0])[i]?.images[0]?.url ?? null;
   const tiles = [
     {
-      href: "/ritual",
+      // The shop's default sort puts bestsellers first.
+      href: "/shop",
       tone: "green",
-      eyebrow: "Ritual builder",
-      title: "Build your daily moringa ritual",
-      body: "Pick what fits your morning and evening — we'll put it together.",
-      cta: "Build mine",
-      image: heroPackList[1]?.images[0]?.url ?? promoImage(0),
+      eyebrow: "Customer favourites",
+      title: "Shop our bestsellers",
+      body: "Powders, teas, capsules, oils and snacks — all from the same tree.",
+      cta: "Shop now",
+      image:
+        catalogue.find((p) => p.isBestSeller && p.images[0])?.images[0]?.url ??
+        promoImage(0),
     },
     {
       href: "/moringa",

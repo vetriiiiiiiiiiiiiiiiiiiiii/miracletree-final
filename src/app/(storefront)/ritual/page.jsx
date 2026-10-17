@@ -11,6 +11,8 @@ export const metadata = buildMetadata({
   description:
     "Assemble a daily moringa routine — morning tea, something nourishing, something to carry, something for after — and add the lot to your bag in one go.",
   path: "/ritual",
+  // Hidden for now: unlinked from the site, and kept out of search results.
+  noIndex: true,
 });
 /**
  * The steps are structure, not content: each names a category and supplies the
