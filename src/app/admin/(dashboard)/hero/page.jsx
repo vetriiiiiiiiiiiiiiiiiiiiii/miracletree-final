@@ -28,6 +28,14 @@ export default async function HeroAdminPage() {
       hint: "A wide lifestyle photo, at least 1920×900. The left side sits under the text, so keep the subject to the right. Without one, the product's pack is shown on deep green.",
     },
     {
+      name: "mobileImageUrl",
+      label: "Mobile photograph (optional)",
+      type: "image",
+      folder: "hero",
+      aspect: "aspect-[4/3]",
+      hint: "Phones show the photo above the text at 4:3. Leave empty to use the main photo (cropped around the product); upload a 4:3 crop here for full control.",
+    },
+    {
       name: "linkHref",
       label: "Click-through link (whole slide)",
       type: "text",
@@ -129,6 +137,7 @@ export default async function HeroAdminPage() {
             secondaryLabel: s.secondaryLabel ?? "",
             secondaryHref: s.secondaryHref ?? "",
             imageUrl: s.imageUrl ?? "",
+            mobileImageUrl: s.mobileImageUrl ?? "",
             productSlug: s.productSlug ?? "",
             videoUrl: s.videoUrl ?? "",
             videoLabel: s.videoLabel ?? "",

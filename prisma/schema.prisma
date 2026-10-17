@@ -877,6 +877,8 @@ model HeroSlide {
   secondaryLabel String?
   secondaryHref  String?
   imageUrl       String?
+  /// Optional phone crop (4:3 works best); phones use imageUrl if empty.
+  mobileImageUrl String?
   /// Used for the fallback packshot and as the default button link.
   productSlug    String?
   /// "Watch our story" — a link to a video, opened in a new tab.

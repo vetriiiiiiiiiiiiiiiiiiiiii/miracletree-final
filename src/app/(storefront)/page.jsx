@@ -233,6 +233,7 @@ export default async function HomePage() {
         secondaryLabel: s.secondaryLabel,
         secondaryHref: s.secondaryHref,
         image: s.imageUrl,
+        mobileImage: s.mobileImageUrl,
         packshot: s.productSlug ? packshotFor(s.productSlug) : null,
         videoUrl: s.videoUrl,
         videoLabel: s.videoLabel,

@@ -142,31 +142,61 @@ function Slide({ slide, active, first, position }) {
       aria-hidden={!active}
       inert={!active}
       className={cn(
-        "relative col-start-1 row-start-1 flex min-h-[40rem] items-center transition-opacity duration-700 ease-[var(--ease-organic)] md:min-h-[36rem] lg:min-h-[clamp(36rem,74vh,46rem)]",
+        // Phones and tablets stack photo over copy; from lg the copy sits
+        // on the photo.
+        "relative col-start-1 row-start-1 flex flex-col transition-opacity duration-700 ease-[var(--ease-organic)] lg:min-h-[clamp(36rem,74vh,46rem)] lg:flex-row lg:items-center",
         active ? "z-10 opacity-100" : "z-0 opacity-0",
       )}
     >
+      {/* On a phone the photo is its own block above the copy. A wide
+          lifestyle shot behind a tall phone screen was cropped to a blurred
+          sliver of the pack; at 4:3 the whole scene stays in frame. A
+          separate mobile photo from the admin takes its place if set. */}
+      {slide.mobileImage || slide.image ? (
+        <div className="relative aspect-[4/3] w-full overflow-hidden md:aspect-[16/9] lg:hidden">
+          <Image
+            src={slide.mobileImage || slide.image}
+            alt=""
+            fill
+            priority={first}
+            sizes="100vw"
+            className={cn(
+              "object-cover",
+              !slide.mobileImage && "object-[72%_center]",
+            )}
+            unoptimized={(slide.mobileImage || slide.image).startsWith("/uploads/")}
+          />
+          {!slide.hideText ? (
+            <div
+              className="absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-[#0d2416] to-transparent"
+              aria-hidden
+            />
+          ) : null}
+        </div>
+      ) : null}
+
       {/* Background */}
       {slide.image ? (
-        <Image
-          src={slide.image}
-          alt=""
-          fill
-          priority={first}
-          sizes="100vw"
-          // Anchored a little right of centre: the subject sits right of
-          // middle (the copy covers the left), and at this anchor it stays in
-          // the right half from a tablet up to a wide desktop. Anchoring
-          // fully right slid it under the copy on mid-width screens.
-          className="-z-10 object-cover object-[60%_center] xl:object-[50%_center]"
-          unoptimized={slide.image.startsWith("/uploads/")}
-        />
+        <div className="absolute inset-0 -z-10 hidden lg:block">
+          <Image
+            src={slide.image}
+            alt=""
+            fill
+            priority={first}
+            sizes="100vw"
+            // Anchored a little right of centre: the subject sits right of
+            // middle (the copy covers the left), and at this anchor it stays
+            // in the right half from a tablet up to a wide desktop.
+            className="object-cover object-[60%_center] xl:object-[50%_center]"
+            unoptimized={slide.image.startsWith("/uploads/")}
+          />
+        </div>
       ) : (
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(70%_80%_at_78%_45%,#2c6b43_0%,#14351f_55%,#0b1d12_100%)]">
           {slide.packshot ? (
             // Packshots are photographed on white, so they sit on a round
             // cream plate where that white disappears, not on the green.
-            <div className="absolute right-[6%] top-1/2 hidden aspect-square w-[min(36vw,30rem)] -translate-y-1/2 md:block">
+            <div className="absolute right-[6%] top-1/2 hidden aspect-square w-[min(36vw,30rem)] -translate-y-1/2 lg:block">
               <div className="absolute -inset-6 rounded-full bg-[#efe1b4]/10 blur-2xl" aria-hidden />
               <div className="absolute inset-0 overflow-hidden rounded-full bg-[#fbf8f0] shadow-[0_40px_80px_-20px_rgba(0,0,0,0.6)]">
                 <Image
@@ -185,9 +215,9 @@ function Slide({ slide, active, first, position }) {
       )}
       {/* The shade that keeps the copy legible over any photograph. A
           photo-only slide carries its own text, so it gets none. */}
-      {!slide.hideText ? (
+      {!slide.hideText && slide.image ? (
         <div
-          className="absolute inset-0 -z-10 bg-gradient-to-t from-black/85 via-black/65 to-black/50 md:bg-gradient-to-r md:from-black/70 md:via-black/35 md:to-transparent"
+          className="absolute inset-0 -z-10 hidden bg-gradient-to-r from-black/70 via-black/35 to-transparent lg:block"
           aria-hidden
         />
       ) : null}
@@ -208,11 +238,16 @@ function Slide({ slide, active, first, position }) {
           {[slide.title, slide.subtitle].filter(Boolean).join(" ")}
         </h2>
       ) : (
-      <div className="pointer-events-none relative mx-auto w-full max-w-[90rem] gutter pb-24 pt-12 md:py-16 [&_a]:pointer-events-auto">
+      <div
+        className={cn(
+          "pointer-events-none relative mx-auto w-full max-w-[90rem] gutter pb-24 lg:py-16 [&_a]:pointer-events-auto",
+          slide.mobileImage || slide.image ? "pt-4" : "pt-12",
+        )}
+      >
         <div className="max-w-[38rem]">
           {/* On a phone the packshot sits above the copy rather than beside it. */}
           {!slide.image && slide.packshot ? (
-            <div className="relative mb-6 h-28 w-28 overflow-hidden rounded-full bg-[#fbf8f0] shadow-xl md:hidden">
+            <div className="relative mb-6 h-28 w-28 overflow-hidden rounded-full bg-[#fbf8f0] shadow-xl lg:hidden">
               <Image
                 src={slide.packshot}
                 alt=""
