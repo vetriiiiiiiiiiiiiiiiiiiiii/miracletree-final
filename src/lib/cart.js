@@ -160,8 +160,9 @@ export const getCart = async () => {
     // couponContextFor, which takes a finished CartView — and this *is* the
     // function that builds one. Only queried when a coupon is actually
     // attached, so an ordinary cart still costs nothing extra.
-    const session = await getSession();
-    const userId = session?.sub ?? null;
+    // getCurrentUser, not a raw session: it covers both sign-in paths, and
+    // reading `.sub` off the NextAuth session was always empty.
+    const userId = (await getCurrentUser())?.id ?? null;
     const needsHistory =
       Boolean(userId) &&
       (coupon.appliesTo === "first_order" || coupon.perUserLimit !== null);
@@ -252,8 +253,7 @@ function parseScopeIds(raw) {
  * coupon being renamed or deleted.
  */
 export async function couponContextFor(coupon, cart) {
-  const session = await getSession();
-  const userId = session?.sub ?? null;
+  const userId = (await getCurrentUser())?.id ?? null;
   if (!userId) {
     return {
       subtotal: cart.totals.subtotal,

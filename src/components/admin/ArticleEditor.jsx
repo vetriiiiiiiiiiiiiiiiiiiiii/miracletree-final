@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useActionState, useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
-import { Input, Textarea, FormMessage } from "@/components/ui/Field";
+import { Input, Textarea, Select, FormMessage } from "@/components/ui/Field";
 import { Card, FieldGroup } from "@/components/admin/ui";
 import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import SearchableSelect from "@/components/ui/SearchableSelect";
