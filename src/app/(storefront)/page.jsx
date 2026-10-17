@@ -236,6 +236,8 @@ export default async function HomePage() {
         packshot: s.productSlug ? packshotFor(s.productSlug) : null,
         videoUrl: s.videoUrl,
         videoLabel: s.videoLabel,
+        linkHref: s.linkHref,
+        hideText: s.hideText,
       }))
     : [
         {

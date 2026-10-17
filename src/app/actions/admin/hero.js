@@ -35,8 +35,10 @@ const slideSchema = z.object({
   productSlug: text(200),
   videoUrl: href,
   videoLabel: text(40),
+  linkHref: href,
   position: z.coerce.number().int().min(0).max(999),
   isActive: z.boolean(),
+  hideText: z.boolean(),
 });
 const bool = (formData, key) =>
   formData.get(key) === "on" || formData.get(key) === "true";
@@ -46,13 +48,14 @@ export async function saveHeroSlideAction(_prev, formData) {
     const admin = await requireAdmin();
     const fields = Object.fromEntries(
       Object.keys(slideSchema.shape)
-        .filter((k) => k !== "position" && k !== "isActive")
+        .filter((k) => !["position", "isActive", "hideText"].includes(k))
         .map((k) => [k, formText(formData, k)]),
     );
     const parsed = slideSchema.safeParse({
       ...fields,
       position: formData.get("position") || 0,
       isActive: bool(formData, "isActive"),
+      hideText: bool(formData, "hideText"),
     });
     if (!parsed.success) {
       return {
@@ -77,6 +80,8 @@ export async function saveHeroSlideAction(_prev, formData) {
       productSlug: orNull(input.productSlug),
       videoUrl: orNull(input.videoUrl),
       videoLabel: orNull(input.videoLabel),
+      linkHref: orNull(input.linkHref),
+      hideText: input.hideText,
       position: input.position,
       isActive: input.isActive,
     };

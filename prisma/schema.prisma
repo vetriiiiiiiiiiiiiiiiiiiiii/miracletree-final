@@ -882,6 +882,10 @@ model HeroSlide {
   /// "Watch our story" — a link to a video, opened in a new tab.
   videoUrl       String?
   videoLabel     String?
+  /// Where a click anywhere on the slide goes. Buttons keep their own links.
+  linkHref       String?
+  /// For a photo that already carries its own text: hide the text overlay.
+  hideText       Boolean @default(false)
   position       Int     @default(0)
   isActive       Boolean @default(true)
 

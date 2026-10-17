@@ -183,13 +183,32 @@ function Slide({ slide, active, first, position }) {
           ) : null}
         </div>
       )}
-      {/* The shade that keeps the copy legible over any photograph. */}
-      <div
-        className="absolute inset-0 -z-10 bg-gradient-to-t from-black/85 via-black/65 to-black/50 md:bg-gradient-to-r md:from-black/70 md:via-black/35 md:to-transparent"
-        aria-hidden
-      />
+      {/* The shade that keeps the copy legible over any photograph. A
+          photo-only slide carries its own text, so it gets none. */}
+      {!slide.hideText ? (
+        <div
+          className="absolute inset-0 -z-10 bg-gradient-to-t from-black/85 via-black/65 to-black/50 md:bg-gradient-to-r md:from-black/70 md:via-black/35 md:to-transparent"
+          aria-hidden
+        />
+      ) : null}
 
-      <div className="mx-auto w-full max-w-[90rem] gutter pb-24 pt-12 md:py-16">
+      {/* Click anywhere on the slide. It sits under the copy, which ignores
+          the pointer except on its own buttons, so those keep their links. */}
+      {slide.linkHref ? (
+        <SlideLink
+          href={slide.linkHref}
+          label={[slide.title, slide.subtitle].filter(Boolean).join(" ")}
+          active={active}
+        />
+      ) : null}
+
+      {slide.hideText ? (
+        // The photo carries the words; the headline stays for screen readers.
+        <h2 className="sr-only">
+          {[slide.title, slide.subtitle].filter(Boolean).join(" ")}
+        </h2>
+      ) : (
+      <div className="pointer-events-none relative mx-auto w-full max-w-[90rem] gutter pb-24 pt-12 md:py-16 [&_a]:pointer-events-auto">
         <div className="max-w-[38rem]">
           {/* On a phone the packshot sits above the copy rather than beside it. */}
           {!slide.image && slide.packshot ? (
@@ -275,8 +294,27 @@ function Slide({ slide, active, first, position }) {
           ) : null}
         </div>
       </div>
-
+      )}
     </div>
+  );
+}
+function SlideLink({ href, label, active }) {
+  const className = "absolute inset-0 z-0";
+  const tabIndex = active ? undefined : -1;
+  if (/^https?:\/\//i.test(href)) {
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={label}
+        tabIndex={tabIndex}
+        className={className}
+      />
+    );
+  }
+  return (
+    <Link href={href} aria-label={label} tabIndex={tabIndex} className={className} />
   );
 }
 function Arrow() {

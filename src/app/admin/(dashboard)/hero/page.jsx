@@ -28,6 +28,20 @@ export default async function HeroAdminPage() {
       hint: "A wide lifestyle photo, at least 1920×900. The left side sits under the text, so keep the subject to the right. Without one, the product's pack is shown on deep green.",
     },
     {
+      name: "linkHref",
+      label: "Click-through link (whole slide)",
+      type: "text",
+      maxLength: 500,
+      placeholder: "/product/mogo-moringa-energy-bar",
+      hint: "Where shoppers go when they click anywhere on the slide — a site path like /shop/super-foods, or a full https:// link. The buttons below keep their own links. Leave empty for no click-through.",
+    },
+    {
+      name: "hideText",
+      label: "Photo only — hide the text and buttons",
+      type: "checkbox",
+      hint: "For a banner that already has its headline and offer designed into the photo. Set a click-through link above so it still goes somewhere.",
+    },
+    {
       name: "eyebrow",
       label: "Small line above the headline",
       type: "text",
@@ -75,11 +89,14 @@ export default async function HeroAdminPage() {
       />
       <Card>
         <p className="text-sm leading-relaxed">
-          Slides cross-fade every seven seconds, in order. Upload a wide
-          lifestyle photograph for each — the text sits on the left over a
-          dark shade, so the product or scene reads best on the right. With no
-          visible slides the homepage falls back to the products ticked
-          &ldquo;Homepage hero&rdquo;.
+          Slides cross-fade every seven seconds, in order. For each one you
+          can upload the photo, edit every line of text, set the two buttons
+          and where they go, and set where a click anywhere on the slide goes.
+          The text sits on the left over a dark shade, so the product or scene
+          reads best on the right — or tick &ldquo;Photo only&rdquo; for a
+          banner that already has its text designed in. With no visible slides
+          the homepage falls back to the products ticked &ldquo;Homepage
+          hero&rdquo;.
         </p>
       </Card>
       <RecordManager
@@ -97,6 +114,8 @@ export default async function HeroAdminPage() {
           badges: [
             s.isActive ? { label: "Live", tone: "success" } : { label: "Hidden", tone: "neutral" },
             s.imageUrl ? { label: "Photo", tone: "info" } : { label: "No photo", tone: "warning" },
+            ...(s.linkHref ? [{ label: "Clickable", tone: "info" }] : []),
+            ...(s.hideText ? [{ label: "Photo only", tone: "neutral" }] : []),
           ],
           values: {
             eyebrow: s.eyebrow ?? "",
@@ -113,6 +132,8 @@ export default async function HeroAdminPage() {
             productSlug: s.productSlug ?? "",
             videoUrl: s.videoUrl ?? "",
             videoLabel: s.videoLabel ?? "",
+            linkHref: s.linkHref ?? "",
+            hideText: s.hideText,
             position: s.position,
             isActive: s.isActive,
           },
