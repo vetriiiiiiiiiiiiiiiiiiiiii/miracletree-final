@@ -28,6 +28,7 @@ const NAVIGATION = [
     title: "Content",
     items: [
       { href: "/admin/content", label: "Homepage", icon: "content" },
+      { href: "/admin/hero", label: "Hero banner", icon: "hero" },
       { href: "/admin/journal", label: "Journal", icon: "journal" },
       { href: "/admin/story", label: "Our Story", icon: "story" },
       { href: "/admin/leadership", label: "Leadership", icon: "leadership" },
@@ -302,6 +303,7 @@ function Icon({ name, active }) {
     leadership:
       "M10 3.5a2.6 2.6 0 1 1 0 5.2 2.6 2.6 0 0 1 0-5.2M4.5 16.5c0-2.9 2.5-4.8 5.5-4.8s5.5 1.9 5.5 4.8",
     promotions: "M3 8l7-5 7 5v9H3V8zM7.5 10.5l5 5M12.5 10.5l-5 5",
+    hero: "M2 4h16v12H2zM2 13l4-4 3 3 3-3 6 6M5 7.5h4",
     gallery: "M2.5 5.5h11v10h-11zM6.5 2.5h11v10M2.5 13l3.5-3.5 2.5 2.5 2-2 3 3",
     media:
       "M3 4h14v12H3zM3 12l4-4 3 3 3-3 4 4M7.5 7.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z",

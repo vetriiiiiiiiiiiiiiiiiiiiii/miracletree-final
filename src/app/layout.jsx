@@ -7,7 +7,7 @@ import {
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Analytics } from "@/components/analytics/Analytics";
 import { Preloader } from "@/components/motion/Preloader";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import { Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 // Self-hosted at build time by next/font, so no request goes to Google at
 // runtime and the CSP needs no font host.
@@ -15,6 +15,13 @@ const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
   variable: "--font-jakarta",
+  display: "swap",
+});
+// The hero's display serif — headline only, everything else stays sans.
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-playfair",
   display: "swap",
 });
 export const metadata = {
@@ -63,7 +70,7 @@ export default function RootLayout({ children }) {
       // Server-rendered as the brand default; the theme script in <head>
       // corrects it before paint from the visitor's stored choice.
       data-theme="light"
-      className={jakarta.variable}
+      className={`${jakarta.variable} ${playfair.variable}`}
       // The inline script below adds a `js` class before React hydrates, and
       // Lenis adds its own afterwards. Both are deliberate mutations of an
       // element React also renders, so the class mismatch is expected here.

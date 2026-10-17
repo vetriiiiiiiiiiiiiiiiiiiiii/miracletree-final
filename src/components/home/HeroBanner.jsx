@@ -3,25 +3,31 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { formatPrice } from "@/lib/money";
 /**
- * The homepage banner carousel.
+ * The homepage hero: full-bleed photographic slides, managed in
+ * Admin → Hero banner.
  *
- * Slide one carries the CMS hero copy; every product ticked "Homepage hero" in
- * the admin gets a slide of its own. Each slide is a rounded panel in one of a
- * few soft brand tints with the pack photographed on the right. It advances
- * every six seconds, pauses on hover/focus, swipes on touch, and respects
- * reduced motion by not advancing at all.
+ * Each slide is a background photograph under a left-hand shade, with a serif
+ * headline, a tagline, body copy, up to three feature icons and two buttons.
+ * Without a photograph a slide falls back to a deep green ground with its
+ * product's packshot, so it never renders as a hole.
+ *
+ * Slides cross-fade every seven seconds; hovering or focusing pauses them, a
+ * swipe moves them on touch, and reduced motion stops the autoplay entirely.
  */
-const TINTS = [
-  "from-[#e8f4ea] to-[#f6fbf3]",
-  "from-[#fdf0e1] to-[#fff8ef]",
-  "from-[#fbe6ee] to-[#fff4f8]",
-  "from-[#e6f0f7] to-[#f5fafd]",
-];
+const DURATION = 7000;
+const ICONS = {
+  leaf: "M5 19c0-8 6-14 14-14 0 8-6 14-14 14zM5 19l7-7",
+  bolt: "M13 2L4 14h7l-1 8 9-12h-7l1-8z",
+  flask: "M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-5-9V3M7.5 15h9",
+  sun: "M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zM12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4",
+  shield: "M12 3l7 3v5c0 5-3 8.5-7 10-4-1.5-7-5-7-10V6l7-3zM9 12l2 2 4-4",
+  heart: "M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z",
+};
 export function HeroBanner({ slides }) {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [reduced, setReduced] = useState(false);
   const touchX = useRef(null);
   const count = slides.length;
   const go = useCallback(
@@ -29,17 +35,20 @@ export function HeroBanner({ slides }) {
     [count],
   );
   useEffect(() => {
-    if (count < 2 || paused) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const id = window.setTimeout(() => go(index + 1), 6000);
+    setReduced(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  }, []);
+  useEffect(() => {
+    if (count < 2 || paused || reduced) return;
+    const id = window.setTimeout(() => go(index + 1), DURATION);
     return () => window.clearTimeout(id);
-  }, [index, paused, count, go]);
+  }, [index, paused, reduced, count, go]);
   if (!count) return null;
+  const active = slides[index];
   return (
     <section
       aria-roledescription="carousel"
       aria-label="Featured"
-      className="mx-auto max-w-[90rem] gutter pt-4 md:pt-6"
+      className="relative isolate overflow-hidden bg-[#0d2416] text-white"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocusCapture={() => setPaused(true)}
@@ -52,141 +61,224 @@ export function HeroBanner({ slides }) {
         touchX.current = null;
       }}
     >
-      <div className="relative overflow-hidden rounded-3xl">
-        <div
-          className="flex transition-transform duration-700 ease-[var(--ease-organic)]"
-          style={{ transform: `translateX(-${index * 100}%)` }}
-        >
-          {slides.map((slide, i) => (
-            <div
-              key={slide.key}
-              role="group"
-              aria-roledescription="slide"
-              aria-label={`${i + 1} of ${count}`}
-              aria-hidden={i !== index}
-              className={cn(
-                "relative grid w-full shrink-0 grid-cols-1 items-center gap-4 bg-gradient-to-br px-6 py-8 sm:px-10 md:min-h-[26rem] md:grid-cols-[1.1fr_1fr] md:px-14 md:py-10 lg:min-h-[30rem]",
-                TINTS[i % TINTS.length],
-                "dark:from-forest-800 dark:to-ink-800",
-              )}
-            >
-              <div className="relative z-10 max-w-xl">
-                {slide.eyebrow ? (
-                  <p className="inline-flex rounded-full bg-white/80 px-3 py-1 text-[0.72rem] font-bold uppercase tracking-wider text-emerald-600 dark:bg-ink-700 dark:text-leaf-200">
-                    {slide.eyebrow}
-                  </p>
-                ) : null}
-                <h2
-                  className={cn(
-                    "mt-4 font-extrabold leading-[1.05] tracking-tight text-cream-50",
-                    i === 0
-                      ? "text-[2.1rem] sm:text-5xl lg:text-[3.6rem]"
-                      : "text-[1.9rem] sm:text-4xl lg:text-5xl",
-                  )}
-                >
-                  {slide.title}
-                </h2>
-                {slide.subtitle ? (
-                  <p className="mt-4 line-clamp-3 max-w-md text-[1rem] leading-relaxed text-cream-300 md:text-lg">
-                    {slide.subtitle}
-                  </p>
-                ) : null}
-                {slide.price ? (
-                  <p className="mt-4 text-lg font-bold text-cream-50">
-                    <span className="text-sm font-medium text-cream-400">From </span>
-                    {formatPrice(slide.price)}
-                  </p>
-                ) : null}
-                <div className="mt-6 flex flex-wrap gap-3">
-                  <Link
-                    href={slide.ctaHref}
-                    tabIndex={i === index ? undefined : -1}
-                    className="inline-flex h-12 items-center rounded-full bg-emerald-500 px-7 text-[0.92rem] font-bold text-on-accent shadow-sm transition-colors hover:bg-emerald-600"
-                  >
-                    {slide.ctaLabel}
-                  </Link>
-                  {slide.secondaryHref ? (
-                    <Link
-                      href={slide.secondaryHref}
-                      tabIndex={i === index ? undefined : -1}
-                      className="inline-flex h-12 items-center rounded-full border-2 border-cream-50/15 bg-white/60 px-6 text-[0.92rem] font-bold text-cream-50 transition-colors hover:border-emerald-500 hover:text-emerald-500 dark:bg-transparent"
-                    >
-                      {slide.secondaryLabel}
-                    </Link>
-                  ) : null}
-                </div>
-              </div>
-
-              {slide.image ? (
-                <div className="relative mx-auto aspect-square w-full max-w-[17rem] sm:max-w-[20rem] md:max-w-[26rem]">
-                  <div className="absolute inset-[8%] rounded-full bg-white/70 dark:bg-ink-700/60" aria-hidden />
-                  <Image
-                    src={slide.image}
-                    alt={slide.imageAlt ?? ""}
-                    fill
-                    priority={i === 0}
-                    sizes="(min-width: 768px) 420px, 280px"
-                    className="object-contain p-[10%] mix-blend-multiply dark:mix-blend-normal"
-                    unoptimized={slide.image.startsWith("/uploads/")}
-                  />
-                </div>
-              ) : null}
-            </div>
-          ))}
-        </div>
-
-        {count > 1 ? (
-          <>
-            <button
-              type="button"
-              onClick={() => go(index - 1)}
-              aria-label="Previous slide"
-              className="absolute left-3 top-1/2 hidden h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-white/90 text-cream-50 shadow-md transition-transform hover:scale-105 md:grid dark:bg-ink-700"
-            >
-              <Chevron dir="left" />
-            </button>
-            <button
-              type="button"
-              onClick={() => go(index + 1)}
-              aria-label="Next slide"
-              className="absolute right-3 top-1/2 hidden h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-white/90 text-cream-50 shadow-md transition-transform hover:scale-105 md:grid dark:bg-ink-700"
-            >
-              <Chevron dir="right" />
-            </button>
-          </>
-        ) : null}
+      {/* Every slide stays mounted and cross-fades; the active one sets the
+          section's height, the rest are layered behind it. */}
+      <div className="grid">
+        {slides.map((slide, i) => (
+          <Slide
+            key={slide.key}
+            slide={slide}
+            active={i === index}
+            first={i === 0}
+            position={`${i + 1} of ${count}`}
+          />
+        ))}
       </div>
 
-      {count > 1 ? (
-        <div className="mt-4 flex justify-center gap-2">
-          {slides.map((slide, i) => (
-            <button
-              key={slide.key}
-              type="button"
-              onClick={() => go(i)}
-              aria-label={`Show slide ${i + 1}`}
-              aria-current={i === index ? "true" : undefined}
-              className={cn(
-                "h-2 rounded-full transition-all duration-300",
-                i === index ? "w-7 bg-emerald-500" : "w-2 bg-ink-600 hover:bg-cream-400",
-              )}
-            />
-          ))}
+      {/* Controls: dots and a progress line on the left, the video link on
+          the right. */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20">
+        <div className="mx-auto flex max-w-[90rem] items-center justify-between gap-4 gutter pb-5 md:pb-7">
+          {count > 1 ? (
+            <div className="pointer-events-auto flex flex-1 items-center gap-2">
+              {slides.map((slide, i) => (
+                <button
+                  key={slide.key}
+                  type="button"
+                  onClick={() => go(i)}
+                  aria-label={`Show slide ${i + 1}`}
+                  aria-current={i === index ? "true" : undefined}
+                  className={cn(
+                    "h-2 rounded-full transition-all duration-300",
+                    i === index
+                      ? "w-6 bg-white"
+                      : "w-2 border border-white/70 hover:bg-white/60",
+                  )}
+                />
+              ))}
+              <span className="relative ml-2 hidden h-px max-w-md flex-1 bg-white/25 sm:block" aria-hidden>
+                {!reduced ? (
+                  <span
+                    key={index}
+                    className="absolute inset-0 origin-left bg-white/80"
+                    style={{
+                      animation: `hero-progress ${DURATION}ms linear forwards`,
+                      animationPlayState: paused ? "paused" : "running",
+                    }}
+                  />
+                ) : null}
+              </span>
+            </div>
+          ) : (
+            <span />
+          )}
+
+          {active.videoUrl ? (
+            <a
+              href={active.videoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="pointer-events-auto group flex shrink-0 items-center gap-3 text-sm font-semibold text-white"
+            >
+              <span className="grid h-11 w-11 place-items-center rounded-full bg-white text-[#0d2416] shadow-lg transition-transform group-hover:scale-105">
+                <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden fill="currentColor">
+                  <path d="M3 1.5v11l9-5.5z" />
+                </svg>
+              </span>
+              <span className="hidden sm:inline">{active.videoLabel || "Watch our story"}</span>
+            </a>
+          ) : null}
         </div>
-      ) : null}
+      </div>
     </section>
   );
 }
-function Chevron({ dir }) {
+function Slide({ slide, active, first, position }) {
   return (
-    <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden>
-      <path
-        d={dir === "left" ? "M12.5 4 6.5 10l6 6" : "M7.5 4l6 6-6 6"}
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
+    <div
+      role="group"
+      aria-roledescription="slide"
+      aria-label={position}
+      aria-hidden={!active}
+      inert={!active}
+      className={cn(
+        "relative col-start-1 row-start-1 flex min-h-[40rem] items-center transition-opacity duration-700 ease-[var(--ease-organic)] md:min-h-[36rem] lg:min-h-[clamp(36rem,74vh,46rem)]",
+        active ? "z-10 opacity-100" : "z-0 opacity-0",
+      )}
+    >
+      {/* Background */}
+      {slide.image ? (
+        <Image
+          src={slide.image}
+          alt=""
+          fill
+          priority={first}
+          sizes="100vw"
+          className="-z-10 object-cover"
+          unoptimized={slide.image.startsWith("/uploads/")}
+        />
+      ) : (
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(70%_80%_at_78%_45%,#2c6b43_0%,#14351f_55%,#0b1d12_100%)]">
+          {slide.packshot ? (
+            // Packshots are photographed on white, so they sit on a round
+            // cream plate where that white disappears, not on the green.
+            <div className="absolute right-[6%] top-1/2 hidden aspect-square w-[min(36vw,30rem)] -translate-y-1/2 md:block">
+              <div className="absolute -inset-6 rounded-full bg-[#efe1b4]/10 blur-2xl" aria-hidden />
+              <div className="absolute inset-0 overflow-hidden rounded-full bg-[#fbf8f0] shadow-[0_40px_80px_-20px_rgba(0,0,0,0.6)]">
+                <Image
+                  src={slide.packshot}
+                  alt=""
+                  fill
+                  priority={first}
+                  sizes="30rem"
+                  className="object-contain p-[14%] mix-blend-multiply"
+                  unoptimized={slide.packshot.startsWith("/uploads/")}
+                />
+              </div>
+            </div>
+          ) : null}
+        </div>
+      )}
+      {/* The shade that keeps the copy legible over any photograph. */}
+      <div
+        className="absolute inset-0 -z-10 bg-gradient-to-t from-black/75 via-black/45 to-black/20 md:bg-gradient-to-r md:from-black/70 md:via-black/35 md:to-transparent"
+        aria-hidden
       />
+
+      <div className="mx-auto w-full max-w-[90rem] gutter pb-24 pt-12 md:py-16">
+        <div className="max-w-[38rem]">
+          {/* On a phone the packshot sits above the copy rather than beside it. */}
+          {!slide.image && slide.packshot ? (
+            <div className="relative mb-6 h-28 w-28 overflow-hidden rounded-full bg-[#fbf8f0] shadow-xl md:hidden">
+              <Image
+                src={slide.packshot}
+                alt=""
+                fill
+                sizes="112px"
+                className="object-contain p-3 mix-blend-multiply"
+                unoptimized={slide.packshot.startsWith("/uploads/")}
+              />
+            </div>
+          ) : null}
+          {slide.eyebrow ? (
+            <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-white/85 md:text-[0.74rem]">
+              {slide.eyebrow.split("·").map((part, i) => (
+                <span key={i} className="flex items-center gap-3">
+                  {i > 0 ? <span aria-hidden className="h-1 w-1 rounded-full bg-white/70" /> : null}
+                  {part.trim()}
+                </span>
+              ))}
+            </p>
+          ) : null}
+
+          <h2 className="mt-5 font-[family-name:var(--font-serif)] font-semibold tracking-normal">
+            <span className="block text-[3.2rem] leading-[0.95] text-white sm:text-[4.2rem] lg:text-[5.4rem]">
+              {slide.title}
+            </span>
+            {slide.subtitle ? (
+              <span className="mt-1 block text-[2.1rem] font-medium leading-[1.05] text-[#efe1b4] sm:text-[2.8rem] lg:text-[3.5rem]">
+                {slide.subtitle}
+              </span>
+            ) : null}
+          </h2>
+
+          {slide.tagline ? (
+            <p className="mt-4 font-[family-name:var(--font-serif)] text-[1.35rem] leading-snug text-white sm:text-[1.7rem]">
+              {slide.tagline}
+            </p>
+          ) : null}
+          {slide.body ? (
+            <p className="mt-3 max-w-[30rem] text-[0.95rem] leading-relaxed text-white/85 md:text-[1rem]">
+              {slide.body}
+            </p>
+          ) : null}
+
+          {slide.features.length ? (
+            <ul className="mt-6 flex flex-wrap gap-x-7 gap-y-4">
+              {slide.features.map((f) => (
+                <li key={f.text} className="flex max-w-[10rem] items-center gap-2.5 text-[0.82rem] leading-tight text-white/90">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden className="shrink-0 text-white">
+                    <path d={ICONS[f.icon] ?? ICONS.leaf} stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  {f.text}
+                </li>
+              ))}
+            </ul>
+          ) : null}
+
+          {slide.ctaHref || slide.secondaryHref ? (
+            <>
+              <div className="mt-6 h-px max-w-[32rem] bg-white/25" aria-hidden />
+              <div className="mt-6 flex flex-wrap gap-3">
+                {slide.ctaHref ? (
+                  <Link
+                    href={slide.ctaHref}
+                    className="inline-flex h-12 items-center gap-3 rounded-full bg-emerald-500 px-7 text-[0.92rem] font-bold text-white shadow-lg transition-colors hover:bg-emerald-400"
+                  >
+                    {slide.ctaLabel || "Shop now"} <Arrow />
+                  </Link>
+                ) : null}
+                {slide.secondaryHref ? (
+                  <Link
+                    href={slide.secondaryHref}
+                    className="inline-flex h-12 items-center gap-3 rounded-full border border-white/70 px-7 text-[0.92rem] font-semibold text-white transition-colors hover:bg-white hover:text-[#0d2416]"
+                  >
+                    {slide.secondaryLabel || "Know more"} <Arrow />
+                  </Link>
+                ) : null}
+              </div>
+            </>
+          ) : null}
+        </div>
+      </div>
+
+    </div>
+  );
+}
+function Arrow() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden>
+      <path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }

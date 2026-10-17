@@ -853,3 +853,40 @@ model GalleryPhoto {
 
   @@index([groupId, position])
 }
+
+/**
+ * A slide in the homepage hero carousel, managed in Admin → Hero banner.
+ * `imageUrl` is the full-bleed background photograph; without one the slide
+ * falls back to a deep green ground with the linked product's packshot.
+ */
+model HeroSlide {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  /// Small caps line above the headline, e.g. "Natural nutrition · Indian origin".
+  eyebrow        String?
+  /// The big first line, e.g. "Mogo".
+  title          String
+  /// The second line in the accent colour, e.g. "Moringa Energy Bar".
+  subtitle       String?
+  /// A short serif line under the headline.
+  tagline        String?
+  body           String?
+  /// One feature per line as "icon | text" — icons: leaf, bolt, flask, sun, shield, heart.
+  features       String?
+  ctaLabel       String?
+  ctaHref        String?
+  secondaryLabel String?
+  secondaryHref  String?
+  imageUrl       String?
+  /// Used for the fallback packshot and as the default button link.
+  productSlug    String?
+  /// "Watch our story" — a link to a video, opened in a new tab.
+  videoUrl       String?
+  videoLabel     String?
+  position       Int     @default(0)
+  isActive       Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive, position])
+}

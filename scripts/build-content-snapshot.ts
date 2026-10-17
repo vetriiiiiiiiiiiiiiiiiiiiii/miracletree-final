@@ -18,6 +18,7 @@ import {
   ARTICLES,
   FAQS,
   GALLERY_SEED,
+  HERO_SLIDES,
   HOMEPAGE_SECTIONS,
   NAVIGATION,
   SETTINGS,
@@ -31,7 +32,7 @@ import { LEADERS } from "../prisma/leadership";
 const content = {
   // For the logs only. sync-content.mjs fills empty tables and never
   // overwrites what the admin has changed.
-  version: process.env.CONTENT_VERSION ?? "2026-10-10.2",
+  version: process.env.CONTENT_VERSION ?? "2026-10-17.1",
   articles: ARTICLES.map(({ category, since, ...a }) => ({
     ...a,
     status: "published",
@@ -59,6 +60,7 @@ const content = {
   ],
   settings: SETTINGS,
   gallery: GALLERY_SEED,
+  heroSlides: HERO_SLIDES,
 };
 
 writeFileSync("./content-snapshot.json", JSON.stringify(content));

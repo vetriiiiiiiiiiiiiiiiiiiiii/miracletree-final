@@ -64,6 +64,7 @@ for (const [name, model, rows] of [
   ["navigation", prisma.navigationItem, content.navigation],
   ["testimonials", prisma.testimonial, content.testimonials],
   ["announcements", prisma.announcement, content.announcements],
+  ["heroSlides", prisma.heroSlide, content.heroSlides],
 ]) {
   await fillIfEmpty(name, model, rows, (data) => model.createMany({ data }));
 }

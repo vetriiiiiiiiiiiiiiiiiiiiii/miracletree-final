@@ -857,6 +857,50 @@ export const GALLERY_SEED = PHOTO_GROUPS.map((g, i) => ({
   })),
 }));
 
+/**
+ * The homepage hero's starting slides. Copy for the Mogo slide is the
+ * business's own; background photographs are uploaded in Admin → Hero banner,
+ * and until then each slide shows its product's packshot on deep green.
+ */
+export const HERO_SLIDES = [
+  {
+    eyebrow: "Natural nutrition · Indian origin · Global goodness",
+    title: "Mogo",
+    subtitle: "Moringa Energy Bar",
+    tagline: "Real ingredients. Lasting energy.",
+    body: "The world's first moringa-leaf energy bar — crafted in Madurai with the goodness of moringa, nuts, seeds and natural sweeteners for your everyday nutrition.",
+    features: "leaf | Rich in natural nutrition\nbolt | Plant-based energy\nflask | No artificial preservatives",
+    ctaLabel: "Shop Mogo",
+    ctaHref: "/product/mogo-moringa-energy-bar",
+    secondaryLabel: "Know more",
+    secondaryHref: "/innovation",
+    imageUrl: null,
+    productSlug: "mogo-moringa-energy-bar",
+    videoUrl: "https://www.youtube.com/@miracletreelifescience",
+    videoLabel: "Watch our story",
+    position: 0,
+    isActive: true,
+  },
+  {
+    eyebrow: "Grown · Dried · Milled in Madurai",
+    title: "From the",
+    subtitle: "Miracle Tree.",
+    tagline: "Pure moringa, nothing added.",
+    body: "Leaf powder, teas, capsules, oils and snacks — every product from the same tree, CLHPD dried to keep its colour and nutrients.",
+    features: "leaf | 100% moringa leaf\nsun | CLHPD dried\nshield | FSSAI · GMP certified",
+    ctaLabel: "Shop the range",
+    ctaHref: "/shop",
+    secondaryLabel: "Discover moringa",
+    secondaryHref: "/moringa",
+    imageUrl: null,
+    productSlug: "moringa-leaf-powder-hpd-dried",
+    videoUrl: null,
+    videoLabel: null,
+    position: 1,
+    isActive: true,
+  },
+];
+
 export const SETTINGS: Record<string, string> = {
   "shipping.freeThreshold": "69900",
   "shipping.flatFee": "6000",
@@ -1148,6 +1192,7 @@ async function main() {
     // Highlights first: the cascade would handle it, but the delete order in
     // this block is explicit everywhere else and staying consistent is worth
     // more than the one saved line.
+    prisma.heroSlide.deleteMany(),
     prisma.galleryPhoto.deleteMany(),
     prisma.galleryGroup.deleteMany(),
     prisma.leaderHighlight.deleteMany(),
@@ -1299,6 +1344,8 @@ async function main() {
   console.log(
     `✓ leadership: ${LEADERS.length} profiles, ${LEADERS.reduce((n, l) => n + l.highlights.length, 0)} highlights`,
   );
+
+  await prisma.heroSlide.createMany({ data: HERO_SLIDES });
 
   for (const { photos, ...group } of GALLERY_SEED) {
     await prisma.galleryGroup.create({ data: { ...group, photos: { create: photos } } });

@@ -84,6 +84,7 @@ export default async function HomePage() {
     categories,
     heroPacks,
     founder,
+    heroSlides,
     accolades,
   ] = await Promise.all([
     getHomepageSections(),
@@ -119,6 +120,10 @@ export default async function HomePage() {
     prisma.leader.findFirst({
       where: { isActive: true, isFounder: true },
       select: { name: true, role: true, quote: true, imageUrl: true },
+    }),
+    prisma.heroSlide.findMany({
+      where: { isActive: true },
+      orderBy: { position: "asc" },
     }),
     prisma.accolade.findMany({
       where: { isActive: true },
@@ -198,32 +203,65 @@ export default async function HomePage() {
   const freeShippingAt = Number(settings.get("shipping.freeThreshold") ?? 0);
   const codEnabled = settings.get("checkout.codEnabled") !== "false";
 
-  // Slide one is the CMS hero; each hero pack after the first gets its own.
-  const slides = [
-    {
-      key: "hero",
-      eyebrow: "MiracleTree Life Science · Madurai",
-      title: hero.title,
-      subtitle: hero.subtitle,
-      ctaLabel: hero.ctaLabel,
-      ctaHref: hero.ctaHref,
-      secondaryLabel: hero.secondaryLabel,
-      secondaryHref: hero.secondaryHref,
-      image: heroPackList[0]?.images[0]?.url ?? hero.image?.url ?? null,
-      imageAlt: heroPackList[0]?.name ?? "",
-    },
-    ...heroPackList.slice(1, 4).map((p) => ({
-      key: p.slug,
-      eyebrow: p.category?.name ?? "Featured",
-      title: p.name,
-      subtitle: p.shortDescription,
-      price: p.variants[0]?.price ?? null,
-      ctaLabel: "Shop now",
-      ctaHref: `/product/${p.slug}`,
-      image: p.images[0]?.url ?? null,
-      imageAlt: p.name,
-    })),
-  ];
+  // Slides come from Admin → Hero banner. Until any exist, the CMS hero copy
+  // and the "Homepage hero" products stand in, in the same shape.
+  const packshotFor = (slug) =>
+    catalogue.find((p) => p.slug === slug)?.images[0]?.url ?? null;
+  const parseFeatures = (text) =>
+    (text ?? "")
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .slice(0, 3)
+      .map((line) => {
+        const [icon, ...rest] = line.split("|");
+        return rest.length
+          ? { icon: icon.trim().toLowerCase(), text: rest.join("|").trim() }
+          : { icon: "leaf", text: icon.trim() };
+      });
+  const slides = heroSlides.length
+    ? heroSlides.map((s) => ({
+        key: s.id,
+        eyebrow: s.eyebrow,
+        title: s.title,
+        subtitle: s.subtitle,
+        tagline: s.tagline,
+        body: s.body,
+        features: parseFeatures(s.features),
+        ctaLabel: s.ctaLabel,
+        ctaHref: s.ctaHref || (s.productSlug ? `/product/${s.productSlug}` : null),
+        secondaryLabel: s.secondaryLabel,
+        secondaryHref: s.secondaryHref,
+        image: s.imageUrl,
+        packshot: s.productSlug ? packshotFor(s.productSlug) : null,
+        videoUrl: s.videoUrl,
+        videoLabel: s.videoLabel,
+      }))
+    : [
+        {
+          key: "hero",
+          eyebrow: "MiracleTree Life Science · Madurai",
+          title: hero.title,
+          body: hero.subtitle,
+          features: [],
+          ctaLabel: hero.ctaLabel,
+          ctaHref: hero.ctaHref,
+          secondaryLabel: hero.secondaryLabel,
+          secondaryHref: hero.secondaryHref,
+          image: hero.image && heroSection?.mediaUrl ? hero.image.url : null,
+          packshot: heroPackList[0]?.images[0]?.url ?? null,
+        },
+        ...heroPackList.slice(1, 4).map((p) => ({
+          key: p.slug,
+          eyebrow: p.category?.name ?? "Featured",
+          title: p.name,
+          body: p.shortDescription,
+          features: [],
+          ctaLabel: "Shop now",
+          ctaHref: `/product/${p.slug}`,
+          packshot: p.images[0]?.url ?? null,
+        })),
+      ];
 
   const firstImageIn = (slug) =>
     catalogue.find((p) => p.category?.slug === slug && p.images[0])?.images[0]
