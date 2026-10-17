@@ -39,7 +39,7 @@ export default async function OrderConfirmationPage({ params }) {
   const paid = order.paymentStatus === "paid";
   const cod = order.paymentProvider === "cod";
   return (
-    <div className="grain relative bg-ink pb-24 pt-16">
+    <div className="grain relative bg-ink pb-24 pt-8">
       <OrderCelebration />
 
       <div

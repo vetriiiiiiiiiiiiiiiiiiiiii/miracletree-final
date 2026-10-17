@@ -20,7 +20,7 @@ export default async function ContactPage({ searchParams }) {
     <>
       <JsonLd id="contact-breadcrumb" data={breadcrumbSchema(crumbs)} />
 
-      <div className="grain bg-ink pb-24 pt-12 md:pt-16">
+      <div className="grain bg-ink pb-24 pt-6 md:pt-8">
         <Container>
           <Breadcrumbs items={crumbs} />
 

@@ -42,7 +42,7 @@ export default async function FaqPage() {
       {/* Only real, published questions are marked up — never padded to qualify. */}
       <JsonLd id="faq" data={faqSchema(faqs)} />
 
-      <div className="grain bg-ink pb-24 pt-12 md:pt-16">
+      <div className="grain bg-ink pb-24 pt-6 md:pt-8">
         <Container>
           <Breadcrumbs items={crumbs} />
 

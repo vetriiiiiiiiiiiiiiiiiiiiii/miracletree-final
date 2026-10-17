@@ -26,7 +26,7 @@ export default function TrackPage() {
     <>
       <JsonLd id="track-breadcrumb" data={breadcrumbSchema(crumbs)} />
 
-      <Section spacing="none" className="pb-24 pt-32 md:pt-40">
+      <Section spacing="none" className="pb-24 pt-6 md:pt-8">
         <Container>
           <Breadcrumbs items={crumbs} />
 

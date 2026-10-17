@@ -36,8 +36,8 @@ const CERTIFICATIONS = [
 ];
 export function AuthShell({ title, lede, children }) {
   return (
-    <div className="grain relative grid min-h-[80svh] items-center bg-ink py-20 lg:grid-cols-2 lg:py-0">
-      <div className="relative z-10 mx-auto w-full max-w-md gutter">
+    <div className="grain relative grid items-start bg-ink lg:min-h-[70svh] lg:grid-cols-2">
+      <div className="relative z-10 mx-auto w-full max-w-md gutter py-8 md:py-12">
         <h1 className="text-display text-cream-50">{title}</h1>
         {lede ? (
           <p className="mt-5 max-w-[42ch] leading-relaxed text-cream-300">
@@ -48,7 +48,7 @@ export function AuthShell({ title, lede, children }) {
         <div className="mt-10">{children}</div>
       </div>
 
-      <aside className="relative hidden h-full flex-col justify-center border-l border-border-subtle bg-ink-900 px-16 lg:flex">
+      <aside className="relative hidden h-full flex-col justify-center self-stretch border-l border-border-subtle bg-ink-900 px-16 lg:flex">
         <ul className="grid gap-8">
           {REASONS.map((reason) => (
             <li key={reason.title} className="flex gap-4">

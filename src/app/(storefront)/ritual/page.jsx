@@ -162,7 +162,7 @@ export default async function RitualPage() {
     <>
       <JsonLd id="ritual-breadcrumb" data={breadcrumbSchema(crumbs)} />
 
-      <Container className="py-14 md:py-20">
+      <Container className="pb-14 pt-6 md:pb-20 md:pt-8">
         <Breadcrumbs items={crumbs} />
 
         <header className="mt-10 max-w-3xl">

@@ -52,7 +52,7 @@ export default async function ArticlePage({ params }) {
       <JsonLd id="article" data={articleSchema(article)} />
       <JsonLd id="article-breadcrumb" data={breadcrumbSchema(crumbs)} />
 
-      <article className="grain bg-ink pb-24 pt-12 md:pt-16">
+      <article className="grain bg-ink pb-24 pt-6 md:pt-8">
         <Container>
           <Breadcrumbs items={crumbs} />
 

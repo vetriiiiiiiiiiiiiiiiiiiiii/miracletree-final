@@ -82,7 +82,7 @@ export default async function AboutPage() {
       <article className="paper">
         {/* ---------------------------------------------------------- cover */}
         <div className="paper-ruled relative overflow-hidden border-b border-[#c9c0a8]">
-          <Container className="relative py-16 md:py-24">
+          <Container className="relative pb-16 pt-6 md:pb-24 md:pt-8">
             <Breadcrumbs items={crumbs} className="[&_*]:!text-[#6f6440]" />
 
             <div className="mt-12 grid items-center gap-12 lg:grid-cols-[1.25fr_0.75fr]">

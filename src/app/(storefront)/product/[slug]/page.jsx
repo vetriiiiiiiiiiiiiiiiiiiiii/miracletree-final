@@ -128,7 +128,7 @@ export default async function ProductPage({ params }) {
       />
 
       {/* PRODUCT HERO */}
-      <div className="grain bg-ink pb-20 pt-12 md:pt-16">
+      <div className="grain bg-ink pb-20 pt-6 md:pt-8">
         <Container>
           <Breadcrumbs items={crumbs} className="mb-10" />
           <ProductHero

@@ -48,7 +48,7 @@ export default async function MoringaPage() {
       {faqs.length ? <JsonLd id="moringa-faq" data={faqSchema(faqs)} /> : null}
 
       {/* Intro */}
-      <div className="grain bg-ink pb-20 pt-12 md:pt-16">
+      <div className="grain bg-ink pb-20 pt-6 md:pt-8">
         <Container>
           <Breadcrumbs items={crumbs} />
 

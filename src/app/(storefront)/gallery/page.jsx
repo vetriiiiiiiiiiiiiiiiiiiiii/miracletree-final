@@ -38,7 +38,7 @@ export default async function GalleryPage() {
     <>
       <JsonLd id="gallery-breadcrumb" data={breadcrumbSchema(crumbs)} />
 
-      <Section spacing="none" className="pt-32 md:pt-40">
+      <Section spacing="none" className="pt-6 md:pt-8">
         <Container>
           <Breadcrumbs items={crumbs} />
 

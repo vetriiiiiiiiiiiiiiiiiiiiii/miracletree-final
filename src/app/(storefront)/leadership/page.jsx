@@ -147,7 +147,7 @@ export default async function LeadershipPage() {
             introduction. He is why a distributor is on this page, and the
             portrait, the record and the biography read as one block instead of
             being split by a heading nobody needed. */}
-      <Section spacing="none" className="pt-28 md:pt-36">
+      <Section spacing="none" className="pt-6 md:pt-8">
         <Container>
           <Breadcrumbs items={crumbs} />
         </Container>
