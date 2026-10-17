@@ -239,7 +239,7 @@ export default async function HomePage() {
 
   const usps = [
     { icon: "leaf", title: "Pure moringa", body: "Grown & milled in Madurai" },
-    { icon: "sun", title: "Low-temp dried", body: "Colour and nutrients kept" },
+    { icon: "sun", title: "CLHPD dried", body: "Colour and nutrients kept" },
     { icon: "shield", title: "Certified quality", body: "FSSAI · GMP · ISO 9001" },
     ...(freeShippingAt > 0
       ? [
