@@ -5,7 +5,6 @@ import {
   SectionHeading,
 } from "@/components/layout/Section";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { TreeGrowth } from "@/components/home/TreeGrowth";
 import { ProcessSection } from "@/components/home/ProcessSection";
 import { IngredientExplorer } from "@/components/home/IngredientExplorer";
 import { FaqSection } from "@/components/home/FaqSection";
@@ -97,12 +96,6 @@ export default async function MoringaPage() {
           </Reveal>
         </Container>
       </div>
-
-      {/* The tree, grown by scrolling */}
-      <TreeGrowth
-        title="A full season, in one scroll."
-        subtitle="Seed to harvest, the way the tree actually does it: fast, untidy, and useful at every stage."
-      />
 
       {/* Parts of the tree.
 
