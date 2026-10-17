@@ -15,7 +15,7 @@ e2e/.auth/
 shots/
 test-results/
 
-# Built by scripts/export-content.mjs during the image build.
+# Built by scripts/build-content-snapshot.ts during the image build.
 content-snapshot.json
 
 # Bundled by the Dockerfile from scripts/import-catalogue.ts.

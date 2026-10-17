@@ -113,7 +113,7 @@ for (const theme of ["dark", "light"]) {
   for (const route of ROUTES) {
     const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
     await page.addInitScript((t) => {
-      try { localStorage.setItem("mt-theme", t); } catch {}
+      try { localStorage.setItem("mt-theme-v2", t); } catch {}
     }, theme);
     try {
       await page.goto(BASE + route, { waitUntil: "domcontentloaded", timeout: 30000 });

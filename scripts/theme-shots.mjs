@@ -27,7 +27,7 @@ for (const route of routes) {
   for (const theme of ["dark", "light"]) {
     const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
     await page.addInitScript((t) => {
-      try { localStorage.setItem("mt-theme", t); } catch {}
+      try { localStorage.setItem("mt-theme-v2", t); } catch {}
     }, theme);
     await page.goto(BASE + route, { waitUntil: "networkidle", timeout: 45000 });
     await page.evaluate(() => {

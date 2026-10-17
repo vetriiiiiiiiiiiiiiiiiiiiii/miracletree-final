@@ -2,7 +2,7 @@
  * Builds content-snapshot.json straight from the seed's source data, with no
  * database.
  *
- * export-content.mjs expects a freshly seeded database to read from, but the
+ * It replaced an exporter that read from a freshly seeded database, but the
  * image build has none — the Mongo container is not running while
  * `docker compose build` is. So the snapshot was never written, sync-content
  * found nothing to apply on every start, and a VPS database kept whatever

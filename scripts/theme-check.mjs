@@ -47,7 +47,7 @@ const ground = (page) =>
 {
   const page = await browser.newPage();
   await page.addInitScript(() => {
-    try { localStorage.setItem("mt-theme", "light"); } catch {}
+    try { localStorage.setItem("mt-theme-v2", "light"); } catch {}
     // Record the attribute at the earliest moment scripts can observe the
     // document. If the init script has not run by now, the page paints dark.
     document.addEventListener("readystatechange", () => {
@@ -66,7 +66,7 @@ const ground = (page) =>
 for (const scheme of ["light", "dark"]) {
   const page = await browser.newPage({ colorScheme: scheme });
   await page.addInitScript(() => {
-    try { localStorage.setItem("mt-theme", "system"); } catch {}
+    try { localStorage.setItem("mt-theme-v2", "system"); } catch {}
   });
   await page.goto(BASE, { waitUntil: "domcontentloaded" });
   const got = await ground(page);
