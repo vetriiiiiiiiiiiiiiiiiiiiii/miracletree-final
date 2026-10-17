@@ -7,20 +7,23 @@ import {
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Analytics } from "@/components/analytics/Analytics";
 import { Preloader } from "@/components/motion/Preloader";
-import { Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
-// Self-hosted at build time by next/font, so no request goes to Google at
-// runtime and the CSP needs no font host.
-const jakarta = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+// Variable fonts shipped from npm (@fontsource-variable/*) and bundled by
+// next/font at build time. They used to come from next/font/google, which
+// downloads from Google during the build — and a bad response from Google
+// failed a production deploy outright. Nothing is fetched now, and no
+// request goes to Google at runtime either.
+const jakarta = localFont({
+  src: "../../node_modules/@fontsource-variable/plus-jakarta-sans/files/plus-jakarta-sans-latin-wght-normal.woff2",
+  weight: "200 800",
   variable: "--font-jakarta",
   display: "swap",
 });
 // The hero's display serif — headline only, everything else stays sans.
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+const playfair = localFont({
+  src: "../../node_modules/@fontsource-variable/playfair-display/files/playfair-display-latin-wght-normal.woff2",
+  weight: "400 900",
   variable: "--font-playfair",
   display: "swap",
 });
