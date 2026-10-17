@@ -13,7 +13,7 @@ const TONES = {
 export function PromoTiles({ tiles }) {
   if (!tiles.length) return null;
   return (
-    <section className="mx-auto max-w-[90rem] gutter py-6 md:py-10">
+    <section className="mx-auto max-w-[90rem] gutter py-4 md:py-6">
       <ul className="grid gap-4 md:grid-cols-2 md:gap-6">
         {tiles.map((tile) => (
           <li key={tile.href}>

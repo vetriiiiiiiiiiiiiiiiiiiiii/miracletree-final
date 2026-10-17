@@ -8,7 +8,7 @@ import Link from "next/link";
 export function CategoryCircles({ title = "Shop by category", categories }) {
   if (!categories.length) return null;
   return (
-    <section className="mx-auto max-w-[90rem] gutter py-10 md:py-14">
+    <section className="mx-auto max-w-[90rem] gutter py-8 md:py-10">
       <h2 className="text-center text-2xl text-cream-50 md:text-3xl">{title}</h2>
       <ul className="mt-7 flex snap-x gap-4 overflow-x-auto pb-2 [scrollbar-width:none] sm:justify-center md:gap-8 [&::-webkit-scrollbar]:hidden">
         <li className="snap-start">

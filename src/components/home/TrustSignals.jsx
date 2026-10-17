@@ -39,9 +39,9 @@ export function TrustSignals({ accolades }) {
           lede="Licence numbers, issuing bodies and dates — not adjectives. Every certificate below can be checked with the authority that granted it."
         />
 
-        <CertificationMarks className="mt-12" />
+        <CertificationMarks className="mt-8" />
 
-        <div className="mt-14 grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
+        <div className="mt-8 grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-12">
           <div>
             <h3 className="text-[0.7rem] uppercase tracking-[0.2em] text-cream-400">
               Certification

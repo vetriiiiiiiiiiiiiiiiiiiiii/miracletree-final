@@ -11,7 +11,7 @@ export function SocialProof({ title, subtitle, items }) {
     ? rated.reduce((s, i) => s + i.rating, 0) / rated.length
     : null;
   return (
-    <section id="reviews" className="py-12 md:py-16">
+    <section id="reviews" className="py-10 md:py-14">
       <div className="mx-auto max-w-[90rem] gutter">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>

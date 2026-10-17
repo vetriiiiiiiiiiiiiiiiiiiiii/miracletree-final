@@ -27,14 +27,19 @@ export function JournalRail({ title, subtitle, ctaLabel, ctaHref, articles }) {
         </div>
 
         <Reveal
-          className="mt-16 grid gap-x-8 gap-y-12 md:grid-cols-3"
+          className="mt-8 grid gap-x-8 gap-y-10 md:grid-cols-3"
           stagger={0.1}
         >
           {articles.map((article) => (
-            <article key={article.id} data-animate="fade-up" className="group">
+            <article
+              key={article.id}
+              data-animate="fade-up"
+              className="group h-full rounded-3xl border border-border-subtle bg-ink p-4 transition-shadow hover:shadow-[var(--mt-shadow-card)]"
+            >
               <Link href={`/journal/${article.slug}`} className="block">
-                <div className="relative aspect-16/10 overflow-hidden bg-ink-800">
-                  {article.heroImageUrl ? (
+                {/* No cover image, no empty frame: the card is text-only. */}
+                {article.heroImageUrl ? (
+                  <div className="relative mb-5 aspect-16/10 overflow-hidden rounded-2xl bg-ink-800">
                     <Image
                       src={article.heroImageUrl}
                       alt=""
@@ -47,19 +52,10 @@ export function JournalRail({ title, subtitle, ctaLabel, ctaHref, articles }) {
                           : undefined
                       }
                     />
-                  ) : (
-                    <div
-                      aria-hidden
-                      className="absolute inset-0"
-                      style={{
-                        background:
-                          "radial-gradient(120% 90% at 30% 20%, rgba(28,90,58,0.35) 0%, rgba(6,9,7,1) 70%)",
-                      }}
-                    />
-                  )}
-                </div>
+                  </div>
+                ) : null}
 
-                <div className="mt-5 flex items-center gap-3 text-[0.66rem] uppercase tracking-[0.14em] text-cream-400">
+                <div className="flex items-center gap-3 text-[0.66rem] uppercase tracking-[0.14em] text-cream-400">
                   {article.category ? (
                     <span className="text-gold-400">
                       {article.category.name}

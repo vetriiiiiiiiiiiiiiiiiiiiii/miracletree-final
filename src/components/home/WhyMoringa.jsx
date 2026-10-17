@@ -28,7 +28,7 @@ const FACTS = [
 ];
 export function WhyMoringa({ title, subtitle }) {
   return (
-    <section id="why-moringa" className="bg-ink-900 py-12 md:py-16">
+    <section id="why-moringa" className="bg-ink-900 py-10 md:py-14">
       <div className="mx-auto max-w-[90rem] gutter">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-2xl text-cream-50 md:text-3xl">{title}</h2>

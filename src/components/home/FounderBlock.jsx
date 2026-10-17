@@ -23,10 +23,18 @@ export function FounderBlock({ name, role, quote, imageUrl }) {
   return (
     <Section tone="forest" spacing="default" id="founder">
       <Container>
-        <div className="grid items-center gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
-          <Reveal>
-            {imageUrl ? (
-              <div className="relative aspect-4/5 w-full overflow-hidden border border-border-subtle">
+        {/* With no portrait the block is a single column: an empty 4:5 frame
+            was hundreds of pixels of nothing in the middle of the page. */}
+        <div
+          className={
+            imageUrl
+              ? "grid items-center gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16"
+              : "mx-auto max-w-4xl"
+          }
+        >
+          {imageUrl ? (
+            <Reveal>
+              <div className="relative aspect-4/5 w-full overflow-hidden rounded-3xl border border-border-subtle">
                 <Image
                   src={imageUrl}
                   alt={name}
@@ -40,27 +48,28 @@ export function FounderBlock({ name, role, quote, imageUrl }) {
                   }
                 />
               </div>
-            ) : (
-              <div
-                className="grid aspect-4/5 w-full place-items-center border border-border-subtle bg-forest-800"
-                role="img"
-                aria-label={`${name} — portrait not yet supplied`}
-              >
-                <span className="font-display text-[3.5rem] text-emerald-400">
-                  {name
-                    .split(/\s+/)
-                    .slice(0, 2)
-                    .map((p) => p[0])
-                    .join("")}
-                </span>
-              </div>
-            )}
-          </Reveal>
+            </Reveal>
+          ) : null}
 
           <div>
             <Reveal>
-              <p className="eyebrow text-gold-400">{role}</p>
-              <h2 className="mt-5 text-display text-cream-50">{name}</h2>
+              <div className="flex items-center gap-4">
+                {!imageUrl ? (
+                  <span
+                    role="img"
+                    aria-label={`${name} — portrait not yet supplied`}
+                    className="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-emerald-500 text-xl font-bold text-on-accent"
+                  >
+                    {name
+                      .split(/\s+/)
+                      .slice(0, 2)
+                      .map((p) => p[0])
+                      .join("")}
+                  </span>
+                ) : null}
+                <p className="eyebrow text-gold-400">{role}</p>
+              </div>
+              <h2 className="mt-4 text-display text-cream-50">{name}</h2>
               {quote ? (
                 <blockquote className="mt-8 border-l-2 border-gold-500 pl-6 font-display text-[1.4rem] leading-snug text-cream-100 md:text-[1.6rem]">
                   &ldquo;{quote}&rdquo;
@@ -68,7 +77,7 @@ export function FounderBlock({ name, role, quote, imageUrl }) {
               ) : null}
             </Reveal>
 
-            <Reveal className="mt-12" stagger={0.06}>
+            <Reveal className="mt-8" stagger={0.06}>
               <dl className="grid gap-x-8 gap-y-7 sm:grid-cols-2">
                 {FIGURES.map((figure) => (
                   <div key={figure.value} data-animate="fade-up">
@@ -83,7 +92,7 @@ export function FounderBlock({ name, role, quote, imageUrl }) {
               </dl>
             </Reveal>
 
-            <Reveal className="mt-12">
+            <Reveal className="mt-8">
               <div className="flex flex-wrap gap-4">
                 <LinkButton href="/leadership">His full record</LinkButton>
                 <LinkButton href="/innovation" variant="secondary">

@@ -16,7 +16,7 @@ export function ProductTabs({ title, subtitle, tabs, viewAllHref = "/shop" }) {
   if (!visible.length) return null;
   const current = visible.find((t) => t.key === active) ?? visible[0];
   return (
-    <section className="mx-auto max-w-[90rem] gutter py-10 md:py-14">
+    <section className="mx-auto max-w-[90rem] gutter py-8 md:py-10">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h2 className="text-2xl text-cream-50 md:text-3xl">{title}</h2>

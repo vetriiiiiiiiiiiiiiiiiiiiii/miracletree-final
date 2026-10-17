@@ -124,20 +124,66 @@ export function revealOnScroll(targets, options = {}) {
     gsap.set(targets, { opacity: 1, y: 0, clearProps: "transform" });
     return undefined;
   }
-  const tween = gsap.to(targets, {
-    opacity: 1,
-    y: 0,
-    duration: DURATION.base,
-    ease: EASE.organic,
-    stagger: options.stagger ?? 0.09,
-    delay: options.delay ?? 0,
-    scrollTrigger: {
-      trigger: options.trigger ?? targets,
-      start: options.start ?? "top 85%",
-      once: true,
+  // Watched with IntersectionObserver rather than a ScrollTrigger. A
+  // ScrollTrigger measures its start position once; the homepage keeps
+  // changing height after that (hero photos, product images), so triggers
+  // near the bottom were measured past the end of the page and never fired —
+  // the founder figures and every journal card stayed at opacity 0, which
+  // read as hundreds of pixels of empty page. The observer fires when the
+  // element is actually on screen, wherever layout has moved it to.
+  const trigger =
+    options.trigger ?? (targets instanceof Element ? targets : targets[0]);
+  let tween;
+  let failsafe;
+  const list = targets instanceof Element ? [targets] : [...targets];
+  const play = () => {
+    if (tween) return;
+    const stagger = options.stagger ?? 0.09;
+    const delay = options.delay ?? 0;
+    tween = gsap.to(targets, {
+      opacity: 1,
+      y: 0,
+      duration: DURATION.base,
+      ease: EASE.organic,
+      stagger,
+      delay,
+    });
+    // Content must never depend on the animation to be seen. GSAP runs on
+    // animation frames, which a background tab, a battery saver or a busy
+    // phone can pause — so once the reveal has started, everything is
+    // forced to its end state shortly after it should have finished.
+    const total = delay + DURATION.base + stagger * list.length;
+    failsafe = window.setTimeout(() => {
+      gsap.set(list, { opacity: 1, y: 0 });
+    }, (total + 0.5) * 1000);
+  };
+  if (!trigger || typeof IntersectionObserver === "undefined") {
+    play();
+    return {
+      kill: () => {
+        window.clearTimeout(failsafe);
+        tween?.kill();
+      },
+    };
+  }
+  const observer = new IntersectionObserver(
+    (entries) => {
+      if (entries.some((e) => e.isIntersecting)) {
+        observer.disconnect();
+        play();
+      }
     },
-  });
-  return tween.scrollTrigger;
+    // "top 85%": start once the top edge is 15% up from the bottom.
+    { rootMargin: "0px 0px -15% 0px" },
+  );
+  observer.observe(trigger);
+  return {
+    kill: () => {
+      observer.disconnect();
+      window.clearTimeout(failsafe);
+      tween?.kill();
+    },
+  };
 }
 /**
  * Image reveal: the mask lifts while the image itself settles back from a

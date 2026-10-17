@@ -34,11 +34,13 @@ export function Section({
     forest: "bg-forest-900 text-cream-100",
     cream: "bg-cream-100 text-ink-900",
   };
+  // Tightened for the D2C layout: the editorial spacing (up to 192px above
+  // and below a section) left gaps that read as the end of the page.
   const spacings = {
     none: "",
-    tight: "py-16 md:py-20",
-    default: "py-24 md:py-32",
-    loose: "py-32 md:py-48",
+    tight: "py-10 md:py-12",
+    default: "py-12 md:py-16",
+    loose: "py-16 md:py-20",
   };
   const El = Tag;
   return (
