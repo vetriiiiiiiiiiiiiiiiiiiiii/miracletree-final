@@ -429,7 +429,10 @@ export const getSettings = cache(async () => {
 export async function settingNumber(key, fallback) {
   const settings = await getSettings();
   const raw = settings.get(key);
-  const parsed = raw === undefined ? NaN : Number(raw);
+  // A box left empty in Admin → Settings is saved as "", and Number("") is 0
+  // — which silently made shipping free. Blank means "not set", not zero.
+  const parsed =
+    raw === undefined || String(raw).trim() === "" ? NaN : Number(raw);
   return Number.isFinite(parsed) ? parsed : fallback;
 }
 /** The /gallery page: visible groups, each with its visible photos in order. */

@@ -221,9 +221,11 @@ export const getCart = async () => {
       // Zero once shipping is already free, whether earned by spending or
       // granted by a coupon. Otherwise the summary urges the shopper to spend
       // another ₹539 to unlock something they have just been given.
-      amountToFreeShipping: freeShipping
-        ? 0
-        : Math.max(0, threshold - (subtotal - discountTotal)),
+      // Also zero when the flat fee itself is zero: there is nothing to unlock.
+      amountToFreeShipping:
+        freeShipping || flatFee === 0
+          ? 0
+          : Math.max(0, threshold - (subtotal - discountTotal)),
     },
     coupon: coupon
       ? {
