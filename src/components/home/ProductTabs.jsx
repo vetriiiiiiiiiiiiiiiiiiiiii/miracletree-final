@@ -3,7 +3,6 @@ import Link from "next/link";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { ProductCard } from "@/components/product/ProductCard";
-import { QuickView } from "@/components/product/QuickView";
 /**
  * A tabbed product shelf — "Bestsellers / New / by category" — the centrepiece
  * of most D2C homepages. Tabs with no products are left out rather than shown
@@ -12,7 +11,6 @@ import { QuickView } from "@/components/product/QuickView";
 export function ProductTabs({ title, subtitle, tabs, viewAllHref = "/shop" }) {
   const visible = tabs.filter((t) => t.products.length);
   const [active, setActive] = useState(visible[0]?.key);
-  const [quickView, setQuickView] = useState(null);
   if (!visible.length) return null;
   const current = visible.find((t) => t.key === active) ?? visible[0];
   return (
@@ -58,25 +56,19 @@ export function ProductTabs({ title, subtitle, tabs, viewAllHref = "/shop" }) {
 
       <ul
         role="tabpanel"
-        className="-mx-[var(--spacing-gutter)] mt-6 flex snap-x gap-3 overflow-x-auto px-[var(--spacing-gutter)] pb-2 [scrollbar-width:none] md:mx-0 md:grid md:grid-cols-3 md:gap-5 md:overflow-visible md:px-0 lg:grid-cols-4 [&::-webkit-scrollbar]:hidden"
+        className="-mx-[var(--spacing-gutter)] mt-6 flex snap-x gap-3 overflow-x-auto px-[var(--spacing-gutter)] pb-2 [scrollbar-width:none] md:mx-0 md:grid md:grid-cols-2 md:gap-5 md:overflow-visible md:px-0 lg:grid-cols-3 xl:grid-cols-4 [&::-webkit-scrollbar]:hidden"
       >
         {current.products.slice(0, 8).map((product, i) => (
-          <li key={product.id} className="w-[46%] shrink-0 snap-start sm:w-[31%] md:w-auto">
+          <li key={product.id} className="w-[80%] shrink-0 snap-start sm:w-[46%] md:w-auto">
             <ProductCard
               product={product}
               index={i}
               listName={`Home — ${current.label}`}
-              onQuickView={setQuickView}
             />
           </li>
         ))}
       </ul>
 
-      <QuickView
-        slug={quickView}
-        open={Boolean(quickView)}
-        onClose={() => setQuickView(null)}
-      />
     </section>
   );
 }

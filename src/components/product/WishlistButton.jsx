@@ -83,8 +83,8 @@ export function WishlistButton({
       }
       className={cn(
         "relative z-20 inline-flex items-center gap-2 p-2 text-cream-300 transition-colors duration-300",
-        "hover:text-gold-300",
-        saved && "text-gold-400",
+        "hover:text-berry-500",
+        saved && "text-berry-500",
         className,
       )}
     >

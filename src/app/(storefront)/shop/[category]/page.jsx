@@ -113,6 +113,7 @@ export default async function CategoryPage({ params, searchParams }) {
               ) : (
                 <>
                   <ProductGrid
+                    layout={raw.view === "list" ? "list" : "grid"}
                     products={result.products}
                     listName={category.name}
                     columns={3}

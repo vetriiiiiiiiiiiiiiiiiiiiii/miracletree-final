@@ -1,8 +1,7 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { ProductCard } from "@/components/product/ProductCard";
-import { QuickView } from "@/components/product/QuickView";
 import { initMotion, productReveal } from "@/lib/motion";
 import { analytics } from "@/lib/analytics";
 /**
@@ -17,10 +16,10 @@ export function ProductGrid({
   priorityCount = 0,
   className,
   headingLabel,
+  layout = "grid",
 }) {
   const ref = useRef(null);
   const reported = useRef(false);
-  const [quickViewSlug, setQuickViewSlug] = useState(null);
   useEffect(() => {
     initMotion();
     const node = ref.current;
@@ -54,17 +53,19 @@ export function ProductGrid({
     observer.observe(node);
     return () => observer.disconnect();
   }, [products, listName]);
+  // One card per row on a phone: the card carries a size picker and a
+  // quantity stepper, which do not fit at half a phone's width.
   const gridColumns = {
     2: "grid-cols-1 sm:grid-cols-2",
-    3: "grid-cols-2 lg:grid-cols-3",
-    4: "grid-cols-2 lg:grid-cols-3 xl:grid-cols-4",
+    3: "grid-cols-1 sm:grid-cols-2 xl:grid-cols-3",
+    4: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4",
   };
   return (
     <section
       ref={ref}
       className={cn(
-        "grid gap-x-6 gap-y-14 md:gap-x-8",
-        gridColumns[columns],
+        "grid gap-5 md:gap-6",
+        layout === "list" ? "grid-cols-1" : gridColumns[columns],
         className,
       )}
       aria-label={headingLabel}
@@ -77,15 +78,9 @@ export function ProductGrid({
           index={index}
           listName={listName}
           priority={index < priorityCount}
-          onQuickView={setQuickViewSlug}
+          layout={layout}
         />
       ))}
-
-      <QuickView
-        slug={quickViewSlug}
-        open={Boolean(quickViewSlug)}
-        onClose={() => setQuickViewSlug(null)}
-      />
     </section>
   );
 }

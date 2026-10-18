@@ -51,11 +51,11 @@ export default async function ShopPage({ searchParams }) {
           <Breadcrumbs items={crumbs} />
 
           <ShopHero
-            title={query.q ? `Results for “${query.q}”` : "Shop all"}
+            title={query.q ? `Results for “${query.q}”` : "All Products"}
             description={
               query.q
                 ? null
-                : "Leaf, pod, flower, seed and gum — every product from the same tree."
+                : "Discover the complete range of Miracle Tree products — leaf, pod, flower, seed and gum, all from the same tree."
             }
             total={result.total}
             categories={query.q ? null : categories.filter((c) => c._count.products)}
@@ -91,6 +91,7 @@ export default async function ShopPage({ searchParams }) {
               ) : (
                 <>
                   <ProductGrid
+                    layout={raw.view === "list" ? "list" : "grid"}
                     products={result.products}
                     listName={query.q ? `Search: ${query.q}` : "Shop"}
                     columns={3}

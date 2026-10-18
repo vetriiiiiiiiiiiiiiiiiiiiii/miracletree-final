@@ -45,11 +45,55 @@ function useFilterNavigation() {
     const params = new URLSearchParams();
     const q = searchParams.get("q");
     if (q) params.set("q", q);
+    // The grid/list choice is a preference, not a filter.
+    const view = searchParams.get("view");
+    if (view) params.set("view", view);
     startTransition(() =>
       router.push(`${pathname}?${params.toString()}`, { scroll: false }),
     );
   }, [pathname, router, searchParams]);
   return { searchParams, setParam, clearAll, pending };
+}
+/**
+ * Grid or list. Kept in the URL (?view=list) so it survives a refresh and a
+ * shared link; switching does not reset the page the shopper is on.
+ */
+function ViewToggle() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const view = searchParams.get("view") === "list" ? "list" : "grid";
+  const set = (next) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (next === "list") params.set("view", "list");
+    else params.delete("view");
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+  };
+  const button = (value, label, path) => (
+    <button
+      type="button"
+      onClick={() => set(value)}
+      aria-pressed={view === value}
+      aria-label={label}
+      title={label}
+      className={cn(
+        "grid h-10 w-10 place-items-center transition-colors",
+        view === value
+          ? "bg-emerald-600 text-white"
+          : "text-cream-300 hover:text-emerald-500",
+      )}
+    >
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden>
+        <path d={path} stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </button>
+  );
+  return (
+    <div className="flex overflow-hidden rounded-xl border border-border-strong" role="group" aria-label="Layout">
+      {button("grid", "Grid view", "M3.5 3.5h5v5h-5zM11.5 3.5h5v5h-5zM3.5 11.5h5v5h-5zM11.5 11.5h5v5h-5z")}
+      {button("list", "List view", "M7 5h10M7 10h10M7 15h10M3.5 5h.01M3.5 10h.01M3.5 15h.01")}
+    </div>
+  );
 }
 export function ShopToolbar({ total, groups, activeCount }) {
   const { searchParams, setParam, clearAll } = useFilterNavigation();
@@ -57,45 +101,44 @@ export function ShopToolbar({ total, groups, activeCount }) {
   const sort = searchParams.get("sort") ?? "featured";
   return (
     <>
-      <div className="flex flex-wrap items-center justify-between gap-4 border-y border-border-subtle py-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 py-2">
         <p className="text-sm text-cream-400" aria-live="polite">
-          <span className="tabular-nums text-cream-100">{total}</span>{" "}
+          Showing{" "}
+          <span className="font-semibold tabular-nums text-cream-100">{total}</span>{" "}
           {total === 1 ? "product" : "products"}
         </p>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <button
             type="button"
             onClick={() => setFiltersOpen(true)}
-            className="inline-flex items-center gap-2 border border-border-subtle px-4 py-2 text-[0.68rem] uppercase tracking-[0.14em] text-cream-200 transition-colors hover:border-border-strong hover:text-cream-50 lg:hidden"
+            className="inline-flex h-10 items-center gap-2 rounded-xl border border-border-strong px-4 text-sm font-semibold text-cream-100 transition-colors hover:border-emerald-500 lg:hidden"
           >
             Filters
             {activeCount > 0 ? (
-              <span className="grid h-4 w-4 place-items-center rounded-full bg-gold-400 text-[0.6rem] text-ink">
+              <span className="grid h-5 w-5 place-items-center rounded-full bg-emerald-600 text-[0.65rem] font-bold text-white">
                 {activeCount}
               </span>
             ) : null}
           </button>
 
-          <label className="flex items-center gap-2 text-[0.68rem] uppercase tracking-[0.14em] text-cream-400">
-            <span className="hidden sm:inline">Sort</span>
+          <label className="flex items-center gap-2 text-sm text-cream-400">
+            <span className="hidden sm:inline">Sort by</span>
             <select
               value={sort}
               onChange={(e) => setParam("sort", e.target.value)}
-              className="border border-border-subtle bg-transparent py-2 pl-3 pr-8 text-[0.68rem] uppercase tracking-[0.14em] text-cream-100 focus:border-emerald-400 focus:outline-none"
+              className="h-10 rounded-xl border border-border-strong bg-ink py-0 pl-3 pr-8 text-sm font-semibold text-cream-100 focus:border-emerald-500 focus:outline-none"
               aria-label="Sort products"
             >
               {SORTS.map((option) => (
-                <option
-                  key={option.value}
-                  value={option.value}
-                  className="bg-ink-800"
-                >
+                <option key={option.value} value={option.value}>
                   {option.label}
                 </option>
               ))}
             </select>
           </label>
+
+          <ViewToggle />
         </div>
       </div>
 
