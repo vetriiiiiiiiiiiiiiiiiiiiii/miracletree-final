@@ -1,5 +1,3 @@
-import { existsSync } from "node:fs";
-import { join } from "node:path";
 import { getCart, EMPTY_CART } from "@/lib/cart";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -10,7 +8,6 @@ import { CartDrawer } from "@/components/cart/CartDrawer";
 import { WishlistProvider } from "@/components/product/WishlistButton";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { CustomCursor } from "@/components/motion/CustomCursor";
 import { SmoothScroll } from "@/components/motion/SmoothScroll";
 import { RouteProgress } from "@/components/motion/RouteProgress";
 export const dynamic = "force-dynamic";
@@ -54,11 +51,6 @@ export default async function StorefrontLayout({ children }) {
     c.imageUrl ||
     covers.find((p) => p.categoryId === c.id && p.images[0])?.images[0].url ||
     null;
-  // Checked on the server: probing for the asset from the browser fired a 404
-  // on every page load, which is both noise and a real (if small) request.
-  const hasCursorPhoto = existsSync(
-    join(process.cwd(), "public", "cursor", "seed.webp"),
-  );
   const wishlistIds = user
     ? (
         await prisma.wishlistItem.findMany({
@@ -72,7 +64,6 @@ export default async function StorefrontLayout({ children }) {
       <WishlistProvider productIds={wishlistIds}>
         <SmoothScroll />
         <RouteProgress />
-        <CustomCursor hasPhoto={hasCursorPhoto} />
 
         <Header
           items={navigation.header.map((i) => ({

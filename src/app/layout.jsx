@@ -77,7 +77,7 @@ export default function RootLayout({ children }) {
       data-theme="light"
       className={`${jakarta.variable} ${playfair.variable}`}
       // The inline script below adds a `js` class before React hydrates, and
-      // Lenis adds its own afterwards. Both are deliberate mutations of an
+      // client code may add more. Both are deliberate mutations of an
       // element React also renders, so the class mismatch is expected here.
       suppressHydrationWarning
     >

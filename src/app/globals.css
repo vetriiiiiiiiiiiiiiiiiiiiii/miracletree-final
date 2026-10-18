@@ -280,16 +280,6 @@
     /* Anchored targets must clear the sticky header, or a deep link lands with
        its heading hidden underneath it. */
     scroll-padding-top: calc(var(--header-offset) + 1rem);
-    /* Lenis drives scroll on desktop; this is the no-JS / reduced-motion path. */
-  }
-
-  html.lenis,
-  html.lenis body {
-    height: auto;
-  }
-
-  .lenis.lenis-smooth {
-    scroll-behavior: auto !important;
   }
 
   body {
@@ -333,12 +323,6 @@
     border-radius: 2px;
   }
 
-  /* Custom cursor replaces the native one only where it is actually active. */
-  html[data-cursor-mode="custom"],
-  html[data-cursor-mode="custom"] a,
-  html[data-cursor-mode="custom"] button {
-    cursor: none;
-  }
 
   input,
   textarea,

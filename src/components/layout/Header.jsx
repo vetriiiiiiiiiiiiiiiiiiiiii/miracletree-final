@@ -101,7 +101,7 @@ export function Header({
         className={cn(
           "sticky top-0 z-[150] transition-[transform,background-color,box-shadow] duration-500 ease-[var(--ease-organic)]",
           scrolled
-            ? "bg-[#fbf8f1]/88 shadow-[0_10px_40px_-24px_rgba(40,30,10,0.45)] backdrop-blur-xl backdrop-saturate-150 dark:bg-ink/85"
+            ? "bg-[#fbf8f1]/88 shadow-[0_10px_40px_-24px_rgba(40,30,10,0.45)] backdrop-blur-md dark:bg-ink/85"
             : "bg-[#fbf8f1] dark:bg-ink",
           hidden && !menuOpen && "-translate-y-full",
         )}
