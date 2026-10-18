@@ -56,7 +56,7 @@ export function ProductTabs({ title, subtitle, tabs, viewAllHref = "/shop" }) {
 
       <ul
         role="tabpanel"
-        className="-mx-[var(--spacing-gutter)] mt-6 flex snap-x gap-3 overflow-x-auto px-[var(--spacing-gutter)] pb-2 [scrollbar-width:none] md:mx-0 md:grid md:grid-cols-2 md:gap-5 md:overflow-visible md:px-0 lg:grid-cols-3 xl:grid-cols-4 [&::-webkit-scrollbar]:hidden"
+        className="-mx-[var(--spacing-gutter)] mt-6 flex snap-x scroll-px-[var(--spacing-gutter)] gap-3 overflow-x-auto px-[var(--spacing-gutter)] pb-2 [scrollbar-width:none] md:mx-0 md:grid md:grid-cols-2 md:gap-5 md:overflow-visible md:px-0 lg:grid-cols-3 xl:grid-cols-4 [&::-webkit-scrollbar]:hidden"
       >
         {current.products.slice(0, 8).map((product, i) => (
           <li key={product.id} className="w-[80%] shrink-0 snap-start sm:w-[46%] md:w-auto">

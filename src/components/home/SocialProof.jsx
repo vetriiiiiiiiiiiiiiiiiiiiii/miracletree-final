@@ -36,7 +36,7 @@ export function SocialProof({ title, subtitle, items }) {
             </Link>
           </div>
         ) : (
-          <ul className="-mx-[var(--spacing-gutter)] mt-8 flex snap-x gap-4 overflow-x-auto px-[var(--spacing-gutter)] pb-3 [scrollbar-width:thin] md:gap-5">
+          <ul className="-mx-[var(--spacing-gutter)] mt-8 flex snap-x scroll-px-[var(--spacing-gutter)] gap-4 overflow-x-auto px-[var(--spacing-gutter)] pb-3 [scrollbar-width:thin] md:gap-5">
             {items.map((item) => (
               <li
                 key={item.id}

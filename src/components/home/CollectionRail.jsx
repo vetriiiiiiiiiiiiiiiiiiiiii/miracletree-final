@@ -89,7 +89,7 @@ export function CollectionRail({
           <div
             ref={trackRef}
             className="
-              flex w-max gap-6 px-[var(--spacing-gutter)] snap-x snap-mandatory
+              flex w-max gap-6 px-[var(--spacing-gutter)] snap-x scroll-px-[var(--spacing-gutter)] snap-mandatory
               md:gap-8 lg:snap-none
             "
           >
