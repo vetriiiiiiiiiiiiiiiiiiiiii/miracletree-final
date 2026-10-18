@@ -185,26 +185,6 @@ export default async function MoringaPage() {
         </Container>
       </Section>
 
-      {/* Compliance, stated plainly */}
-      <Section tone="raised" spacing="tight" className="grain">
-        <Container size="narrow">
-          <h2 className="text-title text-cream-50">What we are not saying</h2>
-          <p className="mt-5 leading-relaxed text-cream-300">
-            You will find a great deal written online about what moringa does to
-            the human body. We do not repeat it. These are food products, not
-            medicines, and nothing here is intended to diagnose, treat, cure or
-            prevent any disease.
-          </p>
-          <p className="mt-4 leading-relaxed text-cream-400">
-            What we can tell you is how the plant grows, which part of it is in
-            each pack, where it was grown, and how it was dried. If you are
-            pregnant, nursing, taking prescribed medication or managing a health
-            condition, speak to a qualified medical practitioner before adding
-            any supplement to your diet.
-          </p>
-        </Container>
-      </Section>
-
       {/* FAQ */}
       {faqs.length ? (
         <FaqSection
