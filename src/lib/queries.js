@@ -423,7 +423,14 @@ export const getArticleCategories = cache(async () =>
 );
 export const getSettings = cache(async () => {
   const rows = await prisma.siteSetting.findMany();
-  return new Map(rows.map((r) => [r.key, r.value]));
+  // A box left empty in Admin → Settings is saved as "". Treated as set, it
+  // beat every fallback — the homepage went out with an empty <title>, so
+  // browser tabs showed the bare address. Blank means "not set".
+  return new Map(
+    rows
+      .filter((r) => typeof r.value === "string" && r.value.trim() !== "")
+      .map((r) => [r.key, r.value]),
+  );
 });
 /** Reads a numeric setting, falling back when it is absent or malformed. */
 export async function settingNumber(key, fallback) {

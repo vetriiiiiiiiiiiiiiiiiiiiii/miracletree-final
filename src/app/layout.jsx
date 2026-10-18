@@ -48,11 +48,13 @@ export const metadata = {
   },
   twitter: { card: "summary_large_image" },
   icons: {
+    // Generated from public/brand/miracletree-mark.webp. There was no
+    // favicon.svg (nor any of these files), so every tab showed a blank globe.
     icon: [
-      { url: "/favicon.svg", type: "image/svg+xml" },
-      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon.ico", sizes: "16x16 32x32 48x48" },
+      { url: "/icon-192.png", type: "image/png", sizes: "192x192" },
     ],
-    apple: "/apple-touch-icon.png",
+    apple: { url: "/apple-touch-icon.png", sizes: "180x180" },
   },
   manifest: "/site.webmanifest",
   verification: process.env.GOOGLE_SITE_VERIFICATION
