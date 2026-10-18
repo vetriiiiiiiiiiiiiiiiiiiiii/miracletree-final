@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth";
 import { PageHeader } from "@/components/admin/ui";
 import { RecordManager } from "@/components/admin/RecordManager";
+import { ShopAllImageForm } from "@/components/admin/ShopAllImageForm";
 import {
   deleteCategoryAction,
   saveCategoryAction,
@@ -31,6 +32,7 @@ const FIELDS = [
     type: "image",
     folder: "categories",
     aspect: "aspect-square",
+    hint: "Fills this category's circle on the homepage and its tile in the Shop menu. A square lifestyle photo works best. Leave empty to show the first product's pack instead.",
   },
   { name: "position", label: "Order", type: "number", half: true },
   {
@@ -56,10 +58,13 @@ const FIELDS = [
 ];
 export default async function AdminCategoriesPage() {
   await requireAdmin();
-  const categories = await prisma.category.findMany({
-    orderBy: { position: "asc" },
-    include: { _count: { select: { products: true } } },
-  });
+  const [categories, shopAll] = await Promise.all([
+    prisma.category.findMany({
+      orderBy: { position: "asc" },
+      include: { _count: { select: { products: true } } },
+    }),
+    prisma.siteSetting.findUnique({ where: { key: "home.shopAllImage" } }),
+  ]);
   return (
     <>
       <PageHeader
@@ -70,6 +75,8 @@ export default async function AdminCategoriesPage() {
           { label: "Categories" },
         ]}
       />
+
+      <ShopAllImageForm value={shopAll?.value} />
 
       <RecordManager
         title={`${categories.length} categor${categories.length === 1 ? "y" : "ies"}`}

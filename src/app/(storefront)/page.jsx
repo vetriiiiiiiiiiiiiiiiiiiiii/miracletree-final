@@ -276,6 +276,9 @@ export default async function HomePage() {
       slug: c.slug,
       count: c._count.products,
       image: c.imageUrl || firstImageIn(c.slug),
+      // An uploaded category picture fills the circle; a fallback packshot
+      // is shown smaller on the warm disc.
+      fill: Boolean(c.imageUrl),
     }));
 
   const usps = [
@@ -350,7 +353,10 @@ export default async function HomePage() {
     <>
       <HeroBanner slides={slides} />
 
-      <CategoryCircles categories={categoryTiles} />
+      <CategoryCircles
+        categories={categoryTiles}
+        shopAllImage={settings.get("home.shopAllImage") ?? null}
+      />
 
       <UspStrip items={usps} />
 

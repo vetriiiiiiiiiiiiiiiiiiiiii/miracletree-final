@@ -27,6 +27,7 @@ export function CategoryCircles({
   title = "Shop by category",
   tagline = "Goodness from one tree, many ways",
   categories,
+  shopAllImage = null,
 }) {
   if (!categories.length) return null;
   return (
@@ -57,7 +58,7 @@ export function CategoryCircles({
 
         <ul className="-mx-[var(--spacing-gutter)] mt-8 flex snap-x scroll-px-[var(--spacing-gutter)] gap-5 overflow-x-auto px-[var(--spacing-gutter)] pb-2 [scrollbar-width:none] md:mx-0 md:mt-10 md:grid md:grid-cols-6 md:gap-6 md:overflow-visible md:px-0 [&::-webkit-scrollbar]:hidden">
           <li className="w-36 shrink-0 snap-start md:w-auto">
-            <Tile href="/shop" name="Shop all" note="Explore our complete range" icon="all" />
+            <Tile href="/shop" name="Shop all" note="Explore our complete range" image={shopAllImage} fill icon="all" />
           </li>
           {categories.map((c) => (
             <li key={c.slug} className="w-36 shrink-0 snap-start md:w-auto">
@@ -66,6 +67,7 @@ export function CategoryCircles({
                 name={c.name}
                 note={`${c.count} ${c.count === 1 ? "product" : "products"}`}
                 image={c.image}
+                fill={c.fill}
                 icon={iconFor(c.slug)}
               />
             </li>
@@ -75,7 +77,7 @@ export function CategoryCircles({
     </section>
   );
 }
-function Tile({ href, name, note, image, icon }) {
+function Tile({ href, name, note, image, fill = false, icon }) {
   return (
     <Link href={href} className="group flex flex-col items-center text-center">
       {/* The gold ring is a gradient border: a padded gradient disc with the
@@ -88,7 +90,11 @@ function Tile({ href, name, note, image, icon }) {
               alt=""
               fill
               sizes="(min-width: 768px) 184px, 144px"
-              className="object-contain p-[16%] mix-blend-multiply transition-transform duration-500 group-hover:scale-105 dark:mix-blend-normal"
+              className={
+                fill
+                  ? "object-cover transition-transform duration-500 group-hover:scale-105"
+                  : "object-contain p-[16%] mix-blend-multiply transition-transform duration-500 group-hover:scale-105 dark:mix-blend-normal"
+              }
               unoptimized={image.startsWith("/uploads/")}
             />
           ) : (
