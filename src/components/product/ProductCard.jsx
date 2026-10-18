@@ -103,7 +103,7 @@ export function ProductCard({
       <div
         className={cn(
           "relative shrink-0 overflow-hidden bg-photo-from",
-          list ? "aspect-[5/4] sm:aspect-auto sm:w-64" : "aspect-[5/4]",
+          list ? "aspect-square sm:aspect-auto sm:w-64" : "aspect-square",
         )}
       >
         <Link
@@ -119,7 +119,9 @@ export function ProductCard({
               fill
               sizes={list ? "256px" : "(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 30vw"}
               priority={priority}
-              className="object-contain p-5 transition-transform duration-500 group-hover:scale-[1.04]"
+              // Edge to edge: 24 of the 27 packshots are square, so a square frame
+              // shows each one whole while it fills the top of the card.
+              className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
               unoptimized={
                 typeof primary.url === "string"
                   ? primary.url.startsWith("/uploads/")
