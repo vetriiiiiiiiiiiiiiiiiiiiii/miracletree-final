@@ -323,29 +323,33 @@ export default async function HomePage() {
     })),
   ];
 
-  const promoImage = (i) =>
-    catalogue.filter((p) => p.images[0])[i]?.images[0]?.url ?? null;
+  // Two different packs: the first bestseller, then the leaf powder (the
+  // product that is most simply "the tree") or failing that the next pack
+  // that is not the first — both tiles had been showing Beauty Drops.
+  const withImage = catalogue.filter((p) => p.images[0]);
+  const bestseller = withImage.find((p) => p.isBestSeller) ?? withImage[0];
+  const leaf =
+    withImage.find((p) => p.slug === "moringa-leaf-powder-hpd-dried" && p.id !== bestseller?.id) ??
+    withImage.find((p) => p.id !== bestseller?.id);
   const tiles = [
     {
       // The shop's default sort puts bestsellers first.
       href: "/shop",
-      tone: "green",
+      tone: "forest",
       eyebrow: "Customer favourites",
       title: "Shop our bestsellers",
       body: "Powders, teas, capsules, oils and snacks — all from the same tree.",
       cta: "Shop now",
-      image:
-        catalogue.find((p) => p.isBestSeller && p.images[0])?.images[0]?.url ??
-        promoImage(0),
+      image: bestseller?.images[0]?.url ?? null,
     },
     {
       href: "/moringa",
-      tone: "berry",
+      tone: "ivory",
       eyebrow: "The miracle tree",
       title: "Why moringa, and why ours",
       body: "Leaf, pod, flower, seed and gum — what each one does.",
       cta: "Discover",
-      image: heroPackList[2]?.images[0]?.url ?? promoImage(1),
+      image: leaf?.images[0]?.url ?? null,
     },
   ];
 

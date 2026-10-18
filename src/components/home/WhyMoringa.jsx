@@ -28,47 +28,61 @@ const FACTS = [
 ];
 export function WhyMoringa({ title, subtitle }) {
   return (
-    <section id="why-moringa" className="bg-ink-900 py-10 md:py-14">
+    <section
+      id="why-moringa"
+      className="relative bg-[#fbf8f1] py-12 dark:bg-ink-900 md:py-16"
+    >
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#c8a24a]/50 to-transparent" aria-hidden />
       <div className="mx-auto max-w-[90rem] gutter">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-2xl text-cream-50 md:text-3xl">{title}</h2>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden className="mx-auto h-7 w-7 text-[#1f5c3a] dark:text-leaf-300">
+            <path d="M5 19c0-8 6-14 14-14 0 8-6 14-14 14zM5 19l7-7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          <h2 className="mt-2 font-[family-name:var(--font-serif)] text-[2rem] font-medium tracking-normal text-[#173f29] dark:text-cream-50 md:text-[2.75rem]">
+            {title}
+          </h2>
+          <p className="mt-2 text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-[#8a6d2c] dark:text-gold-300">
+            How the plant grows, and how we handle it
+          </p>
           {subtitle ? (
-            <p className="mt-3 leading-relaxed text-cream-300">{subtitle}</p>
+            <p className="mt-4 leading-relaxed text-[#3d4a40] dark:text-cream-300">{subtitle}</p>
           ) : null}
         </div>
-        <ul className="mt-9 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 md:gap-6">
+
+        <ul className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 md:gap-6">
           {FACTS.map((fact) => (
             <li
               key={fact.figure}
-              className="rounded-3xl border border-border-subtle bg-ink p-6 md:p-8"
+              className="relative overflow-hidden rounded-[1.75rem] border border-[#e8dcc0] bg-white p-7 shadow-[0_20px_50px_-36px_rgba(40,30,10,0.5)] dark:border-border-subtle dark:bg-ink md:p-9"
             >
-              <p className="flex items-baseline gap-2">
-                <span className="text-[2.6rem] font-extrabold leading-none tracking-tight text-emerald-500">
+              {/* Gold rule across the top edge. */}
+              <span className="absolute inset-x-8 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#c8a24a] to-transparent" aria-hidden />
+              <p className="flex items-baseline gap-3">
+                <span className="font-[family-name:var(--font-serif)] text-[3.2rem] font-medium leading-none text-[#173f29] dark:text-leaf-200">
                   {fact.figure}
                 </span>
-                <span className="text-[0.75rem] font-bold uppercase tracking-wider text-berry-500">
+                <span className="text-[0.66rem] font-semibold uppercase tracking-[0.24em] text-[#8a6d2c] dark:text-gold-300">
                   {fact.unit}
                 </span>
               </p>
               {fact.title ? (
-                <h3 className="mt-4 text-[1.05rem] font-bold leading-snug text-cream-50">
+                <h3 className="mt-5 font-[family-name:var(--font-serif)] text-[1.2rem] font-medium leading-snug tracking-normal text-[#173f29] dark:text-cream-50">
                   {fact.title}
                 </h3>
               ) : null}
-              <p
-                className={`text-sm leading-relaxed text-cream-300 ${fact.title ? "mt-2" : "mt-4"}`}
-              >
+              <p className={`text-[0.92rem] leading-relaxed text-[#4d5950] dark:text-cream-300 ${fact.title ? "mt-2" : "mt-5"}`}>
                 {fact.body}
               </p>
             </li>
           ))}
         </ul>
-        <p className="mx-auto mt-8 max-w-3xl text-center text-xs leading-relaxed text-cream-400">
+
+        <p className="mx-auto mt-8 max-w-3xl text-center text-xs leading-relaxed text-[#5b665e] dark:text-cream-400">
           We describe how the plant is grown and handled, not what it will do
           for you. Moringa is a food, and our products are foods — if you are
           pregnant, nursing, on prescribed medication or managing a condition,
           talk to your doctor before adding any supplement.{" "}
-          <Link href="/moringa" className="font-semibold text-emerald-500 underline underline-offset-2">
+          <Link href="/moringa" className="font-semibold text-[#173f29] underline decoration-[#c8a24a] underline-offset-4 dark:text-leaf-200">
             More about the plant
           </Link>
         </p>
