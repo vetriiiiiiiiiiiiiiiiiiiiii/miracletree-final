@@ -111,3 +111,7 @@ export function WishlistButton({
     </button>
   );
 }
+/** How many products are saved, for the header's wishlist badge. */
+export function useWishlistCount() {
+  return useContext(WishlistContext)?.ids.size ?? 0;
+}

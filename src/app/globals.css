@@ -264,7 +264,7 @@
 @layer base {
   @media (min-width: 768px) {
     :root {
-      --header-offset: 6.75rem;
+      --header-offset: 7.5rem;
     }
   }
 

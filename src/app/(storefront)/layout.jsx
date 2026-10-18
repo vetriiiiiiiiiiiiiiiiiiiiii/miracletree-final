@@ -38,6 +38,22 @@ export default async function StorefrontLayout({ children }) {
     getCategories().catch(safeCatch([])),
     getAnnouncements().catch(safeCatch([])),
   ]);
+  // A picture for each category in the Shop menu: the category's own image
+  // from the admin, or the first pack in it.
+  const covers = await prisma.product
+    .findMany({
+      where: { status: "published" },
+      orderBy: { position: "asc" },
+      select: {
+        categoryId: true,
+        images: { orderBy: { position: "asc" }, take: 1, select: { url: true } },
+      },
+    })
+    .catch(safeCatch([]));
+  const coverFor = (c) =>
+    c.imageUrl ||
+    covers.find((p) => p.categoryId === c.id && p.images[0])?.images[0].url ||
+    null;
   // Checked on the server: probing for the asset from the browser fired a 404
   // on every page load, which is both noise and a real (if small) request.
   const hasCursorPhoto = existsSync(
@@ -69,11 +85,14 @@ export default async function StorefrontLayout({ children }) {
             label: i.label,
             href: i.href,
           }))}
-          categories={categories.map((c) => ({
-            name: c.name,
-            slug: c.slug,
-            count: c._count.products,
-          }))}
+          categories={categories
+            .filter((c) => c._count.products > 0)
+            .map((c) => ({
+              name: c.name,
+              slug: c.slug,
+              count: c._count.products,
+              image: coverFor(c),
+            }))}
           isAuthenticated={Boolean(user)}
           announcements={announcements.map((a) => a.message)}
         />
