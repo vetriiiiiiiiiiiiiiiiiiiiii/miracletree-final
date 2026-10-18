@@ -254,7 +254,7 @@
      this much so a 100svh stage actually fills the viewport rather than ending
      that far below the fold — the header is transparent over the hero there,
      so it is meant to sit on top of it. */
-  --header-offset: 6.25rem;
+  --header-offset: 7rem;
 }
 
 /* ==========================================================================
@@ -264,7 +264,7 @@
 @layer base {
   @media (min-width: 768px) {
     :root {
-      --header-offset: 7.5rem;
+      --header-offset: 9.25rem;
     }
   }
 
