@@ -131,6 +131,27 @@ const ONE_OFFS = [
       });
     },
   },
+  {
+    // "Free shipping on orders above ₹699" only means something if orders
+    // below it pay for shipping. The live flat fee had been saved as 0, so
+    // every order shipped free and the threshold never did anything. Set the
+    // standard ₹60 once where it is 0 or blank; any later change made in
+    // Admin → Settings is left alone.
+    marker: "oneoff.shipping-flat-fee",
+    run: async () => {
+      const row = await prisma.siteSetting.findUnique({
+        where: { key: "shipping.flatFee" },
+      });
+      const value = row?.value?.trim() ?? "";
+      if (value !== "" && Number(value) !== 0) return { count: 0 };
+      await prisma.siteSetting.upsert({
+        where: { key: "shipping.flatFee" },
+        create: { key: "shipping.flatFee", value: "6000" },
+        update: { value: "6000" },
+      });
+      return { count: 1 };
+    },
+  },
 ];
 for (const { marker, run } of ONE_OFFS) {
   if (await prisma.siteSetting.findUnique({ where: { key: marker } })) continue;
