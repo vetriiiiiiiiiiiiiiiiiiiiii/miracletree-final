@@ -808,3 +808,36 @@
     transform: scaleX(1);
   }
 }
+
+/* The leaf pointer — the site's original cursor, now drawn by the browser
+   as a plain CSS image cursor: no script, no per-frame work, so it cannot
+   bring back the lag the animated version caused. A single leaf on the page;
+   over anything clickable a pair of leaflets joins it (as the animated one
+   did). Mouse and trackpad only; text fields keep the text cursor.
+   Hotspot 3 3 is the leaf's tip. */
+@media (hover: hover) and (pointer: fine) {
+  html {
+    cursor: url("/cursor/leaf-32.png") 3 3, auto;
+    cursor: -webkit-image-set(url("/cursor/leaf-32.png") 1x, url("/cursor/leaf-64.png") 2x) 3 3, auto;
+    cursor: image-set(url("/cursor/leaf-32.png") 1x, url("/cursor/leaf-64.png") 2x) 3 3, auto;
+  }
+  a,
+  button,
+  [role="button"],
+  label,
+  summary,
+  select {
+    cursor: url("/cursor/leaf-sprig-32.png") 3 3, pointer;
+    cursor: -webkit-image-set(url("/cursor/leaf-sprig-32.png") 1x, url("/cursor/leaf-sprig-64.png") 2x) 3 3, pointer;
+    cursor: image-set(url("/cursor/leaf-sprig-32.png") 1x, url("/cursor/leaf-sprig-64.png") 2x) 3 3, pointer;
+  }
+  input:not([type="checkbox"], [type="radio"], [type="range"], [type="submit"], [type="button"], [type="file"]),
+  textarea,
+  [contenteditable="true"] {
+    cursor: text;
+  }
+  :disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+}
