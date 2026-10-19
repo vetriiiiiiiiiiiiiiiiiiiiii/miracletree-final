@@ -516,7 +516,7 @@ export const FAQS = [
     category: "returns",
     question: "Can I return a product?",
     answer:
-      "Because these are agricultural food products, we cannot accept returns once an order has been delivered. If something arrives damaged or incorrect, email support@miracletree.in within 48 hours of delivery with photographs and we will make it right.",
+      "Because these are agricultural food products, we cannot accept returns once an order has been delivered. If something arrives damaged or incorrect, email info@miracletree.in within 48 hours of delivery with photographs and we will make it right.",
   },
   {
     category: "payments",

@@ -281,6 +281,22 @@ const ONE_OFFS = [
       return { count };
     },
   },
+  {
+    // Every contact address is now info@miracletree.in. FAQ answers saved in
+    // the database still named the old ones.
+    marker: "oneoff.contact-email-info",
+    run: async () => {
+      const old = /support@miracletree\.in|miracletree\.in@gmail\.com/gi;
+      let count = 0;
+      for (const row of await prisma.faq.findMany()) {
+        const answer = row.answer.replace(old, "info@miracletree.in");
+        if (answer === row.answer) continue;
+        await prisma.faq.update({ where: { id: row.id }, data: { answer } });
+        count++;
+      }
+      return { count };
+    },
+  },
 ];
 for (const { marker, run } of ONE_OFFS) {
   if (await prisma.siteSetting.findUnique({ where: { key: marker } })) continue;
