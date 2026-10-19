@@ -152,6 +152,24 @@ const ONE_OFFS = [
       return { count: 1 };
     },
   },
+  {
+    // The parent group is Uyirmei Farms, not Vedha Farms. Renames the credit
+    // (and the name in its line) once; later edits in the admin stand.
+    marker: "oneoff.credit-uyirmei-farms",
+    run: async () => {
+      const rows = await prisma.credit.findMany({ where: { name: "Vedha Farms" } });
+      for (const row of rows) {
+        await prisma.credit.update({
+          where: { id: row.id },
+          data: {
+            name: "Uyirmei Farms",
+            body: row.body ? row.body.replaceAll("Vedha Farms", "Uyirmei Farms") : row.body,
+          },
+        });
+      }
+      return { count: rows.length };
+    },
+  },
 ];
 for (const { marker, run } of ONE_OFFS) {
   if (await prisma.siteSetting.findUnique({ where: { key: marker } })) continue;

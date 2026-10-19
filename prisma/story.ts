@@ -237,9 +237,9 @@ export const CREDITS = [
     url: null,
   },
   {
-    name: "Vedha Farms",
+    name: "Uyirmei Farms",
     role: "Parent group",
-    body: "MiracleTree™ is a division of Vedha Farms, an organic farming group based in Madurai.",
+    body: "MiracleTree™ is a division of Uyirmei Farms, an organic farming group based in Madurai.",
     group: "partner",
     url: null,
   },
