@@ -285,13 +285,6 @@ export default function SearchableSelect({
     }
   };
 
-  const isLight =
-    activeTheme?.name === "light" ||
-    activeTheme?.text === "#0F172A" ||
-    activeTheme?.text === "#0f172a" ||
-    activeTheme?.text === "#000000";
-  const text = activeTheme?.text || (isLight ? "#0F172A" : "#ffffff");
-
   const hasExactMatch = items.some(
     (i) => getItemDisplay(i).toLowerCase() === search.trim().toLowerCase(),
   );
@@ -310,7 +303,6 @@ export default function SearchableSelect({
       {label && (
         <label
           className="text-xs font-medium uppercase tracking-[0.14em] text-cream-400 block truncate"
-          style={{ color: text }}
         >
           {label}
         </label>
@@ -318,7 +310,7 @@ export default function SearchableSelect({
       <div
         onClick={() => !disabled && setIsOpen((v) => !v)}
         className={`
-          relative flex items-center w-full rounded-sm border px-3 py-2 text-sm bg-black/[0.03] border-border-strong text-cream-100 placeholder:text-cream-400
+          relative flex items-center w-full rounded-sm border px-3 py-2 text-sm bg-ink border-border-strong text-cream-50 placeholder:text-cream-400
           cursor-pointer transition-all select-none min-h-[42px]
           ${disabled ? "opacity-40 cursor-not-allowed" : "hover:border-cream-400"}
         `}
@@ -329,7 +321,7 @@ export default function SearchableSelect({
               selectedItem.map((item, idx) => (
                 <span
                   key={getItemKey(item) || idx}
-                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-xs font-medium border bg-white/10 border-white/10"
+                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-xs font-medium border bg-ink-800 border-border-subtle text-cream-100"
                 >
                   {item.flag && <span className="text-sm">{item.flag}</span>}
                   {getItemDisplay(item)}
@@ -380,7 +372,7 @@ export default function SearchableSelect({
               <button
                 type="button"
                 onClick={handleClear}
-                className="opacity-40 hover:opacity-80 transition-opacity p-1 rounded-full hover:bg-black/10 dark:hover:bg-white/10"
+                className="opacity-40 hover:opacity-80 transition-opacity p-1 rounded-full hover:bg-ink-800"
               >
                 <X size={12} />
               </button>
@@ -401,11 +393,11 @@ export default function SearchableSelect({
 
       {isOpen && (
         <div
-          className="absolute z-[9999] min-w-[260px] sm:min-w-[300px] w-full max-w-[95vw] rounded-sm shadow-xl border border-border-strong overflow-hidden bg-[#1a1b1e]"
+          className="absolute z-[9999] min-w-[260px] sm:min-w-[300px] w-full max-w-[95vw] rounded-sm shadow-xl border border-border-strong overflow-hidden bg-ink"
           style={{ top: "calc(100% + 4px)", left: 0 }}
         >
-          <div className="p-2 border-b border-border-strong bg-[#25262b]">
-            <div className="flex items-center gap-2 px-3 py-2 rounded-sm bg-black/20">
+          <div className="p-2 border-b border-border-subtle bg-ink-900">
+            <div className="flex items-center gap-2 px-3 py-2 rounded-sm border border-border-subtle bg-ink">
               <Search
                 size={13}
                 className="opacity-40 shrink-0 text-cream-100"
@@ -416,7 +408,7 @@ export default function SearchableSelect({
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Type to filter..."
-                className="flex-1 bg-transparent outline-none text-sm text-cream-100 placeholder:opacity-40"
+                className="flex-1 bg-transparent outline-none text-sm text-cream-50 placeholder:text-cream-400"
               />
               {search && (
                 <button
@@ -452,7 +444,7 @@ export default function SearchableSelect({
             {onAddNew && search.trim() && !hasExactMatch && (
               <div
                 onClick={handleAddNew}
-                className="flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors hover:bg-white/5 text-emerald-400 font-medium"
+                className="flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors hover:bg-forest-900 text-emerald-600 font-medium"
               >
                 <Plus size={16} className="shrink-0" />
                 <div className="text-sm truncate">
@@ -472,12 +464,12 @@ export default function SearchableSelect({
                   onClick={() => handleSelect(item)}
                   className={`
                     group flex items-center justify-between gap-3 px-4 py-3 cursor-pointer transition-colors
-                    ${isSelected ? "bg-white/15 text-cream-50" : "hover:bg-white/5 text-cream-100"}
+                    ${isSelected ? "bg-forest-900 text-emerald-700 font-semibold" : "hover:bg-ink-800 text-cream-100"}
                   `}
                 >
                   <div className="flex items-center gap-3 min-w-0 flex-1">
                     {isSelected && (
-                      <div className="w-1.5 h-1.5 rounded-full shrink-0 bg-blue-400" />
+                      <div className="w-1.5 h-1.5 rounded-full shrink-0 bg-emerald-500" />
                     )}
                     <div className="flex-1 min-w-0">
                       <div className="text-sm truncate leading-snug flex items-center gap-2">
@@ -499,7 +491,7 @@ export default function SearchableSelect({
                         setDeleteError(null);
                         setPendingDeleteItem(item);
                       }}
-                      className="opacity-60 hover:opacity-100 group-hover:opacity-100 p-1.5 rounded text-cream-400 hover:text-red-400 hover:bg-white/10 transition-colors shrink-0"
+                      className="opacity-60 hover:opacity-100 group-hover:opacity-100 p-1.5 rounded text-cream-400 hover:text-danger hover:bg-ink-800 transition-colors shrink-0"
                     >
                       <X size={14} />
                     </button>
