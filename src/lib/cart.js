@@ -21,6 +21,11 @@ export const EMPTY_CART = {
     grandTotal: 0,
     freeShippingThreshold: COMMERCE_DEFAULTS.freeShippingThreshold,
     amountToFreeShipping: COMMERCE_DEFAULTS.freeShippingThreshold,
+    couponDiscount: 0,
+    offerDiscount: 0,
+    offerPercent: COMMERCE_DEFAULTS.autoDiscountPercent,
+    offerThreshold: COMMERCE_DEFAULTS.autoDiscountThreshold,
+    amountToOffer: COMMERCE_DEFAULTS.autoDiscountThreshold,
   },
   coupon: null,
   couponWarning: null,
@@ -150,6 +155,22 @@ export const getCart = async () => {
     "shipping.flatFee",
     COMMERCE_DEFAULTS.flatShippingFee,
   );
+  // --- automatic order discount: a percentage off every order at or above
+  // a threshold, no code needed. A percent of 0 switches it off.
+  const offerThreshold = await settingNumber(
+    "discount.autoThreshold",
+    COMMERCE_DEFAULTS.autoDiscountThreshold,
+  );
+  const offerPercent = Math.min(
+    100,
+    Math.max(0, await settingNumber("discount.autoPercent", COMMERCE_DEFAULTS.autoDiscountPercent)),
+  );
+  const offerActive = offerPercent > 0;
+  const offerEarned =
+    offerActive && lines.length > 0 && subtotal >= offerThreshold
+      ? // Whole rupees: paise totals like ₹256.50 look odd on a receipt.
+        Math.round((subtotal * offerPercent) / 100 / 100) * 100
+      : 0;
   // --- coupon
   let discountTotal = 0;
   let freeShipping = false;
@@ -195,8 +216,24 @@ export const getCart = async () => {
       coupon = null;
     }
   }
+  // The automatic discount and a code do not stack: the shopper gets
+  // whichever saves them more.
+  let couponDiscount = discountTotal;
+  let offerDiscount = 0;
+  if (offerEarned > 0 && offerEarned >= couponDiscount) {
+    if (coupon && couponDiscount > 0) {
+      couponWarning = `Your ${offerPercent}% order discount saves you more, so ${coupon.code} isn't added on top.`;
+      coupon = null;
+      freeShipping = false;
+    }
+    couponDiscount = 0;
+    offerDiscount = offerEarned;
+    discountTotal = offerEarned;
+  }
+  // Free shipping is earned on the order value before discounts, so a
+  // discount never takes it away again.
   const shippingTotal =
-    lines.length === 0 || freeShipping || subtotal - discountTotal >= threshold
+    lines.length === 0 || freeShipping || subtotal >= threshold
       ? 0
       : flatFee;
   // Product prices are GST-inclusive, matching Indian retail convention, so tax
@@ -225,7 +262,13 @@ export const getCart = async () => {
       amountToFreeShipping:
         freeShipping || flatFee === 0
           ? 0
-          : Math.max(0, threshold - (subtotal - discountTotal)),
+          : Math.max(0, threshold - subtotal),
+      couponDiscount,
+      offerDiscount,
+      offerPercent,
+      offerThreshold,
+      // Zero once the offer applies, or when it is switched off.
+      amountToOffer: offerActive ? Math.max(0, offerThreshold - subtotal) : 0,
     },
     coupon: coupon
       ? {

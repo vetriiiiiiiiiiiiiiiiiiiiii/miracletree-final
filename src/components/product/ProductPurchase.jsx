@@ -266,7 +266,7 @@ export function ProductPurchase({
       {/* Trust */}
       <ul className="grid gap-2.5 rounded-2xl bg-forest-900 p-4 text-sm text-cream-200 sm:grid-cols-2">
         <TrustRow icon="ship">
-          Free shipping over ₹699 · flat ₹60 below that
+          Free shipping over ₹1,499 · 10% off over ₹2,499
         </TrustRow>
         <TrustRow icon="pack">
           Packed within 1–2 working days, shipped across India

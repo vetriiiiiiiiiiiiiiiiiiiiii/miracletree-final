@@ -498,7 +498,7 @@ export const FAQS = [
     category: "shipping",
     question: "What does shipping cost?",
     answer:
-      "Shipping is free on orders above ₹699. Below that a flat ₹60 applies. We ship across India.",
+      "Shipping is free on orders above ₹1,499. Below that a flat ₹60 applies. Orders above ₹2,499 also get 10% off automatically. We ship across India.",
   },
   {
     category: "shipping",
@@ -961,9 +961,11 @@ export const HERO_SLIDES = [
 ];
 
 export const SETTINGS: Record<string, string> = {
-  "shipping.freeThreshold": "69900",
+  "shipping.freeThreshold": "149900",
   "shipping.flatFee": "6000",
-  "shipping.copy": "Free shipping on orders above ₹699",
+  "shipping.copy": "Free shipping above ₹1,499 · 10% off above ₹2,499",
+  "discount.autoThreshold": "249900",
+  "discount.autoPercent": "10",
   "checkout.codEnabled": "true",
   "seo.defaultTitle": "Miracle Tree — Moringa superfoods from Madurai",
   "seo.defaultDescription":
@@ -1300,7 +1302,10 @@ async function main() {
     await prisma.navigationItem.create({ data: { ...n, isActive: true } });
   }
   await prisma.announcement.create({
-    data: { message: "Free shipping on orders above ₹699", position: 1, isActive: true },
+    data: { message: "Free shipping on orders above ₹1,499", position: 1, isActive: true },
+  });
+  await prisma.announcement.create({
+    data: { message: "10% off on orders above ₹2,499", position: 2, isActive: true },
   });
 
   for (const [key, value] of Object.entries(SETTINGS)) {

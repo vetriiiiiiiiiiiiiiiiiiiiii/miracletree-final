@@ -56,8 +56,11 @@ export const INVENTORY_REASONS = [
 export const COMMERCE_DEFAULTS = {
   currency: "INR",
   locale: "en-IN",
-  /** Free shipping above this subtotal, in paise. Matches the live store's Rs.699. */
-  freeShippingThreshold: 69900,
+  /** Free shipping at or above this subtotal, in paise (₹1,499). */
+  freeShippingThreshold: 149900,
+  /** An automatic percentage off orders at or above this subtotal (₹2,499). */
+  autoDiscountThreshold: 249900,
+  autoDiscountPercent: 10,
   /** Flat shipping fee below the threshold, in paise. */
   flatShippingFee: 6000,
   codEnabled: true,

@@ -102,7 +102,7 @@ export function SettingsForm({ values, policyDefaults, activity }) {
               <Card title="Shipping & checkout">
                 <FieldGroup
                   title="Thresholds"
-                  description="Enter paise — ₹699 is 69900. These drive the cart's free-shipping meter and the amount charged at checkout."
+                  description="Enter paise — ₹1,499 is 149900. These drive the cart's free-shipping meter and the amount charged at checkout."
                 >
                   <div className="grid gap-5 sm:grid-cols-2">
                     <Input
@@ -110,8 +110,8 @@ export function SettingsForm({ values, policyDefaults, activity }) {
                       name="shipping.freeThreshold"
                       type="number"
                       min={0}
-                      defaultValue={values["shipping.freeThreshold"] ?? "69900"}
-                      hint="69900 = ₹699"
+                      defaultValue={values["shipping.freeThreshold"] ?? "149900"}
+                      hint="149900 = ₹1,499"
                     />
                     <Input
                       label="Flat shipping fee (paise)"
@@ -128,10 +128,30 @@ export function SettingsForm({ values, policyDefaults, activity }) {
                     name="shipping.copy"
                     defaultValue={
                       values["shipping.copy"] ??
-                      "Free shipping on orders above ₹699"
+                      "Free shipping above ₹1,499 · 10% off above ₹2,499"
                     }
                     hint="Used on product pages and in the footer."
                   />
+
+                  <div className="grid gap-5 sm:grid-cols-2">
+                    <Input
+                      label="Automatic discount above (paise)"
+                      name="discount.autoThreshold"
+                      type="number"
+                      min={0}
+                      defaultValue={values["discount.autoThreshold"] ?? "249900"}
+                      hint="249900 = ₹2,499 · no code needed"
+                    />
+                    <Input
+                      label="Automatic discount (%)"
+                      name="discount.autoPercent"
+                      type="number"
+                      min={0}
+                      max={100}
+                      defaultValue={values["discount.autoPercent"] ?? "10"}
+                      hint="0 switches it off · doesn't stack with codes"
+                    />
+                  </div>
 
                   <Select
                     label="Cash on delivery"

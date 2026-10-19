@@ -403,6 +403,48 @@ const ONE_OFFS = [
       return { count: fresh.length };
     },
   },
+  {
+    // Free shipping moves from ₹699 to ₹1,499, and orders from ₹2,499 get an
+    // automatic 10% off. Updates the settings, the shipping FAQ answer and
+    // the ₹699 announcement, and adds a 10%-off announcement.
+    marker: "oneoff.offers-1499-2499",
+    run: async () => {
+      const settings = {
+        "shipping.freeThreshold": "149900",
+        "shipping.copy": "Free shipping above ₹1,499 · 10% off above ₹2,499",
+        "discount.autoThreshold": "249900",
+        "discount.autoPercent": "10",
+      };
+      for (const [key, value] of Object.entries(settings)) {
+        await prisma.siteSetting.upsert({ where: { key }, create: { key, value }, update: { value } });
+      }
+      let count = Object.keys(settings).length;
+      for (const row of await prisma.faq.findMany()) {
+        if (!row.answer.includes("₹699")) continue;
+        let answer = row.answer.replaceAll("₹699", "₹1,499");
+        if (!answer.includes("10%")) answer = answer.replace(/(Below that a flat ₹\d+ applies\.)/, "$1 Orders above ₹2,499 also get 10% off automatically.");
+        await prisma.faq.update({ where: { id: row.id }, data: { answer } });
+        count++;
+      }
+      const announcements = await prisma.announcement.findMany({ orderBy: { position: "asc" } });
+      for (const row of announcements) {
+        if (!row.message.includes("₹699")) continue;
+        await prisma.announcement.update({
+          where: { id: row.id },
+          data: { message: row.message.replaceAll("₹699", "₹1,499") },
+        });
+        count++;
+      }
+      if (!announcements.some((row) => /10%/.test(row.message))) {
+        const position = announcements.reduce((max, row) => Math.max(max, row.position), 0) + 1;
+        await prisma.announcement.create({
+          data: { message: "10% off on orders above ₹2,499", position, isActive: true },
+        });
+        count++;
+      }
+      return { count };
+    },
+  },
 ];
 for (const { marker, run } of ONE_OFFS) {
   if (await prisma.siteSetting.findUnique({ where: { key: marker } })) continue;

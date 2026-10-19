@@ -421,10 +421,17 @@ export function CheckoutForm({
                 label="Subtotal"
                 value={formatPrice(cart.totals.subtotal)}
               />
-              {cart.totals.discountTotal > 0 ? (
+              {cart.totals.offerDiscount > 0 ? (
+                <SummaryRow
+                  label={`${cart.totals.offerPercent}% off orders above ${formatPrice(cart.totals.offerThreshold)}`}
+                  value={`−${formatPrice(cart.totals.offerDiscount)}`}
+                  tone="positive"
+                />
+              ) : null}
+              {cart.totals.couponDiscount > 0 ? (
                 <SummaryRow
                   label={`Discount${cart.coupon ? ` (${cart.coupon.code})` : ""}`}
-                  value={`−${formatPrice(cart.totals.discountTotal)}`}
+                  value={`−${formatPrice(cart.totals.couponDiscount)}`}
                   tone="positive"
                 />
               ) : null}

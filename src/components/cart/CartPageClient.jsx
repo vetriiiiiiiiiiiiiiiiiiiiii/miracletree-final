@@ -194,6 +194,17 @@ export function CartPageClient() {
             ) : (
               <p className="text-sm text-leaf-300">Free shipping applied</p>
             )}
+            {totals.amountToOffer > 0 ? (
+              <p className="mt-1.5 text-sm text-cream-300">
+                Add{" "}
+                <span className="text-gold-300">{formatPrice(totals.amountToOffer)}</span>{" "}
+                more for {totals.offerPercent}% off your order
+              </p>
+            ) : totals.offerDiscount > 0 ? (
+              <p className="mt-1.5 text-sm text-leaf-300">
+                {totals.offerPercent}% order discount applied
+              </p>
+            ) : null}
             <div className="mt-2 h-px w-full bg-border-subtle">
               <div
                 className="h-px bg-gold-400 transition-[width] duration-700 ease-[var(--ease-organic)]"
@@ -260,10 +271,17 @@ export function CartPageClient() {
           {/* Totals */}
           <dl className="mt-7 grid gap-2.5 border-t border-border-subtle pt-6 text-sm">
             <Row label="Subtotal" value={formatPrice(totals.subtotal)} />
-            {totals.discountTotal > 0 ? (
+            {totals.offerDiscount > 0 ? (
               <Row
-                label="Discount"
-                value={`−${formatPrice(totals.discountTotal)}`}
+                label={`${totals.offerPercent}% off orders above ${formatPrice(totals.offerThreshold)}`}
+                value={`−${formatPrice(totals.offerDiscount)}`}
+                tone="positive"
+              />
+            ) : null}
+            {totals.couponDiscount > 0 ? (
+              <Row
+                label={`Discount${cart.coupon ? ` (${cart.coupon.code})` : ""}`}
+                value={`−${formatPrice(totals.couponDiscount)}`}
                 tone="positive"
               />
             ) : null}

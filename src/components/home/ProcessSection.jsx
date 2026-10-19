@@ -43,7 +43,7 @@ const STEPS = [
   {
     id: "home",
     label: "Your home",
-    body: "Shipped across India. Free above ₹699.",
+    body: "Shipped across India. Free above ₹1,499.",
   },
 ];
 /**

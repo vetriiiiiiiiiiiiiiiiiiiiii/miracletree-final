@@ -15,7 +15,7 @@ const FIELDS = [
     type: "text",
     required: true,
     maxLength: 200,
-    placeholder: "Free shipping on orders above ₹699",
+    placeholder: "Free shipping on orders above ₹1,499",
   },
   {
     name: "href",

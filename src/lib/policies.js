@@ -5,7 +5,7 @@ import { SITE } from "./constants";
  * The returns and payment text is carried over from the existing store's own
  * published policy — it is the business's stated position, not our invention.
  * Shipping and privacy were not published on the old site; the text below states
- * only what is observably true of this store (free shipping over ₹699, what this
+ * only what is observably true of this store (free shipping over ₹1,499, what this
  * site actually stores) and is written to be reviewed and replaced by the
  * business. Everything here is editable from admin → Settings → Policies.
  */
@@ -30,7 +30,7 @@ export const POLICY_DEFAULTS = {
 
 <h2>Charges</h2>
 <ul>
-  <li>Free on orders above ₹699.</li>
+  <li>Free on orders above ₹1,499.</li>
   <li>A flat ₹60 applies below that.</li>
 </ul>
 
