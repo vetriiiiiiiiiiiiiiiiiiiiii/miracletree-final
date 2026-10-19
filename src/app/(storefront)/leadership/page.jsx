@@ -68,7 +68,7 @@ const FOUNDER_FIGURES = [
 export const metadata = buildMetadata({
   title: "Leadership",
   description:
-    "The people behind Miracletree Life Science: R. Saravanakumaran, the engineer-agriculturist behind the ULTCD and CLHPD drying technologies and the company's moringa projects in Saudi Arabia and Oman; co-founder Sujatha Rajendran; and the medical advisors to the range.",
+    "The people behind Miracletree Life Science: Saravana Kumaran Rajendran, the engineer-agriculturist behind the ULTCD and CLHPD drying technologies and the company's moringa projects in Saudi Arabia and Oman; co-founder Sujatha Kumaran; and the medical advisors to the range.",
   path: "/leadership",
 });
 /**

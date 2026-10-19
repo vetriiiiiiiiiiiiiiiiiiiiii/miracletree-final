@@ -61,6 +61,18 @@ export default async function sitemap() {
       priority: 0.7,
     },
     {
+      url: siteUrl("/international-farm-consultancy"),
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    {
+      url: siteUrl("/third-party-manufacturing"),
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    {
       url: siteUrl("/gallery"),
       lastModified: now,
       changeFrequency: "monthly",

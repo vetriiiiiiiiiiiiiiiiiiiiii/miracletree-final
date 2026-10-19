@@ -21,7 +21,7 @@ const COMPANY = "MiracleTree company records";
 export const LEADERS = [
   {
     slugKey: "saravanakumaran-rajendran",
-    name: "R. Saravanakumaran",
+    name: "Saravana Kumaran Rajendran",
     role: "Founder & Chief Executive",
     credential: "Engineer-agriculturist",
     isFounder: true,
@@ -29,7 +29,7 @@ export const LEADERS = [
     bio: "He developed the two drying technologies the company is built on, ULTCD and CLHPD, and now leads MiracleTree's international moringa projects: technology transfer with NADEC in Saudi Arabia, and a 1.7-million-tree development at Thumrait in Oman.",
     longBio: `THE ENGINEER WHO NEVER SET OUT TO FARM
 
-Saravanakumaran Rajendran grew up in Madurai in a household where both the table and the bookshelf were fed by the land. The meals were farm-fresh produce; the reading was Sangam literature. "My father made sure we learnt and appreciated Purananuru and Agathyan's writings," he recalls. Somewhere along the way, he admits, it all took a backseat.
+Saravana Kumaran Rajendran grew up in Madurai in a household where both the table and the bookshelf were fed by the land. The meals were farm-fresh produce; the reading was Sangam literature. "My father made sure we learnt and appreciated Purananuru and Agathyan's writings," he recalls. Somewhere along the way, he admits, it all took a backseat.
 
 He left with an engineering degree and went to work on the technology side of agriculture finding ways and means to make sustainable technology work for farming. "Solving problems was my goal, not farming," he smiles. Those years were spent on the equipment and process side of the field: the machines, the drying, the handling the unglamorous half of agriculture that decides whether a harvest survives.
 
@@ -109,13 +109,13 @@ Since 2021, the work has been international. MiracleTree® transferred expertise
   },
   {
     slugKey: "sujatha-rajendran",
-    name: "Sujatha Rajendran",
+    name: "Sujatha Kumaran",
     role: "Co-founder",
     credential: null,
     isFounder: false,
     position: 1,
     bio: "Sujatha came up with the products. Her rule was that moringa had to arrive as food people already eat, not as a supplement, and the range still follows it.",
-    longBio: `Sujatha Rajendran started the product side of the company. Her question was a commercial one: how do you get moringa to people who would never buy a supplement?
+    longBio: `Sujatha Kumaran started the product side of the company. Her question was a commercial one: how do you get moringa to people who would never buy a supplement?
 
 The answer was to make things they already eat. An energy bar instead of a capsule. Tea instead of a tincture. Laddus. The range still works to that rule, and it is the reason the company makes food rather than extracts.`,
     quote: null,

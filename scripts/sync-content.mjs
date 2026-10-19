@@ -206,6 +206,75 @@ const ONE_OFFS = [
       return { count };
     },
   },
+  {
+    // Two new pages under Company: farm consultancy and third-party
+    // manufacturing. Appended to the header Company menu and the footer's
+    // Company column, after whatever is there; skipped where already present.
+    marker: "oneoff.nav-services-pages",
+    run: async () => {
+      const pages = [
+        { href: "/international-farm-consultancy", header: "International Farm Consultancy", footer: "Farm consultancy" },
+        { href: "/third-party-manufacturing", header: "Third Party Manufacturing", footer: "Third party manufacturing" },
+      ];
+      let count = 0;
+      for (const group of ["header-company", "footer-company"]) {
+        const rows = await prisma.navigationItem.findMany({ where: { group } });
+        let position = rows.reduce((max, r) => Math.max(max, r.position), 0);
+        for (const page of pages) {
+          if (rows.some((r) => r.href === page.href)) continue;
+          position += 1;
+          await prisma.navigationItem.create({
+            data: {
+              group,
+              label: group === "header-company" ? page.header : page.footer,
+              href: page.href,
+              position,
+              isActive: true,
+            },
+          });
+          count++;
+        }
+      }
+      return { count };
+    },
+  },
+  {
+    // The founders' names as they want them shown: Sujatha Kumaran and
+    // Saravana Kumaran Rajendran. Rewrites every text field that carries them.
+    marker: "oneoff.founder-names",
+    run: async () => {
+      const pairs = [
+        ["Saravanakumaran Rajendran", "Saravana Kumaran Rajendran"],
+        ["R. Saravanakumaran", "Saravana Kumaran Rajendran"],
+        ["Sujatha Rajendran", "Sujatha Kumaran"],
+        ["Saravanakumaran", "Saravana Kumaran"],
+      ];
+      const fix = (text) =>
+        typeof text === "string" ? pairs.reduce((t, [from, to]) => t.replaceAll(from, to), text) : text;
+      const tables = [
+        [prisma.leader, ["name", "role", "credential", "bio", "longBio", "quote"]],
+        [prisma.leaderHighlight, ["title", "body"]],
+        [prisma.credit, ["name", "role", "body"]],
+        [prisma.milestone, ["title", "body"]],
+        [prisma.accolade, ["title", "body"]],
+      ];
+      let count = 0;
+      for (const [table, fields] of tables) {
+        for (const row of await table.findMany()) {
+          const data = {};
+          for (const field of fields) {
+            const next = fix(row[field]);
+            if (next !== row[field]) data[field] = next;
+          }
+          if (Object.keys(data).length) {
+            await table.update({ where: { id: row.id }, data });
+            count++;
+          }
+        }
+      }
+      return { count };
+    },
+  },
 ];
 for (const { marker, run } of ONE_OFFS) {
   if (await prisma.siteSetting.findUnique({ where: { key: marker } })) continue;

@@ -223,14 +223,14 @@ export const ACCOLADES = [
 
 export const CREDITS = [
   {
-    name: "Sujatha Rajendran",
+    name: "Sujatha Kumaran",
     role: "Co-founder",
     body: "Conceived the product line. The rule she set — moringa has to arrive as food people already eat — is why the range is bars, teas and laddus rather than capsules.",
     group: "team",
     url: null,
   },
   {
-    name: "R. Saravanakumaran",
+    name: "Saravana Kumaran Rajendran",
     role: "Founder & Chief Executive",
     body: "Engineer-agriculturist. Built the ULTCD and CLHPD drying processes, and leads the company's international moringa projects in Saudi Arabia and Oman.",
     group: "team",

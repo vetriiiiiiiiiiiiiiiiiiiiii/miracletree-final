@@ -216,7 +216,7 @@ export default function InnovationPage() {
           <div>
             <h2 className="text-title text-cream-50">Who built it</h2>
             <p className="mt-4 max-w-[48ch] text-cream-300">
-              R. Saravanakumaran developed both drying technologies and leads
+              Saravana Kumaran Rajendran developed both drying technologies and leads
               the company&rsquo;s projects in Saudi Arabia and Oman.
             </p>
           </div>

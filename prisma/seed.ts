@@ -813,6 +813,8 @@ export const NAVIGATION = [
   { group: "header-company", label: "Innovation", href: "/innovation", position: 3 },
   { group: "header-company", label: "Gallery", href: "/gallery", position: 4 },
   { group: "header-company", label: "Certifications", href: "/innovation#certifications", position: 5 },
+  { group: "header-company", label: "International Farm Consultancy", href: "/international-farm-consultancy", position: 6 },
+  { group: "header-company", label: "Third Party Manufacturing", href: "/third-party-manufacturing", position: 7 },
 
   { group: "footer-shop", label: "All products", href: "/shop", position: 1 },
   { group: "footer-shop", label: "Super Foods", href: "/shop/super-foods", position: 2 },
@@ -826,6 +828,8 @@ export const NAVIGATION = [
   { group: "footer-company", label: "Innovation", href: "/innovation", position: 3 },
   { group: "footer-company", label: "Gallery", href: "/gallery", position: 4 },
   { group: "footer-company", label: "Discover moringa", href: "/moringa", position: 5 },
+  { group: "footer-company", label: "Farm consultancy", href: "/international-farm-consultancy", position: 6 },
+  { group: "footer-company", label: "Third party manufacturing", href: "/third-party-manufacturing", position: 7 },
   { group: "footer-company", label: "Field notes", href: "/about#field-notes", position: 6 },
   { group: "footer-company", label: "Become a distributor", href: "/contact?topic=distributor", position: 7 },
   { group: "footer-company", label: "Bulk & export", href: "https://indiamoringa.com", position: 8 },

@@ -18,7 +18,7 @@ import {
 export const metadata = buildMetadata({
   title: "Our story",
   description:
-    "Miracletree Life Science began in 2009 with Sujatha Rajendran's idea and a research farm near Madurai. The history, the certifications, the people, and the field notes.",
+    "Miracletree Life Science began in 2009 with Sujatha Kumaran's idea and a research farm near Madurai. The history, the certifications, the people, and the field notes.",
   path: "/about",
 });
 /**
@@ -175,12 +175,12 @@ export default async function AboutPage() {
 
               <div className="prose-paper max-w-[62ch]">
                 <p>
-                  In 2009 <strong>Sujatha Rajendran</strong> started turning
+                  In 2009 <strong>Sujatha Kumaran</strong> started turning
                   moringa into food instead of supplements, with nothing
                   chemical added. The product line was hers.
                 </p>
                 <p>
-                  <strong>Saravanakumaran Rajendran</strong>, an
+                  <strong>Saravana Kumaran Rajendran</strong>, an
                   engineer-agriculturist, came in to build the processing side:
                   drying, milling and handling the leaf at a scale that could
                   run every week without overheating it. He holds patents in
