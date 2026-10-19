@@ -100,6 +100,12 @@ function sanitizeAttributes(tag, raw) {
       out.push('rel="noopener noreferrer"');
     }
   }
+  // Bullet icons from the old store (width="23") are marked so the prose
+  // styles keep them icon-sized beside their text instead of full width.
+  if (tag === "img") {
+    const width = out.find((a) => a.startsWith("width="));
+    if (width && Number(width.slice(7, -1)) <= 64) out.push('class="prose-icon"');
+  }
   return out.length ? ` ${out.join(" ")}` : "";
 }
 function escapeAttr(value) {
