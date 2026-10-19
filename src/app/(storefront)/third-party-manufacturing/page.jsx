@@ -46,7 +46,7 @@ export default function ThirdPartyManufacturingPage() {
           <div className="mt-10 grid gap-12 pb-12 md:pb-16 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
             <Reveal className="max-w-[62ch]">
               <p className="eyebrow text-gold-400">Third Party Manufacturing</p>
-              <h1 className="mt-5 text-display text-cream-50">Your brand, our moringa</h1>
+              <h1 className="mt-5 text-display text-cream-50">Your brand, made by us</h1>
               <p className="mt-8 text-[1.1rem] leading-relaxed text-cream-300">{MANUFACTURING_INTRO}</p>
               <div className="mt-10 flex flex-wrap gap-3">
                 <LinkButton href={whatsapp}>Send an enquiry</LinkButton>
@@ -72,8 +72,8 @@ export default function ThirdPartyManufacturingPage() {
       <Section tone="forest">
         <Container>
           <SectionHeading
-            title="Made the MiracleTree way"
-            lede="Most contract manufacturers buy moringa in. We grow it, dry it with our own technology, and make it — so the product carrying your name starts better."
+            title="Why make it with MiracleTree"
+            lede="We are food makers first — with our own drying technology, our own recipes and our own facility behind every product that carries your name."
           />
           <Reveal className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4" stagger={0.06}>
             {DIFFERENCE.map((item) => (

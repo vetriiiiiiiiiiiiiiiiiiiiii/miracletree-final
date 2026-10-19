@@ -3,21 +3,21 @@
  * so the ranges can be swapped for the final list without touching the page.
  */
 export const MANUFACTURING_INTRO =
-  "MiracleTree takes on third-party and private-label manufacturing from its own licensed facility of more than 10,000 sq ft in Madurai. You bring the brand; we make the product — from our ready formulations or one developed with you — and hand it over packed in your name, ready to sell. The same moringa, the same low-temperature drying and the same team behind our own range go into every order.";
+  "MiracleTree takes on third-party and private-label food manufacturing from its own licensed facility of more than 10,000 sq ft in Madurai. Health mixes, milk mixes, nutri bars, dried fruits and vegetables, masala powders, ready-to-use foods and more — you bring the brand; we make the product, from our ready formulations or one developed with you, and hand it over packed in your name, ready to sell.";
 
 /** What sets a MiracleTree-made product apart. */
 export const DIFFERENCE = [
   {
-    title: "Grown by us, not bought in",
-    body: "Moringa from farms we run and contract — about 405 acres across south Tamil Nadu — so every batch traces back to the field it came from.",
+    title: "Low-temperature drying",
+    body: "Closed-chamber and vacuum drying processes we developed ourselves keep colour, aroma and nutrients in — not baked out by heat.",
   },
   {
-    title: "Dried our way",
-    body: "ULTCD and CLHPD, the closed-chamber, low-temperature drying processes we developed in 2014 and 2019, keep the leaf green rather than olive.",
+    title: "Formulation in-house",
+    body: "Our own team develops and refines every recipe, so a ready product can be tuned to your brief, or a new one built from scratch.",
   },
   {
-    title: "Only moringa, since 2009",
-    body: "Fifteen years on one tree and 60+ formulations — leaf, flower, seed, seed oil and gum — behind every product we make for you.",
+    title: "Any pack, 10 g to 10 kg",
+    body: "Sachets, retail pouches and bulk packs from one facility, so trial runs and repeat orders come from the same line.",
   },
   {
     title: "Proven at volume",
@@ -28,9 +28,9 @@ export const DIFFERENCE = [
 /** The facility and its credentials. */
 export const FACILITY = [
   { value: "10,000+", label: "Sq ft facility", note: "Madurai, Tamil Nadu" },
-  { value: "60+", label: "Formulations", note: "Ready to carry your label" },
+  { value: "12", label: "Product ranges", note: "Ready to carry your label" },
   { value: "ISO · GMP · HACCP", label: "Certified", note: "Quality and food safety" },
-  { value: "2009", label: "Making moringa since", note: "Fifteen years on one crop" },
+  { value: "2009", label: "Manufacturing since", note: "Madurai, Tamil Nadu" },
 ];
 
 /** Premium ranges available for private labelling. A range with no items
@@ -101,9 +101,9 @@ export const RANGES = [
 /** Who the service is for. */
 export const PARTNERS = [
   { title: "Startups", body: "A first product without building a factory: pick from our ranges, put your name on it and launch." },
-  { title: "Established brands", body: "New moringa SKUs added to your line, made to your specification while your team sells." },
-  { title: "Supermarkets & modern trade", body: "A store-brand moringa range, supplied at the volumes shelves need." },
-  { title: "Health & wellness brands", body: "Clean, single-origin moringa that fits a natural, functional positioning." },
+  { title: "Established brands", body: "New SKUs added to your line, made to your specification while your team sells." },
+  { title: "Supermarkets & modern trade", body: "A store-brand range of health foods, supplied at the volumes shelves need." },
+  { title: "Health & wellness brands", body: "Clean, natural products — millets, traditional grains, dried fruits — that fit a functional positioning." },
   { title: "Exporters", body: "Batches for overseas buyers — our products have already reached 14+ countries." },
 ];
 
