@@ -62,7 +62,8 @@ export default async function MoringaPage() {
             </h1>
             <p className="mt-8 max-w-[56ch] text-[1.15rem] leading-relaxed text-cream-300">
               Known affectionately in Tamil Nadu as{" "}
-              <em className="text-leaf-200">murungai</em>, Our Moringa is
+              <em className="text-leaf-200">murungai</em>{" "}
+              <span lang="ta">(முருங்கை)</span>, Our Moringa is
               cultivated in meticulously enriched earth along the beautiful
               foothills of the Western Ghats and Sirumalai. A true testament to
               natural resilience, it thrives even with very little water easily
