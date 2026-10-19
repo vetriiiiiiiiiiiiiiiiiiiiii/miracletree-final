@@ -7,7 +7,7 @@ import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { LinkButton } from "@/components/ui/Button";
 import { Reveal } from "@/components/motion/Reveal";
 import { DIFFERENCE_ICONS, Medallion } from "@/components/services/ManufacturingIcons";
-import { RangeShowcase } from "@/components/services/RangeShowcase";
+import { RangeBento } from "@/components/services/RangeBento";
 import {
   DIFFERENCE,
   FACILITY,
@@ -159,11 +159,11 @@ export default function ThirdPartyManufacturingPage() {
               Premium ranges for your label
             </h2>
             <p className="mt-4 leading-relaxed text-[#3d4a40] dark:text-cream-300">
-              Pick a range to see its products. Every one can be made under your brand, in your pack size — from 10 g to 10 kg.
+              Every product below can be made under your brand, in your pack size — from 10 g to 10 kg.
               Have something else in mind? We develop new formulations too.
             </p>
           </div>
-          <RangeShowcase ranges={RANGES} whatsapp={SITE.whatsapp} />
+          <RangeBento ranges={RANGES} whatsapp={SITE.whatsapp} />
         </Container>
       </section>
 
