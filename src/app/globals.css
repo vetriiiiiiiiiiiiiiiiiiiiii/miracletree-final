@@ -815,18 +815,16 @@
   }
 }
 
-/* The leaf pointer: a Moringa oleifera leaflet as it really is — small,
-   obovate and round-tipped on a short stalk — drawn by the browser as a
-   plain CSS image cursor: no script, no per-frame work, so it cannot
-   bring back the lag the animated version caused. A single leaf on the page;
-   over anything clickable an opposite pair of smaller leaflets joins it, a
-   moringa pinna in miniature. Mouse and trackpad only; text fields keep the text cursor.
-   Hotspot 2 2 is the tip of the leaflet's stalk. */
+/* The leaf pointer: a glossy three-leaf sprig, drawn by the browser as a
+   plain CSS image cursor — no script, no per-frame work, so it cannot bring
+   back the lag the animated version caused. Over anything clickable the
+   sprig glows; in text fields it carries a text bar. Mouse and trackpad only.
+   Hotspot 2 2 is the tip of the big leaf; 25 16 is the middle of the bar. */
 @media (hover: hover) and (pointer: fine) {
   html {
-    cursor: url("/cursor/leaf-32.png") 2 2, auto;
-    cursor: -webkit-image-set(url("/cursor/leaf-32.png") 1x, url("/cursor/leaf-64.png") 2x) 2 2, auto;
-    cursor: image-set(url("/cursor/leaf-32.png") 1x, url("/cursor/leaf-64.png") 2x) 2 2, auto;
+    cursor: url("/cursor/sprig-32.png") 2 2, auto;
+    cursor: -webkit-image-set(url("/cursor/sprig-32.png") 1x, url("/cursor/sprig-64.png") 2x) 2 2, auto;
+    cursor: image-set(url("/cursor/sprig-32.png") 1x, url("/cursor/sprig-64.png") 2x) 2 2, auto;
   }
   a,
   button,
@@ -834,17 +832,52 @@
   label,
   summary,
   select {
-    cursor: url("/cursor/leaf-sprig-32.png") 2 2, pointer;
-    cursor: -webkit-image-set(url("/cursor/leaf-sprig-32.png") 1x, url("/cursor/leaf-sprig-64.png") 2x) 2 2, pointer;
-    cursor: image-set(url("/cursor/leaf-sprig-32.png") 1x, url("/cursor/leaf-sprig-64.png") 2x) 2 2, pointer;
+    cursor: url("/cursor/sprig-glow-32.png") 2 2, pointer;
+    cursor: -webkit-image-set(url("/cursor/sprig-glow-32.png") 1x, url("/cursor/sprig-glow-64.png") 2x) 2 2, pointer;
+    cursor: image-set(url("/cursor/sprig-glow-32.png") 1x, url("/cursor/sprig-glow-64.png") 2x) 2 2, pointer;
   }
   input:not([type="checkbox"], [type="radio"], [type="range"], [type="submit"], [type="button"], [type="file"]),
   textarea,
   [contenteditable="true"] {
-    cursor: text;
+    cursor: url("/cursor/sprig-text-32.png") 25 16, text;
+    cursor: -webkit-image-set(url("/cursor/sprig-text-32.png") 1x, url("/cursor/sprig-text-64.png") 2x) 25 16, text;
+    cursor: image-set(url("/cursor/sprig-text-32.png") 1x, url("/cursor/sprig-text-64.png") 2x) 25 16, text;
   }
   :disabled,
   [aria-disabled="true"] {
     cursor: not-allowed;
+  }
+}
+
+/* Click burst (LeafBurst.jsx): six small leaves fly out and fade. */
+.leaf-burst {
+  position: fixed;
+  z-index: 9999;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+.leaf-burst i {
+  position: absolute;
+  left: -5px;
+  top: -3px;
+  width: 10px;
+  height: 6px;
+  border-radius: 0 100% 0 100%;
+  background: linear-gradient(135deg, #b5ec6c, #3f9a2c);
+  box-shadow: 0 0 6px rgba(196, 242, 122, 0.7);
+  animation: leaf-burst 650ms ease-out forwards;
+}
+@keyframes leaf-burst {
+  from {
+    transform: rotate(var(--a)) translateX(4px) scale(0.6);
+    opacity: 1;
+  }
+  55% {
+    opacity: 1;
+  }
+  to {
+    transform: rotate(var(--a)) translateX(var(--d)) rotate(120deg) scale(1);
+    opacity: 0;
   }
 }

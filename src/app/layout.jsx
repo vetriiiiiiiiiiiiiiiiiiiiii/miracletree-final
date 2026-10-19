@@ -7,6 +7,7 @@ import {
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Analytics } from "@/components/analytics/Analytics";
 import { Preloader } from "@/components/motion/Preloader";
+import { LeafBurst } from "@/components/motion/LeafBurst";
 import localFont from "next/font/local";
 import "./globals.css";
 // Variable fonts shipped from npm (@fontsource-variable/*) and bundled by
@@ -101,6 +102,7 @@ export default function RootLayout({ children }) {
           <JsonLd id="website" data={websiteSchema()} />
           {children}
           <Preloader />
+          <LeafBurst />
           <Analytics />
         </ThemeProvider>
       </body>
