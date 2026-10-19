@@ -77,7 +77,7 @@ export default function FarmConsultancyPage() {
         { title: "Design", body: "Cultivation model, nursery, processing and SOPs for your project." },
         { title: "Support", body: "On-ground guidance and training through planting and the first harvests." },
       ]}
-      enquirySubject="International farm consultancy enquiry"
+      enquirySubject="international farm consultancy"
       enquiryBody="Write to us with where the project is, how much land you have, and what you want the moringa for. We will come back with how we can help."
     />
   );

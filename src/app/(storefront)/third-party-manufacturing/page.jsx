@@ -1,5 +1,6 @@
 import { breadcrumbSchema, buildMetadata } from "@/lib/seo";
 import { SITE } from "@/lib/constants";
+import { whatsappLink } from "@/lib/utils";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Container, Section, SectionHeading } from "@/components/layout/Section";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
@@ -30,7 +31,10 @@ export default function ThirdPartyManufacturingPage() {
     { name: "Third Party Manufacturing", path: "/third-party-manufacturing" },
   ];
   const mailto = `mailto:${SITE.email}?subject=${encodeURIComponent("Third party manufacturing enquiry")}`;
-  const tel = `tel:${SITE.phone.replace(/\s+/g, "")}`;
+  const whatsapp = whatsappLink(
+    SITE.whatsapp,
+    "Hello MiracleTree, I would like to enquire about third party manufacturing.",
+  );
   return (
     <>
       <JsonLd id="manufacturing-breadcrumb" data={breadcrumbSchema(crumbs)} />
@@ -45,7 +49,7 @@ export default function ThirdPartyManufacturingPage() {
               <h1 className="mt-5 text-display text-cream-50">Your brand, our moringa</h1>
               <p className="mt-8 text-[1.1rem] leading-relaxed text-cream-300">{MANUFACTURING_INTRO}</p>
               <div className="mt-10 flex flex-wrap gap-3">
-                <LinkButton href={mailto}>Send an enquiry</LinkButton>
+                <LinkButton href={whatsapp}>Send an enquiry</LinkButton>
                 <LinkButton href="#ranges" variant="secondary">See the ranges</LinkButton>
               </div>
             </Reveal>
@@ -156,8 +160,8 @@ export default function ThirdPartyManufacturingPage() {
               Tell us the product, the rough quantity and your timeline. We will reply with samples, minimums and pricing.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
-              <LinkButton href={mailto}>Email {SITE.email}</LinkButton>
-              <LinkButton href={tel} variant="secondary">Call {SITE.phone}</LinkButton>
+              <LinkButton href={whatsapp}>WhatsApp {SITE.phone}</LinkButton>
+              <LinkButton href={mailto} variant="secondary">Email {SITE.email}</LinkButton>
             </div>
             <p className="mt-4 text-sm text-cream-400">{SITE.phoneHours}</p>
           </div>

@@ -80,6 +80,8 @@ export const SITE = {
   email: "info@miracletree.in",
   supportEmail: "info@miracletree.in",
   phone: "+91 79040 57352",
+  // Enquiry buttons open a WhatsApp chat with this number (digits only).
+  whatsapp: "917904057352",
   mobile: "+91 99763 27888",
   phoneHours: "Mon–Sat, 10am–5pm IST",
   address: {

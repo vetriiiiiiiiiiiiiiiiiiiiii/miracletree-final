@@ -51,3 +51,8 @@ export function readingMinutes(content) {
   const words = stripHtml(content).split(/\s+/).filter(Boolean).length;
   return Math.max(1, Math.round(words / 220));
 }
+
+/** A WhatsApp chat link to the business number, with the message pre-filled. */
+export function whatsappLink(number, message) {
+  return `https://wa.me/${number}${message ? `?text=${encodeURIComponent(message)}` : ""}`;
+}

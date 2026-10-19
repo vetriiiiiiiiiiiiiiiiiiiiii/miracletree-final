@@ -1,5 +1,6 @@
 import { breadcrumbSchema } from "@/lib/seo";
 import { SITE } from "@/lib/constants";
+import { whatsappLink } from "@/lib/utils";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Container, Section, SectionHeading } from "@/components/layout/Section";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
@@ -8,8 +9,8 @@ import { Reveal } from "@/components/motion/Reveal";
 /**
  * The shared layout for the Company menu's service pages (farm consultancy,
  * third-party manufacturing): intro and figures, what the service covers,
- * the record behind it, how an engagement runs, and an enquiry block that
- * opens an email with the subject already filled in.
+ * the record behind it, how an engagement runs, and an enquiry block. Every
+ * enquiry button opens WhatsApp with a message already written.
  */
 export function ServicePage({
   slug,
@@ -30,7 +31,8 @@ export function ServicePage({
     { name: "Home", path: "/" },
     { name: eyebrow, path: `/${slug}` },
   ];
-  const mailto = `mailto:${SITE.email}?subject=${encodeURIComponent(enquirySubject)}`;
+  const whatsapp = whatsappLink(SITE.whatsapp, `Hello MiracleTree, I would like to enquire about ${enquirySubject}.`);
+  const mailto = `mailto:${SITE.email}?subject=${encodeURIComponent(`${eyebrow} enquiry`)}`;
   const tel = `tel:${SITE.phone.replace(/\s+/g, "")}`;
   return (
     <>
@@ -45,7 +47,7 @@ export function ServicePage({
             <h1 className="mt-5 text-display text-cream-50">{title}</h1>
             <p className="mt-8 text-[1.15rem] leading-relaxed text-cream-300">{intro}</p>
             <div className="mt-10 flex flex-wrap gap-3">
-              <LinkButton href={mailto}>Send an enquiry</LinkButton>
+              <LinkButton href={whatsapp}>Send an enquiry</LinkButton>
               <LinkButton href={tel} variant="secondary">
                 Call {SITE.phone}
               </LinkButton>
@@ -129,9 +131,9 @@ export function ServicePage({
             <h2 className="text-title text-cream-50">Start a conversation</h2>
             <p className="mt-5 leading-relaxed text-cream-300">{enquiryBody}</p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
-              <LinkButton href={mailto}>Email {SITE.email}</LinkButton>
-              <LinkButton href={tel} variant="secondary">
-                Call {SITE.phone}
+              <LinkButton href={whatsapp}>WhatsApp {SITE.phone}</LinkButton>
+              <LinkButton href={mailto} variant="secondary">
+                Email {SITE.email}
               </LinkButton>
             </div>
             <p className="mt-4 text-sm text-cream-400">{SITE.phoneHours}</p>
