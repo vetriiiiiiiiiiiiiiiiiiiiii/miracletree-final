@@ -327,6 +327,82 @@ const ONE_OFFS = [
       return { count };
     },
   },
+  {
+    // Beauty Drops, Chaitree and Movita join the hero, in that order, right
+    // after the Soup slide (after Mogo if there is no Soup slide). Slides
+    // already in the admin keep their order around them; photos can be
+    // uploaded later in Admin → Hero banner.
+    marker: "oneoff.hero-beauty-chaitree-movita",
+    run: async () => {
+      const additions = [
+        {
+          "eyebrow": "Skin food · Cold-pressed moringa seed oil",
+          "title": "Beauty Drops",
+          "subtitle": "Skin Food",
+          "tagline": "Hydrated skin, a fresh glow.",
+          "body": "Cold-pressed virgin moringa seed oil with extra virgin coconut oil, sweet orange peel oil and moringa root extract — a few drops to hydrate and protect the skin.",
+          "features": "leaf | Cold-pressed moringa seed oil\nheart | Deep moisturising\nshield | Protects and tones",
+          "ctaLabel": "Shop Beauty Drops",
+          "ctaHref": "/product/beauty-drops-skin-food-hydrates-skin",
+          "secondaryLabel": "Read reviews",
+          "secondaryHref": "/reviews?product=beauty-drops-skin-food-hydrates-skin#all",
+          "productSlug": "beauty-drops-skin-food-hydrates-skin",
+          "imageUrl": null,
+          "videoUrl": null,
+          "videoLabel": null,
+          "isActive": true
+        },
+        {
+          "eyebrow": "Moringa loose-leaf infusion",
+          "title": "Chaitree®",
+          "subtitle": "Moringa Masala Chai",
+          "tagline": "Robust, spicy, and moringa green.",
+          "body": "Rolled moringa leaves with ginger, cardamom, cloves, cinnamon, nutmeg and black pepper — spices from organic farms, about 50 cups in every 100 g.",
+          "features": "leaf | Organic moringa leaves\nsun | Warming whole spices\nbolt | Quick energy",
+          "ctaLabel": "Shop Chaitree",
+          "ctaHref": "/product/moringa-rolled-masala-chai-100-gms-50-servings-approx-description",
+          "secondaryLabel": "All moringa teas",
+          "secondaryHref": "/shop/moringa-tea",
+          "productSlug": "moringa-rolled-masala-chai-100-gms-50-servings-approx-description",
+          "imageUrl": null,
+          "videoUrl": null,
+          "videoLabel": null,
+          "isActive": true
+        },
+        {
+          "eyebrow": "Multi-grain nutrition with moringa",
+          "title": "Movita",
+          "subtitle": "Health Mix & Laddus",
+          "tagline": "Sprouted grains, the goodness of moringa.",
+          "body": "Moringa leaf, flower and seed with flax, almond, palm jaggery and 21 sprouted pulses and grains — a health drink for children and adults, and laddus with no added sugar.",
+          "features": "leaf | Moringa leaf, flower & seed\nheart | 21 sprouted pulses & grains\nshield | No preservatives",
+          "ctaLabel": "Shop Movita",
+          "ctaHref": "/shop?q=Movita",
+          "secondaryLabel": "Health Mix",
+          "secondaryHref": "/product/movita-multi-grain-health-mix-flavored",
+          "productSlug": "movita-multi-grain-health-mix-flavored",
+          "imageUrl": null,
+          "videoUrl": null,
+          "videoLabel": null,
+          "isActive": true
+        }
+      ];
+      const slides = await prisma.heroSlide.findMany({ orderBy: { position: "asc" } });
+      const fresh = additions.filter((a) => !slides.some((s) => s.productSlug === a.productSlug));
+      if (!fresh.length) return { count: 0 };
+      const find = (re) =>
+        slides.findIndex((s) => re.test(`${s.title} ${s.subtitle ?? ""} ${s.productSlug ?? ""}`));
+      let at = find(/soup/i);
+      if (at < 0) at = find(/mogo/i);
+      // Re-number everything: slides up to the anchor, the new ones, the rest.
+      const ordered = [...slides.slice(0, at + 1), ...fresh, ...slides.slice(at + 1)];
+      for (const [position, slide] of ordered.entries()) {
+        if (slide.id) await prisma.heroSlide.update({ where: { id: slide.id }, data: { position } });
+        else await prisma.heroSlide.create({ data: { ...slide, position } });
+      }
+      return { count: fresh.length };
+    },
+  },
 ];
 for (const { marker, run } of ONE_OFFS) {
   if (await prisma.siteSetting.findUnique({ where: { key: marker } })) continue;
