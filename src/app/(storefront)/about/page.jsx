@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getArticles } from "@/lib/queries";
@@ -138,11 +139,16 @@ export default async function AboutPage() {
               </div>
 
               <div className="mx-auto w-full max-w-xs lg:max-w-none">
-                <BotanicalPlate
-                  subject="leaf"
-                  className="h-[22rem] w-full"
-                  label="Moringa oleifera — bipinnate leaf, small oval leaflets in opposite pairs"
-                />
+                <figure className="relative mx-auto h-[22rem] w-full max-w-[22rem]">
+                  <Image
+                    src="/brand/miracletree-mark.webp"
+                    alt="The MiracleTree mark"
+                    fill
+                    priority
+                    sizes="(min-width: 1024px) 352px, 320px"
+                    className="object-contain"
+                  />
+                </figure>
               </div>
             </div>
           </Container>
@@ -162,7 +168,7 @@ export default async function AboutPage() {
                   <BotanicalPlate
                     subject="flower"
                     className="h-56 w-40"
-                    label="blossom — also eaten"
+                    label="Moringa blossom — cream petals, also eaten"
                   />
                 </div>
               </div>

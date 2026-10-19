@@ -174,6 +174,90 @@ function moringaLeafShapes() {
   return shapes;
 }
 const MORINGA_LEAF = moringaLeafShapes();
+
+/**
+ * Shapes for the moringa blossom plate (viewBox 200×210). Petals are
+ * spathulate — a narrow claw widening to a rounded blade — drawn pointing
+ * up in local space and rotated into place around the flower's centre.
+ */
+function moringaFlowerShapes() {
+  const shapes = [];
+  const cx = 100;
+  const cy = 88;
+  const f = (n) => Math.round(n * 10) / 10;
+  const spoon = (len, w) =>
+    `M0 0C${f(-w * 0.25)} ${f(-len * 0.3)} ${f(-w)} ${f(-len * 0.55)} ${f(-w * 0.85)} ${f(-len * 0.86)}` +
+    `C${f(-w * 0.6)} ${f(-len * 1.04)} ${f(w * 0.6)} ${f(-len * 1.04)} ${f(w * 0.85)} ${f(-len * 0.86)}` +
+    `C${f(w)} ${f(-len * 0.55)} ${f(w * 0.25)} ${f(-len * 0.3)} 0 0Z`;
+  const at = (x, y, rot) => `translate(${x} ${y}) rotate(${rot})`;
+
+  // Drooping panicle stalk, with two side pedicels carrying buds.
+  shapes.push({ kind: "path", delay: 0, d: `M${cx} ${cy + 4}C${cx + 2} 124 108 160 118 202` });
+  shapes.push({ kind: "path", delay: 60, d: "M104 136C94 142 82 146 70 158" });
+  shapes.push({ kind: "path", delay: 80, d: "M111 166C121 168 132 172 142 182" });
+  shapes.push({ kind: "path", delay: 90, d: "M86 147C82 142 77 139 71 138" });
+
+  // Five narrow sepals, reflexed behind the petals.
+  [32, -32, 96, -96, 180].forEach((rot, i) => {
+    shapes.push({ kind: "path", delay: 120 + i * 30, d: spoon(34, 2.6), transform: at(cx, cy, rot) });
+  });
+
+  // Five unequal petals: the upright standard, two laterals, two swept back.
+  const petals = [
+    { rot: 4, len: 50, w: 10 },
+    { rot: 62, len: 46, w: 9.5 },
+    { rot: -58, len: 46, w: 9.5 },
+    { rot: 132, len: 42, w: 9 },
+    { rot: -128, len: 42, w: 9 },
+  ];
+  petals.forEach(({ rot, len, w }, i) => {
+    const delay = 260 + i * 70;
+    shapes.push({ kind: "path", delay, d: spoon(len, w), transform: at(cx, cy, rot) });
+    // Midvein running up the blade.
+    shapes.push({ kind: "path", delay: delay + 40, d: `M0 ${f(-len * 0.18)}L0 ${f(-len * 0.78)}`, transform: at(cx, cy, rot) });
+  });
+
+  // Floral cup.
+  shapes.push({ kind: "ellipse", delay: 620, cx, cy, rx: 4.5, ry: 4.5, rot: 0 });
+
+  // Five fertile stamens curving up with anthers, five shorter staminodes.
+  [-20, -10, 0, 10, 20].forEach((rot, i) => {
+    const len = 22 - Math.abs(rot) * 0.15;
+    const bend = rot * 0.25;
+    shapes.push({
+      kind: "path",
+      delay: 680 + i * 40,
+      d: `M0 -3C${f(bend)} ${f(-len * 0.5)} ${f(-bend * 0.4)} ${f(-len * 0.8)} 0 ${f(-len)}`,
+      transform: at(cx, cy, rot),
+    });
+    const rad = (rot * Math.PI) / 180;
+    shapes.push({
+      kind: "ellipse",
+      delay: 720 + i * 40,
+      cx: f(cx + Math.sin(rad) * (len + 2.2)),
+      cy: f(cy - Math.cos(rad) * (len + 2.2)),
+      rx: 1.4,
+      ry: 2.4,
+      rot,
+    });
+  });
+  [-15, -5, 5, 15].forEach((rot, i) => {
+    shapes.push({ kind: "path", delay: 760 + i * 30, d: "M0 -3C0.5 -7 -0.5 -10 0 -13", transform: at(cx, cy, rot) });
+  });
+
+  // Closed buds: ovoid, a sepal line hugging each.
+  [
+    { x: 64.9, y: 164.1, rot: 40 },
+    { x: 64.9, y: 132.9, rot: -50 },
+    { x: 147.1, y: 188.1, rot: -40 },
+  ].forEach(({ x, y, rot }, i) => {
+    shapes.push({ kind: "ellipse", delay: 880 + i * 60, cx: x, cy: y, rx: 4.2, ry: 8, rot });
+    shapes.push({ kind: "path", delay: 910 + i * 60, d: "M0 7C-2 3 -2 -1 0 -4", transform: at(x, y, rot) });
+  });
+  return shapes;
+}
+
+const MORINGA_FLOWER = moringaFlowerShapes();
 export function BotanicalPlate({ subject, className, label }) {
   const ref = useDrawOnScroll();
   const plates = {
@@ -223,29 +307,35 @@ export function BotanicalPlate({ subject, className, label }) {
         <path data-draw data-draw-delay="320" d="M96 14C99 8 105 8 108 14" />
       </>
     ),
-    // Cream blossom, five petals.
+    // A Moringa oleifera blossom as it really grows: zygomorphic, five
+    // unequal spoon-shaped cream petals (one standing upright, four swept
+    // back), narrow reflexed sepals, a tuft of upcurved stamens, and closed
+    // buds further down the drooping panicle.
     flower: (
-      <>
-        <path data-draw d="M100 118C100 140 100 168 100 192" />
-        {[0, 72, 144, 216, 288].map((angle, i) => (
-          <ellipse
-            key={angle}
-            data-draw
-            data-draw-delay={80 + i * 70}
-            cx="100"
-            cy="86"
-            rx="13"
-            ry="26"
-            transform={`rotate(${angle} 100 108)`}
-          />
-        ))}
-        <circle data-draw data-draw-delay="460" cx="100" cy="108" r="7" />
-        <path
-          data-draw
-          data-draw-delay="520"
-          d="M100 150C90 144 82 146 76 152"
-        />
-      </>
+      <g strokeWidth="1.3">
+        {MORINGA_FLOWER.map((shape, i) =>
+          shape.kind === "path" ? (
+            <path
+              key={i}
+              data-draw
+              data-draw-delay={shape.delay}
+              d={shape.d}
+              transform={shape.transform}
+            />
+          ) : (
+            <ellipse
+              key={i}
+              data-draw
+              data-draw-delay={shape.delay}
+              cx={shape.cx}
+              cy={shape.cy}
+              rx={shape.rx}
+              ry={shape.ry}
+              transform={`rotate(${shape.rot} ${shape.cx} ${shape.cy})`}
+            />
+          ),
+        )}
+      </g>
     ),
     // The winged seed the whole story starts from.
     seed: (
