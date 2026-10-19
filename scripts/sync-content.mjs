@@ -207,9 +207,10 @@ const ONE_OFFS = [
     },
   },
   {
-    // Two new pages under Company: farm consultancy and third-party
-    // manufacturing. Appended to the header Company menu and the footer's
-    // Company column, after whatever is there; skipped where already present.
+    // Two new pages under Company — farm consultancy and third-party
+    // manufacturing — appended to the header Company menu and the footer's
+    // Company column, and Customer reviews to the footer's Support column;
+    // after whatever is there, skipped where already present.
     marker: "oneoff.nav-services-pages",
     run: async () => {
       const pages = [
@@ -217,16 +218,21 @@ const ONE_OFFS = [
         { href: "/third-party-manufacturing", header: "Third Party Manufacturing", footer: "Third party manufacturing" },
       ];
       let count = 0;
-      for (const group of ["header-company", "footer-company"]) {
+      const additions = {
+        "header-company": pages.map((p) => ({ href: p.href, label: p.header })),
+        "footer-company": pages.map((p) => ({ href: p.href, label: p.footer })),
+        "footer-support": [{ href: "/reviews", label: "Customer reviews" }],
+      };
+      for (const [group, items] of Object.entries(additions)) {
         const rows = await prisma.navigationItem.findMany({ where: { group } });
         let position = rows.reduce((max, r) => Math.max(max, r.position), 0);
-        for (const page of pages) {
+        for (const page of items) {
           if (rows.some((r) => r.href === page.href)) continue;
           position += 1;
           await prisma.navigationItem.create({
             data: {
               group,
-              label: group === "header-company" ? page.header : page.footer,
+              label: page.label,
               href: page.href,
               position,
               isActive: true,

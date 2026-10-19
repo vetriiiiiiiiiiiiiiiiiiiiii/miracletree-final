@@ -841,6 +841,7 @@ export const NAVIGATION = [
   { group: "footer-support", label: "Returns & refunds", href: "/returns", position: 5 },
   { group: "footer-support", label: "Privacy policy", href: "/privacy", position: 6 },
   { group: "footer-support", label: "Terms of service", href: "/terms", position: 7 },
+  { group: "footer-support", label: "Customer reviews", href: "/reviews", position: 8 },
 ];
 
 /** The gallery's starting content: the company's own photo set in public/photos. */

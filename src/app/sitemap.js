@@ -67,6 +67,12 @@ export default async function sitemap() {
       priority: 0.6,
     },
     {
+      url: siteUrl("/reviews"),
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.6,
+    },
+    {
       url: siteUrl("/third-party-manufacturing"),
       lastModified: now,
       changeFrequency: "monthly",

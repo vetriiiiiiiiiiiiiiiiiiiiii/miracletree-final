@@ -19,10 +19,15 @@ export function SocialProof({ title, subtitle, items }) {
             {subtitle ? <p className="mt-1.5 text-cream-400">{subtitle}</p> : null}
           </div>
           {average ? (
-            <p className="flex items-center gap-2 rounded-full bg-forest-900 px-4 py-2 text-sm font-semibold text-cream-100">
+            <Link
+              href="/reviews"
+              className="flex items-center gap-2 rounded-full bg-forest-900 px-4 py-2 text-sm font-semibold text-cream-100 transition-colors hover:bg-forest-800"
+            >
               <Stars value={average} />
               {average.toFixed(1)} from {rated.length} review{rated.length === 1 ? "" : "s"}
-            </p>
+              <span aria-hidden>→</span>
+              <span className="sr-only">See all reviews</span>
+            </Link>
           ) : null}
         </div>
 

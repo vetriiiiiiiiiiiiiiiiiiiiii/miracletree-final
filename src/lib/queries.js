@@ -468,3 +468,53 @@ export const getGalleryGroups = cache(async () => {
       })),
     }));
 });
+/**
+ * The /reviews page: the store-wide rating, the star breakdown, every
+ * published product with its own rating (unreviewed ones included, so each
+ * product has a place to start), and the approved reviews, newest first.
+ */
+export const getReviewsOverview = cache(async () => {
+  const [products, reviews] = await Promise.all([
+    prisma.product.findMany({
+      where: { status: "published" },
+      orderBy: { position: "asc" },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        images: { orderBy: { position: "asc" }, take: 1, select: { url: true, alt: true } },
+        reviews: { where: { status: "approved" }, select: { rating: true } },
+      },
+    }),
+    prisma.review.findMany({
+      where: { status: "approved", product: { status: "published" } },
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        authorName: true,
+        rating: true,
+        title: true,
+        body: true,
+        isVerified: true,
+        createdAt: true,
+        product: { select: { name: true, slug: true } },
+      },
+    }),
+  ]);
+  const breakdown = [5, 4, 3, 2, 1].map((stars) => ({
+    stars,
+    count: reviews.filter((r) => r.rating === stars).length,
+  }));
+  const average = reviews.length
+    ? Math.round((reviews.reduce((s, r) => s + r.rating, 0) / reviews.length) * 10) / 10
+    : null;
+  return {
+    average,
+    total: reviews.length,
+    breakdown,
+    products: products
+      .map(withRating)
+      .sort((a, b) => b.ratingCount - a.ratingCount || (b.ratingAverage ?? 0) - (a.ratingAverage ?? 0)),
+    reviews,
+  };
+});
