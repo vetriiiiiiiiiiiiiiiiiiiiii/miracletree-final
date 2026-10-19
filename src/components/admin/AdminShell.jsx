@@ -22,6 +22,7 @@ const NAVIGATION = [
       { href: "/admin/customers", label: "Customers", icon: "customers" },
       { href: "/admin/promotions", label: "Promotions", icon: "promotions" },
       { href: "/admin/reviews", label: "Reviews", icon: "reviews" },
+      { href: "/admin/enquiries", label: "Enquiries", icon: "enquiries" },
     ],
   },
   {
@@ -59,6 +60,8 @@ export function AdminShell({ children, user, pendingCounts }) {
       return pendingCounts.orders;
     if (href === "/admin/reviews" && pendingCounts.reviews > 0)
       return pendingCounts.reviews;
+    if (href === "/admin/enquiries" && pendingCounts.enquiries > 0)
+      return pendingCounts.enquiries;
     if (href === "/admin/inventory" && pendingCounts.lowStock > 0)
       return pendingCounts.lowStock;
     return null;
@@ -297,6 +300,7 @@ function Icon({ name, active }) {
     inventory: "M3 7l7-3.5L17 7v6l-7 3.5L3 13V7zM3 7l7 3.5L17 7M10 10.5V17",
     reviews:
       "M10 3l2 4.3 4.7.5-3.5 3.2.9 4.6L10 13.4 5.9 15.6l.9-4.6L3.3 7.8 8 7.3 10 3z",
+    enquiries: "M2.5 4.5h15v11h-15zM2.5 5l7.5 6 7.5-6",
     content: "M3 3h14v5H3zM3 10h6v7H3zM11 10h6v7h-6z",
     journal: "M4 3h12v14H4zM7 7h6M7 10h6M7 13h4",
     story: "M6 3v14M6 4.5h8l-1.6 2.4L14 9.3H6",

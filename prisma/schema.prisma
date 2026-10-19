@@ -635,6 +635,23 @@ model NewsletterSubscriber {
   createdAt DateTime @default(now())
 }
 
+/// A message sent through the contact form, read and handled in
+/// Admin → Enquiries.
+model Enquiry {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  email     String
+  phone     String?
+  topic     String?
+  message   String
+  status    String    @default("new") // new | handled
+  createdAt DateTime  @default(now())
+  handledAt DateTime?
+
+  @@index([status])
+  @@index([createdAt])
+}
+
 model AuditLog {
   id String @id @default(auto()) @map("_id") @db.ObjectId
   actorId String? @db.ObjectId

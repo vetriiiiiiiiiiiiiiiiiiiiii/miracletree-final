@@ -297,6 +297,36 @@ const ONE_OFFS = [
       return { count };
     },
   },
+  {
+    // Contact-form messages used to be kept only in the audit log. Copies
+    // them into the Enquiries inbox, with their original dates, as new.
+    marker: "oneoff.enquiries-from-audit",
+    run: async () => {
+      const rows = await prisma.auditLog.findMany({ where: { action: "contact.submitted" } });
+      let count = 0;
+      for (const row of rows) {
+        let meta;
+        try {
+          meta = JSON.parse(row.meta ?? "{}");
+        } catch {
+          continue;
+        }
+        if (!meta.name || !meta.email || !meta.message) continue;
+        await prisma.enquiry.create({
+          data: {
+            name: String(meta.name),
+            email: String(meta.email),
+            phone: meta.phone ? String(meta.phone) : null,
+            topic: meta.topic ? String(meta.topic) : null,
+            message: String(meta.message),
+            createdAt: row.createdAt,
+          },
+        });
+        count++;
+      }
+      return { count };
+    },
+  },
 ];
 for (const { marker, run } of ONE_OFFS) {
   if (await prisma.siteSetting.findUnique({ where: { key: marker } })) continue;

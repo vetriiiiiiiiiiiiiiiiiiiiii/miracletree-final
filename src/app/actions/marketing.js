@@ -69,8 +69,16 @@ export async function contactAction(_prev, formData) {
       message: "Too many messages. Please try again later.",
     };
   }
-  // Enquiries are recorded in the audit log so nothing is lost before an email
-  // integration is configured; admin can read them under Settings → Activity.
+  // Saved for Admin → Enquiries; the audit entry stays as a second record.
+  await prisma.enquiry.create({
+    data: {
+      name: parsed.data.name,
+      email: parsed.data.email,
+      phone: parsed.data.phone || null,
+      topic: parsed.data.topic || null,
+      message: parsed.data.message,
+    },
+  });
   await recordAudit({
     action: "contact.submitted",
     entity: "Contact",
