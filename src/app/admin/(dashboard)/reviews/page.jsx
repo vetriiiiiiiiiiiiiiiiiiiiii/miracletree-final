@@ -10,7 +10,8 @@ export default async function AdminReviewsPage({ searchParams }) {
   await requireAdmin();
   const params = await searchParams;
   const status = params.status ?? "pending";
-  const [reviews, counts, ratingRows] = await Promise.all([
+  const statusWhere = status !== "all" ? { status } : {};
+  const [productReviews, counts, ratingRows, storeReviews, storeCounts, storeRatingRows] = await Promise.all([
     prisma.review.findMany({
       where: {
         ...(status !== "all" ? { status } : {}),
@@ -40,10 +41,45 @@ export default async function AdminReviewsPage({ searchParams }) {
       where: { status: "approved" },
       _count: { _all: true },
     }),
+    // Reviews of MiracleTree as a whole, moderated in the same list. A
+    // product filter leaves them out.
+    params.product
+      ? []
+      : prisma.storeReview.findMany({
+          where: statusWhere,
+          orderBy: { createdAt: "desc" },
+          take: 100,
+          select: {
+            id: true,
+            authorName: true,
+            authorEmail: true,
+            rating: true,
+            title: true,
+            body: true,
+            status: true,
+            isVerified: true,
+            isFeatured: true,
+            createdAt: true,
+            userId: true,
+          },
+        }),
+    prisma.storeReview.groupBy({ by: ["status"], _count: { _all: true } }),
+    prisma.storeReview.groupBy({
+      by: ["rating"],
+      where: { status: "approved" },
+      _count: { _all: true },
+    }),
   ]);
-  const byStatus = Object.fromEntries(
-    counts.map((row) => [row.status, row._count._all]),
-  );
+  const reviews = [
+    ...productReviews,
+    ...storeReviews.map((r) => ({ ...r, kind: "store", product: null, user: r.userId ? {} : null })),
+  ]
+    .sort((a, b) => b.createdAt - a.createdAt)
+    .slice(0, 100);
+  const byStatus = {};
+  for (const row of [...counts, ...storeCounts])
+    byStatus[row.status] = (byStatus[row.status] ?? 0) + row._count._all;
+  ratingRows.push(...storeRatingRows);
   const approvedTotal = ratingRows.reduce(
     (sum, row) => sum + row._count._all,
     0,
@@ -139,6 +175,7 @@ export default async function AdminReviewsPage({ searchParams }) {
               createdAt: formatDate(review.createdAt),
               hasAccount: Boolean(review.user),
               product: review.product,
+              kind: review.kind ?? "product",
             }))}
           />
         )}

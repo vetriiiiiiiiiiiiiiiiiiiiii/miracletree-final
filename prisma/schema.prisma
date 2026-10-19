@@ -492,6 +492,25 @@ model Review {
   @@index([status])
 }
 
+/// A review of MiracleTree as a whole rather than one product — written on
+/// /reviews, moderated alongside product reviews, counted in the overall rating.
+model StoreReview {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String?  @db.ObjectId
+  authorName  String
+  authorEmail String?
+  rating      Int
+  title       String?
+  body        String
+  status      String   @default("pending") // pending | approved | rejected
+  isVerified  Boolean  @default(false)
+  isFeatured  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([status])
+}
+
 model Testimonial {
   id String @id @default(auto()) @map("_id") @db.ObjectId
   authorName String

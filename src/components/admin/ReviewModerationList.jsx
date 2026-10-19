@@ -100,12 +100,16 @@ export function ReviewModerationList({ reviews }) {
                 {review.authorEmail ? ` · ${review.authorEmail}` : ""} ·{" "}
                 {review.createdAt}
                 {" · on "}
-                <Link
-                  href={`/admin/products/${review.product.id}`}
-                  className="underline underline-offset-4 hover:text-cream-100"
-                >
-                  {review.product.name}
-                </Link>
+                {review.product ? (
+                  <Link
+                    href={`/admin/products/${review.product.id}`}
+                    className="underline underline-offset-4 hover:text-cream-100"
+                  >
+                    {review.product.name}
+                  </Link>
+                ) : (
+                  <span className="text-gold-300">MiracleTree (overall)</span>
+                )}
               </p>
             </div>
 
@@ -118,6 +122,7 @@ export function ReviewModerationList({ reviews }) {
                     run(review.id, () =>
                       moderateReviewAction({
                         reviewId: review.id,
+                        kind: review.kind,
                         status: "approved",
                       }),
                     )
@@ -132,6 +137,7 @@ export function ReviewModerationList({ reviews }) {
                     run(review.id, () =>
                       moderateReviewAction({
                         reviewId: review.id,
+                        kind: review.kind,
                         status: "pending",
                       }),
                     )
@@ -148,6 +154,7 @@ export function ReviewModerationList({ reviews }) {
                     run(review.id, () =>
                       moderateReviewAction({
                         reviewId: review.id,
+                        kind: review.kind,
                         status: "rejected",
                       }),
                     )
@@ -163,6 +170,7 @@ export function ReviewModerationList({ reviews }) {
                   run(review.id, () =>
                     moderateReviewAction({
                       reviewId: review.id,
+                        kind: review.kind,
                       isFeatured: !review.isFeatured,
                     }),
                   )
@@ -178,6 +186,7 @@ export function ReviewModerationList({ reviews }) {
                     run(review.id, () =>
                       moderateReviewAction({
                         reviewId: review.id,
+                        kind: review.kind,
                         isVerified: true,
                       }),
                     )
@@ -209,7 +218,7 @@ export function ReviewModerationList({ reviews }) {
         onConfirm={() => {
           const target = deleting;
           setDeleting(null);
-          if (target) void run(target.id, () => deleteReviewAction(target.id));
+          if (target) void run(target.id, () => deleteReviewAction(target.id, target.kind));
         }}
       />
     </div>

@@ -68,7 +68,9 @@ export default async function ProductPage({ params }) {
   if (dbError || !product) notFound();
 
   const user = null;
-  let canReview = false;
+  // Anyone may write a review; every one waits for moderation, and the
+  // verified badge still comes from order history.
+  const canReview = true;
   let related = [];
   try {
     related = await getRelatedProducts(product.id, product.categoryId, 4);

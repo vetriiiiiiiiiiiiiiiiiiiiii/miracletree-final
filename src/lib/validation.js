@@ -114,7 +114,8 @@ export const razorpayVerifySchema = z.object({
 });
 // ---------------------------------------------------------------- reviews
 export const reviewSchema = z.object({
-  productId: z.string().regex(/^[0-9a-fA-F]{24}$/),
+  // A product id, or "store" for a review of MiracleTree as a whole.
+  productId: z.string().regex(/^([0-9a-fA-F]{24}|store)$/),
   rating: z.coerce.number().int().min(1, "Choose a rating.").max(5),
   title: z.string().trim().max(120).optional().or(z.literal("")),
   body: z
@@ -429,6 +430,7 @@ export const adminUserRoleSchema = z.object({
 });
 export const adminReviewModerationSchema = z.object({
   reviewId: z.string().regex(/^[0-9a-fA-F]{24}$/),
+  kind: z.enum(["product", "store"]).optional(),
   status: z.enum(REVIEW_STATUSES).optional(),
   isFeatured: z.boolean().optional(),
   isVerified: z.boolean().optional(),

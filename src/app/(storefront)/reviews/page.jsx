@@ -7,6 +7,7 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { Container, Section, SectionHeading } from "@/components/layout/Section";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Stars } from "@/components/reviews/Stars";
+import { StoreReviewPrompt } from "@/components/reviews/StoreReviewPrompt";
 export const dynamic = "force-dynamic";
 export const metadata = buildMetadata({
   title: "Customer Reviews",
@@ -21,9 +22,19 @@ export const metadata = buildMetadata({
  */
 export default async function ReviewsPage({ searchParams }) {
   const { product: filter } = await searchParams;
-  const { average, total, breakdown, products, reviews } = await getReviewsOverview();
-  const shown = filter ? reviews.filter((r) => r.product.slug === filter) : reviews;
-  const filtered = filter ? products.find((p) => p.slug === filter) : null;
+  const { average, total, breakdown, products, reviews, storeCount, storeAverage } = await getReviewsOverview();
+  const shown =
+    filter === "store"
+      ? reviews.filter((r) => !r.product)
+      : filter
+        ? reviews.filter((r) => r.product?.slug === filter)
+        : reviews;
+  const filtered =
+    filter === "store"
+      ? { name: "MiracleTree as a whole" }
+      : filter
+        ? products.find((p) => p.slug === filter)
+        : null;
   const crumbs = [
     { name: "Home", path: "/" },
     { name: "Reviews", path: "/reviews" },
@@ -42,8 +53,11 @@ export default async function ReviewsPage({ searchParams }) {
               <h1 className="mt-5 text-display text-cream-50">What our customers say</h1>
               <p className="mt-6 max-w-[52ch] leading-relaxed text-cream-300">
                 Every review here was written by a customer and approved by us — none are invented.
-                Bought from us? Open the product and leave yours.
+                Review MiracleTree as a whole here, or any product below.
               </p>
+              <div className="mt-8">
+                <StoreReviewPrompt />
+              </div>
             </div>
             <div className="rounded-[1.75rem] border border-border-subtle bg-ink-800 p-7 md:p-9">
               {average ? (
@@ -83,6 +97,34 @@ export default async function ReviewsPage({ searchParams }) {
         <Container>
           <SectionHeading title="Reviews by product" lede="Every product we sell, with its own rating." />
           <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {storeCount ? (
+              <li>
+                <div
+                  className={cn(
+                    "flex h-full gap-4 rounded-2xl border bg-ink p-4",
+                    filter === "store" ? "border-emerald-500" : "border-border-subtle",
+                  )}
+                >
+                  <span className="relative size-16 shrink-0 overflow-hidden rounded-xl bg-cream-100">
+                    <Image src="/brand/miracletree-mark.webp" alt="" fill sizes="64px" className="object-contain p-2" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[0.92rem] font-medium leading-snug text-cream-50">MiracleTree — overall</p>
+                    <p className="mt-1.5 flex items-center gap-2 text-sm text-cream-300">
+                      <Stars value={storeAverage} size={14} />
+                      {storeAverage.toFixed(1)}
+                    </p>
+                    <Link
+                      href={filter === "store" ? "/reviews#all" : "/reviews?product=store#all"}
+                      scroll={false}
+                      className="mt-1 inline-block text-xs font-semibold text-emerald-500 underline underline-offset-4"
+                    >
+                      {filter === "store" ? "Show all reviews" : `Read ${storeCount} review${storeCount === 1 ? "" : "s"}`}
+                    </Link>
+                  </div>
+                </div>
+              </li>
+            ) : null}
             {products.map((product) => {
               const image = product.images?.[0];
               const active = product.slug === filter;
@@ -116,17 +158,25 @@ export default async function ReviewsPage({ searchParams }) {
                             <Stars value={product.ratingAverage} size={14} />
                             {product.ratingAverage.toFixed(1)}
                           </p>
-                          <Link
-                            href={active ? "/reviews#all" : `/reviews?product=${product.slug}#all`}
-                            scroll={false}
-                            className="mt-1 inline-block text-xs font-semibold text-emerald-500 underline underline-offset-4"
-                          >
-                            {active ? "Show all reviews" : `Read ${product.ratingCount} review${product.ratingCount === 1 ? "" : "s"}`}
-                          </Link>
+                          <span className="mt-1 flex flex-wrap gap-x-3 gap-y-1">
+                            <Link
+                              href={active ? "/reviews#all" : `/reviews?product=${product.slug}#all`}
+                              scroll={false}
+                              className="text-xs font-semibold text-emerald-500 underline underline-offset-4"
+                            >
+                              {active ? "Show all reviews" : `Read ${product.ratingCount} review${product.ratingCount === 1 ? "" : "s"}`}
+                            </Link>
+                            <Link
+                              href={`/product/${product.slug}#write-review`}
+                              className="text-xs font-semibold text-cream-300 underline underline-offset-4 hover:text-cream-50"
+                            >
+                              Write a review
+                            </Link>
+                          </span>
                         </>
                       ) : (
                         <Link
-                          href={`/product/${product.slug}#reviews`}
+                          href={`/product/${product.slug}#write-review`}
                           className="mt-1.5 inline-block text-xs font-semibold text-emerald-500 underline underline-offset-4"
                         >
                           No reviews yet — write the first
@@ -166,9 +216,13 @@ export default async function ReviewsPage({ searchParams }) {
                     {review.authorName}
                     {review.isVerified ? " · Verified buyer" : ""} · {formatDate(review.createdAt)}
                   </p>
-                  <Link href={`/product/${review.product.slug}`} className="mt-2 inline-block text-xs font-semibold text-emerald-500 hover:underline">
-                    {review.product.name}
-                  </Link>
+                  {review.product ? (
+                    <Link href={`/product/${review.product.slug}`} className="mt-2 inline-block text-xs font-semibold text-emerald-500 hover:underline">
+                      {review.product.name}
+                    </Link>
+                  ) : (
+                    <p className="mt-2 text-xs font-semibold text-gold-400">MiracleTree — overall</p>
+                  )}
                 </li>
               ))}
             </ul>

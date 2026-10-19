@@ -43,6 +43,45 @@ export async function submitReviewAction(_prev, formData) {
       message: "You've submitted several reviews today already.",
     };
   }
+  if (parsed.data.productId === "store") {
+    if (user) {
+      const existing = await prisma.storeReview.findFirst({
+        where: { userId: user.id },
+        select: { id: true },
+      });
+      if (existing) {
+        return {
+          status: "error",
+          message: "You've already reviewed MiracleTree. Contact us to change it.",
+        };
+      }
+    }
+    // Verified when the account has had any order delivered.
+    const verified = user
+      ? Boolean(
+          await prisma.order.findFirst({
+            where: { userId: user.id, status: "delivered" },
+            select: { id: true },
+          }),
+        )
+      : false;
+    await prisma.storeReview.create({
+      data: {
+        userId: user?.id ?? null,
+        authorName: parsed.data.authorName,
+        authorEmail: parsed.data.authorEmail ?? null,
+        rating: parsed.data.rating,
+        title: parsed.data.title || null,
+        body: parsed.data.body,
+        status: "pending",
+        isVerified: verified,
+      },
+    });
+    return {
+      status: "success",
+      message: "Thank you. Your review will appear once it has been checked.",
+    };
+  }
   const product = await prisma.product.findFirst({
     where: { id: parsed.data.productId, status: "published" },
     select: { id: true, slug: true },

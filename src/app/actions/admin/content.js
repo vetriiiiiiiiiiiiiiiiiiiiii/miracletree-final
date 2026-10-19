@@ -593,7 +593,8 @@ export async function moderateReviewAction(input) {
     const parsed = adminReviewModerationSchema.safeParse(input);
     if (!parsed.success)
       return { ok: false, error: "Invalid moderation request." };
-    const review = await prisma.review.update({
+    const table = parsed.data.kind === "store" ? prisma.storeReview : prisma.review;
+    const review = await table.update({
       where: { id: parsed.data.reviewId },
       data: {
         ...(parsed.data.status ? { status: parsed.data.status } : {}),
@@ -604,17 +605,21 @@ export async function moderateReviewAction(input) {
           ? { isVerified: parsed.data.isVerified }
           : {}),
       },
-      select: { id: true, product: { select: { slug: true } } },
+      select:
+        parsed.data.kind === "store"
+          ? { id: true }
+          : { id: true, product: { select: { slug: true } } },
     });
     await recordAudit({
       actorId: admin.id,
       action: "review.moderated",
-      entity: "Review",
+      entity: parsed.data.kind === "store" ? "StoreReview" : "Review",
       entityId: review.id,
       meta: parsed.data,
     });
     revalidatePath("/admin/reviews");
-    revalidatePath(`/product/${review.product.slug}`);
+    if (review.product) revalidatePath(`/product/${review.product.slug}`);
+    revalidatePath("/reviews");
     revalidatePath("/");
     return { ok: true };
   } catch (error) {
@@ -622,9 +627,21 @@ export async function moderateReviewAction(input) {
     return { ok: false, error: "Could not moderate that review." };
   }
 }
-export async function deleteReviewAction(id) {
+export async function deleteReviewAction(id, kind) {
   try {
     const admin = await requireFullAdmin();
+    if (kind === "store") {
+      await prisma.storeReview.delete({ where: { id } });
+      await recordAudit({
+        actorId: admin.id,
+        action: "review.deleted",
+        entity: "StoreReview",
+        entityId: id,
+      });
+      revalidatePath("/admin/reviews");
+      revalidatePath("/reviews");
+      return { ok: true };
+    }
     const review = await prisma.review.findUnique({
       where: { id },
       select: { product: { select: { slug: true } } },

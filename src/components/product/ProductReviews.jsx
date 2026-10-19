@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { Rating, RatingInput } from "@/components/ui/Rating";
 import { Input, Textarea, FormMessage } from "@/components/ui/Field";
@@ -21,9 +21,14 @@ export function ProductReviews({
 }) {
   const [writing, setWriting] = useState(false);
   const [visible, setVisible] = useState(4);
+  // "Write a review" links from elsewhere (/reviews) land on #write-review
+  // and open the form straight away.
+  useEffect(() => {
+    if (canReview && window.location.hash === "#write-review") setWriting(true);
+  }, [canReview]);
   const verifiedCount = (reviews ?? []).filter((r) => r.isVerified).length;
   return (
-    <div className="grid gap-12 lg:grid-cols-[20rem_1fr] lg:gap-16">
+    <div id="write-review" className="grid scroll-mt-[calc(var(--header-offset)+2rem)] gap-12 lg:grid-cols-[20rem_1fr] lg:gap-16">
       {/* Summary */}
       <div className="lg:sticky lg:top-28 lg:self-start">
         {count > 0 ? (
@@ -184,7 +189,7 @@ export function ProductReviews({
     </div>
   );
 }
-function ReviewForm({ productId, productName, user, onDone }) {
+export function ReviewForm({ productId, productName, user, onDone }) {
   const [state, action] = useActionState(submitReviewAction, INITIAL);
   const [rating, setRating] = useState(0);
   const [imageUrl, setImageUrl] = useState(null);

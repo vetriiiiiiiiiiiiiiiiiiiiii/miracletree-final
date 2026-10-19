@@ -471,10 +471,11 @@ export const getGalleryGroups = cache(async () => {
 /**
  * The /reviews page: the store-wide rating, the star breakdown, every
  * published product with its own rating (unreviewed ones included, so each
- * product has a place to start), and the approved reviews, newest first.
+ * product has a place to start), and the approved reviews — product reviews
+ * and reviews of MiracleTree as a whole — newest first.
  */
 export const getReviewsOverview = cache(async () => {
-  const [products, reviews] = await Promise.all([
+  const [products, productReviews, storeReviews] = await Promise.all([
     prisma.product.findMany({
       where: { status: "published" },
       orderBy: { position: "asc" },
@@ -500,7 +501,24 @@ export const getReviewsOverview = cache(async () => {
         product: { select: { name: true, slug: true } },
       },
     }),
+    prisma.storeReview.findMany({
+      where: { status: "approved" },
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        authorName: true,
+        rating: true,
+        title: true,
+        body: true,
+        isVerified: true,
+        createdAt: true,
+      },
+    }),
   ]);
+  // Store reviews have no product; they count in the overall rating.
+  const reviews = [...productReviews, ...storeReviews.map((r) => ({ ...r, product: null }))].sort(
+    (a, b) => b.createdAt - a.createdAt,
+  );
   const breakdown = [5, 4, 3, 2, 1].map((stars) => ({
     stars,
     count: reviews.filter((r) => r.rating === stars).length,
@@ -516,5 +534,9 @@ export const getReviewsOverview = cache(async () => {
       .map(withRating)
       .sort((a, b) => b.ratingCount - a.ratingCount || (b.ratingAverage ?? 0) - (a.ratingAverage ?? 0)),
     reviews,
+    storeCount: storeReviews.length,
+    storeAverage: storeReviews.length
+      ? Math.round((storeReviews.reduce((s, r) => s + r.rating, 0) / storeReviews.length) * 10) / 10
+      : null,
   };
 });
