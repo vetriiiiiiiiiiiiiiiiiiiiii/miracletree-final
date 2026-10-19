@@ -665,16 +665,22 @@
 .js [data-draw] {
   stroke-dasharray: var(--len, 1000);
   stroke-dashoffset: var(--len, 1000);
+  /* Coloured plates wash their fill in once the outline is down. */
+  fill-opacity: 0;
 }
 
 .js [data-draw].is-drawn {
-  transition: stroke-dashoffset 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+  transition:
+    stroke-dashoffset 1.4s cubic-bezier(0.22, 1, 0.36, 1),
+    fill-opacity 0.9s ease 0.6s;
   stroke-dashoffset: 0;
+  fill-opacity: 1;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .js [data-draw] {
     stroke-dashoffset: 0 !important;
+    fill-opacity: 1 !important;
     transition: none !important;
   }
 }
