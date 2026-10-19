@@ -141,7 +141,7 @@ export default async function AboutPage() {
                 <BotanicalPlate
                   subject="leaf"
                   className="h-[22rem] w-full"
-                  label="Moringa oleifera — compound leaf, opposite leaflets"
+                  label="Moringa oleifera — bipinnate leaf, small oval leaflets in opposite pairs"
                 />
               </div>
             </div>

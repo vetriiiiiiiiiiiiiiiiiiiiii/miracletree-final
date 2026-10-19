@@ -114,45 +114,91 @@ export function Circled({ children, className }) {
  * Hand-drawn moringa botany. Line art rather than a photograph, because a field
  * notebook is where you draw the thing you are looking at.
  */
+// Bipinnate Moringa oleifera leaf, drawn as line art in a 200x210 box.
+// A gently swaying rachis; opposite pinnae that rise more steeply and
+// shorten towards the tip, each curving slightly; small obovate leaflets in
+// opposite pairs along every pinna with a terminal leaflet; and a terminal
+// cluster at the very top — the arrangement the tree actually carries.
+function moringaLeafShapes() {
+  const shapes = [];
+  const R = (d) => Math.round(d * 10) / 10;
+  // Rachis x at a given y: a slight S-sway.
+  const rx = (y) => 100 + Math.sin((y / 210) * Math.PI * 1.4) * 2.2;
+  shapes.push({ kind: "path", d: `M${R(rx(204))} 204C${R(rx(160) - 1)} 160 ${R(rx(100) + 1)} 100 ${R(rx(24))} 24`, delay: 0 });
+  const tiers = [
+    { y: 176, len: 64, pairs: 4, angle: 12 },
+    { y: 146, len: 60, pairs: 4, angle: 18 },
+    { y: 117, len: 52, pairs: 3, angle: 24 },
+    { y: 90, len: 42, pairs: 3, angle: 31 },
+    { y: 66, len: 30, pairs: 2, angle: 38 },
+    { y: 46, len: 18, pairs: 1, angle: 46 },
+  ];
+  let delay = 100;
+  for (const t of tiers) {
+    for (const side of [-1, 1]) {
+      const a = (t.angle * Math.PI) / 180;
+      const x0 = rx(t.y), y0 = t.y;
+      // End point, and a control point that bows the pinna slightly upward
+      // near the rachis and lets it relax towards the tip.
+      const x1 = x0 + Math.cos(a) * t.len * side;
+      const y1 = y0 - Math.sin(a) * t.len + t.len * 0.08;
+      const qx = x0 + Math.cos(a + 0.12) * t.len * 0.55 * side;
+      const qy = y0 - Math.sin(a + 0.12) * t.len * 0.55;
+      shapes.push({ kind: "path", d: `M${R(x0)} ${R(y0)}Q${R(qx)} ${R(qy)} ${R(x1)} ${R(y1)}`, delay });
+      const pt = (f) => ({
+        x: (1 - f) ** 2 * x0 + 2 * (1 - f) * f * qx + f * f * x1,
+        y: (1 - f) ** 2 * y0 + 2 * (1 - f) * f * qy + f * f * y1,
+      });
+      for (let i = 1; i <= t.pairs; i++) {
+        const f = i / (t.pairs + 0.85);
+        const p = pt(f), p2 = pt(Math.min(1, f + 0.02));
+        const tx = p2.x - p.x, ty = p2.y - p.y, tl = Math.hypot(tx, ty) || 1;
+        const ux = tx / tl, uy = ty / tl, nx = -uy, ny = ux;
+        const size = 0.92 + f * 0.22; // leaflets a touch larger towards the tip
+        for (const s of [-1, 1]) {
+          const off = 6.2 * size;
+          const ex = p.x + nx * off * s + ux * 1.2, ey = p.y + ny * off * s + uy * 1.2;
+          const deg = (Math.atan2(ny * s, nx * s) * 180) / Math.PI + 90 + 14 * s * side;
+          shapes.push({ kind: "ellipse", cx: R(ex), cy: R(ey), rx: R(3.3 * size), ry: R(5.9 * size), rot: R(deg), delay: delay + 40 + i * 28 });
+        }
+      }
+      const end = pt(1), before = pt(0.97);
+      const ux = end.x - before.x, uy = end.y - before.y, ul = Math.hypot(ux, uy) || 1;
+      const tx = end.x + (ux / ul) * 6.4, ty = end.y + (uy / ul) * 6.4;
+      shapes.push({ kind: "ellipse", cx: R(tx), cy: R(ty), rx: 3.6, ry: 6.4, rot: R((Math.atan2(uy, ux) * 180) / Math.PI + 90), delay: delay + 170 });
+    }
+    delay += 85;
+  }
+  // Terminal leaflet at the top of the rachis.
+  shapes.push({ kind: "ellipse", cx: R(rx(24)), cy: 17, rx: 3.6, ry: 6.6, rot: 0, delay: delay + 40 });
+  return shapes;
+}
+const MORINGA_LEAF = moringaLeafShapes();
 export function BotanicalPlate({ subject, className, label }) {
   const ref = useDrawOnScroll();
   const plates = {
-    // A compound leaf: central rachis with opposite leaflets.
+    // A Moringa oleifera leaf as it really grows: bipinnate, small oval
+    // leaflets in opposite pairs. The old plate — three pairs of large
+    // leaves on a stem — could have been any plant.
     leaf: (
-      <>
-        <path data-draw d="M100 190C100 150 100 90 100 26" />
-        <path
-          data-draw
-          data-draw-delay="120"
-          d="M100 60C86 52 72 50 58 54C64 66 78 72 100 70"
-        />
-        <path
-          data-draw
-          data-draw-delay="160"
-          d="M100 60C114 52 128 50 142 54C136 66 122 72 100 70"
-        />
-        <path
-          data-draw
-          data-draw-delay="200"
-          d="M100 96C86 88 72 86 58 90C64 102 78 108 100 106"
-        />
-        <path
-          data-draw
-          data-draw-delay="240"
-          d="M100 96C114 88 128 86 142 90C136 102 122 108 100 106"
-        />
-        <path
-          data-draw
-          data-draw-delay="280"
-          d="M100 132C88 124 76 122 64 126C70 138 82 144 100 142"
-        />
-        <path
-          data-draw
-          data-draw-delay="320"
-          d="M100 132C112 124 124 122 136 126C130 138 118 144 100 142"
-        />
-        <path data-draw data-draw-delay="360" d="M100 26C93 32 90 40 91 48" />
-      </>
+      <g strokeWidth="1.25">
+        {MORINGA_LEAF.map((shape, i) =>
+          shape.kind === "path" ? (
+            <path key={i} data-draw data-draw-delay={shape.delay} d={shape.d} />
+          ) : (
+            <ellipse
+              key={i}
+              data-draw
+              data-draw-delay={shape.delay}
+              cx={shape.cx}
+              cy={shape.cy}
+              rx={shape.rx}
+              ry={shape.ry}
+              transform={`rotate(${shape.rot} ${shape.cx} ${shape.cy})`}
+            />
+          ),
+        )}
+      </g>
     ),
     // The drumstick: long, ribbed, tapering.
     pod: (
