@@ -17,7 +17,7 @@ import {
 export const metadata = buildMetadata({
   title: "Third Party Manufacturing",
   description:
-    "Third-party and private-label moringa manufacturing from MiracleTree's 10,000+ sq ft licensed facility in Madurai: leaf powder, herbal teas, tablets, energy bars, health mixes and seed oil under your brand.",
+    "Third-party and private-label food manufacturing from MiracleTree's 10,000+ sq ft licensed facility in Madurai: nutrimixes, milk mixes, nutri bars, vacuum-dried fruits and vegetables, masala powders, ready-to-use foods and powder packing from 10 g to 10 kg, under your brand.",
   path: "/third-party-manufacturing",
 });
 /**
@@ -91,7 +91,7 @@ export default function ThirdPartyManufacturingPage() {
         <Container>
           <SectionHeading
             title="Premium ranges for your label"
-            lede="Every product below can be made under your brand, in your pack size. Have something else in mind? We develop new formulations too."
+            lede="Every product below can be made under your brand, in your pack size — from 10 g to 10 kg. Have something else in mind? We develop new formulations too."
           />
           <Reveal className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3" stagger={0.05}>
             {RANGES.map((range) => (
@@ -102,16 +102,20 @@ export default function ThirdPartyManufacturingPage() {
               >
                 <h3 className="font-display text-[1.35rem] leading-tight text-cream-50">{range.name}</h3>
                 <p className="mt-1.5 text-sm text-gold-400">{range.note}</p>
-                <ul className="mt-5 flex flex-wrap gap-2">
-                  {range.items.map((item) => (
-                    <li
-                      key={item}
-                      className="rounded-full border border-border-subtle bg-ink px-3 py-1.5 text-[0.8rem] text-cream-200"
-                    >
-                      {item}
-                    </li>
-                  ))}
-                </ul>
+                {range.items.length ? (
+                  <ul className="mt-5 flex flex-wrap gap-2">
+                    {range.items.map((item) => (
+                      <li
+                        key={item}
+                        className="rounded-full border border-border-subtle bg-ink px-3 py-1.5 text-[0.8rem] text-cream-200"
+                      >
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="mt-5 text-sm text-cream-400">Varieties on request — ask us for the list.</p>
+                )}
               </article>
             ))}
           </Reveal>

@@ -33,61 +33,68 @@ export const FACILITY = [
   { value: "2009", label: "Making moringa since", note: "Fifteen years on one crop" },
 ];
 
-/** Premium ranges available for private labelling. */
+/** Premium ranges available for private labelling. A range with no items
+ *  listed shows "Varieties on request". */
 export const RANGES = [
   {
-    name: "Moringa Leaf Range",
-    note: "The base of everything we make.",
-    items: ["Moringa Leaf Powder", "Dried Moringa Leaf", "Moringa Gum (Gond) Powder"],
+    name: "Nutrimix Range",
+    note: "Wholesome health mixes.",
+    items: ["ABC Mix", "Beetroot Mix", "Sprouted Grains Mix", "Almond Mix", "Mixed Dry Fruits Mix", "Turmeric Mix", "Dry Ginger Mix"],
   },
   {
-    name: "Herbal Tea Range",
-    note: "Tea bags and rolled leaf.",
-    items: [
-      "Moringa Plain Herbal Tea",
-      "Moringa with Ginger",
-      "Moringa with Cinnamon",
-      "Moringa with Orange",
-      "Moringa with Peppermint",
-      "Rolled Plain Tea",
-      "Rolled Ginger & Lemon",
-      "Rolled Masala Chai",
-    ],
+    name: "Milk Mix Range",
+    note: "Stir into warm milk.",
+    items: ["Ragi Chocolate Mix", "Paruthipal Mix", "Karuppu Kavuni Mix", "Moringa Mix", "Turmeric Milk", "Pista Milk Mix", "Mixed Dry Fruit Milk Mix", "Chocolate Malt Mix", "Badam Ragi Milk Mix", "Saffron Milk Mix"],
   },
   {
-    name: "Tablets & Capsules Range",
-    note: "Daily moringa in a measured dose.",
-    items: [
-      "Moringa Leaf Tablets",
-      "Moringa Amla Tablets",
-      "Moringa Flower Tablets",
-      "Moringa Leaf Capsules",
-      "Moringa Seed Capsules",
-    ],
+    name: "Nutri Bar Range",
+    note: "Bars and chikkis.",
+    items: ["Protein Bar", "Moringa Nutri Bar", "Peanut Butter Bar", "Sesame Chikki Bar", "Multigrain Bar", "Puffed Amaranth Bar", "Date & Walnut Bar"],
   },
   {
-    name: "Energy Bar & Snack Range",
-    note: "From the makers of the first moringa-leaf energy bar.",
-    items: [
-      "Mogo™ Moringa Energy Bar",
-      "Colostrum Protein Bar (Peanut Chikki)",
-      "Sprouted Multi-Grain Laddus",
-    ],
+    name: "Vacuum-Dried Fruits & Vegetables",
+    note: "Dried at low temperature.",
+    items: ["Apple", "Carrot", "Banana", "Mango", "Jackfruit", "Pineapple", "Kiwi", "Dragon Fruit", "Beetroot", "Spinach", "Potato", "Bell Pepper", "Tomato"],
   },
   {
-    name: "Health Mix Range",
-    note: "Multi-grain nutrition with moringa.",
-    items: ["Multi-Grain Health Mix — Plain", "Multi-Grain Health Mix — Flavoured"],
+    name: "Powders & Flakes",
+    note: "Fruit, vegetable, herb and grain.",
+    items: ["Ginger", "Banana", "Mango", "Carrot", "Curry Leaf", "Garlic", "Onion", "Sweet Potato", "Mint", "Oats", "Ragi", "Corn", "Roasted Gram", "Amla", "Dry Ginger", "Ashwagandha"],
   },
   {
-    name: "Instant Food Range",
-    note: "Moringa in the food people already cook.",
-    items: ["Moringa Idly Chutney Powder", "Moringa Rice Mix Powder", "Drumstick Pulp Instant Soup"],
+    name: "Masala Mix Powders",
+    note: "Everyday spice blends.",
+    items: ["Turmeric Powder", "Cumin", "Coriander", "Garam Masala", "Sambar Powder", "Chaat Masala", "Chole Masala", "Tea Masala"],
   },
   {
-    name: "Oil & Skin Range",
-    note: "Cold-pressed from the seed.",
-    items: ["Moringa Seed Oil", "Moringa Beauty Drops"],
+    name: "Millet Porridges",
+    note: "Traditional millet porridge mixes.",
+    items: [],
+  },
+  {
+    name: "Fryums",
+    note: "Ready-to-fry snacks.",
+    items: [],
+  },
+  {
+    name: "Ready to Use",
+    note: "Traditional dishes, made quick.",
+    items: ["Spring Hoppers", "Puttu", "Instant Soup", "Fenugreek & Urad Dal Stiff Porridge (களி)"],
+  },
+  {
+    name: "Ready to Eat",
+    note: "Snacks straight from the pack.",
+    items: ["Sundal Varieties", "Spiced Peanut"],
+  },
+  {
+    name: "Vegetable Powders",
+    note: "Ready to use.",
+    items: ["Ash Gourd", "Bottle Gourd"],
+  },
+  {
+    name: "Powder Packing",
+    note: "Any powder formulation, packed from 10 g to 10 kg.",
+    items: ["Protein Powders", "10 g – 10 kg packs"],
   },
 ];
 
