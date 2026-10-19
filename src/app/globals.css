@@ -809,17 +809,18 @@
   }
 }
 
-/* The leaf pointer — the site's original cursor, now drawn by the browser
-   as a plain CSS image cursor: no script, no per-frame work, so it cannot
+/* The leaf pointer: a Moringa oleifera leaflet as it really is — small,
+   obovate and round-tipped on a short stalk — drawn by the browser as a
+   plain CSS image cursor: no script, no per-frame work, so it cannot
    bring back the lag the animated version caused. A single leaf on the page;
-   over anything clickable a pair of leaflets joins it (as the animated one
-   did). Mouse and trackpad only; text fields keep the text cursor.
-   Hotspot 3 3 is the leaf's tip. */
+   over anything clickable an opposite pair of smaller leaflets joins it, a
+   moringa pinna in miniature. Mouse and trackpad only; text fields keep the text cursor.
+   Hotspot 2 2 is the tip of the leaflet's stalk. */
 @media (hover: hover) and (pointer: fine) {
   html {
-    cursor: url("/cursor/leaf-32.png") 3 3, auto;
-    cursor: -webkit-image-set(url("/cursor/leaf-32.png") 1x, url("/cursor/leaf-64.png") 2x) 3 3, auto;
-    cursor: image-set(url("/cursor/leaf-32.png") 1x, url("/cursor/leaf-64.png") 2x) 3 3, auto;
+    cursor: url("/cursor/leaf-32.png") 2 2, auto;
+    cursor: -webkit-image-set(url("/cursor/leaf-32.png") 1x, url("/cursor/leaf-64.png") 2x) 2 2, auto;
+    cursor: image-set(url("/cursor/leaf-32.png") 1x, url("/cursor/leaf-64.png") 2x) 2 2, auto;
   }
   a,
   button,
@@ -827,9 +828,9 @@
   label,
   summary,
   select {
-    cursor: url("/cursor/leaf-sprig-32.png") 3 3, pointer;
-    cursor: -webkit-image-set(url("/cursor/leaf-sprig-32.png") 1x, url("/cursor/leaf-sprig-64.png") 2x) 3 3, pointer;
-    cursor: image-set(url("/cursor/leaf-sprig-32.png") 1x, url("/cursor/leaf-sprig-64.png") 2x) 3 3, pointer;
+    cursor: url("/cursor/leaf-sprig-32.png") 2 2, pointer;
+    cursor: -webkit-image-set(url("/cursor/leaf-sprig-32.png") 1x, url("/cursor/leaf-sprig-64.png") 2x) 2 2, pointer;
+    cursor: image-set(url("/cursor/leaf-sprig-32.png") 1x, url("/cursor/leaf-sprig-64.png") 2x) 2 2, pointer;
   }
   input:not([type="checkbox"], [type="radio"], [type="range"], [type="submit"], [type="button"], [type="file"]),
   textarea,
