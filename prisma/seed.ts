@@ -128,7 +128,7 @@ function extractBullets(html: string): { title: string; body: string | null }[] 
       const split = text.match(/^([^:–—]{3,48})\s*(?::|\s-\s|[–—])\s*(.+)$/);
       return split
         ? { title: split[1]!.trim(), body: split[2]!.trim() }
-        : { title: text.length > 64 ? `${text.slice(0, 61)}…` : text, body: null };
+        : { title: text, body: null };
     });
 }
 

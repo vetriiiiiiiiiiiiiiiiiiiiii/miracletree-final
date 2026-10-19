@@ -170,6 +170,42 @@ const ONE_OFFS = [
       return { count: rows.length };
     },
   },
+  {
+    // The importer used to cut long benefit bullets at 61 characters and add
+    // "…", so sentences ended mid-word on the product page. Restores each
+    // clipped title from the brand's own bullet in the Shopify feed.
+    marker: "oneoff.benefit-full-titles",
+    run: async () => {
+      const feedPath = "prisma/data/shopify-products.json";
+      if (!existsSync(feedPath)) return { count: 0 };
+      const feed = JSON.parse(readFileSync(feedPath, "utf8"));
+      const plain = (html) =>
+        html
+          .replace(/<\/(p|div|li|h[1-6]|br)>/gi, " ")
+          .replace(/<[^>]+>/g, "")
+          .replace(/&nbsp;/g, " ")
+          .replace(/&amp;/g, "&")
+          .replace(/&quot;/g, '"')
+          .replace(/&#39;/g, "'")
+          .replace(/&lt;/g, "<")
+          .replace(/&gt;/g, ">")
+          .replace(/\s+/g, " ")
+          .trim();
+      const bullets = (feed.products ?? feed).flatMap((p) =>
+        [...String(p.body_html ?? "").matchAll(/<li[^>]*>([\s\S]*?)<\/li>/gi)].map((m) => plain(m[1])),
+      );
+      const rows = await prisma.productBenefit.findMany({ where: { title: { endsWith: "…" } } });
+      let count = 0;
+      for (const row of rows) {
+        const prefix = row.title.slice(0, -1).trim();
+        const full = bullets.find((b) => b.length > prefix.length && b.startsWith(prefix));
+        if (!full) continue;
+        await prisma.productBenefit.update({ where: { id: row.id }, data: { title: full } });
+        count++;
+      }
+      return { count };
+    },
+  },
 ];
 for (const { marker, run } of ONE_OFFS) {
   if (await prisma.siteSetting.findUnique({ where: { key: marker } })) continue;
