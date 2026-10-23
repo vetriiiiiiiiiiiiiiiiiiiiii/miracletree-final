@@ -445,6 +445,20 @@ const ONE_OFFS = [
       return { count };
     },
   },
+  {
+    // Queued email was never being sent on this server. Now that it is, the
+    // backlog must not go out late — months-old receipts and alerts. Anything
+    // still pending from more than a day ago is marked expired, not sent.
+    marker: "oneoff.expire-stale-mail",
+    run: () =>
+      prisma.emailJob.updateMany({
+        where: {
+          status: "pending",
+          createdAt: { lt: new Date(Date.now() - 24 * 60 * 60 * 1000) },
+        },
+        data: { status: "expired", error: "Expired: queued before email sending was switched on" },
+      }),
+  },
 ];
 for (const { marker, run } of ONE_OFFS) {
   if (await prisma.siteSetting.findUnique({ where: { key: marker } })) continue;

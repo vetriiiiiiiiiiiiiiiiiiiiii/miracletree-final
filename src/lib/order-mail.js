@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { sendInBackground, opsRecipient } from "@/lib/mail";
 import { orderConfirmation, newOrderAlert } from "@/lib/mail-templates";
-import { ORDER_STATUS_LABELS } from "@/lib/constants";
+import { ORDER_STATUS_LABELS, SITE } from "@/lib/constants";
 import { orderStatusUpdate } from "@/lib/mail-templates";
 /**
  * Order email, driven from the order row rather than from whatever the caller
@@ -21,7 +21,12 @@ async function load(orderNumber) {
   const order = await prisma.order.findUnique({
     where: { orderNumber },
     select: {
+      id: true,
       orderNumber: true,
+      placedAt: true,
+      couponCode: true,
+      notes: true,
+      shippingPhone: true,
       email: true,
       subtotal: true,
       discountTotal: true,
@@ -47,7 +52,12 @@ async function load(orderNumber) {
   });
   if (!order) return null;
   return {
+    id: order.id,
     orderNumber: order.orderNumber,
+    placedAt: order.placedAt,
+    couponCode: order.couponCode,
+    notes: order.notes,
+    phone: order.shippingPhone,
     customerName: order.shippingName,
     email: order.email,
     items: order.items.map((item) => ({
@@ -82,14 +92,25 @@ async function load(orderNumber) {
  * should wait on a mail API.
  */
 export async function sendOrderPlacedEmails(orderNumber) {
+  // Email is a courtesy: the order already exists, so a failure here is
+  // logged and never allowed to reach checkout or the payment webhook.
+  try {
+    await sendOrderPlacedEmailsUnsafe(orderNumber);
+  } catch (error) {
+    console.error(`[order-mail] could not email about ${orderNumber}`, error);
+  }
+}
+async function sendOrderPlacedEmailsUnsafe(orderNumber) {
   const data = await load(orderNumber);
   if (!data) {
     console.error(`[order-mail] no order ${orderNumber} to email about`);
     return;
   }
   sendInBackground(orderConfirmation(data));
-  const ops = opsRecipient();
-  if (ops) sendInBackground(newOrderAlert(data, ops));
+  // The admin alert always reaches the store inbox (info@miracletree.in),
+  // and also MAIL_OPS when the server names a different address.
+  const recipients = [...new Set([SITE.email, opsRecipient()].filter(Boolean).map((a) => a.toLowerCase()))];
+  for (const to of recipients) sendInBackground(newOrderAlert(data, to));
 }
 /** Tell the shopper their order moved — shipped, delivered, cancelled. */
 export async function sendOrderStatusEmail(orderNumber, status, message) {

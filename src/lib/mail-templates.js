@@ -137,23 +137,81 @@ ${SITE.legalName} · ${SITE.phone} · ${SITE.phoneHours}`;
 }
 /** The operational copy, so someone actually packs it. */
 export function newOrderAlert(order, to) {
+  // Straight to this order in the admin; staff sign in if they are not already.
+  const adminUrl = siteUrl(order.id ? `/admin/orders/${order.id}` : "/admin/orders");
+  const placed = order.placedAt
+    ? new Intl.DateTimeFormat("en-IN", {
+        dateStyle: "medium",
+        timeStyle: "short",
+        timeZone: "Asia/Kolkata",
+      }).format(new Date(order.placedAt))
+    : null;
   const lines = order.items
-    .map((i) => `  ${i.name} × ${i.quantity}`)
+    .map((i) => `  ${i.name} × ${i.quantity} — ${formatPrice(i.lineTotal)}`)
     .join("\n");
-  return {
-    to,
-    subject: `New order ${order.orderNumber} — ${formatPrice(order.grandTotal)}`,
-    text: `New order ${order.orderNumber}
+  const text = `You have received an order.
 
-${order.customerName} <${order.email}>
-Total: ${formatPrice(order.grandTotal)} (${order.paymentMethod})
+Order ${order.orderNumber}${placed ? ` · ${placed}` : ""}
 
 ${lines}
 
+Subtotal        ${formatPrice(order.subtotal)}
+${order.discountTotal > 0 ? `Discount        −${formatPrice(order.discountTotal)}${order.couponCode ? ` (${order.couponCode})` : ""}\n` : ""}Shipping        ${order.shippingTotal === 0 ? "Free" : formatPrice(order.shippingTotal)}
+Total           ${formatPrice(order.grandTotal)}
+Payment: ${order.paymentMethod}
+
+Customer: ${order.customerName}
+Email: ${order.email}${order.phone ? `\nPhone: ${order.phone}` : ""}
+
 Ship to:
 ${order.shippingAddress.map((l) => `  ${l}`).join("\n")}
+${order.notes ? `\nNote from the customer: ${order.notes}\n` : ""}
+Open this order: ${adminUrl}
+Visit the store: ${siteUrl("/")}`;
+  const html = shell(
+    "You have received an order",
+    `<p style="margin:0 0 6px;font-size:13px;color:${MUTED};">Order number</p>
+     <p style="margin:0 0 4px;font-family:Georgia,serif;font-size:22px;">${escape(order.orderNumber)}</p>
+     ${placed ? `<p style="margin:0 0 24px;font-size:13px;color:${MUTED};">${escape(placed)} · ${escape(order.paymentMethod)}</p>` : `<p style="margin:0 0 24px;font-size:13px;color:${MUTED};">${escape(order.paymentMethod)}</p>`}
 
-Open it: ${siteUrl("/admin/orders")}`,
+     <table role="presentation" width="100%" cellpadding="0" cellspacing="0">${itemRows(order.items)}</table>
+
+     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:14px;">
+       ${totalRow("Subtotal", formatPrice(order.subtotal))}
+       ${order.discountTotal > 0 ? totalRow(`Discount${order.couponCode ? ` (${order.couponCode})` : ""}`, `−${formatPrice(order.discountTotal)}`) : ""}
+       ${totalRow("Shipping", order.shippingTotal === 0 ? "Free" : formatPrice(order.shippingTotal))}
+       ${totalRow("Total", formatPrice(order.grandTotal), true)}
+     </table>
+
+     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:26px;">
+       <tr>
+         <td valign="top" style="padding-right:12px;width:50%;">
+           <p style="margin:0 0 4px;font-size:13px;color:${MUTED};">Customer</p>
+           <p style="margin:0;font-size:14px;line-height:1.6;">
+             ${escape(order.customerName)}<br>
+             <a href="mailto:${escape(order.email)}" style="color:${ACCENT};">${escape(order.email)}</a>
+             ${order.phone ? `<br><a href="tel:${escape(order.phone)}" style="color:${ACCENT};">${escape(order.phone)}</a>` : ""}
+           </p>
+         </td>
+         <td valign="top" style="width:50%;">
+           <p style="margin:0 0 4px;font-size:13px;color:${MUTED};">Ship to</p>
+           <p style="margin:0;font-size:14px;line-height:1.6;">${order.shippingAddress.map(escape).join("<br>")}</p>
+         </td>
+       </tr>
+     </table>
+     ${order.notes ? `<p style="margin:22px 0 0;padding:12px 14px;background:#f7f4ec;font-size:14px;line-height:1.6;"><span style="color:${MUTED};">Note from the customer:</span> ${escape(order.notes)}</p>` : ""}
+
+     ${button(adminUrl, "Open this order")}
+     <p style="margin:0;font-size:13px;line-height:1.6;color:${MUTED};">
+       This alert goes to the store team only. Customers get their own receipt.
+       <br><a href="${siteUrl("/")}" style="color:${MUTED};">${escape(siteUrl("/").replace(/^https?:\/\//, "").replace(/\/$/, ""))}</a>
+     </p>`,
+  );
+  return {
+    to,
+    subject: `New order ${order.orderNumber} — ${formatPrice(order.grandTotal)} from ${order.customerName}`,
+    text,
+    html,
     replyTo: order.email,
   };
 }

@@ -35,5 +35,16 @@ node ./scripts/inject-admin.mjs || echo "Admin injection failed."
 # Start Nginx in background as daemon
 nginx
 
+# Send queued email every minute. Mail is queued in the database and sent
+# straight away, but nothing retried a failed send — the queue was written
+# for a hosted cron this server does not have. This loop is that cron.
+(
+  sleep 30
+  while true; do
+    node -e "fetch('http://127.0.0.1:3000/api/cron/mail-flush',{headers:process.env.CRON_SECRET?{authorization:'Bearer '+process.env.CRON_SECRET}:{}}).catch(()=>{})"
+    sleep 60
+  done
+) &
+
 # Start Next.js standalone application on port 3000
 PORT=3000 HOSTNAME=0.0.0.0 node server.js

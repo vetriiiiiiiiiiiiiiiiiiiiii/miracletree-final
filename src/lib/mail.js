@@ -1,6 +1,6 @@
 import { SITE } from "@/lib/constants";
 import { createTransport, sendViaSmtp } from "@/lib/mail-transport";
-import { enqueueMail } from "@/lib/mail-queue";
+import { enqueueMail, flushQueue } from "@/lib/mail-queue";
 
 function from() {
   return process.env.MAIL_FROM ?? `${SITE.name} <onboarding@resend.dev>`;
@@ -71,7 +71,11 @@ export async function send(message) {
  * the order exists whether or not the receipt arrives.
  */
 export function sendInBackground(message) {
-  void enqueueMail(message).catch((error) => {
-    console.error("[mail] failed to enqueue", error);
-  });
+  // Queued first so nothing is lost, then sent straight away; the minute loop
+  // in start.sh retries anything that fails.
+  void enqueueMail(message)
+    .then(() => flushQueue())
+    .catch((error) => {
+      console.error("[mail] failed to enqueue or send", error);
+    });
 }
