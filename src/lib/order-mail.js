@@ -107,9 +107,11 @@ async function sendOrderPlacedEmailsUnsafe(orderNumber) {
     return;
   }
   sendInBackground(orderConfirmation(data));
-  // The admin alert always reaches the store inbox (info@miracletree.in),
-  // and also MAIL_OPS when the server names a different address.
-  const recipients = [...new Set([SITE.email, opsRecipient()].filter(Boolean).map((a) => a.toLowerCase()))];
+  // The admin alert goes to every address in SITE.orderAlertEmails, and also
+  // MAIL_OPS when the server names another one.
+  const recipients = [
+    ...new Set([...SITE.orderAlertEmails, opsRecipient()].filter(Boolean).map((a) => a.toLowerCase())),
+  ];
   for (const to of recipients) sendInBackground(newOrderAlert(data, to));
 }
 /** Tell the shopper their order moved — shipped, delivered, cancelled. */

@@ -85,6 +85,8 @@ export const SITE = {
   phone: "+91 79040 57352",
   // Enquiry buttons open a WhatsApp chat with this number (digits only).
   whatsapp: "917904057352",
+  // Everyone who gets the "You have received an order" alert.
+  orderAlertEmails: ["info@miracletree.in", "miracletreelife@gmail.com"],
   mobile: "+91 99763 27888",
   phoneHours: "Mon–Sat, 10am–5pm IST",
   address: {
