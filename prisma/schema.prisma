@@ -293,7 +293,9 @@ model Inventory {
   onHand         Int      @default(0)
   reserved       Int      @default(0)
   lowStockAt     Int      @default(10)
-  trackInventory Boolean  @default(true)
+  /// Off for every product: the store does not track stock, so nothing is
+  /// ever out of stock or limited by quantity.
+  trackInventory Boolean  @default(false)
   updatedAt      DateTime @updatedAt
 
   variant   ProductVariant      @relation(fields: [variantId], references: [id])

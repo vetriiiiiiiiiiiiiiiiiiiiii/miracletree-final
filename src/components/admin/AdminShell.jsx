@@ -17,7 +17,6 @@ const NAVIGATION = [
     title: "Commerce",
     items: [
       { href: "/admin/products", label: "Products", icon: "products" },
-      { href: "/admin/inventory", label: "Inventory", icon: "inventory" },
       { href: "/admin/orders", label: "Orders", icon: "orders" },
       { href: "/admin/customers", label: "Customers", icon: "customers" },
       { href: "/admin/promotions", label: "Promotions", icon: "promotions" },
@@ -62,8 +61,6 @@ export function AdminShell({ children, user, pendingCounts }) {
       return pendingCounts.reviews;
     if (href === "/admin/enquiries" && pendingCounts.enquiries > 0)
       return pendingCounts.enquiries;
-    if (href === "/admin/inventory" && pendingCounts.lowStock > 0)
-      return pendingCounts.lowStock;
     return null;
   };
   const commands = useMemo(
@@ -297,7 +294,6 @@ function Icon({ name, active }) {
     orders: "M4 6h12l-1 11H5L4 6zM7.4 6V4.8a2.6 2.6 0 0 1 5.2 0V6",
     customers:
       "M10 9.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM3.8 17c.6-3.3 3.1-5.2 6.2-5.2s5.6 1.9 6.2 5.2",
-    inventory: "M3 7l7-3.5L17 7v6l-7 3.5L3 13V7zM3 7l7 3.5L17 7M10 10.5V17",
     reviews:
       "M10 3l2 4.3 4.7.5-3.5 3.2.9 4.6L10 13.4 5.9 15.6l.9-4.6L3.3 7.8 8 7.3 10 3z",
     enquiries: "M2.5 4.5h15v11h-15zM2.5 5l7.5 6 7.5-6",

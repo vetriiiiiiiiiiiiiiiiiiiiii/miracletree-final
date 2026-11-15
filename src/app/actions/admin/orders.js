@@ -4,9 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { requireAdmin, AuthError } from "@/lib/auth";
 import { recordAudit } from "@/lib/audit";
 import { sendOrderStatusEmail, statusDeservesEmail } from "@/lib/order-mail";
-import { commitStock, releaseStock, adjustStock } from "@/lib/inventory";
+import { commitStock, releaseStock } from "@/lib/inventory";
 import {
-  adminInventorySchema,
   adminOrderStatusSchema,
   adminPaymentStatusSchema,
   fieldErrors,
@@ -184,55 +183,5 @@ export async function addOrderNoteAction(orderId, note) {
   } catch (error) {
     if (error instanceof AuthError) return { ok: false, error: error.message };
     return { ok: false, error: "Could not save that note." };
-  }
-}
-// ---------------------------------------------------------------- inventory
-export async function adjustInventoryAction(_prev, formData) {
-  try {
-    const admin = await requireAdmin();
-    const parsed = adminInventorySchema.safeParse({
-      variantId: formText(formData, "variantId"),
-      delta: formText(formData, "delta"),
-      reason: formText(formData, "reason"),
-      reference: formText(formData, "reference"),
-    });
-    if (!parsed.success) {
-      return {
-        status: "error",
-        message: "Enter a whole number to add or subtract.",
-        errors: fieldErrors(parsed.error),
-      };
-    }
-    if (parsed.data.delta === 0) {
-      return { status: "error", message: "Enter a non-zero adjustment." };
-    }
-    const result = await adjustStock({
-      variantId: parsed.data.variantId,
-      delta: parsed.data.delta,
-      reason: parsed.data.reason,
-      reference: parsed.data.reference || null,
-      actorId: admin.id,
-    });
-    await recordAudit({
-      actorId: admin.id,
-      action: "inventory.adjusted",
-      entity: "Inventory",
-      entityId: parsed.data.variantId,
-      meta: {
-        delta: parsed.data.delta,
-        reason: parsed.data.reason,
-        onHand: result.onHand,
-      },
-    });
-    revalidatePath("/admin/inventory");
-    return {
-      status: "success",
-      message: `Stock updated — ${result.onHand} on hand.`,
-    };
-  } catch (error) {
-    if (error instanceof AuthError)
-      return { status: "error", message: error.message };
-    console.error("[admin/inventory]", error);
-    return { status: "error", message: "Could not adjust that stock level." };
   }
 }

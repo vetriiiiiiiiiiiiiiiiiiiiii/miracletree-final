@@ -634,12 +634,6 @@ export function ProductEditor({
                   >
                     Product FAQs
                   </Link>
-                  <Link
-                    href="/admin/inventory"
-                    className="border border-border-subtle px-4 py-2 text-cream-200 hover:border-border-strong"
-                  >
-                    Stock levels
-                  </Link>
                 </div>
               </FieldGroup>
             ) : null}
@@ -698,20 +692,9 @@ export function ProductEditor({
                 <dd className="tabular-nums text-cream-100">{reviewCount}</dd>
               </div>
               <div className="flex items-baseline justify-between gap-3">
-                <dt className="text-cream-400">In stock</dt>
+                <dt className="text-cream-400">Availability</dt>
                 <dd>
-                  <Pill
-                    tone={
-                      variants.some((v) => v.onHand - v.reserved > 0)
-                        ? "success"
-                        : "danger"
-                    }
-                  >
-                    {variants.reduce(
-                      (sum, v) => sum + Math.max(0, v.onHand - v.reserved),
-                      0,
-                    )}
-                  </Pill>
+                  <Pill tone="success">Always available</Pill>
                 </dd>
               </div>
             </dl>

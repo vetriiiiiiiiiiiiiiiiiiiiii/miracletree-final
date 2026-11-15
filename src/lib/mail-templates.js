@@ -314,28 +314,6 @@ export function welcomeEmail(input) {
   };
 }
 
-/** Low stock alert for admins */
-export function lowStockAlert(input) {
-  const inventoryUrl = siteUrl("/admin/inventory");
-  return {
-    to: input.ops,
-    subject: `Low Stock Alert: ${input.name}`,
-    text: `The following item is running low on stock:\n\n${input.name}\nCurrent available stock: ${input.stock}\n\nPlease restock soon: ${inventoryUrl}`,
-    html: shell(
-      "Low Stock Alert",
-      `<p style="margin:0 0 18px;font-size:15px;line-height:1.6;">
-         The following item has fallen to or below the low stock threshold:
-       </p>
-       <p style="margin:0 0 8px;font-size:13px;color:${MUTED};">Item</p>
-       <p style="margin:0 0 18px;font-family:Georgia,serif;font-size:20px;">${escape(input.name)}</p>
-       
-       <p style="margin:0 0 8px;font-size:13px;color:${MUTED};">Current available stock</p>
-       <p style="margin:0 0 26px;font-family:Georgia,serif;font-size:20px;color:${input.stock <= 0 ? "#b0322c" : INK};">${escape(input.stock.toString())}</p>
-       
-       ${button(inventoryUrl, "Manage inventory")}`,
-    ),
-  };
-}
 
 /** Payment failed alert for admins */
 export function paymentFailedAlert(input) {

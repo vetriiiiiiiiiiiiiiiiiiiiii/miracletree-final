@@ -418,12 +418,6 @@ export const adminCategorySchema = z.object({
   seoTitle: z.string().trim().max(70).optional().or(z.literal("")),
   seoDescription: z.string().trim().max(180).optional().or(z.literal("")),
 });
-export const adminInventorySchema = z.object({
-  variantId: z.string().regex(/^[0-9a-fA-F]{24}$/),
-  delta: z.coerce.number().int().min(-100000).max(100000),
-  reason: z.enum(["restock", "adjustment"]),
-  reference: z.string().trim().max(120).optional().or(z.literal("")),
-});
 export const adminUserRoleSchema = z.object({
   userId: z.string().regex(/^[0-9a-fA-F]{24}$/),
   role: z.enum(ROLES),

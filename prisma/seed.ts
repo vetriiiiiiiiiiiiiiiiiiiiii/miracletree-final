@@ -1157,9 +1157,11 @@ export async function importCatalogue(
       await prisma.inventory.create({
         data: {
           variantId: variant.id,
-          onHand: v.available ? 40 : 0,
+          onHand: 0,
           reserved: 0,
           lowStockAt: 10,
+          // Stock is not tracked: every product is always available.
+          trackInventory: false,
         },
       });
     }

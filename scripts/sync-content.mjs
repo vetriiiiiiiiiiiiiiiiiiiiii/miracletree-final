@@ -459,6 +459,13 @@ const ONE_OFFS = [
         data: { status: "expired", error: "Expired: queued before email sending was switched on" },
       }),
   },
+  {
+    // The store stopped tracking stock: every product is always available,
+    // with no out-of-stock and no quantity caps. Checkout and the cart
+    // already skip untracked stock, so this switch is the whole change.
+    marker: "oneoff.untrack-all-stock",
+    run: () => prisma.inventory.updateMany({ data: { trackInventory: false, reserved: 0 } }),
+  },
 ];
 for (const { marker, run } of ONE_OFFS) {
   if (await prisma.siteSetting.findUnique({ where: { key: marker } })) continue;

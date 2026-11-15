@@ -58,14 +58,7 @@ export default async function AdminProductsPage({ searchParams }) {
           orderBy: { position: "asc" },
           select: { url: true },
         },
-        variants: {
-          select: {
-            id: true,
-            inventory: {
-              select: { onHand: true, reserved: true, trackInventory: true },
-            },
-          },
-        },
+        variants: { select: { id: true } },
         _count: { select: { reviews: true } },
       },
     }),
@@ -114,28 +107,19 @@ export default async function AdminProductsPage({ searchParams }) {
             "Product",
             "Category",
             { label: "Status", align: "center" },
-            { label: "Stock", align: "right" },
             { label: "Price", align: "right" },
             "Updated",
             { label: "", align: "right", width: "3rem" },
           ]}
         >
           {products.length === 0 ? (
-            <EmptyRow colSpan={7}>
+            <EmptyRow colSpan={6}>
               {params.q
                 ? `No products matched “${params.q}”.`
                 : "No products here yet. Create your first one."}
             </EmptyRow>
           ) : (
             products.map((product) => {
-              const stock = product.variants.reduce((sum, variant) => {
-                const inv = variant.inventory;
-                if (!inv || !inv.trackInventory) return sum;
-                return sum + Math.max(0, inv.onHand - inv.reserved);
-              }, 0);
-              const tracked = product.variants.some(
-                (v) => v.inventory?.trackInventory,
-              );
               return (
                 <Tr key={product.id}>
                   <Td>
@@ -195,24 +179,6 @@ export default async function AdminProductsPage({ searchParams }) {
                     >
                       {product.status}
                     </Pill>
-                  </Td>
-
-                  <Td align="right">
-                    {!tracked ? (
-                      <span className="text-xs text-cream-400">Untracked</span>
-                    ) : (
-                      <span
-                        className={
-                          stock <= 0
-                            ? "tabular-nums text-[#e0a19c]"
-                            : stock <= 10
-                              ? "tabular-nums text-gold-300"
-                              : "tabular-nums text-cream-200"
-                        }
-                      >
-                        {stock}
-                      </span>
-                    )}
                   </Td>
 
                   <Td align="right" className="tabular-nums text-cream-50">

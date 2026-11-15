@@ -12,9 +12,8 @@ import {
 import { formatPrice } from "@/lib/money";
 const INITIAL = { status: "idle" };
 /**
- * Variants and their stock thresholds. Quantity itself is changed on the
- * inventory screen, which records a ledger entry — editing it inline here would
- * let stock move without a reason attached to it.
+ * A product's variants: name, SKU, price and visibility. Stock is not
+ * tracked, so every active variant is always available.
  */
 export function VariantEditor({ productId, variants }) {
   const router = useRouter();
@@ -54,17 +53,14 @@ export function VariantEditor({ productId, variants }) {
             "Variant",
             "SKU",
             { label: "Price", align: "right" },
-            { label: "On hand", align: "right" },
-            { label: "Available", align: "right" },
             { label: "Status", align: "center" },
             { label: "", align: "right", width: "8rem" },
           ]}
         >
           {variants.length === 0 ? (
-            <EmptyRow colSpan={7}>No variants yet.</EmptyRow>
+            <EmptyRow colSpan={5}>No variants yet.</EmptyRow>
           ) : (
             variants.map((variant) => {
-              const available = Math.max(0, variant.onHand - variant.reserved);
               return (
                 <Tr key={variant.id}>
                   <Td className="text-cream-50">{variant.name}</Td>
@@ -78,22 +74,6 @@ export function VariantEditor({ productId, variants }) {
                         {formatPrice(variant.compareAtPrice)}
                       </span>
                     ) : null}
-                  </Td>
-                  <Td align="right" className="tabular-nums">
-                    {variant.onHand}
-                  </Td>
-                  <Td align="right">
-                    <Pill
-                      tone={
-                        available <= 0
-                          ? "danger"
-                          : available <= variant.lowStockAt
-                            ? "warning"
-                            : "success"
-                      }
-                    >
-                      {available}
-                    </Pill>
                   </Td>
                   <Td align="center">
                     <Pill tone={variant.isActive ? "success" : "neutral"}>
@@ -208,31 +188,6 @@ function VariantForm({ productId, variant, onDone, onCancel }) {
             type="number"
             min={0}
             defaultValue={variant?.weightGrams ?? ""}
-          />
-        </div>
-
-        <div className="grid gap-5 sm:grid-cols-2">
-          <Input
-            label={variant ? "On hand (read-only)" : "Opening stock"}
-            name="onHand"
-            type="number"
-            min={0}
-            defaultValue={variant?.onHand ?? 0}
-            readOnly={Boolean(variant)}
-            disabled={Boolean(variant)}
-            hint={
-              variant
-                ? "Change stock from the Inventory screen so the movement is recorded."
-                : "Recorded as an opening-stock movement."
-            }
-          />
-          <Input
-            label="Low-stock threshold"
-            name="lowStockAt"
-            type="number"
-            min={0}
-            defaultValue={variant?.lowStockAt ?? 10}
-            hint="Flags this variant on the dashboard."
           />
         </div>
 

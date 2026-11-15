@@ -40,7 +40,6 @@ export default async function AdminDashboard() {
     draftCount,
     pendingOrders,
     pendingReviews,
-    lowStock,
     recentOrders,
     topProducts,
     dailyRows,
@@ -67,25 +66,6 @@ export default async function AdminDashboard() {
       where: { status: { in: ["pending", "confirmed", "processing"] } },
     }),
     prisma.review.count({ where: { status: "pending" } }),
-    prisma.inventory.findMany({
-      where: { trackInventory: true, onHand: { lte: 10 } },
-      orderBy: { onHand: "asc" },
-      take: 8,
-      select: {
-        id: true,
-        onHand: true,
-        reserved: true,
-        lowStockAt: true,
-        variant: {
-          select: {
-            id: true,
-            name: true,
-            sku: true,
-            product: { select: { id: true, name: true, slug: true } },
-          },
-        },
-      },
-    }),
     prisma.order.findMany({
       orderBy: { placedAt: "desc" },
       take: 8,
@@ -150,7 +130,7 @@ export default async function AdminDashboard() {
       />
 
       {/* Attention */}
-      {pendingOrders + pendingReviews + lowStock.length > 0 ? (
+      {pendingOrders + pendingReviews > 0 ? (
         <div className="mb-8 flex flex-wrap gap-2">
           {pendingOrders > 0 ? (
             <Link href="/admin/orders?status=pending">
@@ -162,11 +142,6 @@ export default async function AdminDashboard() {
               <Pill tone="warning">
                 {pendingReviews} reviews awaiting moderation
               </Pill>
-            </Link>
-          ) : null}
-          {lowStock.length > 0 ? (
-            <Link href="/admin/inventory?filter=low">
-              <Pill tone="danger">{lowStock.length} variants low on stock</Pill>
             </Link>
           ) : null}
         </div>
@@ -215,12 +190,6 @@ export default async function AdminDashboard() {
           value={String(draftCount)}
           href="/admin/products?status=draft"
           tone={draftCount > 0 ? "warning" : "default"}
-        />
-        <StatCard
-          label="Low stock"
-          value={String(lowStock.length)}
-          href="/admin/inventory?filter=low"
-          tone={lowStock.length > 0 ? "danger" : "default"}
         />
         <StatCard
           label="Reviews pending"
@@ -363,65 +332,6 @@ export default async function AdminDashboard() {
         </Card>
       </div>
 
-      {/* Low stock */}
-      {lowStock.length ? (
-        <Card
-          className="mt-8"
-          title="Running low"
-          description="Available stock is on-hand minus what is reserved by open orders."
-          actions={
-            <Link
-              href="/admin/inventory"
-              className="text-[0.66rem] uppercase tracking-[0.14em] text-cream-400 hover:text-cream-100"
-            >
-              Manage inventory
-            </Link>
-          }
-          padded={false}
-        >
-          <Table
-            head={[
-              "Product",
-              "Variant",
-              "SKU",
-              { label: "On hand", align: "right" },
-              { label: "Reserved", align: "right" },
-              { label: "Available", align: "right" },
-            ]}
-          >
-            {lowStock.map((row) => {
-              const available = row.onHand - row.reserved;
-              return (
-                <Tr key={row.id}>
-                  <Td>
-                    <Link
-                      href={`/admin/products/${row.variant.product.id}`}
-                      className="text-cream-50 hover:text-gold-300"
-                    >
-                      {row.variant.product.name}
-                    </Link>
-                  </Td>
-                  <Td>{row.variant.name}</Td>
-                  <Td className="text-xs text-cream-400">
-                    {row.variant.sku ?? "—"}
-                  </Td>
-                  <Td align="right" className="tabular-nums">
-                    {row.onHand}
-                  </Td>
-                  <Td align="right" className="tabular-nums text-cream-400">
-                    {row.reserved}
-                  </Td>
-                  <Td align="right">
-                    <Pill tone={available <= 0 ? "danger" : "warning"}>
-                      {available}
-                    </Pill>
-                  </Td>
-                </Tr>
-              );
-            })}
-          </Table>
-        </Card>
-      ) : null}
     </>
   );
 }

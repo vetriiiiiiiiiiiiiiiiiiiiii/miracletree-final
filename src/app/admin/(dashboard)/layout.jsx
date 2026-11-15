@@ -15,12 +15,9 @@ export default async function AdminLayout({ children }) {
   if (!user || (user.role !== "admin" && user.role !== "staff")) {
     redirect("/admin/login");
   }
-  const [pendingOrders, pendingReviews, lowStock, newEnquiries] = await Promise.all([
+  const [pendingOrders, pendingReviews, newEnquiries] = await Promise.all([
     prisma.order.count({ where: { status: { in: ["pending", "confirmed"] } } }),
     prisma.review.count({ where: { status: "pending" } }),
-    prisma.inventory.count({
-      where: { trackInventory: true, onHand: { lte: 10 } },
-    }),
     prisma.enquiry.count({ where: { status: "new" } }),
   ]);
   return (
@@ -35,7 +32,6 @@ export default async function AdminLayout({ children }) {
       pendingCounts={{
         orders: pendingOrders,
         reviews: pendingReviews,
-        lowStock,
         enquiries: newEnquiries,
       }}
     >
