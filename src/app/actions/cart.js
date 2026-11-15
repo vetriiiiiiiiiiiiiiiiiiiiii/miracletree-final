@@ -14,6 +14,7 @@ import {
   couponSchema,
 } from "@/lib/validation";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { COMMERCE_DEFAULTS } from "@/lib/constants";
 /**
  * Cart mutations. Prices and stock are always re-read from the database here —
  * the client sends ids and quantities, never money.
@@ -39,6 +40,12 @@ export async function addToCartAction(input) {
     where: { cartId_variantId: { cartId: cart.id, variantId } },
   });
   const desired = (existing?.quantity ?? 0) + quantity;
+  if (desired > COMMERCE_DEFAULTS.maxLineQuantity) {
+    return {
+      ok: false,
+      error: `You can order up to ${COMMERCE_DEFAULTS.maxLineQuantity.toLocaleString("en-IN")} of one item at a time.`,
+    };
+  }
   const stock = await availableStock(variantId);
   if (stock <= 0)
     return { ok: false, error: `${variant.product.name} is out of stock.` };

@@ -2,6 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { COMMERCE_DEFAULTS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { discountPercent, formatPrice } from "@/lib/money";
 import { useCart } from "@/components/cart/CartProvider";
@@ -16,7 +17,7 @@ import { analytics } from "@/lib/analytics";
  *
  * `layout="list"` lays the same content out horizontally for the list view.
  */
-const MAX_QTY = 10;
+const MAX_QTY = COMMERCE_DEFAULTS.maxLineQuantity;
 export function ProductCard({
   product,
   index = 0,

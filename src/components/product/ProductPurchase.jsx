@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { COMMERCE_DEFAULTS } from "@/lib/constants";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 import { discountPercent, formatPrice } from "@/lib/money";
@@ -80,8 +81,8 @@ export function ProductPurchase({
   }, [selected]);
   const maxQuantity = selected
     ? selected.tracked
-      ? Math.max(1, Math.min(10, selected.available))
-      : 10
+      ? Math.max(1, Math.min(COMMERCE_DEFAULTS.maxLineQuantity, selected.available))
+      : COMMERCE_DEFAULTS.maxLineQuantity
     : 1;
   const discount = selected
     ? discountPercent(selected.price, selected.compareAtPrice)

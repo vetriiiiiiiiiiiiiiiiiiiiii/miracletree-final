@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Drawer, DrawerHeader } from "@/components/ui/Drawer";
 import { Button, LinkButton } from "@/components/ui/Button";
 import { useCart } from "@/components/cart/CartProvider";
@@ -313,6 +313,17 @@ function Row({ label, value, tone }) {
   );
 }
 export function QuantityStepper({ value, max, onChange, disabled, label }) {
+  // The number can be typed as well as stepped — nobody presses + 200 times.
+  // A typed value is applied on Enter or when the field loses focus, so the
+  // cart is not updated on every keystroke.
+  const [draft, setDraft] = useState(String(value));
+  useEffect(() => setDraft(String(value)), [value]);
+  const commit = () => {
+    const typed = Number.parseInt(draft, 10);
+    const next = Number.isFinite(typed) ? Math.min(Math.max(1, typed), max) : value;
+    setDraft(String(next));
+    if (next !== value) onChange(next);
+  };
   return (
     <div
       className="inline-flex items-center border border-border-subtle"
@@ -330,12 +341,23 @@ export function QuantityStepper({ value, max, onChange, disabled, label }) {
           <path d="M1 5h8" stroke="currentColor" strokeWidth="1.3" />
         </svg>
       </button>
-      <span
-        className="min-w-8 text-center text-sm tabular-nums text-cream-50"
-        aria-live="polite"
-      >
-        {value}
-      </span>
+      <input
+        type="text"
+        inputMode="numeric"
+        pattern="[0-9]*"
+        value={draft}
+        disabled={disabled}
+        onChange={(event) => setDraft(event.target.value.replace(/\D/g, "").slice(0, 5))}
+        onBlur={commit}
+        onKeyDown={(event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            commit();
+          }
+        }}
+        aria-label="Quantity"
+        className="h-8 w-12 bg-transparent text-center text-sm tabular-nums text-cream-50 focus:outline-none"
+      />
       <button
         type="button"
         onClick={() => onChange(value + 1)}

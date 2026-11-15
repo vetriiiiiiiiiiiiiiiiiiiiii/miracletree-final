@@ -139,7 +139,9 @@ export const getCart = async () => {
       quantity: item.quantity,
       lineTotal: unitPrice * item.quantity,
       available:
-        available === Number.MAX_SAFE_INTEGER ? item.quantity : available,
+        available === Number.MAX_SAFE_INTEGER
+          ? COMMERCE_DEFAULTS.maxLineQuantity
+          : available,
       overStock: item.quantity > available,
       categoryId: item.product.category?.id ?? null,
       categorySlug: item.product.category?.slug ?? null,

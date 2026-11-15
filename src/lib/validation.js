@@ -1,5 +1,6 @@
 import { z } from "zod";
 import {
+  COMMERCE_DEFAULTS,
   COUPON_KINDS,
   FAQ_CATEGORIES,
   ORDER_STATUSES,
@@ -76,11 +77,11 @@ export const addressSchema = z.object({
 export const cartAddSchema = z.object({
   productId: z.string().regex(/^[0-9a-fA-F]{24}$/),
   variantId: z.string().regex(/^[0-9a-fA-F]{24}$/),
-  quantity: z.coerce.number().int().min(1).max(20).default(1),
+  quantity: z.coerce.number().int().min(1).max(COMMERCE_DEFAULTS.maxLineQuantity).default(1),
 });
 export const cartUpdateSchema = z.object({
   itemId: z.string().regex(/^[0-9a-fA-F]{24}$/),
-  quantity: z.coerce.number().int().min(0).max(20),
+  quantity: z.coerce.number().int().min(0).max(COMMERCE_DEFAULTS.maxLineQuantity),
 });
 export const couponSchema = z.object({
   code: z
