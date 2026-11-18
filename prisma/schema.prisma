@@ -399,6 +399,26 @@ model Order {
   trackingUrl     String?
   notes           String?
 
+  /// Shiprocket. The order and shipment ids Shiprocket assigned, the courier
+  /// chosen at dispatch, the label, and the latest tracking it reported.
+  srOrderId          Int?
+  srShipmentId       Int?
+  srSyncedAt         DateTime?
+  srSyncError        String?
+  courierId          Int?
+  courierName        String?
+  labelUrl           String?
+  shipmentStatus     String?
+  shipmentEta        String?
+  /// Courier scans, newest first: [{ date, activity, location, status }].
+  trackingActivities Json?
+  trackedAt          DateTime?
+  /// A return booked through Shiprocket.
+  returnSrOrderId    Int?
+  returnSrShipmentId Int?
+  returnAwb          String?
+  returnStatus       String?
+
   placedAt  DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -410,6 +430,7 @@ model Order {
   @@index([userId])
   @@index([status])
   @@index([placedAt])
+  @@index([trackingNumber])
 }
 
 model OrderItem {

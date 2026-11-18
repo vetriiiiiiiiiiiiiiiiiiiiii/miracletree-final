@@ -5,6 +5,7 @@ import { clientIp } from "@/lib/rate-limit";
 import { rateLimit, pruneRateLimits } from "@/lib/rate-limit";
 import { fieldErrors, formText } from "@/lib/validation";
 import { ORDER_STATUS_LABELS } from "@/lib/constants";
+import { refreshTracking } from "@/lib/shipping";
 /**
  * Guest order lookup.
  *
@@ -85,20 +86,32 @@ export async function trackOrderAction(_prev, formData) {
         "We could not find an order with that number and email address. Check both against your confirmation email.",
     };
   }
+  // Live from the courier when the stored copy is more than half an hour old.
+  const full = await prisma.order.findUnique({ where: { orderNumber: order.orderNumber } });
+  const shipment = full ? await refreshTracking(full) : null;
+  const events = await prisma.orderEvent.findMany({
+    where: { order: { orderNumber: order.orderNumber } },
+    orderBy: { createdAt: "asc" },
+    select: { status: true, message: true, createdAt: true },
+  });
   return {
     status: "found",
     order: {
       orderNumber: order.orderNumber,
+      courierName: shipment?.courierName ?? null,
+      shipmentStatus: shipment?.shipmentStatus ?? null,
+      shipmentEta: shipment?.shipmentEta ?? null,
+      activities: Array.isArray(shipment?.trackingActivities) ? shipment.trackingActivities.slice(0, 12) : [],
       placedAt: order.placedAt.toISOString(),
-      status: order.status,
-      statusLabel: ORDER_STATUS_LABELS[order.status] ?? order.status,
+      status: shipment?.status ?? order.status,
+      statusLabel: ORDER_STATUS_LABELS[shipment?.status ?? order.status] ?? order.status,
       paymentStatus: order.paymentStatus,
       // The courier's own reference. A signed-in shopper already sees this on
       // the order page; a guest was told it existed in the shipping email and
       // then had nowhere to read it. It is on the order either way — no more
       // of the record is exposed than before.
-      trackingNumber: order.trackingNumber,
-      trackingUrl: order.trackingUrl,
+      trackingNumber: shipment?.trackingNumber ?? order.trackingNumber,
+      trackingUrl: shipment?.trackingUrl ?? order.trackingUrl,
       itemCount: order.items.reduce((n, i) => n + i.quantity, 0),
       items: order.items.map((i) => ({
         // Variant names repeat the product on single-variant lines, so only
@@ -109,7 +122,7 @@ export async function trackOrderAction(_prev, formData) {
             : i.productName,
         quantity: i.quantity,
       })),
-      events: order.events.map((e) => ({
+      events: events.map((e) => ({
         status: e.status,
         label: ORDER_STATUS_LABELS[e.status] ?? e.status,
         message: e.message,

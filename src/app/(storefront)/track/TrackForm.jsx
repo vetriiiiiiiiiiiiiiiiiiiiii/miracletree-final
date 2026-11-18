@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { OrderStatusPill } from "@/components/account/OrderStatusPill";
 import { trackOrderAction } from "@/app/actions/track";
 import { formatDate } from "@/lib/utils";
+import { ShipmentTracking } from "@/components/account/ShipmentTracking";
 const INITIAL = { status: "idle" };
 export function TrackForm() {
   const [state, action, pending] = useActionState(trackOrderAction, INITIAL);
@@ -120,18 +121,14 @@ function OrderResult({ order }) {
 
       {order.trackingNumber ? (
         <div className="border-t border-border-subtle p-6">
-          <h2 className="eyebrow mb-3 text-cream-400">Consignment</h2>
-          <p className="tabular-nums text-cream-50">{order.trackingNumber}</p>
-          {order.trackingUrl ? (
-            <a
-              href={order.trackingUrl}
-              target="_blank"
-              rel="noreferrer noopener"
-              className="mt-3 inline-block text-sm text-cream-200 underline underline-offset-4 hover:text-cream-50"
-            >
-              Track with the courier
-            </a>
-          ) : null}
+          <ShipmentTracking
+            courierName={order.courierName}
+            trackingNumber={order.trackingNumber}
+            trackingUrl={order.trackingUrl}
+            shipmentStatus={order.shipmentStatus}
+            shipmentEta={order.shipmentEta}
+            activities={order.activities}
+          />
         </div>
       ) : null}
 

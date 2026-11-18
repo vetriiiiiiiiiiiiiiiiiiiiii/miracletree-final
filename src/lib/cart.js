@@ -6,6 +6,7 @@ import { prisma } from "./prisma";
 import { getCurrentUser } from "./auth";
 import { COMMERCE_DEFAULTS } from "./constants";
 import { settingNumber } from "./queries";
+import { shiprocketConfigured } from "./shiprocket";
 const CART_COOKIE = "mt_cart";
 const CART_TTL_SECONDS = 60 * 60 * 24 * 60; // 60 days
 export const EMPTY_CART = {
@@ -234,10 +235,12 @@ export const getCart = async () => {
   }
   // Free shipping is earned on the order value before discounts, so a
   // discount never takes it away again.
-  const shippingTotal =
-    lines.length === 0 || freeShipping || subtotal >= threshold
-      ? 0
-      : flatFee;
+  const shippingFree = lines.length === 0 || freeShipping || subtotal >= threshold;
+  // With Shiprocket set up, shipping is the live courier rate for the
+  // delivery PIN code, which only checkout knows — so the cart leaves it out
+  // and says so, rather than showing a flat fee that checkout then changes.
+  const shippingAtCheckout = !shippingFree && shiprocketConfigured();
+  const shippingTotal = shippingFree || shippingAtCheckout ? 0 : flatFee;
   // Product prices are GST-inclusive, matching Indian retail convention, so tax
   // is reported as zero here rather than added on top.
   const taxTotal = 0;
@@ -257,12 +260,14 @@ export const getCart = async () => {
       taxTotal,
       grandTotal,
       freeShippingThreshold: threshold,
+      shippingFree,
+      shippingAtCheckout,
       // Zero once shipping is already free, whether earned by spending or
       // granted by a coupon. Otherwise the summary urges the shopper to spend
       // another ₹539 to unlock something they have just been given.
       // Also zero when the flat fee itself is zero: there is nothing to unlock.
       amountToFreeShipping:
-        freeShipping || flatFee === 0
+        freeShipping || (flatFee === 0 && !shippingAtCheckout)
           ? 0
           : Math.max(0, threshold - subtotal),
       couponDiscount,

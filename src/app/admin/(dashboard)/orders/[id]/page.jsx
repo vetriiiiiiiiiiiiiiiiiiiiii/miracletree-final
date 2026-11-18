@@ -9,6 +9,8 @@ import { ORDER_STATUS_LABELS } from "@/lib/constants";
 import { Card, PageHeader, Pill, Table, Td, Tr } from "@/components/admin/ui";
 import { OrderStatusPill } from "@/components/account/OrderStatusPill";
 import { OrderControls } from "@/components/admin/OrderControls";
+import { ShipmentPanel } from "@/components/admin/ShipmentPanel";
+import { shippingLive } from "@/lib/shipping";
 export const dynamic = "force-dynamic";
 export default async function AdminOrderPage({ params }) {
   await requireAdmin();
@@ -149,6 +151,29 @@ export default async function AdminOrderPage({ params }) {
               </div>
             </dl>
           </Card>
+
+          {/* Shiprocket */}
+          <ShipmentPanel
+            live={shippingLive()}
+            order={{
+              id: order.id,
+              status: order.status,
+              paymentProvider: order.paymentProvider,
+              paymentStatus: order.paymentStatus,
+              shippingPostalCode: order.shippingPostalCode,
+              srOrderId: order.srOrderId,
+              srSyncError: order.srSyncError,
+              courierName: order.courierName,
+              trackingNumber: order.trackingNumber,
+              trackingUrl: order.trackingUrl,
+              shipmentStatus: order.shipmentStatus,
+              shipmentEta: order.shipmentEta,
+              trackingActivities: order.trackingActivities ?? [],
+              returnSrOrderId: order.returnSrOrderId,
+              returnAwb: order.returnAwb,
+              returnStatus: order.returnStatus,
+            }}
+          />
 
           {/* Controls */}
           <OrderControls

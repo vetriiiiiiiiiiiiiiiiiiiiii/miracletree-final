@@ -5,6 +5,11 @@ import { requireAdmin, AuthError } from "@/lib/auth";
 import { recordAudit } from "@/lib/audit";
 import { sendOrderStatusEmail, statusDeservesEmail } from "@/lib/order-mail";
 import { commitStock, releaseStock } from "@/lib/inventory";
+import { cancelShipment } from "@/lib/shipping";
+
+function courierHasIt(status) {
+  return status === "shipped" || status === "out_for_delivery" || status === "delivered";
+}
 import {
   adminOrderStatusSchema,
   adminPaymentStatusSchema,
@@ -45,6 +50,8 @@ export async function updateOrderStatusAction(_prev, formData) {
         id: true,
         orderNumber: true,
         status: true,
+        srOrderId: true,
+        trackingNumber: true,
         items: { select: { variantId: true, quantity: true } },
       },
     });
@@ -96,6 +103,17 @@ export async function updateOrderStatusAction(_prev, formData) {
         },
       });
     });
+    // Cancelling here cancels in Shiprocket too, while the courier does not
+    // yet have the parcel. A failure is reported, not fatal.
+    let shiprocketNote = "";
+    if ((status === "cancelled" || status === "refunded") && order.srOrderId && !courierHasIt(previous)) {
+      try {
+        await cancelShipment(order, admin.id);
+        shiprocketNote = " Cancelled in Shiprocket too.";
+      } catch (error) {
+        shiprocketNote = ` Shiprocket could not cancel it (${error.message}) — cancel it in the Shiprocket panel.`;
+      }
+    }
     await recordAudit({
       actorId: admin.id,
       action: "order.status_changed",
@@ -114,7 +132,7 @@ export async function updateOrderStatusAction(_prev, formData) {
     }
     return {
       status: "success",
-      message: `Order marked ${status.replace(/_/g, " ")}.`,
+      message: `Order marked ${status.replace(/_/g, " ")}.${shiprocketNote}`,
     };
   } catch (error) {
     if (error instanceof AuthError)

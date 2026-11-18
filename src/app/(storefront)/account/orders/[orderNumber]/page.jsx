@@ -8,6 +8,8 @@ import { formatDate } from "@/lib/utils";
 import { ORDER_STATUS_LABELS } from "@/lib/constants";
 import { buildMetadata } from "@/lib/seo";
 import { OrderStatusPill } from "@/components/account/OrderStatusPill";
+import { ShipmentTracking } from "@/components/account/ShipmentTracking";
+import { refreshTracking } from "@/lib/shipping";
 import { LinkButton } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 export const dynamic = "force-dynamic";
@@ -38,6 +40,9 @@ export default async function OrderDetailPage({ params }) {
     },
   });
   if (!order) notFound();
+  // Live from the courier when the stored copy is more than half an hour old.
+  const tracked = await refreshTracking(order);
+  if (tracked !== order) Object.assign(order, tracked);
   const status = order.status;
   const isCancelled = status === "cancelled" || status === "refunded";
   const currentStep = TIMELINE.indexOf(status);
@@ -103,21 +108,15 @@ export default async function OrderDetailPage({ params }) {
       )}
 
       {order.trackingNumber ? (
-        <div className="mt-8 border border-gold-400/30 bg-gold-400/5 p-5">
-          <p className="eyebrow text-gold-400">Tracking</p>
-          <p className="mt-2 tabular-nums text-cream-50">
-            {order.trackingNumber}
-          </p>
-          {order.trackingUrl ? (
-            <a
-              href={order.trackingUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-2 inline-block text-xs text-gold-300 underline underline-offset-4"
-            >
-              Track with the courier
-            </a>
-          ) : null}
+        <div className="mt-8">
+          <ShipmentTracking
+            courierName={order.courierName}
+            trackingNumber={order.trackingNumber}
+            trackingUrl={order.trackingUrl}
+            shipmentStatus={order.shipmentStatus}
+            shipmentEta={order.shipmentEta}
+            activities={order.trackingActivities ?? []}
+          />
         </div>
       ) : null}
 

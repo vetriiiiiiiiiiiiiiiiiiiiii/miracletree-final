@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { COMMERCE_DEFAULTS } from "@/lib/constants";
+import { PincodeChecker } from "@/components/product/PincodeChecker";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 import { discountPercent, formatPrice } from "@/lib/money";
@@ -263,6 +264,9 @@ export function ProductPurchase({
           />
         </div>
       )}
+
+      {/* Delivery check */}
+      <PincodeChecker variantId={selected?.id} />
 
       {/* Trust */}
       <ul className="grid gap-2.5 rounded-2xl bg-forest-900 p-4 text-sm text-cream-200 sm:grid-cols-2">

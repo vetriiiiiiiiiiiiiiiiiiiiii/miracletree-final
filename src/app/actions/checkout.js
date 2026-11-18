@@ -25,6 +25,42 @@ import {
 } from "@/lib/validation";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 import { recordAudit } from "@/lib/audit";
+import { quoteShipping, syncOrderInBackground } from "@/lib/shipping";
+
+/** Live shipping for this cart to a PIN code, by the payment method chosen. */
+async function quoteForCart(cart, pincode, cod) {
+  return quoteShipping({
+    pincode,
+    cod,
+    lines: cart.lines.map((line) => ({ variantId: line.variantId, quantity: line.quantity })),
+    subtotal: cart.totals.subtotal - cart.totals.discountTotal,
+    free: cart.totals.shippingFree,
+  });
+}
+
+/**
+ * Checkout asks this as soon as a PIN code is entered: can we deliver there,
+ * by when, what does shipping cost, and is cash on delivery available.
+ */
+export async function quoteShippingAction(pincode, paymentMethod) {
+  const limit = await rateLimit({ key: `quote:${await clientIp()}`, limit: 60, windowSeconds: 600 });
+  if (!limit.ok) return { ok: false, error: "Too many checks. Please wait a moment." };
+  const cart = await getCart();
+  if (!cart.id || cart.lines.length === 0) return { ok: false, error: "Your bag is empty." };
+  const quote = await quoteForCart(cart, String(pincode ?? "").trim(), paymentMethod === "cod");
+  if (!quote.ok) return { ok: false, error: quote.reason };
+  const shippingTotal = quote.amount ?? 0;
+  return {
+    ok: true,
+    live: quote.live,
+    serviceable: quote.serviceable,
+    codAvailable: quote.codAvailable,
+    shippingTotal,
+    grandTotal: Math.max(0, cart.totals.subtotal - cart.totals.discountTotal + shippingTotal),
+    etd: quote.etd ?? null,
+    days: quote.days ?? null,
+  };
+}
 /**
  * Places an order.
  *
@@ -79,6 +115,26 @@ export async function placeOrderAction(formData) {
         "Card and UPI payments are unavailable right now. Please choose cash on delivery.",
     };
   }
+  // Shipping is priced here, for this PIN code, whatever the page showed.
+  const quote = await quoteForCart(cart, input.postalCode, input.paymentMethod === "cod");
+  if (!quote.ok) {
+    return { ok: false, error: quote.reason, errors: { postalCode: quote.reason } };
+  }
+  if (!quote.serviceable) {
+    const message = `Sorry, we can't deliver to PIN code ${input.postalCode} yet.`;
+    return { ok: false, error: message, errors: { postalCode: message } };
+  }
+  if (input.paymentMethod === "cod" && !quote.codAvailable) {
+    return {
+      ok: false,
+      error: `Cash on delivery isn't available for PIN code ${input.postalCode}. Please pay by card or UPI.`,
+    };
+  }
+  const shippingTotal = quote.amount;
+  const grandTotal = Math.max(
+    0,
+    cart.totals.subtotal - cart.totals.discountTotal + shippingTotal + cart.totals.taxTotal,
+  );
   const user = await getCurrentUser();
   const stockLines = cart.lines.map((line) => ({
     variantId: line.variantId,
@@ -129,9 +185,9 @@ export async function placeOrderAction(formData) {
           // Server-side totals — the only ones that exist.
           subtotal: cart.totals.subtotal,
           discountTotal: cart.totals.discountTotal,
-          shippingTotal: cart.totals.shippingTotal,
+          shippingTotal,
           taxTotal: cart.totals.taxTotal,
-          grandTotal: cart.totals.grandTotal,
+          grandTotal,
           couponCode: cart.coupon?.code ?? null,
           addressId,
           shippingName: `${input.firstName} ${input.lastName ?? ""}`.trim(),
@@ -213,6 +269,9 @@ export async function placeOrderAction(formData) {
     // The order is committed; the receipt is a courtesy that must not be able
     // to fail it.
     await sendOrderPlacedEmails(order.orderNumber);
+    // On to Shiprocket in the background; a failure is saved on the order and
+    // can be retried from the admin, so the shopper never waits on it.
+    syncOrderInBackground(order.orderNumber);
     return { ok: true, kind: "cod", orderNumber: order.orderNumber };
   }
   // Card / UPI: hand off to Razorpay for the amount we computed.
@@ -361,6 +420,7 @@ export async function markOrderPaid(orderId, paymentRef) {
   // passes the `paymentStatus === "paid"` guard above — so this is the one
   // place that runs exactly once per order, and the receipt cannot double up.
   await sendOrderPlacedEmails(order.orderNumber);
+  syncOrderInBackground(order.orderNumber);
 }
 /** Marks a gateway failure and returns the reserved units to stock. */
 export async function markOrderFailed(orderId, reason) {

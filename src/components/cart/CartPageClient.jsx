@@ -288,9 +288,11 @@ export function CartPageClient() {
             <Row
               label="Shipping"
               value={
-                totals.shippingTotal === 0
-                  ? "Free"
-                  : formatPrice(totals.shippingTotal)
+                totals.shippingAtCheckout
+                  ? "At checkout"
+                  : totals.shippingTotal === 0
+                    ? "Free"
+                    : formatPrice(totals.shippingTotal)
               }
             />
             <Row label="Tax" value="Included" muted />

@@ -235,7 +235,9 @@ export function CartDrawer() {
               <Row
                 label="Shipping"
                 value={
-                  totals.shippingTotal === 0
+                  totals.shippingAtCheckout
+                  ? "At checkout"
+                  : totals.shippingTotal === 0
                     ? "Free"
                     : formatPrice(totals.shippingTotal)
                 }

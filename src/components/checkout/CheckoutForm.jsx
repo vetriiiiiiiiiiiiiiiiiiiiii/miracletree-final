@@ -7,7 +7,7 @@ import { useState, useEffect } from "react";
 import { Input, Textarea, Checkbox, FormMessage } from "@/components/ui/Field";
 import { Button } from "@/components/ui/Button";
 import { useCart } from "@/components/cart/CartProvider";
-import { placeOrderAction, verifyPaymentAction } from "@/app/actions/checkout";
+import { placeOrderAction, quoteShippingAction, verifyPaymentAction } from "@/app/actions/checkout";
 import { formatPrice } from "@/lib/money";
 import { cn } from "@/lib/utils";
 import { analytics } from "@/lib/analytics";
@@ -37,6 +37,44 @@ export function CheckoutForm({
   const [errors, setErrors] = useState({});
   const address = addresses.find((a) => a.id === selectedAddress) ?? null;
   const useSaved = Boolean(address);
+  // Live shipping: priced for the delivery PIN code as soon as there is one,
+  // and again whenever the payment method or the bag changes.
+  const [typedPincode, setTypedPincode] = useState("");
+  const pincode = address ? address.postalCode : typedPincode;
+  const [quote, setQuote] = useState(null);
+  const [quoting, setQuoting] = useState(false);
+  useEffect(() => {
+    if (!/^\d{6}$/.test(pincode ?? "")) {
+      setQuote(null);
+      setQuoting(false);
+      return;
+    }
+    let alive = true;
+    setQuoting(true);
+    const timer = setTimeout(async () => {
+      const result = await quoteShippingAction(pincode, method).catch(() => null);
+      if (!alive) return;
+      setQuote(result);
+      setQuoting(false);
+    }, 350);
+    return () => {
+      alive = false;
+      clearTimeout(timer);
+    };
+  }, [pincode, method, cart.totals.subtotal, cart.totals.discountTotal]);
+  const quoted = quote?.ok && quote.serviceable ? quote : null;
+  const total = quoted ? quoted.grandTotal : cart.totals.grandTotal;
+  const shippingLabel = quoted
+    ? quoted.shippingTotal === 0
+      ? "Free"
+      : formatPrice(quoted.shippingTotal)
+    : cart.totals.shippingAtCheckout
+      ? quoting
+        ? "Checking…"
+        : "Enter PIN code"
+      : cart.totals.shippingTotal === 0
+        ? "Free"
+        : formatPrice(cart.totals.shippingTotal);
 
   // If the user presses the back button while the Razorpay modal is open,
   // Next.js swaps the page out but leaves the Razorpay iframe stuck in the DOM.
@@ -331,6 +369,7 @@ export function CheckoutForm({
                     autoComplete="postal-code"
                     required
                     maxLength={6}
+                    onChange={(event) => setTypedPincode(event.target.value.replace(/\D/g, ""))}
                     error={errors.postalCode}
                   />
                 </div>
@@ -435,21 +474,31 @@ export function CheckoutForm({
                   tone="positive"
                 />
               ) : null}
-              <SummaryRow
-                label="Shipping"
-                value={
-                  cart.totals.shippingTotal === 0
-                    ? "Free"
-                    : formatPrice(cart.totals.shippingTotal)
-                }
-              />
+              <SummaryRow label="Shipping" value={shippingLabel} />
               <div className="mt-3 flex items-baseline justify-between border-t border-border-subtle pt-4">
                 <dt className="text-cream-100">Total</dt>
                 <dd className="text-xl tabular-nums text-cream-50">
-                  {formatPrice(cart.totals.grandTotal)}
+                  {formatPrice(total)}
                 </dd>
               </div>
             </dl>
+
+            {quote?.ok && !quote.serviceable ? (
+              <p role="alert" className="mt-4 text-sm text-[#e0a19c]">
+                Sorry, we can&rsquo;t deliver to PIN code {pincode} yet.
+              </p>
+            ) : quoted ? (
+              <div className="mt-4 grid gap-1 text-sm">
+                {quoted.etd ? (
+                  <p className="text-leaf-300">Estimated delivery by {quoted.etd}</p>
+                ) : null}
+                {method === "cod" && !quoted.codAvailable ? (
+                  <p className="text-[#e0a19c]">
+                    Cash on delivery isn&rsquo;t available for this PIN code — please pay by card or UPI.
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
 
             <Button
               type="submit"
@@ -458,9 +507,7 @@ export function CheckoutForm({
               loading={pending}
               disabled={cart.lines.length === 0}
             >
-              {method === "cod"
-                ? "Place order"
-                : `Pay ${formatPrice(cart.totals.grandTotal)}`}
+              {method === "cod" ? "Place order" : `Pay ${formatPrice(total)}`}
             </Button>
 
             <p className="mt-4 text-center text-xs leading-relaxed text-cream-400">

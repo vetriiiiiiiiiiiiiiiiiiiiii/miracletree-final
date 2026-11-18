@@ -5,6 +5,7 @@ import { Input, Textarea, Select, FormMessage } from "@/components/ui/Field";
 import { Card, FieldGroup, Pill } from "@/components/admin/ui";
 import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import { saveSettingsAction } from "@/app/actions/admin/content";
+import { testShiprocketAction } from "@/app/actions/admin/shipping";
 import { cn } from "@/lib/utils";
 const INITIAL = { status: "idle" };
 const POLICIES = [
@@ -165,6 +166,36 @@ export function SettingsForm({ values, policyDefaults, activity }) {
                 </FieldGroup>
               </Card>
 
+              <Card title="Shiprocket">
+                <FieldGroup
+                  title="Courier & parcels"
+                  description="Orders go to Shiprocket automatically, and checkout charges its live courier rate. The API user's email and password live in the server's .env file, not here."
+                >
+                  <ShiprocketTest />
+                  <Input
+                    label="Pickup address name"
+                    name="shiprocket.pickupLocation"
+                    defaultValue={values["shiprocket.pickupLocation"] ?? ""}
+                    hint="Exactly as named in Shiprocket → Settings → Pickup Addresses. Leave empty to use the primary one."
+                  />
+                  <div className="grid gap-5 sm:grid-cols-2">
+                    <Input
+                      label="Default weight per item (grams)"
+                      name="shipping.defaultWeightGrams"
+                      type="number"
+                      min={1}
+                      defaultValue={values["shipping.defaultWeightGrams"] ?? "500"}
+                      hint="Used when a product variant has no weight of its own."
+                    />
+                    <div className="grid grid-cols-3 gap-3">
+                      <Input label="Box L (cm)" name="shipping.boxLength" type="number" min={1} defaultValue={values["shipping.boxLength"] ?? "20"} />
+                      <Input label="B (cm)" name="shipping.boxBreadth" type="number" min={1} defaultValue={values["shipping.boxBreadth"] ?? "15"} />
+                      <Input label="H (cm)" name="shipping.boxHeight" type="number" min={1} defaultValue={values["shipping.boxHeight"] ?? "10"} />
+                    </div>
+                  </div>
+                </FieldGroup>
+              </Card>
+
               <Card title="Brand & SEO">
                 <FieldGroup
                   title="Defaults"
@@ -277,5 +308,33 @@ function SaveSettings() {
     >
       {pending ? "Saving…" : "Save settings"}
     </button>
+  );
+}
+
+/** Checks the Shiprocket API user and shows the pickup address in use. */
+function ShiprocketTest() {
+  const [state, setState] = useState({ status: "idle" });
+  const test = async () => {
+    setState({ status: "loading" });
+    const result = await testShiprocketAction().catch(() => ({ ok: false, error: "No response." }));
+    setState({ status: result.ok ? "ok" : "error", result });
+  };
+  return (
+    <div className="flex flex-wrap items-center gap-3">
+      <button
+        type="button"
+        onClick={test}
+        disabled={state.status === "loading"}
+        className="border border-border-strong px-4 py-2 text-[0.68rem] uppercase tracking-[0.12em] text-cream-100 hover:border-gold-400 disabled:opacity-50"
+      >
+        {state.status === "loading" ? "Testing…" : "Test Shiprocket connection"}
+      </button>
+      {state.status === "ok" ? (
+        <Pill tone="success">
+          Connected · pickup from {state.result.pickup.name}, {state.result.pickup.city} {state.result.pickup.pincode}
+        </Pill>
+      ) : null}
+      {state.status === "error" ? <span className="text-sm text-[#e0a19c]">{state.result.error}</span> : null}
+    </div>
   );
 }
