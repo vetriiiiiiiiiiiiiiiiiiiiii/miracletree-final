@@ -65,7 +65,7 @@ export const COMMERCE_DEFAULTS = {
    *  guard against a typo like 1000000, not a limit anyone should meet. */
   maxLineQuantity: 9999,
   /** Flat shipping fee below the threshold, in paise. */
-  flatShippingFee: 6000,
+  flatShippingFee: 12000,
   codEnabled: true,
 };
 /**

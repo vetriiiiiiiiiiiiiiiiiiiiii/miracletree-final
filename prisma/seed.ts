@@ -498,7 +498,7 @@ export const FAQS = [
     category: "shipping",
     question: "What does shipping cost?",
     answer:
-      "Shipping is free on orders above ₹1,499. Below that a flat ₹60 applies. Orders above ₹2,499 also get 10% off automatically. We ship across India.",
+      "Shipping is free on orders above ₹1,499. Below that a flat ₹120 applies. Orders above ₹2,499 also get 10% off automatically. We ship across India.",
   },
   {
     category: "shipping",
@@ -962,7 +962,7 @@ export const HERO_SLIDES = [
 
 export const SETTINGS: Record<string, string> = {
   "shipping.freeThreshold": "149900",
-  "shipping.flatFee": "6000",
+  "shipping.flatFee": "12000",
   "shipping.copy": "Free shipping above ₹1,499 · 10% off above ₹2,499",
   "discount.autoThreshold": "249900",
   "discount.autoPercent": "10",

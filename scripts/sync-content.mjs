@@ -466,6 +466,26 @@ const ONE_OFFS = [
     marker: "oneoff.untrack-all-stock",
     run: () => prisma.inventory.updateMany({ data: { trackInventory: false, reserved: 0 } }),
   },
+  {
+    // The flat shipping fee goes from ₹60 to ₹120 (used below ₹1,499, and
+    // whenever Shiprocket's live rate is unavailable). Updates the setting
+    // and the shipping FAQ answer once; later edits in the admin stand.
+    marker: "oneoff.shipping-fee-120",
+    run: async () => {
+      await prisma.siteSetting.upsert({
+        where: { key: "shipping.flatFee" },
+        create: { key: "shipping.flatFee", value: "12000" },
+        update: { value: "12000" },
+      });
+      let count = 1;
+      for (const row of await prisma.faq.findMany()) {
+        if (!row.answer.includes("flat ₹60")) continue;
+        await prisma.faq.update({ where: { id: row.id }, data: { answer: row.answer.replaceAll("flat ₹60", "flat ₹120") } });
+        count++;
+      }
+      return { count };
+    },
+  },
 ];
 for (const { marker, run } of ONE_OFFS) {
   if (await prisma.siteSetting.findUnique({ where: { key: marker } })) continue;

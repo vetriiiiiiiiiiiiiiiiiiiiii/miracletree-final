@@ -31,7 +31,7 @@ export const POLICY_DEFAULTS = {
 <h2>Charges</h2>
 <ul>
   <li>Free on orders above ₹1,499.</li>
-  <li>A flat ₹60 applies below that.</li>
+  <li>A flat ₹120 applies below that.</li>
 </ul>
 
 <h2>Dispatch</h2>

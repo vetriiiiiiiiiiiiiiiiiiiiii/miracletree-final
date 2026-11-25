@@ -119,8 +119,8 @@ export function SettingsForm({ values, policyDefaults, activity }) {
                       name="shipping.flatFee"
                       type="number"
                       min={0}
-                      defaultValue={values["shipping.flatFee"] ?? "6000"}
-                      hint="6000 = ₹60"
+                      defaultValue={values["shipping.flatFee"] ?? "12000"}
+                      hint="12000 = ₹120"
                     />
                   </div>
 
