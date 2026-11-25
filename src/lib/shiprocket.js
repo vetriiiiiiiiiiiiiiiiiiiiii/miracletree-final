@@ -1,4 +1,5 @@
 import "server-only";
+import { createHash } from "node:crypto";
 import { prisma } from "./prisma";
 /**
  * A thin client for Shiprocket's external API.
@@ -10,11 +11,18 @@ import { prisma } from "./prisma";
  *
  * Every call throws ShiprocketError with Shiprocket's own message, so the
  * admin sees "Pincode not serviceable" rather than "Request failed".
+ *
+ * A failed login is remembered for 15 minutes. Without that, every PIN code
+ * check and checkout quote tried the wrong password again, and Shiprocket
+ * locked the API user for "too many failed login attempts". Changing the
+ * credentials in .env lifts the pause at once.
  */
 const BASE = (process.env.SHIPROCKET_API_BASE || "https://apiv2.shiprocket.in/v1/external").replace(/\/$/, "");
 const TOKEN_KEY = "shiprocket.token";
 const TOKEN_LIFETIME_MS = 9 * 24 * 60 * 60 * 1000; // issued for 10 days
 const TIMEOUT_MS = 15000;
+const FAILURE_KEY = "shiprocket.loginFailure";
+const LOGIN_COOLDOWN_MS = 15 * 60 * 1000;
 
 export class ShiprocketError extends Error {
   constructor(message, status) {
@@ -29,22 +37,66 @@ export function shiprocketConfigured() {
 }
 
 let cached = null; // { token, expiresAt }
+let lastFailure = null; // { at, message, fingerprint }
+
+/** Which credentials a failure belongs to, without storing them. */
+function fingerprint() {
+  return createHash("sha256")
+    .update(`${(process.env.SHIPROCKET_EMAIL ?? "").trim().toLowerCase()}\n${process.env.SHIPROCKET_PASSWORD ?? ""}`)
+    .digest("hex")
+    .slice(0, 16);
+}
+
+async function recentFailure() {
+  if (!lastFailure) {
+    const row = await prisma.siteSetting.findUnique({ where: { key: FAILURE_KEY } }).catch(() => null);
+    try {
+      lastFailure = row?.value ? JSON.parse(row.value) : null;
+    } catch {
+      lastFailure = null;
+    }
+  }
+  if (!lastFailure || lastFailure.fingerprint !== fingerprint()) return null;
+  return Date.now() - lastFailure.at < LOGIN_COOLDOWN_MS ? lastFailure : null;
+}
+
+async function rememberFailure(message) {
+  lastFailure = { at: Date.now(), message, fingerprint: fingerprint() };
+  await prisma.siteSetting
+    .upsert({
+      where: { key: FAILURE_KEY },
+      create: { key: FAILURE_KEY, value: JSON.stringify(lastFailure) },
+      update: { value: JSON.stringify(lastFailure) },
+    })
+    .catch(() => {});
+}
 
 async function login() {
   if (!shiprocketConfigured()) throw new ShiprocketError("Shiprocket is not set up on the server.");
+  const failure = await recentFailure();
+  if (failure) {
+    const minutes = Math.max(1, Math.ceil((failure.at + LOGIN_COOLDOWN_MS - Date.now()) / 60000));
+    throw new ShiprocketError(
+      `${failure.message} Not retrying for ${minutes} more minute${minutes === 1 ? "" : "s"}, so the API user isn't locked — or change the credentials in .env to retry now.`,
+      401,
+    );
+  }
   const response = await fetch(`${BASE}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email: process.env.SHIPROCKET_EMAIL, password: process.env.SHIPROCKET_PASSWORD }),
+    body: JSON.stringify({ email: (process.env.SHIPROCKET_EMAIL ?? "").trim(), password: process.env.SHIPROCKET_PASSWORD }),
     signal: AbortSignal.timeout(TIMEOUT_MS),
   });
   const data = await response.json().catch(() => ({}));
   if (!response.ok || !data.token) {
-    throw new ShiprocketError(
-      data.message ? `Shiprocket login failed: ${data.message}` : "Shiprocket login failed — check the API user email and password.",
-      response.status,
-    );
+    const message = data.message
+      ? `Shiprocket login failed: ${data.message}`
+      : "Shiprocket login failed — check the API user email and password.";
+    await rememberFailure(message);
+    throw new ShiprocketError(message, response.status);
   }
+  lastFailure = null;
+  await prisma.siteSetting.deleteMany({ where: { key: FAILURE_KEY } }).catch(() => {});
   cached = { token: data.token, expiresAt: Date.now() + TOKEN_LIFETIME_MS };
   await prisma.siteSetting
     .upsert({
