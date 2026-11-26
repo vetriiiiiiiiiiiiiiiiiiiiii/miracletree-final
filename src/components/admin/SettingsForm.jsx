@@ -129,7 +129,7 @@ export function SettingsForm({ values, policyDefaults, activity }) {
                     name="shipping.copy"
                     defaultValue={
                       values["shipping.copy"] ??
-                      "Free shipping above ₹1,499 · 10% off above ₹2,499"
+                      "Free shipping above ₹1,499 · 5% off above ₹2,499"
                     }
                     hint="Used on product pages and in the footer."
                   />
@@ -149,7 +149,7 @@ export function SettingsForm({ values, policyDefaults, activity }) {
                       type="number"
                       min={0}
                       max={100}
-                      defaultValue={values["discount.autoPercent"] ?? "10"}
+                      defaultValue={values["discount.autoPercent"] ?? "5"}
                       hint="0 switches it off · doesn't stack with codes"
                     />
                   </div>

@@ -528,6 +528,34 @@ const ONE_OFFS = [
       return prisma.productVariant.updateMany({ where: { id: { in: ids } }, data: { isActive: false } });
     },
   },
+  {
+    // The automatic order discount drops from 10% to 5% (still from ₹2,499).
+    // Updates the setting, the shipping message, the announcement and the
+    // shipping FAQ answer once; later edits in the admin stand.
+    marker: "oneoff.auto-discount-5",
+    run: async () => {
+      const set = (key, value) =>
+        prisma.siteSetting.upsert({ where: { key }, create: { key, value }, update: { value } });
+      await set("discount.autoPercent", "5");
+      let count = 1;
+      const copy = await prisma.siteSetting.findUnique({ where: { key: "shipping.copy" } });
+      if (copy?.value?.includes("10% off")) {
+        await set("shipping.copy", copy.value.replaceAll("10% off", "5% off"));
+        count++;
+      }
+      for (const row of await prisma.announcement.findMany()) {
+        if (!row.message.includes("10% off on orders above")) continue;
+        await prisma.announcement.update({ where: { id: row.id }, data: { message: row.message.replace("10% off", "5% off") } });
+        count++;
+      }
+      for (const row of await prisma.faq.findMany()) {
+        if (!row.answer.includes("get 10% off automatically")) continue;
+        await prisma.faq.update({ where: { id: row.id }, data: { answer: row.answer.replace("get 10% off automatically", "get 5% off automatically") } });
+        count++;
+      }
+      return { count };
+    },
+  },
 ];
 for (const { marker, run } of ONE_OFFS) {
   if (await prisma.siteSetting.findUnique({ where: { key: marker } })) continue;

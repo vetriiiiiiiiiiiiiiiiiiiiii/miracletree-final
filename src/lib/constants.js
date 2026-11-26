@@ -60,7 +60,7 @@ export const COMMERCE_DEFAULTS = {
   freeShippingThreshold: 149900,
   /** An automatic percentage off orders at or above this subtotal (₹2,499). */
   autoDiscountThreshold: 249900,
-  autoDiscountPercent: 10,
+  autoDiscountPercent: 5,
   /** Most of one item per order line. Stock is not tracked, so this is only a
    *  guard against a typo like 1000000, not a limit anyone should meet. */
   maxLineQuantity: 9999,
