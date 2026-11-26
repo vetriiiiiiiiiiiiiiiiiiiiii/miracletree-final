@@ -416,6 +416,11 @@ const PRICE_OVERRIDES: Record<string, Record<string, number>> = {
   "movita-sprouted-multi-grain-laddus-250-gms-no-added-sugar-richness-of-moringa": { "25 Box - 250 Laddus": 11000 },
 };
 
+/** Packs no longer sold: kept for old orders, hidden from the shop. */
+const HIDDEN_VARIANTS: Record<string, Set<string>> = {
+  "movita-sprouted-multi-grain-laddus-250-gms-no-added-sugar-richness-of-moringa": new Set(["25 Box - 250 Laddus"]),
+};
+
 /** The corrected price for a variant, or its exported price. */
 function variantPrice(handle: string, title: string, exported: string | number): number {
   const override = PRICE_OVERRIDES[handle]?.[title];
@@ -1153,7 +1158,7 @@ export async function importCatalogue(
           weightGrams: v.grams || null,
           imageUrl: v.featured_image?.src ?? p.images[0]?.src ?? null,
           position: v.position,
-          isActive: true,
+          isActive: !HIDDEN_VARIANTS[p.handle]?.has(v.title),
         },
       });
       await prisma.inventory.create({

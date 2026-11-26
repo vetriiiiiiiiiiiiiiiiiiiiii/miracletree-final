@@ -507,6 +507,27 @@ const ONE_OFFS = [
       });
     },
   },
+  {
+    // The 25-box (250 laddus) Movita pack is no longer sold. Hidden rather
+    // than deleted, so past orders keep it; taken out of open carts so it
+    // cannot be checked out.
+    marker: "oneoff.hide-laddu-25-box",
+    run: async () => {
+      const products = await prisma.product.findMany({
+        where: { slug: { startsWith: "movita-sprouted-multi-grain-laddus" } },
+        select: { id: true },
+      });
+      if (!products.length) return { count: 0 };
+      const variants = await prisma.productVariant.findMany({
+        where: { productId: { in: products.map((p) => p.id) }, name: "25 Box - 250 Laddus" },
+        select: { id: true },
+      });
+      if (!variants.length) return { count: 0 };
+      const ids = variants.map((v) => v.id);
+      await prisma.cartItem.deleteMany({ where: { variantId: { in: ids } } });
+      return prisma.productVariant.updateMany({ where: { id: { in: ids } }, data: { isActive: false } });
+    },
+  },
 ];
 for (const { marker, run } of ONE_OFFS) {
   if (await prisma.siteSetting.findUnique({ where: { key: marker } })) continue;
