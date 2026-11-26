@@ -406,18 +406,24 @@ export function ProductEditor({
           <Panel active={tab === "Pricing"}>
             <FieldGroup
               title="Price"
-              description="Enter rupees. The base price is what a card shows; each variant can override it."
+              description={
+                variants.length > 1
+                  ? `This product has ${variants.length} packs, each with its own price. Change prices in the Variants tab — the price here follows the cheapest pack automatically.`
+                  : "Enter rupees. This is the product's price."
+              }
             >
               <div className="grid gap-5 sm:grid-cols-3">
                 <Input
-                  label="Price (₹)"
+                  label={variants.length > 1 ? "From price (₹)" : "Price (₹)"}
                   name="price"
                   type="number"
                   min={0}
                   step="0.01"
                   required
+                  readOnly={variants.length > 1}
                   defaultValue={draft.price}
                   error={errors.price}
+                  hint={variants.length > 1 ? "Set in the Variants tab." : undefined}
                   onChange={(e) => setPrice(e.target.value)}
                 />
                 <Input
@@ -426,8 +432,9 @@ export function ProductEditor({
                   type="number"
                   min={0}
                   step="0.01"
+                  readOnly={variants.length > 1}
                   defaultValue={draft.compareAtPrice}
-                  hint="Shown struck through."
+                  hint={variants.length > 1 ? "Set in the Variants tab." : "Shown struck through."}
                   error={errors.compareAtPrice}
                 />
                 <Input

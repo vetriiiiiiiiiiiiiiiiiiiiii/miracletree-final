@@ -1,7 +1,6 @@
 "use client";
-import { useActionState, useEffect, useState, useTransition } from "react";
+import { startTransition, useActionState, useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { useFormStatus } from "react-dom";
 import { Input, Checkbox, FormMessage } from "@/components/ui/Field";
 import { Card, Pill, Table, Td, Tr, EmptyRow } from "@/components/admin/ui";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
@@ -131,15 +130,45 @@ export function VariantEditor({ productId, variants }) {
     </div>
   );
 }
+/**
+ * The variant form is drawn inside the product editor's own <form>, and a
+ * form cannot contain another: the browser drops the inner one, so "Save
+ * variant" submitted the product instead and the pack's new price was never
+ * saved. This collects its own fields and calls the action directly.
+ */
 function VariantForm({ productId, variant, onDone, onCancel }) {
-  const [state, action] = useActionState(saveVariantAction, INITIAL);
+  const [state, action, pending] = useActionState(saveVariantAction, INITIAL);
+  const fieldsRef = useRef(null);
+  const submit = () => {
+    const data = new FormData();
+    fieldsRef.current
+      ?.querySelectorAll("input[name], select[name], textarea[name]")
+      .forEach((el) => {
+        if (el.type === "checkbox") {
+          if (el.checked) data.append(el.name, "on");
+        } else {
+          data.append(el.name, el.value);
+        }
+      });
+    startTransition(() => action(data));
+  };
   useEffect(() => {
     if (state.status === "success") onDone();
   }, [state, onDone]);
   const errors = state.status === "error" ? (state.errors ?? {}) : {};
   return (
     <Card title={variant ? `Edit “${variant.name}”` : "New variant"}>
-      <form action={action} className="grid gap-5">
+      <div
+        ref={fieldsRef}
+        className="grid gap-5"
+        onKeyDown={(event) => {
+          // Enter would otherwise submit the product form around this one.
+          if (event.key === "Enter" && event.target.tagName === "INPUT") {
+            event.preventDefault();
+            submit();
+          }
+        }}
+      >
         <input type="hidden" name="productId" value={productId} />
         {variant ? (
           <input type="hidden" name="variantId" value={variant.id} />
@@ -206,7 +235,14 @@ function VariantForm({ productId, variant, onDone, onCancel }) {
         />
 
         <div className="flex flex-wrap gap-3">
-          <SaveVariant />
+          <button
+            type="button"
+            onClick={submit}
+            disabled={pending}
+            className="bg-emerald-500 px-6 py-2.5 text-[0.68rem] font-medium uppercase tracking-[0.14em] text-on-accent transition-colors hover:bg-emerald-400 disabled:opacity-60"
+          >
+            {pending ? "Saving…" : "Save variant"}
+          </button>
           <button
             type="button"
             onClick={onCancel}
@@ -215,19 +251,7 @@ function VariantForm({ productId, variant, onDone, onCancel }) {
             Cancel
           </button>
         </div>
-      </form>
+      </div>
     </Card>
-  );
-}
-function SaveVariant() {
-  const { pending } = useFormStatus();
-  return (
-    <button
-      type="submit"
-      disabled={pending}
-      className="bg-emerald-500 px-6 py-2.5 text-[0.68rem] font-medium uppercase tracking-[0.14em] text-on-accent transition-colors hover:bg-emerald-400 disabled:opacity-60"
-    >
-      {pending ? "Saving…" : "Save variant"}
-    </button>
   );
 }

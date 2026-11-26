@@ -43,6 +43,31 @@ function guard(error) {
     message: "Something went wrong. Please try again.",
   };
 }
+/**
+ * Keeps a product's own price — the "from" price used for sorting, search,
+ * listings and structured data — equal to its cheapest available pack, and
+ * refreshes the shop pages that show it. Without this, a pack's new price
+ * reached the product page but the product kept its old one everywhere else.
+ */
+async function syncProductPrice(productId) {
+  const variants = await prisma.productVariant.findMany({
+    where: { productId },
+    select: { price: true, compareAtPrice: true, isActive: true },
+  });
+  const pool = variants.some((v) => v.isActive) ? variants.filter((v) => v.isActive) : variants;
+  if (!pool.length) return;
+  const cheapest = pool.reduce((low, v) => (v.price < low.price ? v : low), pool[0]);
+  const compareAt = cheapest.compareAtPrice && cheapest.compareAtPrice > cheapest.price ? cheapest.compareAtPrice : null;
+  const product = await prisma.product.update({
+    where: { id: productId },
+    data: { price: cheapest.price, compareAtPrice: compareAt, isOnSale: Boolean(compareAt) },
+    select: { slug: true },
+  });
+  revalidatePath(`/product/${product.slug}`);
+  revalidatePath("/shop", "layout");
+  revalidatePath("/");
+}
+
 function bool(formData, key) {
   return formData.get(key) === "on" || formData.get(key) === "true";
 }
@@ -427,6 +452,9 @@ export async function saveProductAction(_prev, formData) {
           }
         });
       }
+      // With several packs the typed price is not used: the product's own
+      // price follows its cheapest pack.
+      await syncProductPrice(id);
 
       await recordAudit({
         actorId: admin.id,
@@ -565,6 +593,7 @@ export async function saveVariantAction(_prev, formData) {
       entityId: input.id ?? null,
       meta: { productId, name: input.name },
     });
+    await syncProductPrice(productId);
     revalidatePath(`/admin/products/${productId}`);
     return { status: "success", message: "Variant saved." };
   } catch (error) {
@@ -599,20 +628,33 @@ export async function deleteVariantAction(variantId) {
         entity: "ProductVariant",
         entityId: variantId,
       });
+      await syncProductPrice(variant.productId);
       revalidatePath(`/admin/products/${variant.productId}`);
       return { ok: true };
     }
-    await prisma.productVariant.delete({ where: { id: variantId } });
+    // Its stock record, stock history and any cart lines point at it; the
+    // delete is refused while they exist, so they go first.
+    await prisma.$transaction(async (tx) => {
+      const inventory = await tx.inventory.findUnique({ where: { variantId }, select: { id: true } });
+      if (inventory) {
+        await tx.inventoryMovement.deleteMany({ where: { inventoryId: inventory.id } });
+        await tx.inventory.delete({ where: { id: inventory.id } });
+      }
+      await tx.cartItem.deleteMany({ where: { variantId } });
+      await tx.productVariant.delete({ where: { id: variantId } });
+    });
     await recordAudit({
       actorId: admin.id,
       action: "variant.deleted",
       entity: "ProductVariant",
       entityId: variantId,
     });
+    await syncProductPrice(variant.productId);
     revalidatePath(`/admin/products/${variant.productId}`);
     return { ok: true };
   } catch (error) {
     if (error instanceof AuthError) return { ok: false, error: error.message };
+    console.error("[admin/variants] delete failed", error);
     return { ok: false, error: "Could not delete that variant." };
   }
 }
