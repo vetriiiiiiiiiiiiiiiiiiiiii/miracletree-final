@@ -412,6 +412,8 @@ const PRICE_OVERRIDES: Record<string, Record<string, number>> = {
   "mogo-moringa-energy-bar": { "Pack of 10": 400 },
   "colostrum-protein-bar-200-gms": { "Default Title": 400 },
   "drumstick-pulp-soup-instant-soup-10-sachets": { "10 Sachets Per Box": 560 },
+  // No bulk discount on the 25-box pack: the full 25 × ₹440.
+  "movita-sprouted-multi-grain-laddus-250-gms-no-added-sugar-richness-of-moringa": { "25 Box - 250 Laddus": 11000 },
 };
 
 /** The corrected price for a variant, or its exported price. */
@@ -1144,7 +1146,7 @@ export async function importCatalogue(
           sku,
           price: rupeesToPaise(variantPrice(p.handle, v.title, v.price)),
           compareAtPrice: v.compare_at_price
-            ? rupeesToPaise(v.compare_at_price) > rupeesToPaise(v.price)
+            ? rupeesToPaise(v.compare_at_price) > rupeesToPaise(variantPrice(p.handle, v.title, v.price))
               ? rupeesToPaise(v.compare_at_price)
               : null
             : null,

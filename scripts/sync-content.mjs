@@ -486,6 +486,27 @@ const ONE_OFFS = [
       return { count };
     },
   },
+  {
+    // The 25-box Movita laddu pack carried a 25% bulk discount from the old
+    // shop (₹8,250 against ₹11,000). It now sells at the full ₹11,000 with no
+    // "25% off" badge. Only where the old discounted price is still set.
+    marker: "oneoff.laddu-25-box-full-price",
+    run: async () => {
+      const products = await prisma.product.findMany({
+        where: { slug: { startsWith: "movita-sprouted-multi-grain-laddus" } },
+        select: { id: true },
+      });
+      if (!products.length) return { count: 0 };
+      return prisma.productVariant.updateMany({
+        where: {
+          productId: { in: products.map((p) => p.id) },
+          name: "25 Box - 250 Laddus",
+          price: 825000,
+        },
+        data: { price: 1100000, compareAtPrice: null },
+      });
+    },
+  },
 ];
 for (const { marker, run } of ONE_OFFS) {
   if (await prisma.siteSetting.findUnique({ where: { key: marker } })) continue;
